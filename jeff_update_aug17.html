@@ -35,9 +35,6 @@
       padding-left: 16px;
       border-left: 4px solid #174DFF;
     }
-    .section.question-section {
-      border-left-color: #174DFF;
-    }
     .tag {
       display: inline-block;
       font-size: 11px;
@@ -111,29 +108,23 @@
     .footer-actions {
       text-align: center;
     }
-    .copy-btn {
-      padding: 11px 30px;
+    .submit-btn {
+      padding: 12px 36px;
       background: #174DFF;
       color: #fff;
       border: none;
       border-radius: 6px;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       letter-spacing: 0.02em;
     }
-    .copy-btn:hover { background: #000633; }
-    .confirm {
-      margin-top: 10px;
-      font-size: 13px;
-      color: #174DFF;
-      height: 18px;
-    }
+    .submit-btn:hover { background: #000633; }
     .note {
       font-size: 12px;
       color: #aaa;
       text-align: center;
-      margin-top: 8px;
+      margin-top: 10px;
     }
   </style>
 </head>
@@ -144,125 +135,107 @@
   <div class="meta">From: Alex Hill &nbsp;&middot;&nbsp; August 17, 2026</div>
 </div>
 
-<!-- 1. Flight Ops -->
-<div class="section">
-  <span class="tag tag-update">Update</span>
-  <div class="section-title">Flight Ops Leadership Course</div>
-  <p>Met with John Russack. In the context of the HRBP work, he identified a people leadership gap — his leaders come from a technical background and need support making the shift to leading people.</p>
-  <p>We're building a tailored leadership course for his team. Target launch is <strong>next month (September)</strong>. Moving forward on this.</p>
-</div>
+<form action="https://formspree.io/f/meajrdep" method="POST">
+  <input type="hidden" name="_subject" value="Jeff's Responses — August 17, 2026">
 
-<!-- 2. BAC Girls in Aviation -->
-<div class="section question-section">
-  <span class="tag tag-ask">BAC · Question</span>
-  <div class="section-title">Girls in Aviation Event</div>
-  <p>Planning to do a Girls in Aviation event in SLC again this year — same as last year. Not every base, just select locations. We'd need:</p>
-  <ul>
-    <li><strong>$100–$150</strong> for base registrations</li>
-    <li>A small amount for stickers to send to participating bases (marketing will give a cost estimate)</li>
-  </ul>
-  <div class="q-box">
-    <div class="q-label">Question</div>
-    <div class="q-text">Do we have a budget for this? Worth pursuing before I have marketing price out the stickers?</div>
-    <div class="r-label">Jeff's response:</div>
-    <textarea id="q1" placeholder="Type your response here..." oninput="autoResize(this)"></textarea>
+  <!-- 1. Flight Ops -->
+  <div class="section">
+    <span class="tag tag-update">Update</span>
+    <div class="section-title">Flight Ops Leadership Course</div>
+    <p>Met with John Russack. In the context of the HRBP work, he identified a people leadership gap — his leaders come from a technical background and need support making the shift to leading people.</p>
+    <p>We're building a tailored leadership course for his team. Target launch is <strong>next month (September)</strong>. Moving forward on this.</p>
   </div>
-</div>
 
-<!-- 3. Seriously Nice Award -->
-<div class="section question-section">
-  <span class="tag tag-ask">BAC · Question</span>
-  <div class="section-title">Seriously Nice TM Award — Full Revamp</div>
-  <p>Nominations have fallen off with the current $500/month GC model. We used the pause to redesign the whole program around the Seriously Nice Notes already in use. New structure:</p>
-  <ul>
-    <li><strong>Monthly winner:</strong> 2 positive space tickets <em>(James and team have confirmed this is fine)</em></li>
-    <li><strong>2 monthly honorable mentions:</strong> $50 GC to the company store each ($100/month total)</li>
-    <li><strong>Quarterly all-hands drawing:</strong> Pull one winner from that quarter's monthly SNT winners — $500 Visa GC</li>
-  </ul>
-  <p>This saves money overall, gets TMs flying Breeze, and revives participation. If approved, we'd like to <strong>launch in September</strong>, get 3–5 mins on an upcoming TM call to announce it, and put the full program budget into 2027.</p>
-  <p><strong>Estimated cost Sept–Dec 2026:</strong> $100/month x 4 months = $400 (company store GCs) + $500 (one quarterly drawing at all-hands) = <strong>$900 total</strong>. PS seats are covered — marketing is good with this.</p>
-  <div class="q-box">
-    <div class="q-label">Question</div>
-    <div class="q-text">Can we have budget to launch in September? Total through year-end would be ~$900 ($100/month to the company store Sept–Dec + one $500 Visa GC at the Q4 all-hands drawing). PS seats are approved through marketing. If yes — can we get 3–5 mins on an upcoming TM call to kick it off?</div>
-    <div class="r-label">Jeff's response:</div>
-    <textarea id="q2" placeholder="Type your response here..." oninput="autoResize(this)"></textarea>
+  <!-- 2. BAC Girls in Aviation -->
+  <div class="section">
+    <span class="tag tag-ask">BAC · Question</span>
+    <div class="section-title">Girls in Aviation Event</div>
+    <p>Planning to do a Girls in Aviation event in SLC again this year — same as last year. Not every base, just select locations. We'd need:</p>
+    <ul>
+      <li><strong>$100–$150</strong> for base registrations</li>
+      <li>A small amount for stickers to send to participating bases (marketing will give a cost estimate)</li>
+    </ul>
+    <div class="q-box">
+      <div class="q-label">Question</div>
+      <div class="q-text">Do we have a budget for this? Worth pursuing before I have marketing price out the stickers?</div>
+      <div class="r-label">Jeff's response:</div>
+      <textarea name="Girls in Aviation Budget" placeholder="Type your response here..." oninput="autoResize(this)"></textarea>
+    </div>
   </div>
-</div>
 
-<!-- 4. Breeze Pulse -->
-<div class="section question-section">
-  <span class="tag tag-ask">Breeze Pulse · Question</span>
-  <div class="section-title">Pulse Launch Timing</div>
-  <p>Leaders have had time to discuss NPS results — I think we're ready to move. The first round of Pulse surveys would be <strong>leadership-focused</strong>, going out to everyone except inflight and flight ops line.</p>
-  <p>We'd also want ~3 mins on a TM call to introduce Pulse to the team — frame it as getting more real-time feedback instead of waiting on NPS, and how it connects to ongoing improvement for Breeze.</p>
-  <p>We could also use that moment to mention I'm working with Krissy on an inflight leadership training (virtual half day, date TBD).</p>
-  <div class="q-box">
-    <div class="q-label">Question</div>
-    <div class="q-text">Are we good to launch Pulse soon? And can we get ~3 mins on an upcoming TM call to introduce it?</div>
-    <div class="r-label">Jeff's response:</div>
-    <textarea id="q3" placeholder="Type your response here..." oninput="autoResize(this)"></textarea>
+  <!-- 3. Seriously Nice Award -->
+  <div class="section">
+    <span class="tag tag-ask">BAC · Question</span>
+    <div class="section-title">Seriously Nice TM Award — Full Revamp</div>
+    <p>Nominations have fallen off with the current $500/month GC model. We used the pause to redesign the whole program around the Seriously Nice Notes already in use. New structure:</p>
+    <ul>
+      <li><strong>Monthly winner:</strong> 2 positive space tickets <em>(James and team have confirmed this is fine)</em></li>
+      <li><strong>2 monthly honorable mentions:</strong> $50 GC to the company store each ($100/month total)</li>
+      <li><strong>Quarterly all-hands drawing:</strong> Pull one winner from that quarter's monthly SNT winners — $500 Visa GC</li>
+    </ul>
+    <p>This saves money overall, gets TMs flying Breeze, and revives participation. If approved, we'd like to <strong>launch in September</strong>, get 3–5 mins on an upcoming TM call to announce it, and put the full program budget into 2027.</p>
+    <p><strong>Estimated cost Sept–Dec 2026:</strong> $100/month x 4 months = $400 (company store GCs) + $500 (one quarterly drawing at all-hands) = <strong>$900 total</strong>. PS seats are covered — marketing is good with this.</p>
+    <div class="q-box">
+      <div class="q-label">Question</div>
+      <div class="q-text">Can we have budget to launch in September? Total through year-end would be ~$900 ($100/month to the company store Sept–Dec + one $500 Visa GC at the Q4 all-hands drawing). PS seats are approved through marketing. If yes — can we get 3–5 mins on an upcoming TM call to kick it off?</div>
+      <div class="r-label">Jeff's response:</div>
+      <textarea name="Seriously Nice Award Revamp" placeholder="Type your response here..." oninput="autoResize(this)"></textarea>
+    </div>
   </div>
-</div>
 
-<!-- 5. Leadership Summit -->
-<div class="section question-section">
-  <span class="tag tag-ask">Question</span>
-  <div class="section-title">Leadership Summit</div>
-  <p>I'm also meeting with other teams about their leadership development pieces and will keep you posted. On the summit specifically:</p>
-  <div class="q-box">
-    <div class="q-label">Question</div>
-    <div class="q-text">Is there anything you need from me for the leadership summit?</div>
-    <div class="r-label">Jeff's response:</div>
-    <textarea id="q4" placeholder="Type your response here..." oninput="autoResize(this)"></textarea>
+  <!-- 4. Breeze Pulse -->
+  <div class="section">
+    <span class="tag tag-ask">Breeze Pulse · Question</span>
+    <div class="section-title">Pulse Launch Timing</div>
+    <p>Leaders have had time to discuss NPS results — I think we're ready to move. The first round of Pulse surveys would be <strong>leadership-focused</strong>, going out to everyone except inflight and flight ops line.</p>
+    <p>We'd also want ~3 mins on a TM call to introduce Pulse to the team — frame it as getting more real-time feedback instead of waiting on NPS, and how it connects to ongoing improvement for Breeze.</p>
+    <p>We could also use that moment to mention I'm working with Krissy on an inflight leadership training (virtual half day, date TBD).</p>
+    <div class="q-box">
+      <div class="q-label">Question</div>
+      <div class="q-text">Are we good to launch Pulse soon? And can we get ~3 mins on an upcoming TM call to introduce it?</div>
+      <div class="r-label">Jeff's response:</div>
+      <textarea name="Breeze Pulse Launch" placeholder="Type your response here..." oninput="autoResize(this)"></textarea>
+    </div>
   </div>
-</div>
 
-<!-- 6. Anything else -->
-<div class="section question-section">
-  <span class="tag tag-ask">Open</span>
-  <div class="section-title">Anything Else?</div>
-  <div class="q-box">
-    <div class="q-label">For Jeff</div>
-    <div class="q-text">Anything else on your end you want to pass along or want me to be aware of?</div>
-    <div class="r-label">Jeff's response:</div>
-    <textarea id="q5" placeholder="Type your response here..." oninput="autoResize(this)"></textarea>
+  <!-- 5. Leadership Summit -->
+  <div class="section">
+    <span class="tag tag-ask">Question</span>
+    <div class="section-title">Leadership Summit</div>
+    <p>I'm also meeting with other teams about their leadership development pieces and will keep you posted. On the summit specifically:</p>
+    <div class="q-box">
+      <div class="q-label">Question</div>
+      <div class="q-text">Is there anything you need from me for the leadership summit?</div>
+      <div class="r-label">Jeff's response:</div>
+      <textarea name="Leadership Summit" placeholder="Type your response here..." oninput="autoResize(this)"></textarea>
+    </div>
   </div>
-</div>
 
-<hr class="divider">
+  <!-- 6. Anything else -->
+  <div class="section">
+    <span class="tag tag-ask">Open</span>
+    <div class="section-title">Anything Else?</div>
+    <div class="q-box">
+      <div class="q-label">For Jeff</div>
+      <div class="q-text">Anything else on your end you want to pass along or want me to be aware of?</div>
+      <div class="r-label">Jeff's response:</div>
+      <textarea name="Anything Else" placeholder="Type your response here..." oninput="autoResize(this)"></textarea>
+    </div>
+  </div>
 
-<div class="footer-actions">
-  <button class="copy-btn" onclick="copyResponses()">Copy Jeff's Responses to Clipboard</button>
-  <div class="confirm" id="confirm"></div>
-  <div class="note">Fill in your responses above, then click to copy them — paste into Teams or email if needed.</div>
-</div>
+  <hr class="divider">
+
+  <div class="footer-actions">
+    <button type="submit" class="submit-btn">Send Responses to Alex</button>
+    <div class="note">Hit submit and your responses will go straight to Alex — no email needed.</div>
+  </div>
+
+</form>
 
 <script>
   function autoResize(el) {
     el.style.height = 'auto';
     el.style.height = el.scrollHeight + 'px';
-  }
-
-  function copyResponses() {
-    const items = [
-      { label: "Girls in Aviation Budget", id: "q1" },
-      { label: "Seriously Nice Award Revamp", id: "q2" },
-      { label: "Breeze Pulse Launch", id: "q3" },
-      { label: "Leadership Summit", id: "q4" },
-      { label: "Anything Else", id: "q5" },
-    ];
-    let out = "Jeff's Responses — August 17, 2026\n";
-    out += "=".repeat(40) + "\n\n";
-    items.forEach(item => {
-      const val = document.getElementById(item.id).value.trim();
-      out += `${item.label}:\n${val || "(no response entered)"}\n\n`;
-    });
-    navigator.clipboard.writeText(out).then(() => {
-      document.getElementById("confirm").textContent = "Copied to clipboard!";
-      setTimeout(() => document.getElementById("confirm").textContent = "", 3000);
-    }).catch(() => {
-      document.getElementById("confirm").textContent = "Copy failed — try selecting and copying manually.";
-    });
   }
 </script>
 
