@@ -75,6 +75,8 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 
 /* ── PHASE CARD ── */
 .phase-card{background:var(--card);border-radius:14px;padding:26px 30px;box-shadow:0 2px 12px rgba(0,0,0,.06);border-left:5px solid var(--blue);}
+.phase-card.p7{border-left-color:var(--right);}
+.phase-label.p7{color:var(--right);}
 .phase-card.p60{border-left-color:var(--nice);}
 .phase-card.p90{border-left-color:var(--dark);}
 .phase-card.pw1{border-left-color:var(--blue);}
@@ -655,13 +657,17 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
   <div class="sec-sub" id="f90-sub">This roadmap is for you — the leader. Use it to organize your own integration, build the right relationships, and start strong. Check off items as you go — your progress saves automatically.</div>
 
   <div class="phase-tabs">
-    <div class="phase-tab active" onclick="showPhase('p30',this,'first90')">Days 1–30: Listen &amp; Learn</div>
-    <div class="phase-tab" onclick="showPhase('p60',this,'first90')">Days 31–60: Assess &amp; Align</div>
-    <div class="phase-tab" onclick="showPhase('p90',this,'first90')">Days 61–90: Plan &amp; Act</div>
+    <div class="phase-tab active" onclick="showPhase('p7',this,'first90')">Week 1: Start Here</div>
+    <div class="phase-tab" onclick="showPhase('p30',this,'first90')">First Month: Listen &amp; Learn</div>
+    <div class="phase-tab" onclick="showPhase('p60',this,'first90')">Month 2: Assess &amp; Align</div>
+    <div class="phase-tab" onclick="showPhase('p90',this,'first90')">Month 3: Plan &amp; Act</div>
   </div>
 
+  <!-- PHASE WEEK 1 -->
+  <div class="phase-panel active" id="first90-p7"></div>
+
   <!-- PHASE 30 -->
-  <div class="phase-panel active" id="first90-p30"></div>
+  <div class="phase-panel" id="first90-p30"></div>
 
   <!-- PHASE 60 -->
   <div class="phase-panel" id="first90-p60"></div>
@@ -1345,7 +1351,18 @@ const SKILLS_CONFIG = {
 ====================================================================== */
 const FIRST90_CONFIG = {
   supervisor: {
-    sub: 'A guide for first-time people leaders. Organize your integration, build the right relationships, and start strong. Check off items as you go.',
+    sub: 'A guide for first-time people leaders. Start with Week 1 — the actions that can\'t wait. Then work through the rest at your own pace. Check off items as you go.',
+    p7: { title: 'Start Here — Five things to do before anything else.',
+      items: [
+        { id:'sv07a', bold:'Meet with your leader — today or tomorrow if possible', text:' — understand their expectations, top priorities, and how they want to stay informed. Don\'t guess.' },
+        { id:'sv07b', bold:'Schedule 1:1s with every direct report — this week', text:' — your first job as a leader is to know your people. Don\'t let this slip past week 1.' },
+        { id:'sv07c', bold:'Submit all system access requests immediately', text:' — Workday, email distribution lists, any team-specific tools. IT requests take time; start the clock now.' },
+        { id:'sv07d', bold:'Find your payroll approval deadline', text:' — you may have timecards to approve within your first few days. Ask your leader or check with Payroll.' },
+        { id:'sv07e', bold:'Introduce yourself to 1–2 key partners outside your team', text:' — a quick hello now builds the relationship you\'ll need later.' },
+        { id:'sv07f', bold:'Observe and listen — change nothing yet', text:' — your first week earns you the right to be heard. Spend it learning, not leading change.' }
+      ],
+      resources: [{label:'Payroll & Timekeeping',card:'payroll'},{label:'IT & Tech Desk',card:'it'},{label:'→ Onboarding a new TM?',tab:'onboard'}]
+    },
     p30: { title: 'Listen & Learn — Resist the urge to change anything yet.',
       items: [
         { id:'sv30a', bold:'Schedule 1:1s with every direct report', text:' — your goal is to understand their work, what they need from you, and what they\'re proud of.' },
@@ -1386,7 +1403,18 @@ const FIRST90_CONFIG = {
     }
   },
   manager: {
-    sub: "A guide for managers leading a team of individual contributors. Build your people, lead at the right level, and develop a healthy team culture. Check off items as you go.",
+    sub: "A guide for managers leading a team of individual contributors. Start with Week 1 — the actions that can't wait. Then work through the rest at your own pace. Check off items as you go.",
+    p7: { title: "Start Here — Do these first, before the noise takes over.",
+      items: [
+        { id:'mg07a', bold:'Meet 1:1 with every direct report — this week', text:' — listen more than you talk. Ask what\'s working, what\'s not, and what they need from you.' },
+        { id:'mg07b', bold:'Meet with your leader', text:' — understand their top expectations, how they want to stay informed, and what success looks like at 90 days.' },
+        { id:'mg07c', bold:'Map your team', text:' — who\'s who, active priorities, open performance concerns, and where the informal influence lives.' },
+        { id:'mg07d', bold:'Submit all system access requests immediately', text:' — Workday, budget dashboards, email lists, reporting tools. Don\'t wait.' },
+        { id:'mg07e', bold:'Read the room on culture and morale', text:' — observe energy, what people are proud of, and where the tension is. This window closes fast.' },
+        { id:'mg07f', bold:'Change nothing yet', text:' — your first week builds the credibility that earns you the right to lead change. Spend it listening.' }
+      ],
+      resources: [{label:'People Services',card:'people'},{label:'IT & Tech Desk',card:'it'},{label:'→ Onboarding a new TM?',tab:'onboard'}]
+    },
     p30: { title: "Listen & Learn — Understand your team\'s health, dynamics, and current state.",
       items: [
         { id:'mg30a', bold:'Meet 1:1 with each direct report in week 1', text:" — listen more than you talk. Ask: what\'s working, what\'s not, what do they need from you?" },
@@ -1427,7 +1455,18 @@ const FIRST90_CONFIG = {
     }
   },
   director: {
-    sub: 'A guide for directors making the shift from managing people to leading an organization. Map the landscape, assess your talent, and set strategic direction. Check off items as you go.',
+    sub: "A guide for directors making the shift from managing people to leading an organization. Start with Week 1 — the actions that can't wait. Then work through the rest at your own pace. Check off items as you go.",
+    p7: { title: 'Start Here — Map the landscape before you move anything.',
+      items: [
+        { id:'dr07a', bold:'Map your stakeholder landscape — immediately', text:' — who are the key people inside and outside your department? Whose support will you need in the next 90 days?' },
+        { id:'dr07b', bold:'Meet 1:1 with every direct report this week', text:' — ask what they need, what you should know, and where the biggest challenge is. Listen for what\'s not being said.' },
+        { id:'dr07c', bold:'Meet with your leader', text:' — align on your mandate, what success looks like at 90 days, and the single most important priority for your department.' },
+        { id:'dr07d', bold:'Identify any immediate risks', text:' — talent gaps, operational fires, or situations that can\'t wait while you\'re still orienting.' },
+        { id:'dr07e', bold:'Schedule time with your 2–3 most important cross-functional peers', text:' — introduce yourself. These relationships will define your effectiveness at the director level.' },
+        { id:'dr07f', bold:'Hold your opinions — for now', text:' — what you say in week one carries more weight than you expect. Listen first; signal direction later.' }
+      ],
+      resources: [{label:'People Services',card:'people'},{label:'Key Contacts',card:'contacts'},{label:'→ New leader joining your team?',tab:'onboard'}]
+    },
     p30: { title: 'Listen & Learn — Map the landscape before you move anything.',
       items: [
         { id:'dr30a', bold:'Map your stakeholder landscape immediately', text:" — who are the key people within and outside your department? Whose support will you need?" },
@@ -1467,7 +1506,18 @@ const FIRST90_CONFIG = {
     }
   },
   vp: {
-    sub: 'A guide for vice presidents making the transition to leading an entire division. Diagnose fast, build key relationships, and set direction. Check off items as you go.',
+    sub: "A guide for vice presidents making the transition to leading an entire division. Start with Week 1 — the actions that can't wait. Then work through the rest at your own pace. Check off items as you go.",
+    p7: { title: "Start Here — Diagnose fast, but don't move yet.",
+      items: [
+        { id:'vp07a', bold:'Map your stakeholder landscape — now', text:' — CXO peers, cross-functional VPs, key external partners. Know who you need and who needs you before week 2.' },
+        { id:'vp07b', bold:'Meet with every direct report this week', text:' — ask: what do you need from me, what should I know, and what\'s your biggest challenge right now?' },
+        { id:'vp07c', bold:'Meet with your leader to align on your mandate', text:' — what does success look like at 90 days, 6 months, and 1 year? Don\'t let this stay vague.' },
+        { id:'vp07d', bold:"Understand your division's financial picture this week", text:' — budget, headcount, key metrics, and where you\'re tracking vs. targets. Get briefed; don\'t wait.' },
+        { id:'vp07e', bold:'Identify any critical risks needing immediate attention', text:' — talent gaps, operational issues, or situations that can\'t wait while you\'re still settling in.' },
+        { id:'vp07f', bold:'Make no big moves yet', text:' — the first week is for listening and diagnosing. The decisions you make too early are the hardest to undo.' }
+      ],
+      resources: [{label:'Key Contacts',card:'contacts'},{label:'People Services',card:'people'},{label:'→ New leader joining your team?',tab:'onboard'}]
+    },
     p30: { title: "Listen & Learn — Diagnose fast, but don\'t move yet.",
       items: [
         { id:'vp30a', bold:'Map your stakeholder landscape in week 1', text:' — CXO peers, cross-functional VPs, and key external partners. Who do you need, and who needs you?' },
@@ -5323,10 +5373,10 @@ function renderFirst90() {
   const sub = document.getElementById('f90-sub');
   if (sub) sub.textContent = cfg.sub;
 
-  const phaseClasses = { p30:'', p60:' p60', p90:' p90' };
-  const phaseLabels  = { p30:'Days 1\u201330', p60:'Days 31\u201360', p90:'Days 61\u201390' };
+  const phaseClasses = { p7:' p7', p30:'', p60:' p60', p90:' p90' };
+  const phaseLabels  = { p7:'Week 1', p30:'First Month', p60:'Month 2', p90:'Month 3' };
 
-  ['p30','p60','p90'].forEach(ph => {
+  ['p7','p30','p60','p90'].forEach(ph => {
     const panel = document.getElementById('first90-' + ph);
     if (!panel) return;
     const data = cfg[ph];
