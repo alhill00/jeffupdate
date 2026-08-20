@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coaching for Performance | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7fa;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#00875A;
+  --accent-light:#d4f0e4;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#d4f0e4;
+  --good-border:#00875A;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+
+/* HEADER */
+.course-header{background:linear-gradient(135deg,var(--dark) 0%,#0a2e1a 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+/* PROGRESS */
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+
+/* SECTION PILLS */
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(0,135,90,.25);color:rgba(255,255,255,.8);border-color:rgba(0,135,90,.4);}
+
+/* MAIN */
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+
+/* SCREEN CARDS */
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body + .screen-body{margin-top:-8px;}
+
+/* HIGHLIGHT / ALERT BOXES */
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+
+/* TWO-COLUMN */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.col-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:3px 8px;border-radius:4px;margin-bottom:8px;}
+.col-tag.telling{background:#fee2e2;color:#b91c1c;}
+.col-tag.coaching{background:var(--accent-light);color:#065f46;}
+
+/* GROW MODEL */
+.grow-grid{display:flex;flex-direction:column;gap:10px;margin:18px 0;}
+.grow-row{background:var(--dark);border-radius:10px;padding:16px 20px;display:grid;grid-template-columns:44px 1fr 1fr;gap:12px;align-items:center;}
+.grow-letter{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--white);font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.grow-word{color:var(--white);font-size:15px;font-weight:700;}
+.grow-word span{display:block;font-size:12px;font-weight:400;color:rgba(255,255,255,.6);margin-top:2px;}
+.grow-q{color:rgba(255,255,255,.85);font-size:13px;font-style:italic;line-height:1.4;}
+
+/* SCENARIO OPTIONS */
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0fdf8;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+
+/* PULSE CHECK */
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0fdf8;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+
+/* QUESTIONS GRID (GROW deep dive) */
+.q-grid{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.q-block{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;}
+.q-stage{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:8px;}
+.q-list{display:flex;flex-direction:column;gap:6px;}
+.q-item{font-size:14px;color:#374151;padding-left:14px;position:relative;line-height:1.5;}
+.q-item::before{content:'→';position:absolute;left:0;color:var(--accent);font-weight:700;}
+
+/* APPLY IT */
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+
+/* COMPLETE */
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#006b47;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+
+/* NAV */
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#006b47;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(0,135,90,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .grow-row{grid-template-columns:40px 1fr;gap:10px;}
+  .grow-q{display:none;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Coaching for Performance</div>
+  <div class="course-sub">Asking better questions so your team solves their own problems and grows over time.</div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<!-- SECTION PILLS -->
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The GROW Model</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<!-- MAIN -->
+<div class="course-main">
+
+<!-- SCREEN 0: Hook -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Manager Who Always Had the Answer</div>
+  <div class="screen-body">When Marcus got promoted to manager, he was excited to finally be in a position to help. Every time someone on his team came to him with a problem, he solved it — fast, confidently, and well. His team appreciated it. He felt useful. It seemed like good management.</div>
+  <div class="screen-body">Six months later, something was wrong. His team couldn't make a decision without him. They'd stop by his desk a dozen times a day. They were capable people — but they'd stopped trusting their own judgment.</div>
+  <div class="screen-body">Marcus hadn't failed as a manager. He'd just been answering when he should have been asking.</div>
+  <div class="hl"><strong>Coaching for performance isn't about fixing your team's problems.</strong> It's about asking the questions that help them fix their own — and build the capability to handle the next one.</div>
+</div>
+
+<!-- SCREEN 1: Two modes -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Two Modes. One Skill.</div>
+  <div class="screen-body">When a team member comes to you with a problem, you have two options. Most managers default to the first one without thinking about it.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <div class="col-tag telling">Telling Mode</div>
+      <h4>You have the answer</h4>
+      <ul>
+        <li>You listen</li>
+        <li>You diagnose</li>
+        <li>You give the answer</li>
+      </ul>
+      <div class="hl" style="margin-top:12px;font-size:13px;background:#fee2e2;border-left-color:#f43f5e;">Fast. Feels helpful. <strong>Creates dependency.</strong> They come back with the same problem next month.</div>
+    </div>
+    <div class="col-card accent-left">
+      <div class="col-tag coaching">Coaching Mode</div>
+      <h4>They find the answer</h4>
+      <ul>
+        <li>You listen</li>
+        <li>You ask</li>
+        <li>They work it through</li>
+      </ul>
+      <div class="hl" style="margin-top:12px;font-size:13px;">Slower upfront. <strong>Builds capability.</strong> Next time, they solve it themselves.</div>
+    </div>
+  </div>
+  <div class="screen-body" style="font-size:14px;color:var(--muted);">Neither mode is always right. The skill is knowing which to use — and coaching more often than you think.</div>
+</div>
+
+<!-- SCREEN 2: The long game -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Long Game</div>
+  <div class="screen-body">Every time you answer instead of coach, you solve one problem. Every time you coach instead of answer, you multiply your capacity as a leader.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <div class="col-tag telling">When You Tell</div>
+      <ul>
+        <li>Problem solved — once</li>
+        <li>Team member returns next time with the same type of problem</li>
+        <li>You become the bottleneck</li>
+        <li>Your team's ceiling is your availability</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <div class="col-tag coaching">When You Coach</div>
+      <ul>
+        <li>Problem solved — and they learned the process</li>
+        <li>Next time, they figure it out themselves</li>
+        <li>You free up capacity</li>
+        <li>Your team's ceiling keeps rising</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al"><strong>The trap:</strong> Telling feels more productive in the moment. Coaching feels slow. But telling is borrowing time from the future — every answer you give creates another question tomorrow.</div>
+</div>
+
+<!-- SCREEN 3: GROW Model -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The GROW Model</div>
+  <div class="screen-title">A Framework for Every Coaching Conversation</div>
+  <div class="screen-body">The GROW model gives you a simple structure to follow. You don't have to say the letters out loud — it's a thinking tool, not a script.</div>
+  <div class="grow-grid">
+    <div class="grow-row">
+      <div class="grow-letter">G</div>
+      <div class="grow-word">Goal<span>Where do we want to get to?</span></div>
+      <div class="grow-q">"What would a good outcome look like for you?"</div>
+    </div>
+    <div class="grow-row">
+      <div class="grow-letter">R</div>
+      <div class="grow-word">Reality<span>Where are we right now?</span></div>
+      <div class="grow-q">"What's happening right now? What have you tried?"</div>
+    </div>
+    <div class="grow-row">
+      <div class="grow-letter">O</div>
+      <div class="grow-word">Options<span>What could we do?</span></div>
+      <div class="grow-q">"What could you do? What else?"</div>
+    </div>
+    <div class="grow-row">
+      <div class="grow-letter">W</div>
+      <div class="grow-word">Way Forward<span>What will we actually do?</span></div>
+      <div class="grow-q">"What will you do? When? What do you need from me?"</div>
+    </div>
+  </div>
+  <div class="hl"><strong>Key principle:</strong> Don't skip Goal. Most managers jump straight to Options — brainstorming solutions before both people agree on what success looks like. Start with Goal every time.</div>
+</div>
+
+<!-- SCREEN 4: Scenario — recognize coaching moment -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Coach It or Answer It?</div>
+  <div class="screen-body">Alex, one of your direct reports, stops you in the hallway: <em>"Hey — I've been going back and forth with a vendor and I'm not sure how to handle their latest pushback. Do you have a minute?"</em></div>
+  <div class="screen-body">What's the right call?</div>
+  <div class="options" id="opts-4">
+    <div class="opt" onclick="pickOpt(4,'A')"><span class="opt-letter">A</span><span>Give Alex specific advice on how to handle vendor pushback — you've dealt with this before and can help fast.</span></div>
+    <div class="opt" onclick="pickOpt(4,'B')"><span class="opt-letter">B</span><span>Ask Alex what's happened so far and what they've already tried before offering anything.</span></div>
+    <div class="opt" onclick="pickOpt(4,'C')"><span class="opt-letter">C</span><span>Offer to take the call yourself — it's faster and you can handle it cleanly.</span></div>
+    <div class="opt" onclick="pickOpt(4,'D')"><span class="opt-letter">D</span><span>Send Alex a template you've used before for vendor pushback situations.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-4"></div>
+</div>
+
+<!-- SCREEN 5: GROW questions in depth -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The GROW Model</div>
+  <div class="screen-title">The Questions That Actually Work</div>
+  <div class="screen-body">GROW is only as good as the questions you ask inside it. Here are the most useful questions at each stage.</div>
+  <div class="q-grid">
+    <div class="q-block">
+      <div class="q-stage">G — Goal</div>
+      <div class="q-list">
+        <div class="q-item">"What would a good outcome look like for you?"</div>
+        <div class="q-item">"What are you hoping to achieve here?"</div>
+        <div class="q-item">"What does success look like in 3 months?"</div>
+      </div>
+    </div>
+    <div class="q-block">
+      <div class="q-stage">R — Reality</div>
+      <div class="q-list">
+        <div class="q-item">"What's happening right now?"</div>
+        <div class="q-item">"What have you already tried?"</div>
+        <div class="q-item">"What's getting in the way?"</div>
+      </div>
+    </div>
+    <div class="q-block">
+      <div class="q-stage">O — Options</div>
+      <div class="q-list">
+        <div class="q-item">"What could you do?"</div>
+        <div class="q-item">"What else?" <em style="color:var(--muted);font-size:12px;">— ask this 2-3 times. First answer is rarely the best one.</em></div>
+        <div class="q-item">"What would you do if you knew you couldn't get it wrong?"</div>
+      </div>
+    </div>
+    <div class="q-block">
+      <div class="q-stage">W — Way Forward</div>
+      <div class="q-list">
+        <div class="q-item">"What will you do — specifically?"</div>
+        <div class="q-item">"When will you do it?"</div>
+        <div class="q-item">"What support do you need from me?"</div>
+      </div>
+    </div>
+  </div>
+  <div class="hl"><strong>"What else?"</strong> is the single most powerful coaching question. After any answer, ask it again. It pushes past the obvious first idea — which is usually not the most useful one.</div>
+</div>
+
+<!-- SCREEN 6: Scenario — GROW in action -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The GROW Model</div>
+  <div class="screen-title">Walk It Through</div>
+  <div class="screen-body">Your direct report Jordan says: <em>"I want to get better at presenting to senior leaders, but I don't know where to start."</em></div>
+  <div class="screen-body">You want to coach using GROW. What do you say first?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>"Here's what I've found works when presenting to executives — lead with the recommendation, then the data."</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>"What would success look like for you in six months when it comes to senior presentations?"</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>"You should connect with L&D — they have an executive presence course that might be perfect."</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>"Why do you think you struggle with senior presentations right now?"</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario — stuck on a problem -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">They Want You to Solve It</div>
+  <div class="screen-body">Sam comes to you frustrated: <em>"I can't figure out how to get the Operations team to prioritize our requests. They keep deprioritizing us. What should I do?"</em></div>
+  <div class="screen-body">What's your coaching response?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>"Here's what I'd do — schedule a recurring sync with their ops lead and get on the standing agenda."</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>"What have you already tried with them? Walk me through what's happened."</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>"I'll talk to their VP — I have a relationship there and can get this moved."</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>"You should be escalating this to me sooner when it becomes a pattern."</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario — performance gap -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Performance Gap — Coaching Approach</div>
+  <div class="screen-body">One of your team members, Casey, has been missing deadlines consistently. You sit down for a 1:1. A coaching approach to open this conversation looks like:</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>"I want to talk about the missed deadlines. Walk me through what's been happening from your perspective."</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>"You've missed three deadlines this month. This needs to stop — what's your plan?"</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>"Let me share some time management strategies that have helped others on the team."</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>"What do you think I should do about this situation?"</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario — career development -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Career Development Conversation</div>
+  <div class="screen-body">Your direct report Taylor says in a 1:1: <em>"I want to grow, but I'm not really sure what direction."</em> You want to coach, not tell. Your next move:</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>"Based on what I've seen from you, I think you should develop your project management skills."</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>"What does growth look like to you in the next year or two? What would feel meaningful?"</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>"Let me connect you with L&D — they have a career pathing framework that's great for this."</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>"Tell me about a time you felt really energized by your work — what were you doing?"</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — Coaching works best when a team member already has some relevant knowledge or experience to draw on.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — In the GROW model, you should understand the current Reality before setting a Goal.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — When a team member asks "What should I do?", the best coaching response is:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — "Here's what I would do in your situation."</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — "What do you think you should do?"</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — "That's a great question — let me think about it."</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — "Check the SOP and circle back to me."</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — Asking "What else?" after a team member answers is:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — A signal that their answer was wrong or incomplete</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — One of the most powerful coaching moves — it pushes past the obvious first answer</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Only useful when you disagree with what they said</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — A sign you weren't listening carefully enough</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — Coaching and giving feedback are essentially the same thing.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Coaching only becomes a skill when you practice it deliberately. Use the prompts below to plan your first (or next) intentional coaching conversation.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Who on your team do you tend to give answers to instead of coaching through questions?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Name or role…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What's a current challenge or question they're facing that you could coach through?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Describe the situation…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Write your opening GROW question — the Goal stage — for that conversation.</div>
+    <div class="apply-sub">Start with "What would…" or "What does success look like…"</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Your opening question…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's one thing you're going to stop solving for them so they can develop the skill themselves?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="The thing you'll let them work through…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. When will you have this coaching conversation?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Day and time this week…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🌱</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Coaching for Performance. The managers who change careers are the ones who ask better questions — and do it consistently, even when it's slower.</div>
+  </div>
+  <div class="commitments">
+    <h4>What great coaching managers do differently:</h4>
+    <div class="commit-item">They resist the urge to answer — and ask what the person has already tried first</div>
+    <div class="commit-item">They start with Goal, not Reality — so the conversation is forward-facing</div>
+    <div class="commit-item">They ask "What else?" at least twice in every coaching conversation</div>
+    <div class="commit-item">They close with a specific commitment: what will you do, and when</div>
+    <div class="commit-item">They use coaching and feedback as distinct tools — not the same conversation</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.office.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div><!-- end course-main -->
+
+<!-- NAV -->
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation',    start:0, end:4},
+  {label:'The GROW Model',start:3, end:6},
+  {label:'Practice',      start:7, end:9},
+  {label:'Pulse Check',   start:10,end:14},
+  {label:'Apply It',      start:15,end:15},
+  {label:'Complete',      start:16,end:16}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  4:  { correct:'B', feedback:'<strong>B is right.</strong> "What have you already tried?" opens the coaching conversation. It respects what Alex already knows, gives you useful context, and lets them think through the situation before you offer anything. Giving advice or taking the call yourself solves this one problem — and teaches Alex nothing about handling the next one.' },
+  6:  { correct:'B', feedback:'<strong>B is right.</strong> Starting with Goal lets Jordan define what success looks like to <em>them</em> — not your version of it. "Why" questions (D) often trigger defensiveness. Advice (A) and referrals (C) skip the conversation that builds real capability.' },
+  7:  { correct:'B', feedback:'<strong>B is right.</strong> "What have you already tried?" is a Reality question that respects what Sam already knows and has attempted. It also gives you important context before you offer anything. Taking over (C) or escalating for them (C) removes the learning opportunity entirely.' },
+  8:  { correct:'A', feedback:'<strong>A is right.</strong> "Walk me through what\'s been happening from your perspective" is a coaching opener for a performance conversation. You\'re gathering Reality before jumping to advice or expectations. You may still need to give direct feedback or set clear expectations — but coaching starts with understanding, not prescribing.' },
+  9:  { correct:'B', feedback:'<strong>B is right.</strong> Before you can help someone grow, you need to understand what growth means to <em>them</em>. "What would feel meaningful?" invites real reflection. Your experience and L&D resources come later — after you know what Taylor is actually after.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'A', feedback:'<strong>True.</strong> Coaching unlocks what someone already has in them — existing knowledge, experience, and judgment. If someone has zero knowledge or skill in an area, they may need direct instruction or training first before coaching can be effective.' },
+  11: { correct:'B', feedback:'<strong>False.</strong> GROW starts with <em>Goal</em> first — not Reality. Understanding where the person wants to get to gives context to the current Reality. Starting with problems keeps the conversation focused backward instead of forward.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> Reflecting the question back — "What do you think you should do?" — is the coaching reflex. It respects their capacity to figure it out and makes them think it through. You can offer input after they\'ve shared their perspective.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> "What else?" is one of the most powerful moves in coaching. It signals that you\'re listening AND that you believe the person has more to offer. The first answer is almost never the most useful one — keep asking.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> Feedback is backward-looking — what happened, using SBI (Situation, Behavior, Impact). Coaching is forward-looking — where do we want to go and how do we get there. Great managers use both, at the right moments, for different purposes.' }
+};
+
+const KEY = 'course_coaching_perf_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) {
+    restoreScenario(n, state.choices[n]);
+  }
+  if (n in PULSE_ANSWERS && state.choices[n]) {
+    restorePulse(n, state.choices[n]);
+  }
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  const answer = PULSE_ANSWERS[screenIdx];
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>
