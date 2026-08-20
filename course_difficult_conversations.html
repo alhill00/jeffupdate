@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Difficult Conversations | Breeze Leadership</title>
+<style>
+:root {
+  --dark-blue:#000633; --blue:#174DFF; --light-blue:#C1DDFF;
+  --accent:#0077A8; --accent-light:#d0eef8;
+  --ok:#2d6a4f; --ok-bg:#f0fff4; --ok-bdr:#b7e4c7;
+  --err:#c1121f; --err-bg:#fff0f3; --err-bdr:#ffc2cc;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f6f9;color:#1a1a2e;min-height:100vh;}
+#app{max-width:840px;margin:0 auto;padding:24px 16px 80px;}
+
+.hdr{background:var(--dark-blue);color:white;padding:22px 28px 16px;border-radius:14px 14px 0 0;}
+.hdr-top{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.hdr-badge{background:var(--accent);color:white;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 10px;border-radius:20px;white-space:nowrap;}
+.hdr-title{font-size:1.3rem;font-weight:700;flex:1;}
+.hdr-meta{font-size:.78rem;color:#8899cc;margin-bottom:12px;}
+.prog-wrap{background:rgba(255,255,255,.12);border-radius:4px;height:5px;}
+.prog-fill{background:var(--accent);height:100%;border-radius:4px;transition:width .4s ease;}
+
+.sec-bar{background:#e4f2f8;border-bottom:1px solid #c8dfe8;padding:10px 24px;display:flex;gap:6px;flex-wrap:wrap;}
+.sec-pill{font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:20px;background:white;color:#999;border:1.5px solid #c8dfe8;white-space:nowrap;}
+.sec-pill.active{background:var(--dark-blue);color:white;border-color:var(--dark-blue);}
+.sec-pill.done{background:#e6f4ea;color:var(--ok);border-color:var(--ok-bdr);}
+
+.card{background:white;border-radius:0 0 14px 14px;padding:40px 36px 28px;min-height:500px;box-shadow:0 4px 20px rgba(0,0,30,.08);display:flex;flex-direction:column;}
+.card-body{flex:1;}
+
+.screen-h{font-size:1.45rem;font-weight:700;color:var(--dark-blue);margin-bottom:20px;line-height:1.3;}
+.screen-b{font-size:.97rem;line-height:1.8;color:#2c2c40;}
+.screen-b p{margin-bottom:14px;}
+.screen-b strong{color:var(--dark-blue);}
+.screen-b ul{padding-left:22px;margin-bottom:14px;}
+.screen-b li{margin-bottom:8px;}
+.insight{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:16px 20px;margin-top:24px;font-size:.93rem;line-height:1.7;color:var(--dark-blue);font-style:italic;}
+
+/* Three-column callout boxes */
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:20px 0;}
+.tcol{background:#f5f7ff;border-radius:10px;padding:18px 16px;text-align:center;}
+.tcol-icon{font-size:1.6rem;margin-bottom:8px;}
+.tcol-label{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--accent);margin-bottom:6px;}
+.tcol-desc{font-size:.82rem;line-height:1.55;color:#444;}
+
+/* Two-column callout */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:20px 0;}
+.col-box{background:#f5f7ff;border-radius:10px;padding:18px;}
+.col-box.red-tint{background:#fff5f7;border:1.5px solid #ffd6df;}
+.col-box.ok-tint{background:var(--ok-bg);border:1.5px solid var(--ok-bdr);}
+.col-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;color:var(--accent);}
+.col-box.red-tint .col-label{color:var(--err);}
+.col-box.ok-tint .col-label{color:var(--ok);}
+.col-body{font-size:.86rem;line-height:1.6;color:#2c2c40;}
+
+/* STATE model */
+.state-list{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.state-row{display:flex;align-items:flex-start;gap:16px;background:var(--dark-blue);border-radius:10px;padding:16px 18px;}
+.state-letter{font-size:2rem;font-weight:900;color:var(--accent-light);line-height:1;min-width:32px;text-align:center;}
+.state-right{flex:1;}
+.state-word{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#8899cc;margin-bottom:4px;}
+.state-def{font-size:.85rem;line-height:1.55;color:#ccd;margin-bottom:6px;}
+.state-ex{font-size:.8rem;color:var(--accent-light);font-style:italic;line-height:1.5;}
+
+/* Scenario */
+.sc-ctx{background:#f0f6f9;border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:18px 20px;margin-bottom:22px;font-size:.93rem;line-height:1.7;}
+.sc-q{font-weight:600;font-size:1rem;margin-bottom:14px;color:var(--dark-blue);}
+.opts{display:flex;flex-direction:column;gap:10px;}
+.opt{padding:14px 18px;border:2px solid #dde3f5;border-radius:8px;cursor:pointer;font-size:.92rem;line-height:1.55;transition:border-color .15s,background .15s;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f6f9;}
+.opt.correct{border-color:var(--ok);background:var(--ok-bg);cursor:default;}
+.opt.wrong{border-color:var(--err);background:var(--err-bg);cursor:default;}
+.opt.show-correct{border-color:var(--ok);background:var(--ok-bg);cursor:default;}
+.opt.locked{cursor:default;}
+.opt-fb{margin-top:8px;padding:12px 16px;border-radius:6px;font-size:.86rem;line-height:1.6;display:none;}
+.opt-fb.show{display:block;}
+.opt-fb.fb-ok{background:#e6f4ea;color:#1b4332;}
+.opt-fb.fb-err{background:#fce8ea;color:#7b2230;}
+
+/* Pulse */
+.pulse-h{font-size:1rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px;}
+.pulse-q{font-size:1.05rem;font-weight:600;color:var(--dark-blue);margin-bottom:18px;line-height:1.5;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.pulse-opt{padding:13px 16px;border:2px solid #dde3f5;border-radius:8px;cursor:pointer;font-size:.92rem;line-height:1.5;transition:border-color .15s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);}
+.pulse-opt.correct{border-color:var(--ok);background:var(--ok-bg);cursor:default;}
+.pulse-opt.wrong{border-color:var(--err);background:var(--err-bg);cursor:default;}
+.pulse-opt.show-correct{border-color:var(--ok);background:var(--ok-bg);cursor:default;}
+.pulse-opt.locked{cursor:default;}
+.pulse-exp{display:none;background:var(--accent-light);border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:14px 18px;font-size:.88rem;line-height:1.65;color:#1a3344;}
+.pulse-exp.show{display:block;}
+
+/* Apply It */
+.apply-intro{font-size:.95rem;line-height:1.78;color:#2c2c40;margin-bottom:28px;}
+.apply-field{margin-bottom:20px;}
+.apply-lbl{display:block;font-weight:600;font-size:.88rem;color:var(--dark-blue);margin-bottom:3px;}
+.apply-hint{font-size:.79rem;color:#999;margin-bottom:7px;}
+textarea.apply-ta{width:100%;padding:11px 13px;border:2px solid #dde3f5;border-radius:8px;font-family:inherit;font-size:.92rem;line-height:1.6;resize:vertical;transition:border-color .15s;}
+textarea.apply-ta:focus{outline:none;border-color:var(--accent);}
+
+/* Complete */
+.done-wrap{text-align:center;padding:24px 0;}
+.done-circle{width:80px;height:80px;border-radius:50%;background:var(--ok-bg);border:3px solid var(--ok);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2.4rem;color:var(--ok);}
+.done-h{font-size:1.6rem;font-weight:700;color:var(--dark-blue);margin-bottom:12px;}
+.done-b{font-size:.95rem;line-height:1.78;color:#555;max-width:460px;margin:0 auto 30px;}
+.btn-done{display:inline-block;padding:16px 40px;background:var(--accent);color:white;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s;}
+.btn-done:hover{background:#005580;}
+.done-note{font-size:.78rem;color:#bbb;margin-top:12px;}
+.btn-restart{background:none;border:none;color:#aaa;font-size:.8rem;cursor:pointer;margin-top:20px;text-decoration:underline;}
+
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:30px;padding-top:18px;border-top:1px solid #eef0fa;}
+.btn-nav{padding:11px 28px;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;border:none;transition:opacity .15s,background .15s;}
+.btn-back{background:#e4f2f8;color:var(--dark-blue);}
+.btn-back:hover{background:#c8dfe8;}
+.btn-back:disabled{opacity:.3;cursor:default;pointer-events:none;}
+.btn-next{background:var(--accent);color:white;}
+.btn-next:hover{background:#005580;}
+.btn-next:disabled{opacity:.35;cursor:default;pointer-events:none;}
+.nav-ctr{font-size:.79rem;color:#ccc;}
+
+@media(max-width:600px){
+  .card{padding:28px 18px 22px;}
+  .hdr{padding:18px 18px 14px;}
+  .three-col{grid-template-columns:1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .screen-h{font-size:1.2rem;}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+const SEC_NAMES  = ['Foundation','The Framework','Practice','Pulse Check','Apply It','Complete'];
+const SEC_RANGES = [[0,4],[5,6],[7,9],[10,14],[15,15],[16,16]];
+
+const SCREENS = [
+
+/* 0 ── Hook */
+{ type:'concept', heading:'The Conversation That Never Gets Easier on Its Own',
+  body:`<p>For eight weeks, Dana avoided the conversation with her team member, Chris. The performance issues were real \u2014 missed deadlines, defensive responses to feedback, tension with two other team members. But Chris was also going through something personal, and Dana told herself she was being compassionate by waiting.</p>
+<p>By week eight, two other team members had come to Dana separately to say they were carrying Chris\u2019s workload. One of them was quietly looking for another job. The conversation Dana finally had with Chris was raw, emotional, and full of accumulated frustration on both sides. It took three separate meetings to reach a workable outcome.</p>
+<p>None of that had to happen. The conversation Dana avoided in week one would have been hard. It also would have taken 30 minutes and left Chris with a clear picture of what needed to change \u2014 while he still had time to change it.</p>`,
+  insight:'The longer you wait on a crucial conversation, the more you\u2019re not sparing anyone \u2014 you\u2019re just choosing who suffers. Usually it\u2019s the whole team.' },
+
+/* 1 ── What Makes a Conversation Crucial */
+{ type:'concept', heading:'What Makes a Conversation \u201cCrucial\u201d',
+  body:`<p>Not every hard conversation is a crucial one. A crucial conversation has three defining features happening at the same time:</p>`,
+  boxes:[
+    { icon:'\u26A1', label:'High Stakes', desc:'The outcome matters \u2014 to performance, to the relationship, to the team, or to trust.' },
+    { icon:'\u21C4', label:'Opposing Views', desc:'You and the other person see the situation differently, and that gap needs to be bridged.' },
+    { icon:'\u{1F525}', label:'Strong Emotions', desc:'One or both of you has feelings about it \u2014 frustration, anxiety, hurt, or defensiveness.' }
+  ],
+  body2:`<p>When all three are present and a leader avoids the conversation, three things reliably happen: the performance or behavior continues, the leader\u2019s resentment builds, and the team loses confidence in the leader\u2019s willingness to lead.</p>
+<p>Crucial conversations avoided don\u2019t resolve themselves. They compound.</p>`,
+  insight:'The conversations you avoid aren\u2019t neutral. They\u2019re active choices with active costs \u2014 to the person who needed honest feedback, to you, and to the team watching.' },
+
+/* 2 ── Safety: The #1 Failure Point */
+{ type:'concept', heading:'Why Most Crucial Conversations Fail: Safety',
+  body:`<p>When people don\u2019t feel safe in a conversation, they do one of two things: they go <strong>silent</strong> (shut down, withdraw, give you the answer they think you want) or they go <strong>violent</strong> (get defensive, attack, escalate). Neither is dialogue. Both make the problem worse.</p>
+<p>Safety doesn\u2019t mean comfortable. It means the other person believes two things:</p>`,
+  safety:[
+    { label:'Mutual Purpose', body:'They believe you\u2019re not out to get them \u2014 that you have a genuine shared interest in a good outcome for them, not just for yourself.' },
+    { label:'Mutual Respect', body:'They believe you see them as a capable, worthy person \u2014 not someone to be managed, dismissed, or made an example of.' }
+  ],
+  body2:`<p>When either of these breaks down \u2014 when someone feels attacked or disrespected \u2014 the conversation is over, even if it\u2019s still happening. Your job before and during any crucial conversation is to protect the safety of the space.</p>`,
+  insight:'You can say almost anything in a crucial conversation if the other person feels safe. You can say nothing right if they don\u2019t.' },
+
+/* 3 ── Start with Heart */
+{ type:'concept', heading:'Start with Heart: Know What You Actually Want',
+  body:`<p>Before you enter any crucial conversation, ask yourself one question: <strong>What do I really want here?</strong></p>
+<p>Most leaders think they know. But if they\u2019re honest, the answer is often something like: \u201cI want them to understand they\u2019ve been wrong,\u201d or \u201cI want to feel less frustrated,\u201d or \u201cI want this off my plate.\u201d Those are understandable \u2014 and they will quietly sabotage your conversation.</p>
+<p>Ask the question at four levels:</p>
+<ul>
+<li><strong>For myself</strong> \u2014 What outcome do I actually need?</li>
+<li><strong>For the other person</strong> \u2014 What do I want for them, genuinely?</li>
+<li><strong>For the relationship</strong> \u2014 What kind of dynamic do I want to have with them after this conversation?</li>
+<li><strong>For the team</strong> \u2014 What outcome serves the people around us?</li>
+</ul>
+<p>Leaders who enter crucial conversations wanting to \u201cwin\u201d almost always lose the things that actually matter \u2014 the person\u2019s trust, the relationship, and the team\u2019s confidence in their leadership.</p>`,
+  insight:'If you\u2019re entering a crucial conversation focused on being right, you\u2019re already losing. The goal is a real outcome, not a point scored.' },
+
+/* 4 ── Facts vs Stories */
+{ type:'concept', heading:'Mastering Your Story Before You Enter the Room',
+  body:`<p>Here\u2019s what happens inside your head between an event and a crucial conversation:</p>
+<p><strong>You observe a fact.</strong> Your team member missed a deadline \u2014 again. That\u2019s observable. A camera would have caught it.</p>
+<p><strong>You immediately create a story.</strong> \u201cThey don\u2019t care. They\u2019re not a team player. They\u2019re doing this on purpose.\u201d That\u2019s an interpretation \u2014 and it\u2019s probably at least partially wrong.</p>
+<p><strong>You react to your story, not the fact.</strong> By the time you enter the conversation, you\u2019re not talking about a missed deadline \u2014 you\u2019re carrying the weight of every story you\u2019ve told yourself about this person for the last three weeks.</p>
+<p>The question that resets this: <strong>\u201cWhat am I telling myself about this?\u201d</strong></p>
+<p>Write it down if you need to. Separate what you know (the observable facts) from what you\u2019ve concluded. Enter the conversation with facts. Share your story tentatively. Ask for theirs.</p>`,
+  insight:'You can\u2019t control what happened. You can choose what story you tell about it \u2014 and whether you hold that story loosely enough to be wrong.' },
+
+/* 5 ── STATE Framework */
+{ type:'state', heading:'The Framework: STATE Your Path',
+  body:`<p>STATE gives you a sequence for delivering your perspective in a crucial conversation without triggering defensiveness or shutting the other person down. Each letter matters.</p>`,
+  steps:[
+    { letter:'S', word:'Share your facts',
+      def:'Start with observable facts \u2014 what you\u2019ve seen or heard. Not conclusions, not interpretations. What a camera would have captured.',
+      ex:'\u201cIn the last six weeks, three of your project deliverables have been submitted more than 48 hours late.\u201d' },
+    { letter:'T', word:'Tell your story \u2014 tentatively',
+      def:'Share your interpretation, but hold it loosely. You\u2019ve told yourself a story. Name it \u2014 and signal that you might be wrong.',
+      ex:'\u201cI\u2019ve been wondering whether something is getting in the way for you, or whether I\u2019ve been unclear about expectations.\u201d' },
+    { letter:'A', word:'Ask for their path',
+      def:'Invite the other person to share their perspective. This isn\u2019t courtesy \u2014 they almost certainly have information you don\u2019t.',
+      ex:'\u201cI want to hear your take on what\u2019s been happening. Help me understand what\u2019s going on from your side.\u201d' },
+    { letter:'T', word:'Talk tentatively',
+      def:'Use language that expresses your view without closing off theirs. \u201cIt seems like,\u201d \u201cI\u2019ve been wondering if,\u201d \u201cI might be missing something.\u201d',
+      ex:'\u201cIt seems like the timelines might not be realistic, though I could be wrong about that.\u201d' },
+    { letter:'E', word:'Encourage testing',
+      def:'Make it genuinely safe to disagree. The goal is dialogue, not compliance. You want their real response, not a performance.',
+      ex:'\u201cIf you see this differently, I really want to hear it. I might be off base.\u201d' }
+  ],
+  insight:'STATE isn\u2019t a script \u2014 it\u2019s a sequence. Share facts first. Story second. Then get curious.' },
+
+/* 6 ── Restoring Safety */
+{ type:'concept', heading:'When Safety Breaks Down: How to Recover',
+  body:`<p>Even when you prepare well, crucial conversations can go sideways. The other person gets defensive, shuts down, or escalates. When that happens, <strong>stop the content conversation and repair the safety first.</strong></p>
+<p>Three tools for restoring safety:</p>
+<p><strong>1. Apologize</strong> \u2014 when something you said landed wrong, even if you didn\u2019t intend it that way. \u201cI didn\u2019t mean to imply that. I apologize if it came across that way.\u201d You\u2019re not conceding the point \u2014 you\u2019re repairing the relationship so the conversation can continue.</p>
+<p><strong>2. Contrast</strong> \u2014 clarify what you don\u2019t mean before restating what you do. \u201cI don\u2019t want you to think I\u2019m questioning your commitment \u2014 I\u2019m not. What I am trying to understand is why the timeline has slipped three times.\u201d</p>
+<p><strong>3. Find mutual purpose</strong> \u2014 remind both of you what you\u2019re actually trying to achieve together. \u201cI want us to get to a place where you\u2019re set up to succeed and the team has what it needs. That\u2019s the goal here.\u201d</p>`,
+  insight:'Safety restoration isn\u2019t weakness \u2014 it\u2019s skill. The leader who can bring a derailed conversation back on track is the one people trust with the hard stuff.' },
+
+/* 7 ── Scenario: Declining performance */
+{ type:'scenario', heading:'Practice: The Declining Performance',
+  ctx:'Marcus has been on your team for 18 months and was a strong contributor in his first year. Over the last 6 weeks, his work quality has declined noticeably \u2014 deliverables are late, errors have increased, and in two recent meetings he\u2019s been visibly disengaged. You don\u2019t know why. You\u2019ve decided to have the conversation today.',
+  question:'How do you open this conversation?',
+  opts:[
+    { text:'\u201cMarcus, I need to talk to you about your performance. It\u2019s been slipping and I\u2019m concerned. What\u2019s going on?\u201d',
+      correct:false,
+      fb:'This opens with a conclusion (\u201cperformance has been slipping\u201d) rather than facts, which is likely to trigger defensiveness immediately. \u201cI\u2019m concerned\u201d signals judgment before dialogue. Start with observable facts first, then your story tentatively.' },
+    { text:'\u201cMarcus, I want to check in on something. Over the last six weeks, three deliverables have come in more than 48 hours late and I\u2019ve noticed you\u2019ve been less engaged in our team meetings. I\u2019ve been wondering whether something\u2019s going on for you, or whether there\u2019s something I\u2019m missing on my end. I\u2019d really like to hear your perspective.\u201d',
+      correct:true,
+      fb:'This is STATE in action. You lead with specific, observable facts (three late deliverables, less engaged in meetings). You share your story tentatively (\u201cI\u2019ve been wondering\u201d). You ask for their path (\u201cI\u2019d like to hear your perspective\u201d). And you leave the door open to being wrong. Marcus has room to respond honestly.' },
+    { text:'Wait until the next performance review to document a pattern before bringing it up.',
+      correct:false,
+      fb:'Waiting compounds the problem. Marcus deserves to know something is off while he still has time to address it. The pattern is already visible \u2014 six weeks in. A leader who waits for a formal review cycle to name a real-time performance issue has left their team member without critical feedback for months.' }
+  ] },
+
+/* 8 ── Scenario: Didn't get the promotion */
+{ type:'scenario', heading:'Practice: \u201cI Should Have Been Promoted\u201d',
+  ctx:'Jordan has been on your team for three years and openly expected to be promoted to a senior role that instead went to an external hire. Jordan hasn\u2019t said anything directly, but their engagement has dropped noticeably and they\u2019ve been making subtle comments in team meetings \u2014 \u201cMaybe the new person will know what to do\u201d \u2014 that are affecting team morale. You need to have the conversation.',
+  question:'Which is the right approach?',
+  opts:[
+    { text:'Address the passive comments in a team meeting by setting a group norm around positivity and constructive communication.',
+      correct:false,
+      fb:'Addressing individual behavior through a group norm is avoidance. Jordan won\u2019t clearly own the feedback, the rest of the team is caught in the middle, and the real conversation \u2014 the one about the promotion and what\u2019s actually going on for Jordan \u2014 still doesn\u2019t happen.' },
+    { text:'Have a private conversation: \u201cJordan, I want to talk with you directly about something. In a few recent team meetings, I\u2019ve heard some comments that felt like they were landing sideways for the team. I also know the promotion decision was disappointing. I don\u2019t want to assume I know how you\u2019re feeling \u2014 but I want to give you the space to say it directly. What\u2019s going on for you?\u201d',
+      correct:true,
+      fb:'This opens with the observable behavior (comments in team meetings), names the underlying context (the promotion), and invites Jordan to say what\u2019s actually true for them rather than continuing to signal it sideways. You\u2019re creating safety for the real conversation. That\u2019s the only path to a real resolution.' },
+    { text:'Tell Jordan directly: \u201cThe comments in team meetings need to stop. They\u2019re affecting morale.\u201d',
+      correct:false,
+      fb:'This addresses the symptom but not the cause. The comments are a signal \u2014 and silencing the signal without exploring what\u2019s behind it doesn\u2019t resolve anything. Jordan goes quiet, the resentment stays, and the real issue never gets addressed. You\u2019ve managed the behavior without leading the person.' }
+  ] },
+
+/* 9 ── Scenario: Conversation upward */
+{ type:'scenario', heading:'Practice: The Hard Conversation Going Up',
+  ctx:'Your senior leader made a decision last week that has significantly affected your team\u2019s workload \u2014 a new priority was added without removing anything else, and the timeline is unrealistic. Two team members have told you they\u2019re overwhelmed. You believe the decision was made without full information about your team\u2019s current capacity. You need to raise this with your leader.',
+  question:'How do you approach the conversation?',
+  opts:[
+    { text:'Send an email outlining your concerns so your leader has time to think about it before you talk.',
+      correct:false,
+      fb:'Email is a low-safety channel for crucial conversations. Tone is easily misread, your leader can\u2019t respond to your full picture in real time, and you lose the ability to read and respond to their reaction. Crucial conversations need to happen in dialogue, not in writing.' },
+    { text:'\u201cI want to share something I\u2019m seeing and get your perspective, because I might be missing context. Since the new priority was added last week, my team is carrying three simultaneous deadlines with the same headcount. Two people have flagged that they\u2019re at capacity. I\u2019m not pushing back on the priority \u2014 I want to find a path that makes it work. Can we talk through what\u2019s flexible?\u201d',
+      correct:true,
+      fb:'This is STATE used upward. You share specific facts (three simultaneous deadlines, same headcount, two people at capacity), tell your story tentatively (you might be missing context), and ask for dialogue rather than demanding relief. You\u2019re not complaining \u2014 you\u2019re problem-solving. Leaders who can raise difficult realities to their own leaders clearly and constructively build enormous credibility.' },
+    { text:'Absorb it for now. Bringing problems up to your leader signals you can\u2019t handle the pressure.',
+      correct:false,
+      fb:'This is a common but deeply flawed instinct. Absorbing an unworkable situation in silence doesn\u2019t signal strength \u2014 it signals that your team\u2019s reality isn\u2019t reaching the people who need to know about it. Leaders who manage up effectively \u2014 raising real issues clearly and with solutions \u2014 are more trusted, not less. Silence protects no one here.' }
+  ] },
+
+/* 10 ── Pulse: Going silent */
+{ type:'pulse', question:'When someone \u201cgoes silent\u201d in a crucial conversation, it typically means:',
+  opts:[
+    { text:'They agree with what\u2019s being said and are processing it.', correct:false },
+    { text:'They no longer feel safe and have stopped engaging authentically.', correct:true },
+    { text:'They don\u2019t have anything useful to add.', correct:false },
+    { text:'The conversation is going well and they\u2019re listening carefully.', correct:false }
+  ],
+  exp:'Silence in a crucial conversation is almost always a safety signal, not consent. When someone shuts down, it means the conversation has stopped being safe enough for them to engage honestly. Before continuing with the content, restore safety \u2014 otherwise you\u2019re having a one-sided conversation while the other person performs agreement.' },
+
+/* 11 ── Pulse: STATE sequence */
+{ type:'pulse', question:'In the STATE model, what should you lead with?',
+  opts:[
+    { text:'Your story \u2014 tell them what you think is going on.', correct:false },
+    { text:'Your emotions \u2014 share how the situation has affected you.', correct:false },
+    { text:'Your facts \u2014 start with what you\u2019ve observed.', correct:true },
+    { text:'A question \u2014 ask them to explain themselves first.', correct:false }
+  ],
+  exp:'Starting with facts (not your interpretation or your feelings) gives the other person something concrete to respond to without triggering immediate defensiveness. Facts are things both parties can agree happened. Your story is where interpretation begins \u2014 and it comes second, tentatively.' },
+
+/* 12 ── Pulse: Safety breakdown */
+{ type:'pulse', question:'Halfway through a crucial conversation, the other person becomes visibly defensive and says \u201cI feel like you\u2019ve already made up your mind.\u201d What should you do?',
+  opts:[
+    { text:'Clarify your point more firmly so they understand where you\u2019re coming from.', correct:false },
+    { text:'Stop the content conversation and restore safety before continuing.', correct:true },
+    { text:'Tell them you\u2019re just sharing facts and they shouldn\u2019t take it personally.', correct:false },
+    { text:'Wrap up the conversation and schedule a follow-up when they\u2019ve had time to think.', correct:false }
+  ],
+  exp:'When safety breaks down, pressing forward with your content makes it worse. Stop. Address the safety concern directly: \u201cI can hear that it feels that way \u2014 I want to say clearly that I\u2019m here to understand your perspective, not to deliver a verdict. Can we start there?\u201d Once safety is restored, the content conversation becomes possible again.' },
+
+/* 13 ── Pulse: Mastering your story */
+{ type:'pulse', question:'\u201cMastering your story\u201d before a crucial conversation means:',
+  opts:[
+    { text:'Preparing your talking points so you stay on message.', correct:false },
+    { text:'Separating observable facts from the interpretations you\u2019ve added, and holding your story loosely.', correct:true },
+    { text:'Deciding in advance what outcome you want from the conversation.', correct:false },
+    { text:'Rehearsing how you\u2019ll respond to pushback.', correct:false }
+  ],
+  exp:'The story you\u2019ve told yourself about a situation is almost never the whole picture \u2014 and it\u2019s often at least partially wrong. Mastering your story means identifying what you actually observed versus what you concluded, and entering the conversation willing to be wrong. That willingness is what makes dialogue possible.' },
+
+/* 14 ── Pulse: Most common mistake */
+{ type:'pulse', question:'What is the most common mistake leaders make when entering a crucial conversation?',
+  opts:[
+    { text:'Choosing the wrong setting or time of day.', correct:false },
+    { text:'Being too direct and hurting the other person\u2019s feelings.', correct:false },
+    { text:'Entering with a conclusion already reached and treating the conversation as delivery, not dialogue.', correct:true },
+    { text:'Sharing too many facts without enough emotion.', correct:false }
+  ],
+  exp:'Most leaders who struggle with crucial conversations aren\u2019t failing on delivery \u2014 they\u2019re failing on orientation. They\u2019ve already decided what\u2019s true and are using the conversation to communicate that verdict. Real dialogue requires genuine curiosity about the other person\u2019s perspective \u2014 and the actual possibility that you\u2019re missing something important.' },
+
+/* 15 ── Apply It */
+{ type:'apply', heading:'Apply It: Prepare for Your Crucial Conversation',
+  intro:'There\u2019s a conversation you\u2019ve been avoiding or approaching poorly. Use these prompts to prepare before you have it. Your responses are saved in this browser only.',
+  fields:[
+    { id:'who',    label:'Who do you need to have this conversation with?',       hint:'Name or role \u2014 stays private to you', rows:2 },
+    { id:'facts',  label:'What are the observable facts? (No stories yet)',       hint:'What would a camera have captured? What can both of you agree happened?', rows:3 },
+    { id:'story',  label:'What story have you been telling yourself about it?',   hint:'Be honest \u2014 what have you concluded about why this is happening?', rows:3 },
+    { id:'want',   label:'What do you really want \u2014 for them, for you, for the relationship?', hint:'Start with Heart: go deeper than \u201cI want this to stop\u201d', rows:3 },
+    { id:'open',   label:'How will you open the conversation? (Draft your first sentence)', hint:'Lead with facts, not conclusions. Signal curiosity, not verdict.', rows:3 }
+  ] },
+
+/* 16 ── Complete */
+{ type:'complete',
+  heading:'Course Complete: Difficult Conversations',
+  body:'You\u2019ve covered what makes a conversation crucial, why safety is the foundation, the STATE framework, and three realistic practice scenarios \u2014 including one going upward. The next step is having the conversation you\u2019ve been preparing for. You have the tools. Start with the facts.',
+  formUrl:'https://forms.office.com/REPLACE_WITH_YOUR_FORM_ID' }
+
+];
+
+/* ── STATE ───────────────────────────────────────────────── */
+const STORE_KEY = 'course_difficult_conv_v1';
+let S = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+try {
+  const raw = JSON.parse(localStorage.getItem(STORE_KEY)||'{}');
+  if(raw.cur!==undefined) S.cur=raw.cur;
+  if(raw.max!==undefined) S.max=raw.max;
+  if(raw.answered) S.answered=raw.answered;
+  if(raw.choices)  S.choices=raw.choices;
+  if(raw.apply)    S.apply=raw.apply;
+} catch(e){}
+
+function save(){ try{ localStorage.setItem(STORE_KEY,JSON.stringify(S)); }catch(e){} }
+function sectionOf(i){ for(let s=0;s<SEC_RANGES.length;s++){ if(i>=SEC_RANGES[s][0]&&i<=SEC_RANGES[s][1]) return s; } return 0; }
+function needsAnswer(sc){ return sc.type==='scenario'||sc.type==='pulse'; }
+function canNext(i){ return needsAnswer(SCREENS[i]) ? !!S.answered[i] : true; }
+
+/* ── RENDER ──────────────────────────────────────────────── */
+function render(){
+  const sc=SCREENS[S.cur];
+  const pct=Math.round((S.max/(SCREENS.length-1))*100);
+  const curSec=sectionOf(S.cur);
+  const pills=SEC_NAMES.map((n,i)=>{
+    let cls='sec-pill';
+    if(i===curSec) cls+=' active';
+    else if(S.max>SEC_RANGES[i][1]) cls+=' done';
+    return `<span class="${cls}">${n}</span>`;
+  }).join('');
+
+  let body='';
+  if(sc.type==='concept')   body=rConcept(sc);
+  else if(sc.type==='state')    body=rState(sc);
+  else if(sc.type==='scenario') body=rScenario(S.cur,sc);
+  else if(sc.type==='pulse')    body=rPulse(S.cur,sc);
+  else if(sc.type==='apply')    body=rApply(sc);
+  else if(sc.type==='complete') body=rComplete(sc);
+
+  const nav=sc.type!=='complete'?`
+    <div class="nav-row">
+      <button class="btn-nav btn-back" onclick="go(-1)" ${S.cur===0?'disabled':''}>&#8592; Back</button>
+      <span class="nav-ctr">${S.cur+1} of ${SCREENS.length}</span>
+      <button class="btn-nav btn-next" id="btn-next" onclick="go(1)" ${canNext(S.cur)?'':'disabled'}>Next &#8594;</button>
+    </div>`:'';
+
+  document.getElementById('app').innerHTML=`
+    <div class="hdr">
+      <div class="hdr-top">
+        <span class="hdr-badge">Deep Dive</span>
+        <span class="hdr-title">Difficult Conversations</span>
+      </div>
+      <div class="hdr-meta">Communicate Openly &nbsp;&bull;&nbsp; ~20\u201325 min &nbsp;&bull;&nbsp; All Leader Levels</div>
+      <div class="prog-wrap"><div class="prog-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="sec-bar">${pills}</div>
+    <div class="card"><div class="card-body">${body}</div>${nav}</div>`;
+
+  if(sc.type==='apply'){
+    sc.fields.forEach(f=>{ const el=document.getElementById('af_'+f.id); if(el&&S.apply[f.id]) el.value=S.apply[f.id]; });
+  }
+  if(S.answered[S.cur]){
+    if(sc.type==='scenario') restoreScenario(S.cur,sc);
+    if(sc.type==='pulse')    restorePulse(S.cur,sc);
+  }
+}
+
+/* ── SCREEN RENDERERS ────────────────────────────────────── */
+function rConcept(sc){
+  let html=`<h2 class="screen-h">${sc.heading}</h2><div class="screen-b">${sc.body}</div>`;
+  if(sc.boxes){
+    html+=`<div class="three-col">${sc.boxes.map(b=>`<div class="tcol"><div class="tcol-icon">${b.icon}</div><div class="tcol-label">${b.label}</div><div class="tcol-desc">${b.desc}</div></div>`).join('')}</div>`;
+  }
+  if(sc.safety){
+    html+=`<div class="two-col">${sc.safety.map(s=>`<div class="col-box ok-tint"><div class="col-label">${s.label}</div><div class="col-body">${s.body}</div></div>`).join('')}</div>`;
+  }
+  if(sc.body2) html+=`<div class="screen-b">${sc.body2}</div>`;
+  if(sc.insight) html+=`<div class="insight">${sc.insight}</div>`;
+  return html;
+}
+
+function rState(sc){
+  const rows=sc.steps.map(s=>`
+    <div class="state-row">
+      <div class="state-letter">${s.letter}</div>
+      <div class="state-right">
+        <div class="state-word">${s.word}</div>
+        <div class="state-def">${s.def}</div>
+        <div class="state-ex">${s.ex}</div>
+      </div>
+    </div>`).join('');
+  return `<h2 class="screen-h">${sc.heading}</h2>
+<div class="screen-b">${sc.body}</div>
+<div class="state-list">${rows}</div>
+${sc.insight?`<div class="insight">${sc.insight}</div>`:''}`;
+}
+
+function rScenario(idx,sc){
+  const opts=sc.opts.map((o,i)=>`
+    <div class="opt" id="opt_${idx}_${i}" onclick="pickOpt(${idx},${i})">
+      ${o.text}
+      <div class="opt-fb ${o.correct?'fb-ok':'fb-err'}" id="fb_${idx}_${i}">${o.correct?'\u2713 ':'\u2715 '}${o.fb}</div>
+    </div>`).join('');
+  return `<h2 class="screen-h">${sc.heading}</h2>
+<div class="sc-ctx">${sc.ctx}</div>
+<div class="sc-q">${sc.question}</div>
+<div class="opts">${opts}</div>`;
+}
+
+function pickOpt(idx,chosen){
+  if(S.answered[idx]) return;
+  S.answered[idx]=true; S.choices[idx]=chosen;
+  SCREENS[idx].opts.forEach((o,i)=>{
+    const el=document.getElementById(`opt_${idx}_${i}`);
+    const fb=document.getElementById(`fb_${idx}_${i}`);
+    el.classList.add('locked');
+    if(i===chosen){ el.classList.add(o.correct?'correct':'wrong'); fb.classList.add('show'); }
+    else if(o.correct){ el.classList.add('show-correct'); fb.classList.add('show'); }
+  });
+  const btn=document.getElementById('btn-next');
+  if(btn) btn.disabled=false;
+  save();
+}
+
+function restoreScenario(idx,sc){
+  const chosen=S.choices[idx];
+  sc.opts.forEach((o,i)=>{
+    const el=document.getElementById(`opt_${idx}_${i}`);
+    const fb=document.getElementById(`fb_${idx}_${i}`);
+    if(!el) return;
+    el.classList.add('locked');
+    if(i===chosen){ el.classList.add(o.correct?'correct':'wrong'); fb.classList.add('show'); }
+    else if(o.correct){ el.classList.add('show-correct'); fb.classList.add('show'); }
+  });
+}
+
+function rPulse(idx,sc){
+  const opts=sc.opts.map((o,i)=>`
+    <div class="pulse-opt" id="popt_${idx}_${i}" onclick="pickPulse(${idx},${i})">${o.text}</div>`).join('');
+  return `<div class="pulse-h">&#10003; Pulse Check</div>
+<div class="pulse-q">${sc.question}</div>
+<div class="pulse-opts">${opts}</div>
+<div class="pulse-exp" id="pexp_${idx}">${sc.exp}</div>`;
+}
+
+function pickPulse(idx,chosen){
+  if(S.answered[idx]) return;
+  S.answered[idx]=true; S.choices[idx]=chosen;
+  SCREENS[idx].opts.forEach((o,i)=>{
+    const el=document.getElementById(`popt_${idx}_${i}`);
+    el.classList.add('locked');
+    if(i===chosen) el.classList.add(o.correct?'correct':'wrong');
+    else if(o.correct) el.classList.add('show-correct');
+  });
+  const exp=document.getElementById(`pexp_${idx}`);
+  if(exp) exp.classList.add('show');
+  const btn=document.getElementById('btn-next');
+  if(btn) btn.disabled=false;
+  save();
+}
+
+function restorePulse(idx,sc){
+  const chosen=S.choices[idx];
+  sc.opts.forEach((o,i)=>{
+    const el=document.getElementById(`popt_${idx}_${i}`);
+    if(!el) return;
+    el.classList.add('locked');
+    if(i===chosen) el.classList.add(o.correct?'correct':'wrong');
+    else if(o.correct) el.classList.add('show-correct');
+  });
+  const exp=document.getElementById(`pexp_${idx}`);
+  if(exp) exp.classList.add('show');
+}
+
+function rApply(sc){
+  const fields=sc.fields.map(f=>`
+    <div class="apply-field">
+      <label class="apply-lbl" for="af_${f.id}">${f.label}</label>
+      <div class="apply-hint">${f.hint}</div>
+      <textarea class="apply-ta" id="af_${f.id}" rows="${f.rows}" oninput="saveApply('${f.id}',this.value)"></textarea>
+    </div>`).join('');
+  return `<h2 class="screen-h">${sc.heading}</h2>
+<p class="apply-intro">${sc.intro}</p>${fields}`;
+}
+
+function saveApply(fid,val){ S.apply[fid]=val; save(); }
+
+function rComplete(sc){
+  return `<div class="done-wrap">
+  <div class="done-circle">&#10003;</div>
+  <div class="done-h">${sc.heading}</div>
+  <p class="done-b">${sc.body}</p>
+  <a class="btn-done" href="${sc.formUrl}" target="_blank" onclick="localStorage.setItem('course_difficult_conv_done','true')">Mark Complete &amp; Log My Progress</a>
+  <div class="done-note">Opens a Microsoft Form in a new tab. Your L&amp;D team receives your completion record.</div>
+  <br><button class="btn-restart" onclick="restart()">Start over</button>
+</div>`;
+}
+
+function go(dir){
+  const next=S.cur+dir;
+  if(next<0||next>=SCREENS.length) return;
+  S.cur=next; if(next>S.max) S.max=next;
+  save(); render(); window.scrollTo(0,0);
+}
+
+function restart(){
+  S={cur:0,max:0,answered:{},choices:{},apply:{}}; save(); render();
+}
+
+render();
+</script>
+</body>
+</html>

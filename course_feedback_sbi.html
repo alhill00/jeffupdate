@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giving Effective Feedback | Breeze Leadership</title>
+<style>
+:root {
+  --dark-blue:#000633; --blue:#174DFF; --light-blue:#C1DDFF;
+  --red:#FF527B; --tan:#FED4A4; --white:#FFFFFF;
+  --accent:#174DFF; --accent-light:#C1DDFF;
+  --ok:#2d6a4f; --ok-bg:#f0fff4; --ok-bdr:#b7e4c7;
+  --err:#c1121f; --err-bg:#fff0f3; --err-bdr:#ffc2cc;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:#f0f3ff;color:#1a1a2e;min-height:100vh;}
+#app{max-width:840px;margin:0 auto;padding:24px 16px 80px;}
+
+/* Header */
+.hdr{background:var(--dark-blue);color:white;padding:22px 28px 16px;border-radius:14px 14px 0 0;}
+.hdr-top{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.hdr-badge{background:var(--blue);color:white;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:4px 10px;border-radius:20px;white-space:nowrap;}
+.hdr-title{font-size:1.3rem;font-weight:700;flex:1;}
+.hdr-meta{font-size:.78rem;color:#8899cc;margin-bottom:12px;}
+.prog-wrap{background:rgba(255,255,255,.12);border-radius:4px;height:5px;}
+.prog-fill{background:var(--blue);height:100%;border-radius:4px;transition:width .4s ease;}
+
+/* Section bar */
+.sec-bar{background:#e8ecff;border-bottom:1px solid #d4daf5;padding:10px 24px;display:flex;gap:6px;flex-wrap:wrap;}
+.sec-pill{font-size:.7rem;font-weight:700;padding:4px 12px;border-radius:20px;background:white;color:#999;border:1.5px solid #d4daf5;white-space:nowrap;}
+.sec-pill.active{background:var(--dark-blue);color:white;border-color:var(--dark-blue);}
+.sec-pill.done{background:#e6f4ea;color:var(--ok);border-color:var(--ok-bdr);}
+
+/* Card */
+.card{background:white;border-radius:0 0 14px 14px;padding:40px 36px 28px;min-height:500px;box-shadow:0 4px 20px rgba(0,0,30,.08);display:flex;flex-direction:column;}
+.card-body{flex:1;}
+
+/* Concept */
+.screen-h{font-size:1.45rem;font-weight:700;color:var(--dark-blue);margin-bottom:20px;line-height:1.3;}
+.screen-b{font-size:.97rem;line-height:1.8;color:#2c2c40;}
+.screen-b p{margin-bottom:14px;}
+.screen-b strong{color:var(--dark-blue);}
+.screen-b ul{padding-left:22px;margin-bottom:14px;}
+.screen-b li{margin-bottom:8px;}
+.insight{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:16px 20px;margin-top:24px;font-size:.93rem;line-height:1.7;color:var(--dark-blue);font-style:italic;}
+
+/* SBI model */
+.sbi-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:24px 0;}
+.sbi-card{background:var(--dark-blue);color:white;border-radius:12px;padding:20px 16px;}
+.sbi-letter{font-size:2.4rem;font-weight:900;color:var(--light-blue);display:block;line-height:1;margin-bottom:2px;}
+.sbi-word{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:#8899cc;display:block;margin-bottom:10px;}
+.sbi-def{font-size:.8rem;line-height:1.55;color:#ccd;}
+.sbi-ex{font-size:.78rem;color:var(--light-blue);font-style:italic;margin-top:10px;line-height:1.5;}
+
+/* Comparison */
+.cmp-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.cmp-box{border-radius:10px;padding:18px;}
+.cmp-box.bad{background:var(--err-bg);border:1.5px solid var(--err-bdr);}
+.cmp-box.good{background:var(--ok-bg);border:1.5px solid var(--ok-bdr);}
+.cmp-lbl{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+.cmp-box.bad .cmp-lbl{color:var(--err);}
+.cmp-box.good .cmp-lbl{color:var(--ok);}
+.cmp-txt{font-size:.87rem;line-height:1.6;font-style:italic;margin-bottom:8px;color:#2c2c40;}
+.cmp-note{font-size:.79rem;color:#666;line-height:1.5;}
+
+/* Scenario */
+.sc-ctx{background:#f5f7ff;border-left:4px solid var(--accent);border-radius:0 8px 8px 0;padding:18px 20px;margin-bottom:22px;font-size:.93rem;line-height:1.7;}
+.sc-q{font-weight:600;font-size:1rem;margin-bottom:14px;color:var(--dark-blue);}
+.opts{display:flex;flex-direction:column;gap:10px;}
+.opt{padding:14px 18px;border:2px solid #dde3f5;border-radius:8px;cursor:pointer;font-size:.92rem;line-height:1.55;transition:border-color .15s,background .15s;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f5f7ff;}
+.opt.correct{border-color:var(--ok);background:var(--ok-bg);cursor:default;}
+.opt.wrong{border-color:var(--err);background:var(--err-bg);cursor:default;}
+.opt.show-correct{border-color:var(--ok);background:var(--ok-bg);cursor:default;}
+.opt.locked{cursor:default;}
+.opt-fb{margin-top:8px;padding:12px 16px;border-radius:6px;font-size:.86rem;line-height:1.6;display:none;}
+.opt-fb.show{display:block;}
+.opt-fb.fb-ok{background:#e6f4ea;color:#1b4332;}
+.opt-fb.fb-err{background:#fce8ea;color:#7b2230;}
+
+/* Pulse */
+.pulse-h{font-size:1rem;font-weight:700;color:var(--blue);text-transform:uppercase;letter-spacing:.06em;margin-bottom:16px;}
+.pulse-q{font-size:1.05rem;font-weight:600;color:var(--dark-blue);margin-bottom:18px;line-height:1.5;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.pulse-opt{padding:13px 16px;border:2px solid #dde3f5;border-radius:8px;cursor:pointer;font-size:.92rem;line-height:1.5;transition:border-color .15s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);}
+.pulse-opt.correct{border-color:var(--ok);background:var(--ok-bg);cursor:default;}
+.pulse-opt.wrong{border-color:var(--err);background:var(--err-bg);cursor:default;}
+.pulse-opt.show-correct{border-color:var(--ok);background:var(--ok-bg);cursor:default;}
+.pulse-opt.locked{cursor:default;}
+.pulse-exp{display:none;background:#eef2ff;border-left:3px solid var(--accent);border-radius:0 8px 8px 0;padding:14px 18px;font-size:.88rem;line-height:1.65;color:#2c2c40;}
+.pulse-exp.show{display:block;}
+
+/* Apply It */
+.apply-intro{font-size:.95rem;line-height:1.78;color:#2c2c40;margin-bottom:28px;}
+.apply-field{margin-bottom:20px;}
+.apply-lbl{display:block;font-weight:600;font-size:.88rem;color:var(--dark-blue);margin-bottom:3px;}
+.apply-hint{font-size:.79rem;color:#999;margin-bottom:7px;}
+textarea.apply-ta{width:100%;padding:11px 13px;border:2px solid #dde3f5;border-radius:8px;font-family:inherit;font-size:.92rem;line-height:1.6;resize:vertical;transition:border-color .15s;}
+textarea.apply-ta:focus{outline:none;border-color:var(--accent);}
+
+/* Complete */
+.done-wrap{text-align:center;padding:24px 0;}
+.done-circle{width:80px;height:80px;border-radius:50%;background:var(--ok-bg);border:3px solid var(--ok);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2.4rem;color:var(--ok);}
+.done-h{font-size:1.6rem;font-weight:700;color:var(--dark-blue);margin-bottom:12px;}
+.done-b{font-size:.95rem;line-height:1.78;color:#555;max-width:460px;margin:0 auto 30px;}
+.btn-done{display:inline-block;padding:16px 40px;background:var(--accent);color:white;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s;}
+.btn-done:hover{background:#0033cc;}
+.done-note{font-size:.78rem;color:#bbb;margin-top:12px;}
+.btn-restart{background:none;border:none;color:#aaa;font-size:.8rem;cursor:pointer;margin-top:20px;text-decoration:underline;}
+
+/* Nav */
+.nav-row{display:flex;justify-content:space-between;align-items:center;margin-top:30px;padding-top:18px;border-top:1px solid #eef0fa;}
+.btn-nav{padding:11px 28px;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;border:none;transition:opacity .15s,background .15s;}
+.btn-back{background:#e8ecff;color:var(--dark-blue);}
+.btn-back:hover{background:#d4daf5;}
+.btn-back:disabled{opacity:.3;cursor:default;pointer-events:none;}
+.btn-next{background:var(--accent);color:white;}
+.btn-next:hover{background:#0033cc;}
+.btn-next:disabled{opacity:.35;cursor:default;pointer-events:none;}
+.nav-ctr{font-size:.79rem;color:#ccc;}
+
+@media(max-width:600px){
+  .card{padding:28px 18px 22px;}
+  .hdr{padding:18px 18px 14px;}
+  .sbi-grid{grid-template-columns:1fr;}
+  .cmp-grid{grid-template-columns:1fr;}
+  .screen-h{font-size:1.2rem;}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ── SECTION MAP ─────────────────────────────────────────── */
+const SEC_NAMES  = ['Foundation','Common Mistakes','Practice','Pulse Check','Apply It','Complete'];
+const SEC_RANGES = [[0,4],[5,6],[7,9],[10,14],[15,15],[16,16]];
+
+/* ── SCREENS ─────────────────────────────────────────────── */
+const SCREENS = [
+
+/* 0 ── Hook */
+{ type:'concept', heading:'The Conversation You Keep Postponing',
+  body:`<p>Three months. That\u2019s how long Marcus waited to address the fact that his team member, Derek, was consistently short with customers and dismissive in team meetings. \u201cHe\u2019s good at the core job,\u201d Marcus told himself. \u201cI don\u2019t want to discourage him.\u201d</p>
+<p>Three months later, Marcus had a formal complaint from two customers, two team members who asked to be reassigned off Derek\u2019s shifts, and a corrective action conversation that took two hours and left everyone shaken.</p>
+<p>The feedback Marcus avoided in week one would have taken five minutes. It might have changed everything.</p>`,
+  insight:'Feedback delayed is usually feedback compounded. The conversation you\u2019re avoiding today rarely gets easier \u2014 it just gets higher stakes.' },
+
+/* 1 ── Why It Matters */
+{ type:'concept', heading:'Feedback Is the Core of Your Job as a Leader',
+  body:`<p>People cannot grow in a vacuum. Without honest, specific feedback, your team members are flying blind \u2014 repeating behaviors that hold them back, unaware of habits that frustrate colleagues, missing opportunities to build skills that could define their careers.</p>
+<p>The most generous thing you can do as a leader is tell someone the truth while you still can. Not vague reassurance. Not hints. Not waiting until a performance review. Clear, caring, specific feedback \u2014 delivered close to the moment, while it\u2019s still actionable.</p>
+<p>Your team members deserve to know where they stand. The leaders they remember most \u2014 the ones who actually shaped their careers \u2014 will be the ones who cared enough to tell them.</p>`,
+  insight:'Withholding honest feedback isn\u2019t kind. It feels like protection, but it\u2019s a quiet vote of no confidence \u2014 \u201cI don\u2019t think you can handle the truth.\u201d' },
+
+/* 2 ── Feedback vs Criticism */
+{ type:'concept', heading:'The Difference Between Feedback and Criticism',
+  body:`<p>Criticism is about the person. Feedback is about the behavior.</p>
+<p><strong>\u201cYou\u2019re unprofessional\u201d</strong> is criticism. It\u2019s a character judgment that triggers defensiveness and shuts down conversation. People can\u2019t change being \u201cunprofessional\u201d \u2014 they don\u2019t even know what that means to you.</p>
+<p><strong>\u201cIn that meeting, when you cut Carla off before she finished her thought, she didn\u2019t speak again for the next 20 minutes\u201d</strong> is feedback. It names a specific behavior in a specific moment and explains the real effect. That\u2019s something a person can actually change.</p>
+<p>Effective feedback is:</p>
+<ul>
+<li><strong>Specific</strong> \u2014 tied to a real moment, not a vague pattern</li>
+<li><strong>Behavioral</strong> \u2014 what you saw or heard, not what you think it means about them</li>
+<li><strong>Timely</strong> \u2014 close enough to the event to still be useful</li>
+<li><strong>Forward-looking</strong> \u2014 pointed toward what you want to see, not just what you didn\u2019t like</li>
+</ul>` },
+
+/* 3 ── SBI Model */
+{ type:'model', heading:'The SBI Framework',
+  body:`<p>SBI gives you a reliable structure for delivering feedback that lands clearly without triggering defensiveness. Three parts, always in this order.</p>`,
+  sbi:[
+    { letter:'S', word:'Situation',
+      def:'Anchor the conversation in a specific, observable moment. Not \u201cyou always\u201d or \u201clately I\u2019ve noticed\u201d \u2014 name the exact event.',
+      ex:'\u201cYesterday morning in the gate area\u2026\u201d\n\u201cOn Wednesday\u2019s team call\u2026\u201d' },
+    { letter:'B', word:'Behavior',
+      def:'Describe what you saw or heard. Facts only \u2014 no interpretations, no character judgments. Ask yourself: what would a camera have captured?',
+      ex:'\u201c\u2026you raised your voice when the passenger pushed back\u2026\u201d\n\u201c\u2026you didn\u2019t speak up when I asked for input\u2026\u201d' },
+    { letter:'I', word:'Impact',
+      def:'Explain the real effect \u2014 on the team, the customer, you, or the mission. This is what makes feedback meaningful rather than just corrective.',
+      ex:'\u201c\u2026the three passengers nearby visibly stepped back. It raised tension in the whole area.\u201d' }
+  ],
+  insight:'SBI doesn\u2019t make feedback comfortable \u2014 it makes it clear. And clear is kind.' },
+
+/* 4 ── SBI in Action */
+{ type:'comparison', heading:'SBI in Action: Side by Side',
+  body:`<p>Here\u2019s what SBI looks like against the alternative. The difference isn\u2019t just style \u2014 it\u2019s the difference between feedback someone can act on and feedback that lands as an attack.</p>`,
+  pairs:[
+    { bad:{ label:'Vague',
+            txt:'\u201cYou need to work on your communication.\u201d',
+            note:'The person has no idea what to do differently. \u201cCommunication\u201d means something different to everyone. They walk away confused or quietly resentful.' },
+      good:{ label:'SBI',
+             txt:'\u201cIn this morning\u2019s crew brief, you moved through the safety points quickly before the crew had a chance to ask questions. Two crew members came to me during boarding with follow-ups that should have been caught in the brief.\u201d',
+             note:'They know exactly what happened, when, and why it matters. No ambiguity about what needs to change.' } },
+    { bad:{ label:'Character judgment',
+            txt:'\u201cYou\u2019re being difficult about this change.\u201d',
+            note:'Labels the person, not the behavior. Puts them on the defensive immediately and makes the conversation about character rather than action.' },
+      good:{ label:'SBI',
+             txt:'\u201cIn yesterday\u2019s team meeting, when we discussed the new process, you interrupted the presenter twice and said the old way was better without suggesting an alternative. It slowed the conversation and left the team without a clear path forward.\u201d',
+             note:'Same situation \u2014 completely different conversation. Observable, specific, and focused on impact rather than judgment.' } }
+  ],
+  insight:'If your feedback doesn\u2019t include a specific situation and a specific behavior, it\u2019s an opinion. Opinions don\u2019t change behavior.' },
+
+/* 5 ── Common Mistakes */
+{ type:'concept', heading:'Two Mistakes That Undermine Good Feedback',
+  body:`<p><strong>Mistake 1: Waiting too long</strong></p>
+<p>Feedback has a shelf life. The longer you wait, the more the moment fades, the behavior gets reinforced, and resentment quietly builds in you. A feedback conversation the same day is a 5-minute check-in. The same conversation three weeks later is a 30-minute confrontation with a confused team member who barely remembers the moment you\u2019re referencing.</p>
+<p>Rule of thumb: if it\u2019s worth addressing, address it within 48 hours.</p>
+<p><strong>Mistake 2: Vagueness disguised as kindness</strong></p>
+<p>\u201cJust work on being more collaborative\u201d feels gentler than naming what you actually saw. But it\u2019s not feedback \u2014 it\u2019s advice with no anchor. The person doesn\u2019t know what to change because they don\u2019t know what you observed. You protected yourself from an uncomfortable moment. You didn\u2019t help them.</p>`,
+  insight:'Vagueness protects the giver, not the receiver. Every time you soften feedback into meaninglessness, you choose your comfort over their growth.' },
+
+/* 6 ── The Sandwich */
+{ type:'concept', heading:'Stop Sandwiching Your Feedback',
+  body:`<p>The feedback sandwich goes: compliment \u2192 feedback \u2192 compliment. It feels compassionate. It\u2019s actually counterproductive \u2014 for three reasons.</p>
+<p><strong>1. People learn to dread compliments.</strong> The moment you lead with something positive, experienced team members brace for the \u201cbut.\u201d Your compliments stop landing as genuine.</p>
+<p><strong>2. The feedback gets buried.</strong> People remember what comes first and last. The actual message \u2014 the middle \u2014 gets diluted. Leaders walk away thinking they were clear. Team members walk away thinking everything is mostly fine.</p>
+<p><strong>3. It signals you\u2019re not sure it\u2019s a real problem.</strong> If the behavior needs to change, say so directly. Padding it with compliments suggests even you aren\u2019t sure it\u2019s worth addressing.</p>
+<p><strong>What to do instead:</strong> Lead with the SBI feedback. Then, separately and genuinely, acknowledge what they do well. Keep the two distinct \u2014 both messages deserve to land clearly.</p>`,
+  insight:'Positive feedback is powerful \u2014 when it\u2019s not a setup. Give it separately, specifically, and often.' },
+
+/* 7 ── Scenario: Late to meetings */
+{ type:'scenario', heading:'Practice: The Recurring Tardiness',
+  ctx:'Jordan is a solid team member who has been consistently 5\u20137 minutes late to your Monday morning team huddle \u2014 four weeks in a row. The team notices. It disrupts the opening of the week and sets a tone you don\u2019t want. You\u2019ve decided to address it.',
+  question:'Which approach is most effective?',
+  opts:[
+    { text:'\u201cHey Jordan, I\u2019ve noticed you\u2019ve been a little late to our huddles lately. Just wanted to give you a heads up.\u201d',
+      correct:false,
+      fb:'Too vague and too soft. \u201cA little late\u201d and \u201clately\u201d don\u2019t convey the pattern clearly. Jordan may not register this as a real feedback moment \u2014 and the behavior will likely continue.' },
+    { text:'\u201cJordan, the last four Monday huddles you\u2019ve arrived 5\u20137 minutes after we\u2019ve started. The team waits, we lose our opening momentum, and I can see others noticing. I need this to change. Is there something getting in the way for you on Mondays?\u201d',
+      correct:true,
+      fb:'This is SBI with follow-up curiosity. Specific situation (four Monday huddles), clear behavior (arrived 5\u20137 minutes late), real impact (team waits, momentum lost), and a forward-looking question that opens dialogue rather than closing the conversation. This is the model.' },
+    { text:'Send a group reminder to the whole team: \u201cJust a reminder to everyone \u2014 let\u2019s make sure we\u2019re on time for our Monday huddles.\u201d',
+      correct:false,
+      fb:'Addressing individual behavior through a group message is a leadership avoidance move. Jordan doesn\u2019t receive the feedback. The rest of the team gets called out for something they didn\u2019t do. Individual feedback stays individual.' }
+  ] },
+
+/* 8 ── Scenario: High performer */
+{ type:'scenario', heading:'Practice: The High Performer Who Shuts People Down',
+  ctx:'Sam is one of your strongest performers \u2014 high output, sharp instincts, widely respected. In a cross-team meeting, a newer team member named Priya shared an idea. Sam immediately responded: \u201cWe tried something like that two years ago. It didn\u2019t work.\u201d The conversation moved on. Priya went quiet for the rest of the meeting.',
+  question:'What do you do?',
+  opts:[
+    { text:'Nothing. Sam was right \u2014 they have more context. You don\u2019t want to discourage your top performer.',
+      correct:false,
+      fb:'Sam\u2019s performance doesn\u2019t exempt them from feedback on behavior that damages team dynamics. Not addressing it signals the behavior is acceptable \u2014 and it will happen again. High performers need honest feedback more than anyone, not less.' },
+    { text:'Speak to Sam privately: \u201cSam, in the team meeting this morning, when Priya shared her idea, your response \u2014 \u201cwe tried that, it didn\u2019t work\u201d \u2014 closed the conversation before it started. Priya went quiet for the rest of the meeting. I need you to create space for newer voices, even when your instinct is to redirect.\u201d',
+      correct:true,
+      fb:'SBI delivered privately and with respect for Sam\u2019s expertise. You name the moment, the behavior, and the impact without attacking Sam\u2019s character. And you set a clear behavioral expectation going forward. Private, specific, and direct \u2014 this is the right move.' },
+    { text:'Bring it up with the whole team as a general reminder about creating space for new ideas.',
+      correct:false,
+      fb:'Addressing individual behavior publicly is almost never the right call. Sam doesn\u2019t clearly own the feedback, Priya is put in a difficult position, and the rest of the team is corrected for something they didn\u2019t do. Keep individual feedback individual.' }
+  ] },
+
+/* 9 ── Scenario: Quiet disengagement */
+{ type:'scenario', heading:'Practice: The Quiet Disengagement',
+  ctx:'Casey has been on your team for two years and is generally a solid contributor. Since a recent restructure was announced, Casey has been visibly different \u2014 quieter in meetings, slower to respond to teammates, less collaborative on shared work. In your last 1:1, Casey said everything was fine. But two team members have separately told you that Casey\u2019s attitude is making shared work harder.',
+  question:'What\u2019s the right next step?',
+  opts:[
+    { text:'Give it more time. Change is hard and Casey will probably come around.',
+      correct:false,
+      fb:'Waiting and hoping is a leadership avoidance strategy. The behavior is already affecting the team. Every week you wait, the pattern gets more entrenched and the eventual conversation gets harder. Your job is to address it, not manage around it.' },
+    { text:'\u201cCasey, I want to check in on something. Over the last few weeks I\u2019ve noticed you\u2019ve been quieter in team meetings than you normally are, and less engaged on the shared projects. I can see it affecting the team\u2019s flow, and I want to understand what\u2019s going on and how I can support you.\u201d',
+      correct:true,
+      fb:'SBI grounded in curiosity rather than accusation. You name what you\u2019ve personally observed (quieter, less engaged \u2014 specific behaviors) and the impact (team flow). You don\u2019t weaponize what others said. You create space for Casey to share what\u2019s actually happening. This opens the conversation instead of closing it.' },
+    { text:'Tell Casey that the team has raised concerns about their attitude and they need to improve.',
+      correct:false,
+      fb:'Sharing what others said without their permission is a trust violation \u2014 toward the team members who confided in you, and toward Casey who now faces a secondhand accusation. Focus on what you\u2019ve personally observed. Use what others shared to inform your awareness, not as the feedback itself.' }
+  ] },
+
+/* 10 ── Pulse: Best SBI */
+{ type:'pulse', question:'Which of the following is the best example of SBI feedback?',
+  opts:[
+    { text:'\u201cYou need to be more present in meetings.\u201d', correct:false },
+    { text:'\u201cIn Tuesday\u2019s team meeting, you were on your phone during Maya\u2019s presentation. She noticed \u2014 and it sends a signal that discourages people from bringing their best thinking.\u201d', correct:true },
+    { text:'\u201cI\u2019ve noticed you seem distracted lately.\u201d', correct:false },
+    { text:'\u201cYour attitude toward new ideas isn\u2019t always helpful.\u201d', correct:false }
+  ],
+  exp:'Option B is the only one with a specific Situation (Tuesday\u2019s meeting), an observable Behavior (on your phone during the presentation), and a real Impact (Maya noticed; it discourages engagement). The others are interpretations, character judgments, or vague patterns.' },
+
+/* 11 ── Pulse: Timing */
+{ type:'pulse', question:'A team member made a significant mistake during a guest interaction this morning. When should you give feedback?',
+  opts:[
+    { text:'Today, as close to the event as possible.', correct:true },
+    { text:'At your next scheduled 1:1 later this week.', correct:false },
+    { text:'At their end-of-month performance check-in.', correct:false },
+    { text:'Only if it happens again.', correct:false }
+  ],
+  exp:'Feedback has a shelf life. The sooner it\u2019s delivered, the more connected it is to the behavior, the more useful it is, and the less resentment quietly builds in you. \u201cOnly if it happens again\u201d is the most dangerous answer \u2014 it reinforces the behavior by letting it pass without response.' },
+
+/* 12 ── Pulse: Sandwich */
+{ type:'pulse', question:'The \u201cfeedback sandwich\u201d is primarily problematic because:',
+  opts:[
+    { text:'It takes too long to deliver.', correct:false },
+    { text:'It makes people feel good about problematic behavior.', correct:false },
+    { text:'The feedback gets diluted, and people learn to dread compliments.', correct:true },
+    { text:'It only works for minor issues.', correct:false }
+  ],
+  exp:'The sandwich buries the real message and trains people to associate compliments with incoming criticism. Over time your positive feedback stops landing as genuine \u2014 it becomes a signal that something negative is coming. Both recognition and developmental feedback deserve to land clearly. Don\u2019t mix them.' },
+
+/* 13 ── Pulse: SBI gap */
+{ type:'pulse', question:'Which part of the SBI model do leaders most commonly miss or do poorly?',
+  opts:[
+    { text:'Situation \u2014 forgetting to anchor it in a specific moment.', correct:false },
+    { text:'Behavior \u2014 describing interpretations instead of observable actions.', correct:true },
+    { text:'Impact \u2014 moving on without explaining why it matters.', correct:false },
+    { text:'All three equally.', correct:false }
+  ],
+  exp:'The most common failure is slipping from observation to interpretation in the Behavior step. \u201cYou seemed disengaged\u201d (interpretation) vs. \u201cYou didn\u2019t speak during the 45-minute discussion\u201d (observable behavior). Stick to what a camera would have captured. Impact is a close second \u2014 many leaders stop at the behavior and never explain why it matters.' },
+
+/* 14 ── Pulse: Positive SBI */
+{ type:'pulse', question:'True or false: Positive feedback should also follow the SBI format.',
+  opts:[
+    { text:'True \u2014 specific positive feedback is more meaningful and more learnable.', correct:true },
+    { text:'False \u2014 SBI is only useful for developmental or corrective feedback.', correct:false }
+  ],
+  exp:'\u201cGreat job today\u201d doesn\u2019t teach someone what to repeat. \u201cIn the gate delay this afternoon, when the passenger escalated, you stayed calm, got them what they needed, and thanked them for their patience \u2014 two passengers behind them visibly relaxed\u201d is feedback someone can learn from and repeat. SBI makes positive feedback as powerful as developmental feedback.' },
+
+/* 15 ── Apply It */
+{ type:'apply', heading:'Apply It: Draft Your SBI Feedback',
+  intro:'Think of someone on your team who needs feedback from you right now \u2014 developmental or positive. Use the fields below to draft the conversation before you have it. Your responses are saved in this browser only.',
+  fields:[
+    { id:'who',  label:'Who needs feedback from you?',       hint:'Name or initials \u2014 this stays private to you', rows:2 },
+    { id:'sit',  label:'Situation: When and where did this happen?', hint:'Be specific \u2014 name the event, meeting, or moment', rows:3 },
+    { id:'beh',  label:'Behavior: What exactly did you observe?',   hint:'Facts only \u2014 what would a camera have captured?', rows:3 },
+    { id:'imp',  label:'Impact: What was the effect?',              hint:'On the team, the customer, the work, or on you', rows:3 },
+    { id:'when', label:'When will you have this conversation?',     hint:'Name a specific day and time \u2014 not \u201csoon\u201d', rows:2 }
+  ] },
+
+/* 16 ── Complete */
+{ type:'complete',
+  heading:'Course Complete: Giving Effective Feedback',
+  body:'You\u2019ve covered the SBI model, the most common feedback mistakes, three realistic practice scenarios, and five knowledge checks. The next step is using it. That feedback conversation you\u2019ve been putting off? You have the tools \u2014 and a draft.',
+  formUrl:'https://forms.office.com/REPLACE_WITH_YOUR_FORM_ID' }
+
+]; /* end SCREENS */
+
+/* ── STATE ───────────────────────────────────────────────── */
+const STORE_KEY = 'course_feedback_sbi_v1';
+let S = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+try {
+  const raw = JSON.parse(localStorage.getItem(STORE_KEY)||'{}');
+  if(raw.cur!==undefined) S.cur=raw.cur;
+  if(raw.max!==undefined) S.max=raw.max;
+  if(raw.answered) S.answered=raw.answered;
+  if(raw.choices)  S.choices=raw.choices;
+  if(raw.apply)    S.apply=raw.apply;
+} catch(e){}
+
+function save(){
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }catch(e){}
+}
+
+/* ── HELPERS ─────────────────────────────────────────────── */
+function sectionOf(i){
+  for(let s=0;s<SEC_RANGES.length;s++){
+    if(i>=SEC_RANGES[s][0]&&i<=SEC_RANGES[s][1]) return s;
+  }
+  return 0;
+}
+function needsAnswer(sc){ return sc.type==='scenario'||sc.type==='pulse'; }
+function canNext(i){ return needsAnswer(SCREENS[i]) ? !!S.answered[i] : true; }
+
+/* ── RENDER ──────────────────────────────────────────────── */
+function render(){
+  const sc = SCREENS[S.cur];
+  const pct = Math.round((S.max/(SCREENS.length-1))*100);
+  const curSec = sectionOf(S.cur);
+
+  const pills = SEC_NAMES.map((n,i)=>{
+    let cls='sec-pill';
+    if(i===curSec) cls+=' active';
+    else if(S.max>SEC_RANGES[i][1]) cls+=' done';
+    return `<span class="${cls}">${n}</span>`;
+  }).join('');
+
+  let body='';
+  if(sc.type==='concept')    body=rConcept(sc);
+  else if(sc.type==='model') body=rModel(sc);
+  else if(sc.type==='comparison') body=rComparison(sc);
+  else if(sc.type==='scenario')   body=rScenario(S.cur,sc);
+  else if(sc.type==='pulse')      body=rPulse(S.cur,sc);
+  else if(sc.type==='apply')      body=rApply(sc);
+  else if(sc.type==='complete')   body=rComplete(sc);
+
+  const nav = sc.type!=='complete' ? `
+    <div class="nav-row">
+      <button class="btn-nav btn-back" onclick="go(-1)" ${S.cur===0?'disabled':''}>&#8592; Back</button>
+      <span class="nav-ctr">${S.cur+1} of ${SCREENS.length}</span>
+      <button class="btn-nav btn-next" id="btn-next" onclick="go(1)" ${canNext(S.cur)?'':'disabled'}>Next &#8594;</button>
+    </div>` : '';
+
+  document.getElementById('app').innerHTML=`
+    <div class="hdr">
+      <div class="hdr-top">
+        <span class="hdr-badge">Deep Dive</span>
+        <span class="hdr-title">Giving Effective Feedback</span>
+      </div>
+      <div class="hdr-meta">Do What\u2019s Right &nbsp;&bull;&nbsp; ~20\u201325 min &nbsp;&bull;&nbsp; All Leader Levels</div>
+      <div class="prog-wrap"><div class="prog-fill" style="width:${pct}%"></div></div>
+    </div>
+    <div class="sec-bar">${pills}</div>
+    <div class="card"><div class="card-body">${body}</div>${nav}</div>`;
+
+  // restore apply textarea values
+  if(sc.type==='apply'){
+    sc.fields.forEach(f=>{
+      const el=document.getElementById('af_'+f.id);
+      if(el&&S.apply[f.id]) el.value=S.apply[f.id];
+    });
+  }
+  // restore scenario / pulse if already answered
+  if(S.answered[S.cur]){
+    if(sc.type==='scenario') restoreScenario(S.cur,sc);
+    if(sc.type==='pulse')    restorePulse(S.cur,sc);
+  }
+}
+
+/* ── SCREEN RENDERERS ────────────────────────────────────── */
+function rConcept(sc){
+  return `<h2 class="screen-h">${sc.heading}</h2>
+<div class="screen-b">${sc.body}</div>
+${sc.insight?`<div class="insight">${sc.insight}</div>`:''}`;
+}
+
+function rModel(sc){
+  const cards=sc.sbi.map(s=>`
+    <div class="sbi-card">
+      <span class="sbi-letter">${s.letter}</span>
+      <span class="sbi-word">${s.word}</span>
+      <div class="sbi-def">${s.def}</div>
+      <div class="sbi-ex">${s.ex.replace(/\n/g,'<br>')}</div>
+    </div>`).join('');
+  return `<h2 class="screen-h">${sc.heading}</h2>
+<div class="screen-b">${sc.body}</div>
+<div class="sbi-grid">${cards}</div>
+${sc.insight?`<div class="insight">${sc.insight}</div>`:''}`;
+}
+
+function rComparison(sc){
+  const pairs=sc.pairs.map(p=>`
+    <div class="cmp-grid">
+      <div class="cmp-box bad"><div class="cmp-lbl">${p.bad.label}</div><div class="cmp-txt">${p.bad.txt}</div><div class="cmp-note">${p.bad.note}</div></div>
+      <div class="cmp-box good"><div class="cmp-lbl">${p.good.label}</div><div class="cmp-txt">${p.good.txt}</div><div class="cmp-note">${p.good.note}</div></div>
+    </div>`).join('');
+  return `<h2 class="screen-h">${sc.heading}</h2>
+<div class="screen-b">${sc.body}</div>
+${pairs}
+${sc.insight?`<div class="insight">${sc.insight}</div>`:''}`;
+}
+
+function rScenario(idx,sc){
+  const opts=sc.opts.map((o,i)=>`
+    <div class="opt" id="opt_${idx}_${i}" onclick="pickOpt(${idx},${i})">
+      ${o.text}
+      <div class="opt-fb ${o.correct?'fb-ok':'fb-err'}" id="fb_${idx}_${i}">${o.correct?'\u2713 ':'\u2715 '}${o.fb}</div>
+    </div>`).join('');
+  return `<h2 class="screen-h">${sc.heading}</h2>
+<div class="sc-ctx">${sc.ctx}</div>
+<div class="sc-q">${sc.question}</div>
+<div class="opts">${opts}</div>`;
+}
+
+function pickOpt(idx,chosen){
+  if(S.answered[idx]) return;
+  S.answered[idx]=true; S.choices[idx]=chosen;
+  SCREENS[idx].opts.forEach((o,i)=>{
+    const el=document.getElementById(`opt_${idx}_${i}`);
+    const fb=document.getElementById(`fb_${idx}_${i}`);
+    el.classList.add('locked');
+    if(i===chosen){ el.classList.add(o.correct?'correct':'wrong'); fb.classList.add('show'); }
+    else if(o.correct){ el.classList.add('show-correct'); fb.classList.add('show'); }
+  });
+  const btn=document.getElementById('btn-next');
+  if(btn) btn.disabled=false;
+  save();
+}
+
+function restoreScenario(idx,sc){
+  const chosen=S.choices[idx];
+  sc.opts.forEach((o,i)=>{
+    const el=document.getElementById(`opt_${idx}_${i}`);
+    const fb=document.getElementById(`fb_${idx}_${i}`);
+    if(!el) return;
+    el.classList.add('locked');
+    if(i===chosen){ el.classList.add(o.correct?'correct':'wrong'); fb.classList.add('show'); }
+    else if(o.correct){ el.classList.add('show-correct'); fb.classList.add('show'); }
+  });
+}
+
+function rPulse(idx,sc){
+  const opts=sc.opts.map((o,i)=>`
+    <div class="pulse-opt" id="popt_${idx}_${i}" onclick="pickPulse(${idx},${i})">${o.text}</div>`).join('');
+  return `<div class="pulse-h">&#10003; Pulse Check</div>
+<div class="pulse-q">${sc.question}</div>
+<div class="pulse-opts">${opts}</div>
+<div class="pulse-exp" id="pexp_${idx}">${sc.exp}</div>`;
+}
+
+function pickPulse(idx,chosen){
+  if(S.answered[idx]) return;
+  S.answered[idx]=true; S.choices[idx]=chosen;
+  SCREENS[idx].opts.forEach((o,i)=>{
+    const el=document.getElementById(`popt_${idx}_${i}`);
+    el.classList.add('locked');
+    if(i===chosen) el.classList.add(o.correct?'correct':'wrong');
+    else if(o.correct) el.classList.add('show-correct');
+  });
+  const exp=document.getElementById(`pexp_${idx}`);
+  if(exp) exp.classList.add('show');
+  const btn=document.getElementById('btn-next');
+  if(btn) btn.disabled=false;
+  save();
+}
+
+function restorePulse(idx,sc){
+  const chosen=S.choices[idx];
+  sc.opts.forEach((o,i)=>{
+    const el=document.getElementById(`popt_${idx}_${i}`);
+    if(!el) return;
+    el.classList.add('locked');
+    if(i===chosen) el.classList.add(o.correct?'correct':'wrong');
+    else if(o.correct) el.classList.add('show-correct');
+  });
+  const exp=document.getElementById(`pexp_${idx}`);
+  if(exp) exp.classList.add('show');
+}
+
+function rApply(sc){
+  const fields=sc.fields.map(f=>`
+    <div class="apply-field">
+      <label class="apply-lbl" for="af_${f.id}">${f.label}</label>
+      <div class="apply-hint">${f.hint}</div>
+      <textarea class="apply-ta" id="af_${f.id}" rows="${f.rows}" oninput="saveApply('${f.id}',this.value)"></textarea>
+    </div>`).join('');
+  return `<h2 class="screen-h">${sc.heading}</h2>
+<p class="apply-intro">${sc.intro}</p>${fields}`;
+}
+
+function saveApply(fid,val){
+  S.apply[fid]=val; save();
+}
+
+function rComplete(sc){
+  return `<div class="done-wrap">
+  <div class="done-circle">&#10003;</div>
+  <div class="done-h">${sc.heading}</div>
+  <p class="done-b">${sc.body}</p>
+  <a class="btn-done" href="${sc.formUrl}" target="_blank" onclick="localStorage.setItem('course_feedback_sbi_done','true')">Mark Complete &amp; Log My Progress</a>
+  <div class="done-note">Opens a Microsoft Form in a new tab. Your L&amp;D team receives your completion record.</div>
+  <br><button class="btn-restart" onclick="restart()">Start over</button>
+</div>`;
+}
+
+/* ── NAVIGATION ──────────────────────────────────────────── */
+function go(dir){
+  const next=S.cur+dir;
+  if(next<0||next>=SCREENS.length) return;
+  S.cur=next;
+  if(next>S.max) S.max=next;
+  save(); render();
+  window.scrollTo(0,0);
+}
+
+function restart(){
+  S={cur:0,max:0,answered:{},choices:{},apply:{}};
+  save(); render();
+}
+
+render();
+</script>
+</body>
+</html>
