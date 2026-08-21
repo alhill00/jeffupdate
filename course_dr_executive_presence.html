@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Presence | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#faf8ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#6D28D9;
+  --accent-light:#ede9fe;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#ede9fe;
+  --good-border:#6D28D9;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#1a0a3d 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(109,40,217,.25);color:rgba(255,255,255,.8);border-color:rgba(109,40,217,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:18px 0;}
+.pres-card{background:var(--card);border:1.5px solid var(--border);border-top:4px solid var(--accent);border-radius:10px;padding:16px;}
+.pres-card h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.pres-card ul{padding-left:16px;font-size:12.5px;line-height:1.8;color:#374151;}
+.pct-badge{display:inline-block;background:var(--accent);color:var(--white);font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;margin-bottom:8px;}
+.num-cards{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.num-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;}
+.num-badge{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--white);font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.num-content h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.num-content p{font-size:13.5px;color:#374151;line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#5b21b6;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#5b21b6;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(109,40,217,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .three-col{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Director Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Executive Presence</div>
+  <div class="course-sub">How you show up in the room — and why it matters more at this level than any before it.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Presence Model</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Executive Presence Actually Is</div>
+  <div class="screen-body">Executive presence isn't charisma. It isn't being the most extroverted person in the room, or the loudest, or the most polished. Those are surface features that people confuse with presence because they're visible and easy to observe.</div>
+  <div class="screen-body">Executive presence is the consistent ability to show up in high-stakes moments — a tense executive meeting, a hard question in front of 200 Team Members, a direct challenge from a peer in front of your CPO — in a way that commands trust and moves people to action. It's what you project under pressure, not in the easy moments.</div>
+  <div class="screen-body">Presence is a skill. It can be developed deliberately. And it matters more at director level than it has at any previous level — because the stakes of the rooms you're now in are higher, and the cost of going quiet or hedging when it counts is larger.</div>
+  <div class="hl"><strong>Competence gets you to director.</strong> Presence advances you beyond it — or limits how far your competence can take you.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three Components — and Where the Work Actually Is</div>
+  <div class="screen-body">Research from the Center for Talent Innovation identifies three components of executive presence. What's striking is where the weight falls — and where most development programs focus instead.</div>
+  <div class="three-col">
+    <div class="pres-card">
+      <div class="pct-badge">67%</div>
+      <h4>Gravitas</h4>
+      <ul>
+        <li>Calm under pressure</li>
+        <li>Decisive when others aren't</li>
+        <li>Confident without arrogance</li>
+        <li>Knowing when to speak and when not to</li>
+      </ul>
+    </div>
+    <div class="pres-card">
+      <div class="pct-badge">28%</div>
+      <h4>Communication</h4>
+      <ul>
+        <li>Getting to the point</li>
+        <li>Commanding without filling noise</li>
+        <li>Using silence deliberately</li>
+        <li>Commanding a room</li>
+      </ul>
+    </div>
+    <div class="pres-card">
+      <div class="pct-badge">5%</div>
+      <h4>Appearance</h4>
+      <ul>
+        <li>Physical presentation</li>
+        <li>Signal you send before speaking</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al"><strong>Most presence training focuses on Appearance and Communication.</strong> The real work — 67% of what defines executive presence — is Gravitas. How you behave under pressure. Whether you go decisive or quiet when things get hard.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Presence Gap</div>
+  <div class="screen-body">The director who is technically excellent — sharp analysis, solid judgment, dependable execution — but goes quiet in executive rooms, hedges every recommendation with caveats, or loses composure when challenged, is hard to picture as a VP. Not because their competence is in question. Because their presence is.</div>
+  <div class="screen-body">The presence gap shows up in specific moments: when a CPO asks a hard question in a leadership meeting and you give a longer answer than necessary. When a peer dismisses your recommendation and you back down rather than hold your ground. When you're uncertain about an outcome and you project that uncertainty visibly rather than naming it confidently.</div>
+  <div class="al"><strong>The presence gap isn't about being more extroverted or more polished.</strong> It's about choosing your response in high-stakes moments instead of reacting to them — and practicing that choice until it becomes the default.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Presence Model</div>
+  <div class="screen-title">Three Dimensions with Behaviors</div>
+  <div class="screen-body">Presence is built through specific, observable behaviors. Here's what each dimension looks like in practice — and what the opposite looks like.</div>
+  <div class="three-col">
+    <div class="pres-card">
+      <h4>Gravitas</h4>
+      <ul>
+        <li>Calm when others are anxious</li>
+        <li>Makes a call when others equivocate</li>
+        <li>Direct without being aggressive</li>
+        <li>Knows when to hold and when to yield</li>
+        <li>Names uncertainty confidently</li>
+      </ul>
+    </div>
+    <div class="pres-card">
+      <h4>Communication</h4>
+      <ul>
+        <li>Leads with the headline</li>
+        <li>Doesn't fill silence with noise</li>
+        <li>Uses silence as a tool</li>
+        <li>Crisp, complete, stops</li>
+        <li>Answers what was asked</li>
+      </ul>
+    </div>
+    <div class="pres-card">
+      <h4>Credibility</h4>
+      <ul>
+        <li>Consistent between word and action</li>
+        <li>Visible track record</li>
+        <li>Handles being wrong with grace</li>
+        <li>Follows through on commitments</li>
+        <li>Doesn't oversell or undersell</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hl"><strong>Credibility</strong> is earned over time through consistency — but it can be undermined in a single moment by how you respond when you're wrong or caught flat-footed. How you handle those moments is presence.</div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three Behaviors That Move the Needle Most</div>
+  <div class="screen-body">You can't practice everything at once. These three behaviors have the highest presence impact per unit of deliberate effort.</div>
+  <div class="num-cards">
+    <div class="num-card">
+      <div class="num-badge">1</div>
+      <div class="num-content">
+        <h4>Speak Less, Say More</h4>
+        <p>Don't fill silence — create it. A director who gives a three-sentence answer to a complex question projects more confidence than one who gives a seven-sentence answer to prove they've thought about it. Say the most important thing. Stop. Let it land. The impulse to keep talking after a good point is an anxiety response, not a communication strategy.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">2</div>
+      <div class="num-content">
+        <h4>Decisive Framing Under Uncertainty</h4>
+        <p>"Based on what we know, I recommend X. Here's what would change my recommendation." This is the formula. It projects confidence (a recommendation, not a range of options) while naming the honest uncertainty (what would change it). It's not false certainty — it's confident judgment. The alternative is hedged vagueness that sounds indecisive even when the analysis behind it is strong.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">3</div>
+      <div class="num-content">
+        <h4>Physical Consistency</h4>
+        <p>How you enter a room. Your posture when others speak. Your non-verbal response when challenged. Leaning forward, nodding, making eye contact — or pulling back, looking away, shifting when questioned. The body communicates presence before the words do. Physical consistency under challenge — staying steady instead of contracting — is a trainable behavior.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Presence Model</div>
+  <div class="screen-title">Challenged in an Executive Room</div>
+  <div class="screen-body">You're presenting a recommendation in an executive meeting. Mid-presentation, a peer director pushes back sharply: "I don't think the data supports this — this is more optimistic than our experience in similar situations." Several people are watching for your response. What do you do?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Immediately walk back the recommendation — acknowledging the concern shows humility and avoids a public disagreement with a peer.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Acknowledge the concern, hold your position with data, and separate the analytical disagreement from the personal dynamic: "That's a fair challenge — our situation differs from the reference cases in these specific ways. I'm confident in the analysis, and I'm open to looking at their specific data if it changes the picture."</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Defer to the CPO: "I think this is a judgment call — I'd welcome your read on where you land between our two views."</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Ask a series of questions to understand the peer's concern in detail — getting to understanding first before responding demonstrates executive maturity.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Presence Model</div>
+  <div class="screen-title">Recovering from a Stumble</div>
+  <div class="screen-body">You're presenting to the leadership team and you realize mid-sentence that you've cited a data point incorrectly — a significant one. The error will be noticed. What's the high-presence response?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Finish the presentation and address the error in a follow-up email — disrupting the flow calls more attention to the mistake.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Stop, acknowledge the error clearly and calmly — "Let me correct that — the actual figure is X" — continue from where you were. No extended apology, no excessive self-flagellation. Name it, fix it, move on.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Pause the presentation entirely: "I want to make sure I'm giving you accurate information — let me pull the correct data before we continue."</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Soften it without fully correcting it — "Actually that figure is approximate — the precise number is slightly different." Minimize without fully calling it out.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Making a Recommendation Without Full Certainty</div>
+  <div class="screen-body">Your CPO asks you directly in a leadership meeting: "What do you recommend here?" The data is strong but not conclusive. Two reasonable options exist. What's your response?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>"There are really two strong options here — Option A has these advantages and Option B has these advantages. I think both are defensible."</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>"Based on what we know, I recommend Option A. The key assumption driving that is X — if that assumption changes, Option B becomes stronger. I'm confident in A with current information."</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>"I'd want to gather a bit more data before committing to a recommendation — I don't want to give you a premature answer on something this significant."</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>"What's your instinct? I'd like to calibrate against your thinking before I finalize my recommendation."</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Staying Calm When a Peer Dismisses Your Proposal</div>
+  <div class="screen-body">In a cross-functional planning session, a peer from another function says, in front of the group: "I just don't think this is realistic — we tried something similar two years ago and it didn't work." Their tone is dismissive. You believe the comparison is flawed and your proposal is sound. What's your response?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Match their energy — challenge the comparison directly and make the case for why their 2-year-old reference point doesn't apply.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Stay calm and specific: "That's worth understanding — can you tell me more about what made that attempt fail? I want to know if we're solving the same problem, because this proposal is structured differently in these ways."</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Acknowledge the concern and defer the conversation: "Fair point — let me revisit the proposal with that context before we continue the discussion."</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Let it go for now and follow up with the peer privately after the meeting — public disagreements create more heat than light.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Projecting Confidence When Uncertain About the Outcome</div>
+  <div class="screen-body">A major initiative you're leading has an uncertain outcome — you're genuinely unsure whether it will succeed. Your team is watching you closely. A leadership team member asks how you're feeling about it. What do you say?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>"I feel great about it — we're going to make this work." (You project confidence even though you're genuinely uncertain, to protect team morale.)</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>"Honestly, we're in uncertain territory — here's what I know, what I'm watching, and what I'm doing to position us for the best outcome. I'm not certain, but I'm clear on our next steps."</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>"I'm worried — there are a lot of variables we can't control and I'm not sure we have everything we need to be successful."</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>"I'd rather not speculate on outcome — let's focus on execution and see where we land."</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — According to research on executive presence, which component has the most weight in how presence is perceived?</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">A — Communication (how you speak and command a room)</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">B — Gravitas (behavior under pressure and decisiveness)</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'C')">C — Appearance (physical presentation)</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'D')">D — All three are weighted equally</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Executive presence requires being an extrovert or having a naturally commanding personality.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — When you're wrong in a high-stakes setting, the high-presence response is to:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Apologize extensively to demonstrate accountability and humility</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Acknowledge it briefly, correct it, and move on without extended self-flagellation</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Minimize the error and address it later in a follow-up to avoid disrupting the flow</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — Pause the conversation entirely until you can confirm the correct information</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — The decisive framing formula for recommendations under uncertainty is:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — "Here are two strong options — both are defensible depending on your priorities."</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — "Based on what we know, I recommend X. Here's what would change my recommendation."</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — "I want to gather more data before committing — I don't want to be premature."</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — "What's your instinct? I'd like to calibrate against your thinking first."</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — The impulse to keep talking after making a strong point is best described as:</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Providing helpful context that reinforces the point</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — An anxiety response — and it undercuts the impact of the original point</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — A sign of strong preparation and depth of knowledge</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — Appropriate when the audience is analytical and needs full reasoning</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Use these prompts to prepare for a specific upcoming high-stakes situation with deliberate presence work.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Identify one upcoming high-stakes situation — a meeting, presentation, or conversation where presence matters.</div>
+    <textarea class="apply-input" id="apply-0" placeholder="The situation is…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What's your instinctive response in this kind of situation — and what's the presence-driven response instead?</div>
+    <div class="apply-sub">Instinct vs. chosen response</div>
+    <textarea class="apply-input" id="apply-1" placeholder="My instinct is to… The presence-driven response is…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Which of the three dimensions (Gravitas / Communication / Credibility) needs the most deliberate work for you?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="The dimension that needs work is… because…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. Write the decisive framing statement for the most important recommendation you'll make in this situation.</div>
+    <div class="apply-sub">"Based on what we know, I recommend X. Here's what would change my recommendation."</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Based on what we know, I recommend… What would change this is…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. What specific behavior will you practice — and how will you know you did it?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="I will practice… I'll know I did it when…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">⚡</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Executive Presence. Presence isn't who you are — it's what you do in the hard moments. Practice the behaviors. Notice when you react instead of choose. Get better at recovering fast when you don't.</div>
+  </div>
+  <div class="commitments">
+    <h4>Three presence commitments for your next executive meeting:</h4>
+    <div class="commit-item">Speak to be heard — not to fill space. When you've made your point, stop.</div>
+    <div class="commit-item">Practice decisive framing under uncertainty: "Based on what we know, I recommend X. Here's what would change it."</div>
+    <div class="commit-item">Notice how you show up when challenged — and choose your response instead of reacting to it</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation',       end:5},
+  {label:'The Presence Model',end:7},
+  {label:'Practice',         end:10},
+  {label:'Pulse Check',      end:15},
+  {label:'Apply It',         end:16},
+  {label:'Complete',         end:17}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Acknowledge the concern, hold your position with data, and separate the analytical disagreement from the personal dynamic. This is Gravitas in action: staying grounded under challenge, engaging the substance without matching the energy, and naming your confidence clearly. Immediately walking back (A) is a presence failure — it teaches the room that challenge is sufficient to change your position even without new data.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Stop, correct it clearly and calmly, continue. No extended apology, no disruption to the flow. "Let me correct that — the actual figure is X." This is how high-presence leaders handle errors: they name them without drama and move on. Minimizing (D) erodes credibility when the error is discovered. Extended apology (implied in some options) makes the error larger than it needs to be.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> This is the decisive framing formula: a recommendation with explicit reasoning and named uncertainty about what would change it. "Both are defensible" (A) is vague and signals indecision when asked directly for a recommendation. "I want more data" (C) in a live leadership meeting, when asked directly, is a presence miss. "What\'s your instinct?" (D) is deflecting the question you were asked.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Stay calm, ask a specific question, and create the space to distinguish this situation from the prior one. This is Gravitas under pressure: you\'re not matching the dismissive energy (A), not deferring (C), and not going silent (D). You\'re engaging the substance while staying composed. The question "can you tell me more" is not concession — it\'s confident engagement.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> This is the Uncertainty Formula applied to presence: name what you know, name what you\'re watching, and name what you\'re doing — without false confidence and without unnecessary alarm. "I feel great" (A) is false confidence that erodes trust when the outcome doesn\'t match. "I\'m worried" (C) transmits anxiety rather than leadership. Option B projects confident leadership through the uncertainty, which is exactly what presence under pressure looks like.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>B is right.</strong> Gravitas accounts for 67% of how executive presence is perceived — behavior under pressure, decisiveness, projecting confidence without arrogance. Communication is 28% and Appearance is 5%. Most presence training focuses on Appearance and Communication because they\'re visible and easy to develop. The real work is Gravitas.' },
+  11: { correct:'B', feedback:'<strong>False.</strong> Executive presence is a skill, not a personality type. Introverts can have extraordinary presence. The key is not extroversion but the ability to show up with clarity, calm, and decisiveness in high-stakes moments — and those behaviors can be developed regardless of natural personality. Presence is about what you do, not who you are.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> Name it, correct it, move on. Brief and clean. Extended apology (A) makes the error larger than it needs to be and signals that being wrong is catastrophic — the opposite of presence. Minimizing without correcting (C) erodes credibility when it\'s noticed. Pausing entirely (D) is more disruptive than a clean, quick correction.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> "Based on what we know, I recommend X. Here\'s what would change my recommendation." This formula projects confident judgment while honestly naming the uncertainty. It\'s not false certainty — it\'s directed decision-making. "Both are defensible" (A) is presenting options, not making a recommendation. "More data" (C) is deflecting when asked directly. "What\'s your instinct?" (D) inverts the question.' },
+  14: { correct:'B', feedback:'<strong>B is right.</strong> The impulse to keep talking after a strong point is an anxiety response — the body\'s way of filling the uncomfortable silence that follows a moment of impact. It undercuts the point by burying it in follow-up words. Presence is the ability to make the point and stop — to let the silence work for you instead of filling it against you.' }
+};
+
+const KEY = 'course_dr_exec_presence_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building a High-Performing Culture | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#faf8ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#6D28D9;
+  --accent-light:#ede9fe;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#ede9fe;
+  --good-border:#6D28D9;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+
+.course-header{background:linear-gradient(135deg,#1a0a3d 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(109,40,217,.25);color:rgba(255,255,255,.8);border-color:rgba(109,40,217,.4);}
+
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body + .screen-body{margin-top:-8px;}
+
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+
+.lever-grid{display:flex;flex-direction:column;gap:10px;margin:18px 0;}
+.lever-card{background:var(--dark);border-radius:10px;padding:16px 20px;display:grid;grid-template-columns:44px 1fr;gap:14px;align-items:start;}
+.lever-num{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--white);font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.lever-content{}
+.lever-name{color:var(--white);font-size:15px;font-weight:700;margin-bottom:4px;}
+.lever-desc{color:rgba(255,255,255,.7);font-size:13px;line-height:1.5;}
+.lever-example{color:rgba(255,255,255,.5);font-size:12px;font-style:italic;margin-top:4px;}
+
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#5b21b6;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#5b21b6;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(109,40,217,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .lever-card{grid-template-columns:40px 1fr;gap:10px;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Director Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Building a High-Performing Culture</div>
+  <div class="course-sub">Shaping the norms and environment that determine how your team actually operates.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Culture Levers</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Culture Is Not on the Wall</div>
+  <div class="screen-body">Culture is not a set of values on a wall. It's the answer to "how do things actually get done here?" — what behaviors are rewarded, what gets overlooked, what's tolerated under pressure.</div>
+  <div class="screen-body">Directors shape culture not through declarations but through daily decisions. The culture you have is the culture you've been building, whether you meant to or not.</div>
+  <div class="hl"><strong>The real definition:</strong> Culture is the pattern of behavior your team has learned to expect — from each other, and from you.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Stated Culture vs. Lived Culture</div>
+  <div class="screen-body">Most organizations have both. <strong>Stated:</strong> we value collaboration, transparency, accountability. <strong>Lived:</strong> whoever moves fastest wins, real decisions happen in private, accountability is selective.</div>
+  <div class="screen-body">Directors are the translation layer — their behavior converts stated values into lived norms. When a director's actions match the posted values, the culture is coherent. When they don't, the lived culture wins every time.</div>
+  <div class="hl"><strong>The gap is the work.</strong> The distance between what your organization says it values and what it actually rewards is your leadership agenda.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Why Culture Change Is Hard</div>
+  <div class="screen-body">Culture is self-reinforcing — the existing norms select for people who fit them and filter out those who don't. People who thrive under the current culture advocate for its continuation, often without realizing it.</div>
+  <div class="screen-body">Changing culture at a director level requires three things happening simultaneously: changing the <strong>model</strong> (what you visibly reward), changing the <strong>stories</strong> (what you repeat and celebrate), and changing the <strong>consequences</strong> (what you tolerate vs. address).</div>
+  <div class="al"><strong>The mistake:</strong> Trying to change culture through communication alone. Announcing new values without changing behavior creates cynicism — people learn that the stated culture is performative.</div>
+</div>
+
+<!-- SCREEN 3: The Culture Levers -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Culture Levers</div>
+  <div class="screen-title">Five Levers Directors Control</div>
+  <div class="screen-body">Culture isn't shaped by one big decision — it's shaped by hundreds of small ones. These are the five levers in your hands every day.</div>
+  <div class="lever-grid">
+    <div class="lever-card">
+      <div class="lever-num">1</div>
+      <div class="lever-content">
+        <div class="lever-name">What You Reward</div>
+        <div class="lever-desc">Public recognition, promotions, resources you advocate for — these teach the team what's actually valued.</div>
+        <div class="lever-example">Example: Who gets recognized in all-hands? What behavior does it reinforce?</div>
+      </div>
+    </div>
+    <div class="lever-card">
+      <div class="lever-num">2</div>
+      <div class="lever-content">
+        <div class="lever-name">What You Tolerate</div>
+        <div class="lever-desc">Which behaviors you allow to continue without consequence — the most powerful and most unconscious lever.</div>
+        <div class="lever-example">Example: A missed commitment with no follow-up teaches that commitments are optional.</div>
+      </div>
+    </div>
+    <div class="lever-card">
+      <div class="lever-num">3</div>
+      <div class="lever-content">
+        <div class="lever-name">What You Model</div>
+        <div class="lever-desc">The pace, tone, communication style, and standards you personally demonstrate every day.</div>
+        <div class="lever-example">Example: If you reply to emails at 11 PM, you're signaling an expectation — whether you intend to or not.</div>
+      </div>
+    </div>
+    <div class="lever-card">
+      <div class="lever-num">4</div>
+      <div class="lever-content">
+        <div class="lever-name">What Stories You Tell</div>
+        <div class="lever-desc">Which wins and lessons you repeat, who gets celebrated and why — stories encode the culture's values.</div>
+        <div class="lever-example">Example: Do your stories celebrate speed, or quality? Individual heroics, or team coordination?</div>
+      </div>
+    </div>
+    <div class="lever-card">
+      <div class="lever-num">5</div>
+      <div class="lever-content">
+        <div class="lever-name">What You Measure</div>
+        <div class="lever-desc">What you pay attention to in reviews, check-ins, and planning — what gets measured gets managed.</div>
+        <div class="lever-example">Example: If you only review outputs, not how they were achieved, process doesn't matter.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Hardest Lever: Tolerance</div>
+  <div class="screen-body">What you allow to continue is a cultural statement whether you intend it or not. A missed deadline with no consequence teaches that deadlines are optional. An aggressive team member who hits their numbers teaches that results justify the method.</div>
+  <div class="screen-body">Leaders who shape culture explicitly decide what they will and won't tolerate — and act accordingly, consistently. Inconsistent enforcement is worse than no standard at all. It teaches the team that the rule applies selectively, which destroys trust in the whole system.</div>
+  <div class="hl"><strong>The test:</strong> What behavior have you been aware of for more than two weeks that you haven't addressed? That's your tolerance signal — and it's already shaping your culture.</div>
+</div>
+
+<!-- SCREEN 5 -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Culture Levers</div>
+  <div class="screen-title">The High-Performer Who Divides the Team</div>
+  <div class="screen-body">One of your highest-performing managers consistently gets results but cuts corners on cross-functional collaboration — other teams complain about them. You've had informal conversations but nothing has changed. What do you do?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Let it continue — results are results, and they're delivering.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Have a direct, consequential conversation about the specific behavior and what changes, with clarity about what happens if it doesn't.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Reassign them to a role with less cross-functional exposure so the friction stops.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Raise it with HR before addressing it yourself.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6 -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Culture Levers</div>
+  <div class="screen-title">Building Peer Accountability</div>
+  <div class="screen-body">Your team is building a new quarterly operating rhythm. You want to establish a norm of peer accountability — managers holding each other to commitments, not just holding their teams accountable. How do you introduce this?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Announce it as a new expectation in the next director meeting.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Model it yourself first — hold your own commitments visibly, acknowledge when you don't, and then name what you're doing and invite the norm explicitly.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Add accountability as a value to the team's operating principles document.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Build peer accountability into performance reviews so it's formally measured.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7 -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Morale Is Low — What's the Move?</div>
+  <div class="screen-body">A manager on your team reports that their team's morale is low — people feel like their work doesn't matter. What's the most direct lever to pull?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Host a team event to boost morale and connection.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Connect the work to outcomes — tell the stories of impact, specifically and regularly, until people can see how what they do changes something that matters.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Survey the team and build a formal action plan from the data.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Reassign the manager to see if a new leader changes the energy.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8 -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Two Very Different Team Cultures</div>
+  <div class="screen-body">You discover that two of your managers have very different team cultures — one is psychologically safe and high-accountability, one is tightly controlled and low-trust. They're getting similar results today. Why does this matter, and what do you do?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>It doesn't matter if results are equivalent — different styles work for different people.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>The low-trust team is a retention and succession risk — coach the manager on building psychological safety and appropriate autonomy.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Merge the teams to balance out the culture through proximity.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Wait — if results stay even, intervention isn't warranted yet.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9 -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Building a Learning Culture</div>
+  <div class="screen-body">You want to establish a learning culture — normalizing experimentation and learning from failure. Your org currently treats failure as a sign of poor judgment. What's the first move?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Create a formal post-mortem process so failures are systematically reviewed.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Publicly acknowledge a decision you made that didn't work and what you learned from it.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Announce that failure is now acceptable and part of the learning process.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Reward the first team that runs a failed experiment to signal the new norm.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10 -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — True or False: The fastest way to change culture is to update the stated values and communicate them broadly.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11 -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Which culture lever has the highest unintended impact?</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — What you reward</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — What you model</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — What you tolerate</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — What you measure</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12 -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — True or False: Culture change at the director level requires buy-in from above before you can begin.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13 -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — What's the most important thing to do immediately after a team failure or major miss?</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Identify who made the decision that led to the failure</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Move quickly to the next initiative and maintain momentum</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Facilitate a learning debrief and share the lesson widely</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Reassure the team that it won't happen again</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14 -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — True or False: A director who models excellent personal performance but doesn't invest in their managers' development is building a sustainable high-performing culture.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Culture is built in the daily decisions you make — not in the annual planning cycle. Use these prompts to identify where your levers are pointed right now.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Looking at the five culture levers — which one are you using most intentionally? Which one are you neglecting?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Most intentional lever… and the one you've been ignoring…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What behavior are you currently tolerating on your team or in your management layer that contradicts the culture you want?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Be specific — name the behavior, not the person…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. What story about your team or organization do you repeat? What does it teach people about what's valued here?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="The story you tell… and what it signals…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What is one cultural norm you want to establish in the next quarter? Which lever will you pull to get there?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="The norm you want… and the lever you'll use…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. Name one behavior of yours that your managers are probably modeling — for better or worse.</div>
+    <textarea class="apply-input" id="apply-4" placeholder="What are they learning from watching you?" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🏛️</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Building a High-Performing Culture. The culture you lead is the culture you're building — in every conversation, every decision, and everything you let slide.</div>
+  </div>
+  <div class="commitments">
+    <h4>Commitments for culture-building directors:</h4>
+    <div class="commit-item">Name one behavior you've been tolerating and address it this week — directly and specifically.</div>
+    <div class="commit-item">Tell a story in your next team interaction that reinforces the culture you want — specific, real, recent.</div>
+    <div class="commit-item">When something fails, debrief with curiosity before moving on — model that learning is safe.</div>
+    <div class="commit-item">Develop your managers' culture-building skills — not just their technical performance.</div>
+    <div class="commit-item">Be the first to demonstrate the norm you want your team to adopt.</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Complete Course →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {name:'Foundation', end:5},
+  {name:'The Culture Levers', end:7},
+  {name:'Practice', end:10},
+  {name:'Pulse Check', end:15},
+  {name:'Apply It', end:16},
+  {name:'Complete', end:17}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Tolerating the behavior signals to the org that performance excuses conduct. High-performers who treat others poorly are a culture tax — they demoralize teams, erode trust, and model what\'s acceptable. The director conversation needs to name the specific behavior and the specific expectation, with clarity about what happens if it doesn\'t change.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Norms are modeled before they\'re declared. If you want peer accountability, be the first to demonstrate it — report your own progress honestly, name your own misses, and thank people for holding you accountable. Then name what you\'re doing and invite the norm explicitly.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Purpose is the highest driver of engagement, and it\'s a story problem. When people can\'t see how their work connects to something that matters, they disengage. The director\'s job is to close the gap — "here\'s how what you\'re building is changing X" — and repeat that story often enough that it becomes the culture\'s foundation.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Current results don\'t predict future capability. High-control, low-trust cultures retain only the people who can\'t leave — they lose exactly the people you need for future growth. The director\'s job is to see beyond current metrics to team health as a leading indicator of future performance.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> You can\'t announce a learning culture — you have to demonstrate one. When a director openly says "here\'s a call I made that didn\'t land and here\'s what I\'d do differently," it\'s the most powerful signal in the building that learning from failure is safe and valued.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Stated values without behavior change don\'t shift culture — they create cynicism. Culture is changed through sustained behavior, rewarded norms, and tolerated-or-not patterns. The words follow the actions.' },
+  11: { correct:'C', feedback:'<strong>C is right.</strong> What you tolerate is often the most powerful — and most unconscious — culture signal. Leaders often focus on what they reward while overlooking the behavior they\'re allowing to continue. What gets tolerated becomes what\'s expected.' },
+  12: { correct:'B', feedback:'<strong>False.</strong> Directors shape the culture of their own teams and departments regardless of what happens above them. You don\'t need executive approval to model the norms you want, reward the behaviors you value, and address the ones you don\'t.' },
+  13: { correct:'C', feedback:'<strong>C is right.</strong> How you respond to failure is a culture-defining moment. A leader who debriefs with curiosity and shares the learning signals that mistakes are data. A leader who moves on signals that reflection isn\'t valued. A leader who assigns blame signals that it\'s not safe to take risks.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> Director-level culture lives in the managers you develop. If you build your own performance but neglect theirs, you\'ve created dependency — the team only performs when you\'re the most capable person in the room. Developing managers is how culture scales beyond your personal capacity.' }
+};
+
+const KEY = 'course_dr_culture_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Decision Making | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#174DFF;
+  --accent-light:#e0e8ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#e0e8ff;
+  --good-border:#174DFF;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#000633 0%,#0d1f6e 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(23,77,255,.25);color:rgba(255,255,255,.8);border-color:rgba(23,77,255,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.col-card p{font-size:14px;color:#374151;line-height:1.6;}
+.decision-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0;}
+.decision-card{border-radius:10px;padding:16px 18px;}
+.decision-card.t1{background:#1a3a1a;border:2px solid #22c55e;}
+.decision-card.t2{background:#1a2a3a;border:2px solid var(--accent);}
+.decision-card.t3{background:#3a1a1a;border:2px solid #f43f5e;}
+.decision-card.t4{background:#3a2a1a;border:2px solid var(--warn-border);}
+.decision-card .type-label{font-size:11px;font-weight:800;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.t1 .type-label{color:#22c55e;}
+.t2 .type-label{color:var(--accent);}
+.t3 .type-label{color:#f43f5e;}
+.t4 .type-label{color:var(--warn-border);}
+.decision-card h4{font-size:14px;font-weight:700;color:var(--white);margin-bottom:6px;}
+.decision-card p{font-size:13px;color:rgba(255,255,255,.8);line-height:1.5;}
+.decision-card .action{font-size:12px;font-weight:600;margin-top:8px;}
+.t1 .action{color:#22c55e;}
+.t2 .action{color:#7ba4ff;}
+.t3 .action{color:#fca5a5;}
+.t4 .action{color:var(--warn-border);}
+.raci-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+.raci-card{background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;}
+.raci-letter{font-size:20px;font-weight:900;color:var(--accent);margin-bottom:4px;}
+.raci-name{font-size:12px;font-weight:700;color:var(--dark);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px;}
+.raci-desc{font-size:13px;color:var(--muted);line-height:1.4;}
+.failure-list{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.failure-item{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;border-left:4px solid #f43f5e;}
+.failure-item h4{font-size:13px;font-weight:700;color:#dc2626;margin-bottom:6px;}
+.failure-item p{font-size:13px;color:#374151;line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#0d3acc;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#0d3acc;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .two-col,.decision-grid,.raci-grid{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Decision Making</div>
+  <div class="course-sub">Making better calls — and knowing when to decide alone vs. with your team.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Decision Framework</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Two Managers. Two Problems.</div>
+  <div class="screen-body">Manager A involves the team in every decision — meeting format, vendor selection, scheduling, priorities. She's inclusive and collaborative. Her team is increasingly burned out on consensus-seeking and can't tell who's actually in charge.</div>
+  <div class="screen-body">Manager B makes every call himself — fast, confident, and rarely with input from anyone. His team is disengaged. They've stopped offering ideas because they've learned their input doesn't matter.</div>
+  <div class="screen-body">Neither is a decision-making failure. Both are a calibration failure. The skill isn't deciding more or less collaboratively — it's knowing which type of decision is in front of you and responding accordingly.</div>
+  <div class="hl"><strong>Not every decision needs the same process.</strong> The manager who over-consults on low-stakes calls and under-consults on high-stakes ones is making the same mistake from two different directions.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Decision Quality Gap</div>
+  <div class="screen-body">Most managers make decisions the same way regardless of stakes. The result is a predictable mismatch between the weight of the decision and the process applied to it.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Low-Stakes Decisions Get Over-Processed</h4>
+      <p>Meeting formats, communication tools, small schedule changes — these get brought to the team, debated, and consensus-sought. The cost: speed, energy, and a team that stops trusting you to make calls.</p>
+    </div>
+    <div class="col-card red-left">
+      <h4>High-Stakes Decisions Get Rushed</h4>
+      <p>Irreversible decisions — hiring, restructuring, changing how work is assigned — sometimes get made fast because they feel urgent or because the manager thinks they know the answer. The cost: missed perspectives and downstream resistance.</p>
+    </div>
+  </div>
+  <div class="al"><strong>The fix is classification, not style.</strong> Before deciding how to decide, classify the decision. Then apply the right process for that type.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Makes a Decision Hard</div>
+  <div class="screen-body">Decisions feel hard for different reasons — and the reason determines the right response.</div>
+  <div class="two-col">
+    <div class="col-card accent-left">
+      <h4>Ambiguity</h4>
+      <p>No clear best option. Multiple approaches could work. The answer depends on factors that are genuinely uncertain.</p>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Stakes</h4>
+      <p>Hard to reverse. Consequential for people, relationships, or direction. Getting it wrong is costly to fix.</p>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="col-card accent-left">
+      <h4>Politics</h4>
+      <p>Other people have strong preferences and will be affected by the outcome. Their buy-in matters for execution.</p>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Time</h4>
+      <p>Not enough of it to gather all the information you'd want. You have to decide before certainty is available.</p>
+    </div>
+  </div>
+  <div class="hl"><strong>Different combinations require different approaches.</strong> A low-stakes decision with time pressure → decide fast. A high-stakes ambiguous decision with politics → deliberate, consult, document.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Decision Framework</div>
+  <div class="screen-title">Four Decision Types — and RACI-Light</div>
+  <div class="screen-body">Classify before you decide. The type tells you the process.</div>
+  <div class="decision-grid">
+    <div class="decision-card t1">
+      <div class="type-label">Type 1</div>
+      <h4>Reversible + Low Stakes</h4>
+      <p>Easy to undo. Low cost of being wrong.</p>
+      <div class="action">→ Decide fast, alone, move. Wrong? Fix it.</div>
+    </div>
+    <div class="decision-card t2">
+      <div class="type-label">Type 2</div>
+      <h4>Reversible + Higher Stakes</h4>
+      <p>Can be undone, but wrong choices have meaningful cost.</p>
+      <div class="action">→ Consult, decide, communicate reasoning.</div>
+    </div>
+    <div class="decision-card t3">
+      <div class="type-label">Type 3</div>
+      <h4>Irreversible + High Stakes</h4>
+      <p>Hard to undo. Consequential for people or direction.</p>
+      <div class="action">→ Deliberate, document reasoning, broader input.</div>
+    </div>
+    <div class="decision-card t4">
+      <div class="type-label">Type 4</div>
+      <h4>Ambiguous + Urgent</h4>
+      <p>No clear answer and time is short.</p>
+      <div class="action">→ Time-box it. Best available info. Clear owner. Decide.</div>
+    </div>
+  </div>
+  <div class="screen-body" style="font-size:14px;font-weight:700;color:var(--dark);margin-bottom:10px;">RACI-Light — Clarify who does what before you decide:</div>
+  <div class="raci-grid">
+    <div class="raci-card"><div class="raci-letter">R</div><div class="raci-name">Responsible</div><div class="raci-desc">Does the work</div></div>
+    <div class="raci-card"><div class="raci-letter">A</div><div class="raci-name">Accountable</div><div class="raci-desc">Owns the outcome — one person only</div></div>
+    <div class="raci-card"><div class="raci-letter">C</div><div class="raci-name">Consulted</div><div class="raci-desc">Input before the decision</div></div>
+    <div class="raci-card"><div class="raci-letter">I</div><div class="raci-name">Informed</div><div class="raci-desc">Notified after the decision</div></div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three Decision Failure Modes</div>
+  <div class="screen-body">Most decision problems aren't about making the wrong choice. They're about using the wrong process for the type of decision in front of you.</div>
+  <div class="failure-list">
+    <div class="failure-item">
+      <h4>Over-Consultation</h4>
+      <p>Seeking consensus on Type 1 decisions because it feels inclusive. Slows the org. Trains the team that everything needs group buy-in. Creates a culture of decision paralysis in managers who report to you.</p>
+    </div>
+    <div class="failure-item">
+      <h4>Under-Consultation</h4>
+      <p>Making Type 3 decisions unilaterally because you're confident in the answer. Misses critical perspectives. Creates resistance during execution from people who had something useful to contribute and weren't asked.</p>
+    </div>
+    <div class="failure-item">
+      <h4>Decision Avoidance</h4>
+      <p>Waiting for certainty that will never fully arrive. "I need more information before I decide" on Type 4 decisions. The team stalls. Momentum is lost. Decide on the best available information and set a review trigger if needed.</p>
+    </div>
+  </div>
+  <div class="hl"><strong>When you don't have all the information:</strong> name your confidence level, decide on best available data, set a clear trigger for revisiting — "if X happens, we'll reconsider."</div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Decision Framework</div>
+  <div class="screen-title">The Meeting Format Question</div>
+  <div class="screen-body">You need to decide on a new team meeting format — weekly vs biweekly, in-person vs hybrid. It affects the whole team but isn't high stakes. How do you handle it?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Bring it to the full team and decide by consensus — it affects everyone so everyone should weigh in.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Make the call yourself, announce it, and commit to revisiting after a month if it isn't working.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Survey the team on their preferences and then make a data-informed decision.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Ask each person individually before deciding — that way everyone feels heard.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Decision Framework</div>
+  <div class="screen-title">Restructuring How Work Gets Assigned</div>
+  <div class="screen-body">You're about to change how work is assigned across your team — a shift that will affect everyone's day-to-day and is hard to reverse once implemented. How do you approach the decision?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Make the call and announce it — you've thought it through and implementation needs to be clean.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Consult the team on their input before deciding, then communicate the decision and your reasoning.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Put it to a team vote — if it affects everyone, everyone should decide.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Delay until you have more data on the downstream impacts.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Practice -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When the Team Can't Agree</div>
+  <div class="screen-body">You've consulted your team on a meaningful decision and they're split — strong opinions on both sides with no clear consensus emerging. What do you do?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Keep the conversation going until consensus emerges — the team needs to own this decision.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Make the call — you heard the input, you understand the trade-offs, and continued deliberation isn't adding value. Communicate the reasoning clearly.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Go with the majority position — whoever has more people on their side wins.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Escalate to your leader — this level of disagreement needs someone above you to resolve it.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Practice -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Communicating a Solo Decision</div>
+  <div class="screen-body">You made a Type 1 decision without team input — fast, appropriate for the stakes. Now you need to communicate it. What's the right approach?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Just announce the decision — no explanation needed for small calls.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Share the decision and the reasoning briefly — what you decided, why, and what you'd revisit if it doesn't work.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Ask the team for feedback on the decision after you've announced it.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Apologize for not including them and commit to involving them next time.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Practice -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When You Were Wrong</div>
+  <div class="screen-body">You made a decision that turned out to be wrong. The team is affected and frustrated. How do you recover?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Stick with the decision — reversing course too quickly signals lack of conviction.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Name what happened, own the outcome, explain what you'll do differently, and reverse or revise the decision if it's the right call.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Explain why the decision made sense at the time — help the team understand your reasoning.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Ask the team what they think should happen next and follow their recommendation.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — A Type 1 decision (reversible, low stakes) should be brought to the team for input before being made.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — In RACI, the "A" (Accountable) role should be assigned to:</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Everyone who is affected by the decision</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — One person who owns the outcome</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — The most senior person in the room</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — Everyone who will do the work</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — Seeking consensus on every team decision is a sign of inclusive, collaborative leadership.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — When you don't have all the information needed for a decision, the right move is to:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Wait until you have full information before deciding</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Decide on best available information, name your confidence level, and set a review trigger</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Escalate so someone with more authority makes the call</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Involve the whole team so the uncertainty is shared</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — What's the key difference between "consulted" and "informed" in RACI?</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Consulted people have more authority than informed people</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — Consulted means input before the decision; informed means notified after</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — Informed people do the work; consulted people review it</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — There is no real difference — both groups are told about the decision</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Decisions improve when they're classified before they're made. Use these prompts to audit your pending decisions.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. Name 3 decisions you currently have pending. Classify each as Type 1, 2, 3, or 4.</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Decision 1: [type]&#10;Decision 2: [type]&#10;Decision 3: [type]" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. For each decision — who needs to be consulted vs. just informed?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Decision 1: Consult [X], Inform [Y]…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Which decision have you been avoiding? Why?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="The decision I've been avoiding is… because…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. Set a decision deadline for that avoided decision — and the minimum information you need to make the call.</div>
+    <textarea class="apply-input" id="apply-3" placeholder="I'll decide by [date]. Minimum info needed: …" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. Have you been over-consulting (bringing Type 1 decisions to the team) or under-consulting (making Type 3 calls alone)? Where?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="I tend to over-consult on… I tend to under-consult on…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">⚖️</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Decision Making. The best decision-makers aren't always right — they're calibrated. They know which process to use, they decide, and they own the outcome.</div>
+  </div>
+  <div class="commitments">
+    <h4>What sharp decision-making managers do differently:</h4>
+    <div class="commit-item">Classify decisions before making them — type determines process.</div>
+    <div class="commit-item">Reserve consensus-seeking for Type 3 decisions — not Type 1.</div>
+    <div class="commit-item">For Type 1 decisions, decide fast, communicate the reasoning, and revisit if needed.</div>
+    <div class="commit-item">Communicate the reasoning behind decisions, not just the decision itself.</div>
+    <div class="commit-item">Name who is Accountable before the decision is made — confusion about ownership creates the most decision delays.</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {name:'Foundation', end:5},
+  {name:'The Decision Framework', end:7},
+  {name:'Practice', end:10},
+  {name:'Pulse Check', end:15},
+  {name:'Apply It', end:16},
+  {name:'Complete', end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> A meeting format is a Type 1 decision — reversible and low stakes. Taking it to a full team consensus process signals that every small operational decision needs group buy-in, which slows everything down and erodes your decision-making credibility. Make the call, tell them why, set a review date, and move. If it doesn\'t work, adjust.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> This is a Type 3 decision — irreversible and high stakes. The right move is genuine consultation before deciding — not after. But a team vote (C) erodes your accountability as the manager: you own the decision, they inform it. Announcing without consultation (A) misses critical perspective from the people closest to the work.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> When consultation has produced genuine input and no consensus emerges, the manager decides. That\'s the job. Continued deliberation past the point of useful input is decision avoidance. Make the call, explain the reasoning, and own the outcome. Escalating (D) is appropriate only when you genuinely lack the authority or information — not because the team disagrees.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> The reasoning is what turns an announcement into communication. "Here\'s what I decided, here\'s why, and here\'s what I\'d revisit" closes the loop for the team. No explanation (A) creates a vacuum that speculation fills. Apologizing (D) for a Type 1 decision signals that you shouldn\'t have made it alone — which is wrong.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Owning a wrong decision requires naming it, explaining what you\'ll do differently, and reversing course if that\'s the right call. Sticking with a wrong decision to protect conviction (A) is stubbornness, not leadership. Explaining only the original reasoning (C) without owning the outcome looks defensive. The team follows leaders who can be wrong and recover well.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Type 1 decisions — reversible and low stakes — should be made fast, often alone, without team input. Taking them to the team trains people that every small call needs group buy-in, creates decision paralysis, and signals that you don\'t trust your own judgment on simple calls. Decide fast and move.' },
+  11: { correct:'B', feedback:'<strong>B is right.</strong> The Accountable role in RACI belongs to one person — the person who owns the outcome and answers for the result. Multiple people can be Responsible (doing the work) or Consulted (providing input), but Accountability must be singular. When everyone is accountable, no one is.' },
+  12: { correct:'B', feedback:'<strong>False.</strong> Seeking consensus on every decision is the over-consultation failure mode — not inclusive leadership. Real inclusion means consulting the right people on the right decisions. Taking Type 1 decisions to the team is not inclusive; it\'s a burden on the team and a signal that you\'re avoiding the accountability that comes with your role.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> Certainty is rarely available before a deadline — and waiting for it is Type 4 decision avoidance. The right move is to decide on the best available information, name what you know and don\'t know, and set a review trigger: "If X happens, we revisit." Deciding under uncertainty is a leadership skill, not a risk.' },
+  14: { correct:'B', feedback:'<strong>B is right.</strong> Consulted means input before the decision is made — their perspective shapes the outcome. Informed means notified after the decision is made — for awareness and coordination. Confusing these roles is one of the most common sources of decision-making friction: people who expected to be Consulted feel blindsided when they were only Informed.' }
+};
+
+const KEY = 'course_mg_decision_making_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

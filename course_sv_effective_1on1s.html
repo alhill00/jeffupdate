@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Running Effective 1:1s | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f4fbfd;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#0077A8;
+  --accent-light:#d0eef7;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#d0eef7;
+  --good-border:#0077A8;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+
+.course-header{background:linear-gradient(135deg,#0a3d4a 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#00A0C6;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+
+.section-nav{background:#0a3d4a;padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(0,119,168,.25);color:rgba(255,255,255,.8);border-color:rgba(0,119,168,.4);}
+
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body + .screen-body{margin-top:-8px;}
+
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+
+.three-cards{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.framework-card{background:var(--dark);border-radius:10px;padding:18px 20px;display:flex;gap:16px;align-items:flex-start;}
+.fc-icon{font-size:24px;flex-shrink:0;margin-top:2px;}
+.fc-content{}
+.fc-label{color:rgba(255,255,255,.6);font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:4px;}
+.fc-title{color:var(--white);font-size:15px;font-weight:700;margin-bottom:4px;}
+.fc-desc{color:rgba(255,255,255,.75);font-size:13px;line-height:1.5;}
+
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#eef7fb;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#eef7fb;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:#0077A8;color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#005f87;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#005f87;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(0,119,168,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+
+@media(max-width:600px){
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Supervisor Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Running Effective 1:1s</div>
+  <div class="course-sub">Making your weekly 1:1s the most valuable 30 minutes your team member has.</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label">0 of 16</div>
+</div>
+
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The 1:1 Framework</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0: Hook -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The 1:1 That Wasn't</div>
+  <div class="screen-body">Dana had been leading her team for 3 months and was proud of her weekly 1:1s. She showed up, asked "how's it going?", got "fine", talked through project status for 25 minutes, and moved on.</div>
+  <div class="screen-body">Six months later her highest performer gave notice. "I never felt like you actually knew what I was going through," she said.</div>
+  <div class="screen-body">Dana had been running meetings, not 1:1s. The difference matters more than most new leaders realize.</div>
+  <div class="hl"><strong>A 1:1 isn't a status meeting with a nicer name.</strong> It's the primary relationship tool you have as a leader — and most new supervisors don't know the difference until someone walks out the door.</div>
+</div>
+
+<!-- SCREEN 1: Concept -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Status Update vs. Human Conversation</div>
+  <div class="screen-body">Most 1:1s fail because they become status reports. Your team member talks about tasks. You nod. Nothing changes.</div>
+  <div class="screen-body">A real 1:1 has a different purpose: <strong>connection before content.</strong> If you don't know how your person is doing as a human being, you can't lead them effectively as a professional.</div>
+  <div class="hl"><strong>The question to ask yourself after every 1:1:</strong> Did I learn something I didn't already know? If the answer is no, it was a project check-in — not a 1:1.</div>
+</div>
+
+<!-- SCREEN 2: Concept -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What 1:1s Are Actually For</div>
+  <div class="screen-body">Three things every 1:1 should create:</div>
+  <div class="three-cards">
+    <div class="framework-card">
+      <div class="fc-icon">👤</div>
+      <div class="fc-content">
+        <div class="fc-title">The team member feels seen and heard as a person.</div>
+        <div class="fc-desc">Not just as a task performer. This is the baseline.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="fc-icon">💡</div>
+      <div class="fc-content">
+        <div class="fc-title">You learn something you didn't already know.</div>
+        <div class="fc-desc">About their work, their challenges, or how they're experiencing the team.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="fc-icon">🧭</div>
+      <div class="fc-content">
+        <div class="fc-title">They leave with more clarity or support than they came in with.</div>
+        <div class="fc-desc">Something shifted. A question got answered. A burden got lighter.</div>
+      </div>
+    </div>
+  </div>
+  <div class="al"><strong>If a 1:1 doesn't do at least one of those three things, it was a status meeting with a nicer name.</strong></div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The 1:1 Framework</div>
+  <div class="screen-title">Three Questions Every 1:1 Should Touch</div>
+  <div class="screen-body">You don't need a rigid script. You need three anchors that ensure your 1:1s cover what matters.</div>
+  <div class="three-cards">
+    <div class="framework-card">
+      <div class="fc-icon">🤝</div>
+      <div class="fc-content">
+        <div class="fc-label">Personal Connection</div>
+        <div class="fc-title">"How are you?"</div>
+        <div class="fc-desc">Not a formality. Actually listen. Pause long enough that they know you mean it.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="fc-icon">⚡</div>
+      <div class="fc-content">
+        <div class="fc-label">Professional Connection</div>
+        <div class="fc-title">"What's energizing you? What's draining you?"</div>
+        <div class="fc-desc">Surfaces what matters to them at work right now — the real stuff, not the polished stuff.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="fc-icon">🙋</div>
+      <div class="fc-content">
+        <div class="fc-label">Support</div>
+        <div class="fc-title">"What do you need from me right now?"</div>
+        <div class="fc-desc">The question most leaders never ask. Let <em>them</em> set the agenda. Your job is to listen, not fill time.</div>
+      </div>
+    </div>
+  </div>
+  <div class="hl"><strong>Key principle:</strong> Let your team member set the agenda. Your job is to listen, not fill time.</div>
+</div>
+
+<!-- SCREEN 4: Scenario — Foundation -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">When They Say "Everything's Good"</div>
+  <div class="screen-body">Marcus, your direct report, says at the start of a 1:1: <em>"Not much to cover this week — everything's good."</em></div>
+  <div class="screen-body">What do you do?</div>
+  <div class="options" id="opts-4">
+    <div class="opt" onclick="pickOpt(4,'A')"><span class="opt-letter">A</span><span>Accept it and use the time to give your own updates — you have things to cover anyway.</span></div>
+    <div class="opt" onclick="pickOpt(4,'B')"><span class="opt-letter">B</span><span>Ask "What's been the best part of your week? And what's been the hardest?" to open the real conversation.</span></div>
+    <div class="opt" onclick="pickOpt(4,'C')"><span class="opt-letter">C</span><span>End the meeting early — if there's nothing to discuss, don't waste the time.</span></div>
+    <div class="opt" onclick="pickOpt(4,'D')"><span class="opt-letter">D</span><span>Run through the project status list you prepared to make sure nothing falls through the cracks.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-4"></div>
+</div>
+
+<!-- SCREEN 5: Framework deep dive -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The 1:1 Framework</div>
+  <div class="screen-title">The Agenda Question That Changes Everything</div>
+  <div class="screen-body">The single most powerful 1:1 habit: ask your team member to set the agenda.</div>
+  <div class="screen-body"><em>"What do you most want to talk about today?"</em> Then be quiet.</div>
+  <div class="screen-body">Most leaders talk too much. The person you're there for should speak 70% of the time. If you're doing most of the talking, it's a staff briefing — not a 1:1.</div>
+  <div class="hl"><strong>The 70/30 rule:</strong> Your team member talks 70% of the time. You listen, ask questions, and respond 30%. If those numbers are reversed, you've turned it into your meeting.</div>
+</div>
+
+<!-- SCREEN 6: Scenario — Framework -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The 1:1 Framework</div>
+  <div class="screen-title">When Something Real Surfaces</div>
+  <div class="screen-body">You're midway through a 1:1 and your team member mentions in passing that they've been frustrated with how a cross-functional team is treating them. Your instinct is to jump to solutions.</div>
+  <div class="screen-body">What's the better coaching move?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Immediately suggest how to handle the situation — you've dealt with this team before.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Ask "Tell me more about that — what's happening?" and let them unpack it before you problem-solve.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Redirect to the original agenda — you can circle back to this next week.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Offer to talk to the other team's leader yourself to sort it out.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario — Practice -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When You've Been Canceling</div>
+  <div class="screen-body">You've been canceling 1:1s frequently because of operational demands. Your most reliable team member hasn't said anything, but their engagement seems to have dipped slightly.</div>
+  <div class="screen-body">The most important step is:</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Send a message acknowledging you've been hard to reach and asking if there's anything you can do.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Book the next 1:1, protect it, show up, and open with: "I know I've been inconsistently available lately. How are you doing — really?"</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Add more agenda items to the next 1:1 to make up for lost time.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Wait to see if the engagement dip resolves on its own — it might just be a tough week.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario — Practice -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When They Vent About a Coworker</div>
+  <div class="screen-body">A team member uses a 1:1 to vent extensively about a coworker. You've heard this before.</div>
+  <div class="screen-body">What's the right response?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Tell them to work it out directly with the coworker — it's not appropriate to use 1:1 time for this.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Listen, then ask "What outcome are you hoping for with them?" to move from venting to action.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Promise to speak to the coworker on their behalf this week.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Remind them that venting is unproductive and redirect to their goals.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario — Practice -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When 1:1s Keep Running Over</div>
+  <div class="screen-body">Your 1:1s are running over time consistently.</div>
+  <div class="screen-body">How do you handle this?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Cut off the conversation when time is up, regardless of where you are.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Let them run long — ending a 1:1 abruptly sends the wrong message.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Start 1:1s with "We have 30 minutes — what are the two things you most need to cover today?" to focus from the start.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Move 1:1s to 45 minutes to give more room.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — You should always set the 1:1 agenda so the conversation stays on track.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Canceling a 1:1 occasionally is fine as long as you reschedule within the week.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — The most common reason 1:1s fail is:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — They're scheduled too infrequently</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Leaders talk more than they listen</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Team members aren't prepared</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — They're too short</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — "What do you need from me right now?" is powerful because:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — It puts the accountability back on the team member</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Most team members won't ask for support unless directly invited to</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — It signals you don't know what they need</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — It's a good way to end the meeting quickly</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — A good 1:1 always ends with action items for the team member.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">1:1s only get better when you change something specific. Use these prompts to make your next one count.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Who on your team do you know the least about as a person — beyond their work?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Name or role…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What do you typically talk about in your 1:1s right now? (Be honest.)</div>
+    <textarea class="apply-input" id="apply-1" placeholder="What actually gets covered…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Write the opening question you'll use in your next 1:1 to get past "everything's fine."</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Your opening question…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's one thing you'll stop doing in 1:1s to create more space for your team member to talk?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="The habit you'll drop…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. When is your next 1:1, and what will you do differently?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Day, time, and one specific change…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🤝</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Running Effective 1:1s. The leaders whose teams stay and grow are the ones who treat 1:1 time as the most important meeting on the calendar — not the most skippable one.</div>
+  </div>
+  <div class="commitments">
+    <h4>What effective 1:1 leaders do differently:</h4>
+    <div class="commit-item">Let your team member set the agenda, or at least have 70% of the input</div>
+    <div class="commit-item">Ask "What do you need from me?" in every single 1:1</div>
+    <div class="commit-item">Never cancel without rescheduling same week</div>
+    <div class="commit-item">Listen more than you talk — aim for 70/30</div>
+    <div class="commit-item">Treat 1:1s as relationship infrastructure, not status reporting</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.office.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div><!-- end course-main -->
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation',      start:0, end:4},
+  {label:'The 1:1 Framework',start:3, end:6},
+  {label:'Practice',        start:7, end:9},
+  {label:'Pulse Check',     start:10,end:14},
+  {label:'Apply It',        start:15,end:15},
+  {label:'Complete',        start:16,end:16}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  4: { correct:'B', feedback:'<strong>B is right.</strong> "What\'s been the best part of your week? And what\'s been the hardest?" works because it gets past the social script of "everything\'s fine." Most people lead with what\'s polished, not what\'s real. Your job is to create enough safety that the real stuff can surface.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> "Tell me more" is the 1:1 superpower. When someone drops something real, the instinct to fix it fast is understandable — but understanding it fully first produces better help. You might also learn something important about what your team member needs from you.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Canceling 1:1s sends a louder message than most leaders realize: that your team member\'s time doesn\'t matter. The fix isn\'t an apology — it\'s showing up consistently. And opening with acknowledgment and a real question gives your team member permission to be honest.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Venting serves a purpose — people need to feel heard before they can move toward solutions. Listen first. Once they\'ve had space to express it, the pivot question — "What outcome are you hoping for?" — shifts from complaint to agency without dismissing what they shared.' },
+  9: { correct:'C', feedback:'<strong>C is right.</strong> The best 1:1 management happens at the start, not the end. Asking "What are the two things you most need?" sets a focused agenda, respects both of your time, and gives your team member agency over what gets discussed.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Your team member should set the agenda — or at least have primary input. Your job is to create the space. When you control the agenda, you get the information YOU think matters. When they control it, you learn what\'s actually on their mind.' },
+  11: { correct:'A', feedback:'<strong>True — with an important caveat.</strong> Rescheduling within the week is far better than skipping. The key word is "occasionally" — a pattern of canceling signals your team that their time is low priority. If you must cancel, reschedule immediately and protect that new time.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> The most common failure is the leader taking over the conversation — giving updates, sharing news, problem-solving aloud. Great 1:1s are 70% team member, 30% leader. If you\'re doing most of the talking, it\'s a staff briefing, not a 1:1.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> Most people won\'t ask for help, support, or clarity unless specifically invited. This question breaks that barrier. It\'s also one of the most underused questions in leadership — most leaders assume their team knows they can ask for anything. They often don\'t.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> Not every 1:1 needs action items — sometimes the value is in the human connection and the feeling of being heard. Forcing action items onto every conversation makes 1:1s feel like performance reviews. Some of the best 1:1s end with the team member simply feeling more understood and supported.' }
+};
+
+const KEY = 'course_sv_1on1s_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

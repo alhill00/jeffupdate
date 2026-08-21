@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Time & Priority Management | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f4fbfd;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#0077A8;
+  --accent-light:#d0eef7;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#d0eef7;
+  --good-border:#0077A8;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+
+.course-header{background:linear-gradient(135deg,#0a3d4a 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#00A0C6;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+
+.section-nav{background:#0a3d4a;padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(0,119,168,.25);color:rgba(255,255,255,.8);border-color:rgba(0,119,168,.4);}
+
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body + .screen-body{margin-top:-8px;}
+
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+
+.matrix{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0;}
+.matrix-cell{border-radius:10px;padding:16px 18px;}
+.matrix-cell.q1{background:var(--dark);}
+.matrix-cell.q2{background:#0a3d4a;}
+.matrix-cell.q3{background:#1a2e3a;}
+.matrix-cell.q4{background:#111827;}
+.matrix-tag{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:6px;}
+.matrix-title{color:var(--white);font-size:14px;font-weight:700;margin-bottom:8px;}
+.matrix-items{list-style:none;padding:0;}
+.matrix-items li{color:rgba(255,255,255,.75);font-size:13px;padding:3px 0 3px 14px;position:relative;line-height:1.4;}
+.matrix-items li::before{content:'→';position:absolute;left:0;color:var(--accent);}
+
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#eef7fb;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#eef7fb;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:#0077A8;color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#005f87;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#005f87;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(0,119,168,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+
+@media(max-width:600px){
+  .matrix{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Supervisor Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Time &amp; Priority Management</div>
+  <div class="course-sub">Balancing your own work with the new demands of leading others without burning out or letting things fall through.</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label">0 of 16</div>
+</div>
+
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Priority Framework</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0: Hook -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Everything on the List — and None of It Done</div>
+  <div class="screen-body">Riley was a high performer as an individual contributor. Three months into supervising, Riley felt behind on everything: their own work AND their team's needs. Team members needed attention. Meetings multiplied. But Riley's old deliverables hadn't disappeared.</div>
+  <div class="screen-body">The hardest thing wasn't the new responsibilities — it was that the old ones hadn't gone away.</div>
+  <div class="hl"><strong>Nobody told Riley that a promotion means reprioritizing almost everything, not just adding to the list.</strong> If you're trying to carry your full individual contributor load plus leadership responsibilities, the math doesn't work.</div>
+</div>
+
+<!-- SCREEN 1: Concept -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Your Calendar Is a Value Statement</div>
+  <div class="screen-body">Every meeting you accept is a choice. Every task you say yes to means something else waits. New supervisors often try to keep their full individual contributor workload while adding leadership responsibilities.</div>
+  <div class="screen-body">The math doesn't work. And if your calendar is controlled by other people's requests, you're not leading your time — you're just reacting to it.</div>
+  <div class="hl"><strong>What's on your calendar is what you value — whether you chose it consciously or not.</strong> Look at your schedule from last week. Is it a reflection of your actual priorities?</div>
+</div>
+
+<!-- SCREEN 2: Concept -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Actually Needs Your Attention</div>
+  <div class="screen-body">Not all work is equal. The mistake most new leaders make is treating all tasks as equally urgent.</div>
+  <div class="screen-body">The Eisenhower framework cuts through the noise: <strong>Urgent AND important = do it now. Important but not urgent = schedule it. Urgent but not important = delegate it. Neither = drop it or do it last.</strong></div>
+  <div class="al"><strong>Most leaders spend too much time in "urgent but not important" and not enough in "important but not scheduled."</strong> That second category is where leadership actually happens.</div>
+</div>
+
+<!-- SCREEN 3: Priority Framework — Eisenhower Matrix -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Priority Framework</div>
+  <div class="screen-title">The Eisenhower Matrix for Leaders</div>
+  <div class="screen-body">Four quadrants. Most leaders live in Q1 and Q3, when they should be spending more time in Q2.</div>
+  <div class="matrix">
+    <div class="matrix-cell q1">
+      <div class="matrix-tag">Urgent + Important</div>
+      <div class="matrix-title">Do Now</div>
+      <ul class="matrix-items">
+        <li>Team member in crisis</li>
+        <li>Deadline today</li>
+        <li>Safety issue</li>
+      </ul>
+    </div>
+    <div class="matrix-cell q2">
+      <div class="matrix-tag">Not Urgent + Important</div>
+      <div class="matrix-title">Schedule It — Live Here</div>
+      <ul class="matrix-items">
+        <li>1:1 prep &amp; follow-through</li>
+        <li>Skill development</li>
+        <li>Process improvements</li>
+        <li>Relationship building</li>
+      </ul>
+    </div>
+    <div class="matrix-cell q3">
+      <div class="matrix-tag">Urgent + Not Important</div>
+      <div class="matrix-title">Delegate or Minimize</div>
+      <ul class="matrix-items">
+        <li>Most interruptions</li>
+        <li>Some meetings</li>
+        <li>Minor requests</li>
+      </ul>
+    </div>
+    <div class="matrix-cell q4">
+      <div class="matrix-tag">Not Urgent + Not Important</div>
+      <div class="matrix-title">Drop It</div>
+      <ul class="matrix-items">
+        <li>Low-value admin</li>
+        <li>Old habits</li>
+        <li>Low-impact tasks</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4: Scenario — Foundation -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Two Deadlines, One Person</div>
+  <div class="screen-body">Your team member asks for immediate help on a task that's due tomorrow — but you have a report due to your leader in two hours.</div>
+  <div class="screen-body">What's the right prioritization move?</div>
+  <div class="options" id="opts-4">
+    <div class="opt" onclick="pickOpt(4,'A')"><span class="opt-letter">A</span><span>Help your team member immediately — supporting your team is your primary job now.</span></div>
+    <div class="opt" onclick="pickOpt(4,'B')"><span class="opt-letter">B</span><span>Ask your team member what specifically they need, give them 10 minutes of direction now, and reconnect after your report.</span></div>
+    <div class="opt" onclick="pickOpt(4,'C')"><span class="opt-letter">C</span><span>Tell your team member you'll be available after your report — they should have planned ahead.</span></div>
+    <div class="opt" onclick="pickOpt(4,'D')"><span class="opt-letter">D</span><span>Delegate the report to someone else so you can help your team member fully.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-4"></div>
+</div>
+
+<!-- SCREEN 5: Framework deep dive -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Priority Framework</div>
+  <div class="screen-title">Saying No Without Damaging Relationships</div>
+  <div class="screen-body">Most leaders say yes to everything until they can't deliver anything. There are three professional ways to decline work:</div>
+  <div class="screen-body"><strong>1. Trade-off offer:</strong> "I can do X, but I'll have to push Y — which would you like me to prioritize?" (Let your leader decide.)</div>
+  <div class="screen-body"><strong>2. Capacity statement:</strong> "I don't have capacity for that this week — here's what I can commit to."</div>
+  <div class="screen-body"><strong>3. Redirect:</strong> "That sounds important — let me find the right person to take this on."</div>
+  <div class="hl"><strong>Saying no early protects your team and your credibility.</strong> Saying yes to everything and underdelivering is the faster way to damage trust.</div>
+</div>
+
+<!-- SCREEN 6: Scenario — Framework -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Priority Framework</div>
+  <div class="screen-title">When Your Leader Asks You to Take on More</div>
+  <div class="screen-body">Your leader asks you to take on a new project "on top of" your current responsibilities. You're already at full capacity.</div>
+  <div class="screen-body">What do you do?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Accept it and figure out how to manage — leaders are expected to handle more than they think possible.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Decline clearly — if you can't do it well, you shouldn't do it at all.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Accept and immediately bring your leader a prioritization conversation: "To take this on, I need your input on what to deprioritize."</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Accept and quietly let something else slip — your leader will understand.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario — Practice -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Constant Interruptions Fragmenting Your Focus</div>
+  <div class="screen-body">You notice you're checking messages constantly throughout the day, which fragments your focus.</div>
+  <div class="screen-body">The most effective fix is:</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Turn notifications off permanently — focus is worth protecting.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Designate specific check-in windows (e.g., 8am, noon, 4pm) and protect focus time between them.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Reply to everything immediately so your inbox stays clear.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Ask your team to reduce how often they message you.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario — Practice -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Always Busy, Never Ahead</div>
+  <div class="screen-body">At the end of every day, you feel behind. You're working hard but can't seem to make progress on what matters most.</div>
+  <div class="screen-body">What's the root cause most likely to be?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>You need to work longer hours.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>You're spending most of your time in the urgent-but-not-important quadrant.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Your team isn't self-sufficient enough yet.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>You need better project management tools.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario — Practice -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Development Conversations Keep Getting Pushed Out</div>
+  <div class="screen-body">You want to protect time for development conversations with your team, but operational demands keep displacing them.</div>
+  <div class="screen-body">The most effective approach is:</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Schedule development conversations only when the operational pace allows it.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Block dedicated time on your calendar for 1:1s and treat it as a fixed commitment, not a flexible one.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Have development conversations during regular project check-ins.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Address development informally when natural opportunities arise.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — Adding leadership responsibilities to your previous role requires better time management, not role reprioritization.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — The most important tasks should always be treated as urgent.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — When your leader asks you to take on more than your current capacity allows, the best response is:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Accept everything — leaders are expected to find a way</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Decline — protecting your capacity is essential</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Accept and bring a prioritization conversation immediately: "To do this well, I need help deciding what to deprioritize"</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — Accept and redistribute the extra work to your team</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — Which quadrant of the Eisenhower Matrix do most leaders underinvest in?</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Urgent + Important</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Urgent + Not Important</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Not Urgent + Important</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Not Urgent + Not Important</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — Saying "no" to a request from your leader damages trust.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Priority management is a practice, not a system. These prompts are designed to get you to one concrete change this week.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Where does most of your time go right now — which quadrant of the matrix? (Be honest.)</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Your honest quadrant assessment…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What's one important-but-not-urgent thing you keep deprioritizing that you need to protect time for?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="The thing that never makes it onto your calendar…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Is there a task or commitment you should drop or delegate that you've been holding onto from your individual contributor role?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="The thing to let go of…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's the one thing you'll say no to — or renegotiate — this week to protect your most important work?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="The ask you'll decline or push back on…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. Block time on your calendar this week for something important-but-not-urgent. What did you schedule, and when?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="The time block and what it's for…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">⏰</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Time &amp; Priority Management. The leaders who stay effective over time aren't the ones who work hardest — they're the ones who protect the work that matters most before the urgent stuff fills the day.</div>
+  </div>
+  <div class="commitments">
+    <h4>What effective time managers do differently:</h4>
+    <div class="commit-item">Treat your calendar as a value statement — what's on it reflects your priorities</div>
+    <div class="commit-item">Proactively block time for important-but-not-urgent work before reactive tasks fill the day</div>
+    <div class="commit-item">When asked to take on more, bring a prioritization conversation, not silent acceptance</div>
+    <div class="commit-item">Designate check-in windows for messages — protect focus time in between</div>
+    <div class="commit-item">Let go of individual contributor tasks that should be delegated or dropped</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.office.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div><!-- end course-main -->
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation',           start:0, end:4},
+  {label:'The Priority Framework',start:3, end:6},
+  {label:'Practice',             start:7, end:9},
+  {label:'Pulse Check',          start:10,end:14},
+  {label:'Apply It',             start:15,end:15},
+  {label:'Complete',             start:16,end:16}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  4: { correct:'B', feedback:'<strong>B is right.</strong> Neither task should be ignored — but neither requires you to be fully present for the entire duration. A brief direction-setting conversation gets your team member unstuck. Then you finish your report. Most leadership time crunches resolve when you identify the minimum effective dose of your attention rather than all-or-nothing.' },
+  6: { correct:'C', feedback:'<strong>C is right.</strong> This is managing up. You\'re not declining — you\'re being realistic and giving your leader the information they need to make a good decision. "To do X well, I need to reduce Y or Z — which would you prefer?" puts the prioritization where it belongs: with the person who made the request. Most leaders respect this more than either silent acceptance or flat refusal.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Designated check-in windows protect focus time without creating communication blackouts. Your team knows you\'ll respond — just not instantly. The key is setting the expectation clearly so people don\'t feel ignored. Most "urgent" messages can wait 2 hours.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> The feeling of being constantly busy but never getting to what matters is the signature of the urgent-but-not-important trap. Interruptions, small requests, and reactive tasks can fill a day completely. The solution is proactive scheduling of important-but-not-urgent work before the reactive stuff arrives.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> What isn\'t protected doesn\'t happen. Recurring, blocked 1:1 time signals — to you and your team — that people development is a priority, not a luxury. When operational demands hit, the first thing leaders sacrifice is often the most important thing they\'re responsible for.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Time management tools help, but the real need is reprioritization. Some individual contributor tasks you used to own need to be delegated, dropped, or handed back. You can\'t add an entire dimension to your role without letting go of something. Better calendar hygiene won\'t fix a structural overload.' },
+  11: { correct:'B', feedback:'<strong>False.</strong> The most important tasks — development conversations, long-term planning, relationship building — are almost never urgent. They don\'t have deadlines forcing them. That\'s why they get displaced by urgent-but-less-important things. Proactively scheduling important-but-not-urgent work is the skill.' },
+  12: { correct:'C', feedback:'<strong>C is right.</strong> This is managing up in action. You\'re not saying no — you\'re being responsible about trade-offs and giving your leader the information to make a good decision. Most leaders respect this more than silent acceptance that leads to poor delivery.' },
+  13: { correct:'C', feedback:'<strong>C is right.</strong> Important-but-not-urgent work is where leadership actually happens: developing your team, building relationships, improving processes, planning ahead. Because it never demands attention, it\'s chronically underdone. Scheduling it proactively is the single highest-leverage time management habit for new leaders.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> Saying no clearly and with context — "I don\'t have capacity for this unless I can deprioritize X" — builds trust by demonstrating self-awareness and professional honesty. What damages trust is saying yes and then underdelivering. Your leader needs accurate information to manage the work well.' }
+};
+
+const KEY = 'course_sv_time_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

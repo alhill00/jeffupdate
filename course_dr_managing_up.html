@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Managing Up at the Director Level | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#faf8ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#6D28D9;
+  --accent-light:#ede9fe;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#ede9fe;
+  --good-border:#6D28D9;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#1a0a3d 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(109,40,217,.25);color:rgba(255,255,255,.8);border-color:rgba(109,40,217,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.four-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.exec-card{background:var(--card);border:1.5px solid var(--border);border-left:4px solid var(--accent);border-radius:10px;padding:16px;}
+.exec-card h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:6px;}
+.exec-card p{font-size:13px;color:#374151;line-height:1.5;}
+.num-cards{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.num-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;}
+.num-badge{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--white);font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.num-content h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.num-content p{font-size:13.5px;color:#374151;line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#5b21b6;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#5b21b6;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(109,40,217,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .four-cards{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Director Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Managing Up at the Director Level</div>
+  <div class="course-sub">Navigating executive relationships, surfacing the right information, and advocating with impact.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Executive Relationship</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Managing Up Is Strategic, Not Transactional</div>
+  <div class="screen-body">At the manager level, managing up means keeping your boss informed and getting approvals efficiently. That's transactional managing up — and it's table stakes, not a skill.</div>
+  <div class="screen-body">At director level, managing up is strategic. You understand your executive's pressures, stakeholders, and priorities well enough to be genuinely useful — not just compliant. You're thinking about their job while doing yours. You surface risks before they become surprises. You align your org's direction with executive intent, especially when intent is ambiguous. You advocate for your team and function in rooms where they're not present.</div>
+  <div class="screen-body">Directors who master executive relationships get resources, alignment, and organizational air cover. Directors who manage up transactionally get approvals — and not much else.</div>
+  <div class="hl"><strong>The goal isn't to impress your exec.</strong> It's to make their job easier by being the director who needs the least managing — because you're already doing the work of thinking about what they'd want you to know.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three New Managing-Up Responsibilities at Director Level</div>
+  <div class="screen-body">These are distinct from what was expected of you as a manager — and they require a different kind of investment in the relationship.</div>
+  <div class="num-cards">
+    <div class="num-card">
+      <div class="num-badge">1</div>
+      <div class="num-content">
+        <h4>Translating Strategy Down</h4>
+        <p>Your exec sets direction; your job is to translate it into something your org can execute. When strategy is ambiguous — which it often is — you interpret it, align your function, and execute without constant clarification. When you need clarification, you ask the right question in the right moment.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">2</div>
+      <div class="num-content">
+        <h4>Surfacing Signals and Risks Early</h4>
+        <p>Executives hate surprises. Your job is to surface risks, early signals of problems, and developments that affect their priorities — before they hear it from someone else. "I wanted to give you a heads-up before this becomes more visible" is one of the most trust-building things a director can say.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">3</div>
+      <div class="num-content">
+        <h4>Advocating for Your Team</h4>
+        <p>Your team needs a champion in conversations they're not part of. When resources, recognition, or organizational decisions are being made, you make the case for the people and the function you lead. You create visibility for work that deserves it. This is a job only you can do for them.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Most Common Director Managing-Up Failure</div>
+  <div class="screen-body">Over-briefing. Two slides of background before the recommendation. Three paragraphs of context before the ask. A six-minute setup before the thirty-second point.</div>
+  <div class="screen-body">Executives filter every communication for three questions: Is this on track? Is there a risk? What do you need from me? When you lead with context before the point, you're making them do the extraction work. You've trained them to wait — impatiently — through your setup before they can assess the signal.</div>
+  <div class="al"><strong>The instinct to build context first</strong> comes from a good place — you want them to understand. But at director level, understanding is your job to deliver efficiently, not theirs to extract from your briefing. Lead with the point. Context follows for those who want it.</div>
+  <div class="hl"><strong>The 90-second test:</strong> If your exec has 90 seconds in a hallway, can you give them everything they need? If not — that's your briefing structure, not the time available.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Executive Relationship</div>
+  <div class="screen-title">Four Dimensions of the Executive Relationship</div>
+  <div class="screen-body">A strong executive relationship requires competence across all four of these — not just the first one.</div>
+  <div class="four-cards">
+    <div class="exec-card">
+      <h4>Informing</h4>
+      <p>Right signal, right time, right format. Early warning on risk. Milestone updates. Clear asks. Your exec should never be surprised by something you knew was coming.</p>
+    </div>
+    <div class="exec-card">
+      <h4>Advocating</h4>
+      <p>Making the case for your team and function in rooms they're not in. Naming their work. Fighting for resources and recognition where it's deserved. Creating visibility for people who built something worth seeing.</p>
+    </div>
+    <div class="exec-card">
+      <h4>Aligning</h4>
+      <p>Ensuring your direction matches executive intent — especially when intent is ambiguous. Asking the right clarifying questions. Checking back when context shifts. Not assuming alignment that hasn't been confirmed.</p>
+    </div>
+    <div class="exec-card">
+      <h4>Challenging</h4>
+      <p>Knowing when and how to push back without damaging the relationship. Bringing data and a better alternative. Disagreeing privately. Committing publicly. Never sandbagging your exec in the room.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Escalation Judgment Call</div>
+  <div class="screen-body">One of the most important managing-up skills at director level is knowing what to escalate — and what to handle. Over-escalating makes you look like you can't lead your level. Under-escalating means your exec gets blindsided.</div>
+  <div class="hl"><strong>Three-question escalation filter:</strong><br><br>
+  1. Would my exec be surprised if this came up at a higher level and they hadn't heard it from me first?<br><br>
+  2. Does resolving this require executive authority or resources I don't have?<br><br>
+  3. Is this recoverable if I handle it wrong?<br><br>
+  If the answer to question 1 or 2 is yes — escalate. If the answer to question 3 is yes and 1 and 2 are no — handle it and update them after.</div>
+  <div class="screen-body">The goal is to be the director whose judgment on what to escalate is trusted — so your exec knows that when you bring something, it's worth their attention.</div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Executive Relationship</div>
+  <div class="screen-title">Surfacing a Delay Before It Becomes Visible</div>
+  <div class="screen-body">A key initiative you own is running two weeks behind. The delay is real but recoverable with a resource adjustment. Your exec is presenting the initiative timeline to the executive team in three weeks. What do you do?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Absorb the delay internally and try to recover in the next two weeks — no point raising it until you know whether the recovery plan works.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Brief your exec now: headline (two weeks behind), recovery plan (specific), ask (resource adjustment needed). Give them the full picture before they're in a room presenting an inaccurate timeline.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Send a brief email update noting the delay and that you're working on a recovery — no need for a full conversation until the plan is finalized.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Ask your exec's chief of staff how they like to receive delay notifications — better to get the format right before delivering bad news.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Executive Relationship</div>
+  <div class="screen-title">Disagreeing with a Direction Already in Motion</div>
+  <div class="screen-body">Your CPO has made a strategic decision you disagree with — you think it's solving the wrong problem and you have data to support a different approach. The decision was announced publicly two weeks ago and execution has started. What do you do?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Execute the decision fully while sharing your concerns with your team — you disagree, but they should know where you stand.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Execute the decision, then request private time with your CPO: share your data and perspective, ask if there's something you're missing, and let them decide how to proceed with full information.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Slow your team's execution slightly while you build a stronger case — you don't want to be too far in before the decision is reconsidered.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Raise the concern at the next leadership meeting — transparency with the full team is the right forum for strategic disagreements.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">The Hallway Update</div>
+  <div class="screen-body">You run into your CPO in the hallway and they ask: "How's the platform initiative going?" You have 90 seconds. What do you say?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>"Really well overall — we've been working through some complexity with the vendor but I think we're going to be fine."</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>"On track for the March launch. One risk to flag: vendor dependency shifted — I have a recovery option that needs your sign-off. Can I send a one-pager by end of day?"</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>"It's been a complex quarter — there's a lot to update you on. Can we get 30 minutes on the calendar this week?"</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>"Let me check where we are before I give you an update — I want to make sure I'm giving you accurate numbers."</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Advocating for a Resource Before the Room</div>
+  <div class="screen-body">Budget planning is happening. You need a headcount addition that isn't in the current plan. You know the decision will be made in a leadership meeting you won't be in. How do you position the request?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Submit the formal budget request and trust the process — the numbers will speak for themselves.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Brief your exec before the meeting — share the business case (the problem it solves, the cost of not filling it, the expected return), and make sure they can speak to it confidently if asked in the room.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Ask to attend the budget meeting so you can present the case yourself — you know it better than anyone.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Build alliance with peer directors who might advocate for you — coalition support carries weight in resource discussions.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Creating Visibility for Your Team</div>
+  <div class="screen-body">A member of your team built something exceptional — a process improvement that will save the company significant time and money, and demonstrated leadership well above their current level. How do you create visibility for this person at the executive level?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Mention it in your next 1:1 with your exec and let them decide whether it warrants further attention.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Bring it directly into an executive touchpoint: name the person and their work specifically, connect it to a business outcome the exec cares about, and consider whether a brief presentation by the team member directly would be appropriate.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Write it up as a team success story and share it org-wide — broader recognition serves the same purpose as executive visibility.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Nominate them for an internal award — formal recognition programs are the right channel for this kind of acknowledgment.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — The four dimensions of the executive relationship include Informing, Advocating, Aligning, and:</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">A — Reporting</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">B — Challenging</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'C')">C — Executing</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'D')">D — Influencing</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Using the escalation filter, you should escalate when your exec would be surprised if the issue came up at a higher level without them having heard it from you first.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — The most common director managing-up failure is:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Under-escalating risks until they've become significant problems</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Over-briefing — leading with too much context before the recommendation or ask</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Advocating too aggressively for team resources in budget discussions</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — Challenging executive decisions in public settings</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — In a 90-second hallway update, your exec most needs to know:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — The history and context of the initiative</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Status, any risk, and what (if anything) you need from them</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — The full team roster and their individual contributions</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Detailed analysis of the key decisions made to date</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — When you disagree with an executive decision that has already been publicly announced, the right approach is to:</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Execute fully and share your disagreement with your team so they understand your position</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — Execute fully and raise your concern privately with your exec, with data and an alternative</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — Raise it in the next leadership meeting — transparency serves alignment</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — Slow execution slightly while you build a stronger case before committing fully</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Use these prompts to audit your current executive relationship and identify one specific action this week.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. What does your exec care about most right now — and how does your work connect to it?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="My exec cares most about… My work connects to that by…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Is there a risk or development they don't know about that they should?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="The thing they don't know yet is…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Draft a 90-second executive update on your most important current initiative.</div>
+    <div class="apply-sub">Status + risk (if any) + ask (if any). One paragraph max.</div>
+    <textarea class="apply-input" id="apply-2" placeholder="[Initiative] is [status]. [Risk if any]. [Ask if any]." oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. Who on your team deserves executive visibility right now — and how will you create it?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="[Name] deserves visibility for… I'll create it by…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. Which of the four dimensions (Informing / Advocating / Aligning / Challenging) needs the most work in your executive relationship?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="The dimension that needs work is… because…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🤝</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Managing Up at the Director Level. The directors who manage up well aren't the ones who always agree — they're the ones whose judgment is trusted, whose communication is crisp, and whose team knows they have a champion in the room.</div>
+  </div>
+  <div class="commitments">
+    <h4>Four commitments for managing up at director level:</h4>
+    <div class="commit-item">Surface risks before surprises — brief your exec before the room, not after</div>
+    <div class="commit-item">Disagree privately after committing publicly — never sandbag your exec in a leadership meeting</div>
+    <div class="commit-item">Create executive visibility for the Team Members on your team who have earned it</div>
+    <div class="commit-item">Lead every executive briefing with the headline — context follows the point, every time</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation',              end:5},
+  {label:'The Executive Relationship',end:7},
+  {label:'Practice',                end:10},
+  {label:'Pulse Check',             end:15},
+  {label:'Apply It',                end:16},
+  {label:'Complete',                end:17}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Brief your exec now — with the full picture. They\'re presenting your timeline in three weeks. If they don\'t know about the delay, they look uninformed in the room. "I wanted to give you a heads-up before this becomes more visible" is one of the most trust-building things a director can say. The recovery plan plus the ask (resource adjustment) gives them everything they need to take action.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Execute the decision — you committed publicly and the team needs full execution, not half-hearted compliance. Then seek private time to share your data and perspective. This is the Challenging dimension of the executive relationship done right: disagree privately, commit publicly. Sharing your disagreement with your team (A) creates alignment problems. Slowing execution (C) is a passive-aggressive form of resistance.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Status + risk + ask, delivered in 90 seconds. "On track for March launch. One risk to flag — I have a recovery option that needs your sign-off. Can I send a one-pager by end of day?" This answers all three exec questions (on track? yes, mostly. risk? yes, flagged. what do you need? sign-off, one-pager incoming). Option A minimizes a real risk. Option C expands the conversation instead of compressing it.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> The resource decision will be made in a room you\'re not in. Your exec is your advocate. If they can\'t speak to your case confidently, the request won\'t land. Brief them before — share the business case (problem + cost of not filling + expected return) and make sure they have everything they need to champion it. Formal process alone (A) rarely wins in competitive resource environments.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Advocacy is specific, not general. "My team did great work this quarter" doesn\'t create executive visibility. Naming the person, their specific contribution, and its business connection does. Org-wide recognition (C) and awards (D) are valuable but serve a different purpose — they don\'t put someone on an executive\'s radar as a talent worth watching.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>B is right.</strong> The four dimensions are Informing, Advocating, Aligning, and Challenging. Together they describe the full scope of what a strong executive relationship requires at director level. Most directors are competent at Informing; fewer are skilled at Challenging in a way that preserves the relationship while delivering the honest perspective.' },
+  11: { correct:'A', feedback:'<strong>True.</strong> The first escalation filter question is: would my exec be surprised if this came up at a higher level and they hadn\'t heard it from me? If yes — escalate. Executives hate surprises, especially in rooms where they\'re expected to have visibility. The goal is to be the director whose exec is never caught flat-footed because of something you knew.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> Over-briefing is the most common failure — leading with two slides of background before the recommendation, three paragraphs of context before the ask. Executives are triaging enormous volumes of information. When you front-load context, you\'re making them work to find the signal. Lead with the point; context follows for those who want it.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> In 90 seconds, your exec needs status, risk, and ask — exactly what they\'re filtering for. History, context, team composition, and decision history belong in a follow-up one-pager, not a hallway exchange. The 90-second update is about giving them what they need to hold the initiative appropriately — nothing more.' },
+  14: { correct:'B', feedback:'<strong>B is right.</strong> Execute fully and raise the concern privately. This is the standard for the Challenging dimension of the executive relationship: disagree privately after committing publicly. Sharing disagreement with your team (A) creates alignment problems and puts your team in an awkward position. Public challenge (C) or slowed execution (D) both damage the relationship and the org\'s execution.' }
+};
+
+const KEY = 'course_dr_managing_up_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

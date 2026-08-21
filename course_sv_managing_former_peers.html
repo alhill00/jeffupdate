@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Managing Former Peers | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f4fbfd;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#0077A8;
+  --accent-light:#d0eef7;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#d0eef7;
+  --good-border:#0077A8;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+
+.course-header{background:linear-gradient(135deg,#0a3d4a 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#00A0C6;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+
+.section-nav{background:#0a3d4a;padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(0,119,168,.25);color:rgba(255,255,255,.8);border-color:rgba(0,119,168,.4);}
+
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body + .screen-body{margin-top:-8px;}
+
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+
+.convo-cards{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.convo-card{background:var(--dark);border-radius:10px;padding:18px 20px;}
+.convo-type{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.convo-title{color:var(--white);font-size:15px;font-weight:700;margin-bottom:8px;}
+.convo-script{color:rgba(255,255,255,.8);font-size:13px;font-style:italic;line-height:1.6;border-left:3px solid var(--accent);padding-left:12px;}
+
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#eef7fb;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#eef7fb;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:#0077A8;color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#005f87;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#005f87;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(0,119,168,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+
+@media(max-width:600px){
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Supervisor Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Managing Former Peers</div>
+  <div class="course-sub">Establishing authority and trust with people who were recently your colleagues, without losing the relationships.</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label">0 of 16</div>
+</div>
+
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Transition Framework</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0: Hook -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Room That Changed Overnight</div>
+  <div class="screen-body">Alex got promoted to supervisor of the team they'd been on for three years. Day one, they walked into the room and someone said, "Hey, here comes the boss" with a smirk. Dinner invites started going out without them. One close work friend started being oddly formal. Another started trying to get special treatment.</div>
+  <div class="screen-body">Alex hadn't changed. But everything else had.</div>
+  <div class="hl"><strong>The hardest part of the peer-to-leader transition isn't learning the new skills.</strong> It's navigating the relationships that have already shifted — whether you wanted them to or not.</div>
+</div>
+
+<!-- SCREEN 1: Concept -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three Things That Change the Day You're Promoted</div>
+  <div class="screen-body">Most new supervisors try to ignore all three. The relationships suffer more when you pretend nothing changed.</div>
+  <div class="screen-body">
+    <strong>1. Your role.</strong> You're accountable for outcomes you used to contribute to.<br><br>
+    <strong>2. Your relationships.</strong> The informal peer dynamic shifts the moment you can influence someone's schedule, performance review, or assignments.<br><br>
+    <strong>3. Your authority.</strong> You now have formal authority — whether you use it or not.
+  </div>
+  <div class="al"><strong>Acknowledge the shift directly.</strong> The people around you already feel it. Naming it is less awkward than both parties pretending it isn't happening.</div>
+</div>
+
+<!-- SCREEN 2: Concept -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Equity Trap</div>
+  <div class="screen-body">The most common mistake new supervisors make with former peers: trying so hard not to show favoritism that they become harder on their friends than on everyone else. Or the opposite — being easier on friends because the relationship matters.</div>
+  <div class="screen-body">Both are problems. Your team will notice either.</div>
+  <div class="hl"><strong>The goal isn't equal treatment — it's fair treatment based on the work, not the history.</strong> Your decisions need to be defensible to everyone, not just explainable to your friends.</div>
+</div>
+
+<!-- SCREEN 3: Transition Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Transition Framework</div>
+  <div class="screen-title">Three Conversations Every New Supervisor Should Have in Week One</div>
+  <div class="screen-body">These conversations don't have to be long. They do have to happen.</div>
+  <div class="convo-cards">
+    <div class="convo-card">
+      <div class="convo-type">With each team member</div>
+      <div class="convo-title">The Role Clarity Conversation</div>
+      <div class="convo-script">"My job now is to support the team's success — not to be the best individual contributor. I'm still learning what that looks like. Here's what I need from you and here's what you can expect from me."</div>
+    </div>
+    <div class="convo-card">
+      <div class="convo-type">With close friends on the team</div>
+      <div class="convo-title">The Peer Relationship Conversation</div>
+      <div class="convo-script">"Our friendship matters to me. I also need to be fair to everyone on the team, which means I'll sometimes make decisions that might not feel like what a friend would do. I want to be upfront about that."</div>
+    </div>
+    <div class="convo-card">
+      <div class="convo-type">With your manager</div>
+      <div class="convo-title">The Leader Check-In</div>
+      <div class="convo-script">"Here's what I'm navigating. Here's where I could use guidance."</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4: Scenario — Foundation -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">When a Friend Asks for Special Treatment</div>
+  <div class="screen-body">Your close work friend on your team asks you to approve a schedule change that you've denied for other team members in similar circumstances.</div>
+  <div class="screen-body">What do you do?</div>
+  <div class="options" id="opts-4">
+    <div class="opt" onclick="pickOpt(4,'A')"><span class="opt-letter">A</span><span>Approve it — your friendship matters and the situation is slightly different anyway.</span></div>
+    <div class="opt" onclick="pickOpt(4,'B')"><span class="opt-letter">B</span><span>Ask your leader to make the call so you're not put in this position.</span></div>
+    <div class="opt" onclick="pickOpt(4,'C')"><span class="opt-letter">C</span><span>Have a direct conversation: "I have to treat this the same way I've treated similar requests — I can't approve it. I know that's hard to hear and I want to be straight with you about why."</span></div>
+    <div class="opt" onclick="pickOpt(4,'D')"><span class="opt-letter">D</span><span>Deny it and avoid discussing why to keep it professional.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-4"></div>
+</div>
+
+<!-- SCREEN 5: Framework deep dive -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Transition Framework</div>
+  <div class="screen-title">Establishing Authority Without Being Authoritative</div>
+  <div class="screen-body">New supervisors often swing between two failure modes:</div>
+  <div class="screen-body"><strong>1. Over-asserting authority:</strong> "I'm the supervisor now, so..." — This triggers resentment immediately.<br><br><strong>2. Avoiding authority entirely:</strong> "I don't want to make this weird." — This creates confusion and tests.</div>
+  <div class="screen-body">Both backfire. Authority comes from clarity and consistency, not from announcing it.</div>
+  <div class="hl"><strong>Your team will follow you when they understand your expectations and trust that you mean what you say.</strong> The first few weeks establish the pattern. Get that right and everything else gets easier.</div>
+</div>
+
+<!-- SCREEN 6: Scenario — Framework -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Transition Framework</div>
+  <div class="screen-title">When a Former Peer Keeps Pushing Back Publicly</div>
+  <div class="screen-body">A former peer regularly challenges your decisions in front of the team — not aggressively, but frequently and publicly.</div>
+  <div class="screen-body">What's the best response?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Let it happen — it's healthy for teams to question their leaders.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Address it in the meeting in the moment so the team sees you handle it.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Pull them aside privately: "I've noticed you often push back on my decisions in team settings. I want to understand your concerns — and I'd rather you bring them to me directly before the meeting."</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Escalate to your leader — this person is undermining your authority.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario — Practice -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When the Team Still Treats You Like a Peer</div>
+  <div class="screen-body">Three months in, your team still treats you like a peer — they share complaints with you about the company, include you in informal venting sessions, and expect you to agree with them.</div>
+  <div class="screen-body">How do you handle this?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Lean into it — maintaining peer relationships keeps morale high.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Stop attending informal gatherings entirely.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Be warm and present in informal settings while gradually establishing that you can't echo complaints or take sides as their leader.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Tell your leader — this is inappropriate behavior from the team.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario — Practice -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When Your Former Best Friend Is Your Lowest Performer</div>
+  <div class="screen-body">Your former work best friend is now your lowest performer. You need to address their performance.</div>
+  <div class="screen-body">What's the most important thing to do first?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Address it the same way you would for any other team member.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Give them extra time because of the relationship.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Ask your leader to handle this performance conversation.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Wait to see if they improve on their own before saying anything.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario — Practice -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When a Non-Promoted Peer Seems Resentful</div>
+  <div class="screen-body">Your entire former peer group gets promotions in the same cycle — you and two others become supervisors simultaneously. A former peer who didn't get promoted seems resentful.</div>
+  <div class="screen-body">What do you do?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Give them extra visibility and interesting projects to show you still value them.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Treat them professionally and consistently — and privately check in: "How are you doing with all the changes?"</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Avoid one-on-ones for a while to let the tension settle.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Tell your leader that this person's attitude is affecting team morale.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — The peer-to-leader transition gets easier if you maintain the exact same relationships you had before your promotion.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — New supervisors should avoid socializing with their teams entirely to prevent favoritism.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — The "equity trap" refers to:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Treating all team members identically, regardless of their needs or performance</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Overcompensating by being harder on friends — or easier — to manage perceptions of fairness</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Allowing former peer relationships to influence business decisions</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — Promoting team members based on friendship rather than performance</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — The most effective way to establish authority as a new supervisor is to:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Announce your authority clearly in the first team meeting</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Be consistent and clear about expectations — authority follows clarity and credibility</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Distance yourself from the peer group to signal the role change</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Make a few decisive early decisions to show you're in charge</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — It's best to avoid having explicit conversations with former peers about the change in your relationship.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">The peer-to-leader transition is messier than any course can fully capture. These prompts are about your specific situation — not the general case.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Which former peer relationship feels most complicated now that you're their supervisor? What makes it feel that way?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="The relationship and what's complicated about it…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Is there a conversation you've been avoiding with a former peer? What's stopping you?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="The conversation and the resistance…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Write the opening line of the "role clarity" conversation you'll have with your team this week.</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Your opening line…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's one thing you've been doing differently with a former friend that isn't fair to the rest of the team?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="The inconsistency to address…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. What does being "appropriately connected" look like for you — not too distant, not inappropriately close — with this team?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Your version of the right balance…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🔄</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Managing Former Peers. The leaders who navigate this transition best aren't the ones who become distant or formal — they're the ones who acknowledge the shift directly and build new trust on top of the old relationship.</div>
+  </div>
+  <div class="commitments">
+    <h4>What successful peer-to-leader transitions look like:</h4>
+    <div class="commit-item">Have the role clarity conversation with your team — early and directly</div>
+    <div class="commit-item">Address the relationship with close former peers explicitly, before they test it</div>
+    <div class="commit-item">Make decisions based on the work, not the history</div>
+    <div class="commit-item">Establish your standard early — the first inconsistency is the hardest to undo</div>
+    <div class="commit-item">Stay connected and warm without losing the authority the team needs from you</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.office.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div><!-- end course-main -->
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation',             start:0, end:4},
+  {label:'The Transition Framework',start:3, end:6},
+  {label:'Practice',               start:7, end:9},
+  {label:'Pulse Check',            start:10,end:14},
+  {label:'Apply It',               start:15,end:15},
+  {label:'Complete',               start:16,end:16}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  4: { correct:'C', feedback:'<strong>C is right.</strong> This is the peer-to-leader test. The conversation is uncomfortable, but it establishes something important: that your decisions are based on fairness, not relationship. The worst outcome is silent inconsistency — where your friend gets different treatment and everyone notices. That destroys trust faster than the uncomfortable conversation.' },
+  6: { correct:'C', feedback:'<strong>C is right.</strong> Private, direct conversation before it becomes a pattern. Addressing it in the meeting risks a power struggle in front of the team. Escalating immediately is disproportionate. The peer who challenges you publicly is often testing the new dynamic — a direct conversation about your preference usually resets it.' },
+  7: { correct:'C', feedback:'<strong>C is right.</strong> The transition takes time. You don\'t need to become cold or distant — you need to gently but clearly establish where you stand. When someone vents, you can acknowledge the emotion without echoing the complaint: "That sounds frustrating. Here\'s how I\'d think about it..." This is the leader version of the conversation, not the peer version.' },
+  8: { correct:'A', feedback:'<strong>A is right.</strong> The discomfort of addressing a friend\'s performance is real — and it doesn\'t exempt you from doing it. In fact, avoiding it because of the friendship is a form of harm: you\'re letting them stay in a situation that could get worse. The most caring thing is also the most professional thing: a clear, honest, early conversation.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> The resentment is often about loss, not about you. A private check-in acknowledges it without making it a performance issue. It also gives you information: if this person is struggling, you can engage L&D or your leader early. Avoiding them (C) almost always makes it worse.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> The relationship changes whether you want it to or not. The people around you will adjust their behavior once you have authority over their work. Pretending nothing changed creates confusion and inconsistency. Acknowledging the shift explicitly — and navigating it thoughtfully — produces better outcomes than denial.' },
+  11: { correct:'B', feedback:'<strong>False.</strong> Complete withdrawal from the team creates distance and reduces trust. The goal is appropriate relationship management — being present, warm, and connected while maintaining clear professional boundaries. Leaders who go cold immediately after promotion often lose their team\'s trust fastest.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> The equity trap is the over-correction. New supervisors who try too hard not to appear biased often become inconsistent in the other direction — either holding friends to a higher standard or a lower one. The goal is decisions based on the work, not the relationship.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> Authority isn\'t declared — it\'s earned. Consistency, clarity, and following through build it faster than any announcement. Your team will test the new dynamic. The way you respond to those tests establishes who you are as a leader.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> Explicit early conversations — especially with close friends — prevent the awkward drift that happens when both parties are adjusting but neither says anything. A brief, honest conversation ("Our friendship matters and my role has changed — here\'s how I\'m thinking about navigating that") sets the tone far better than silence.' }
+};
+
+const KEY = 'course_sv_former_peers_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

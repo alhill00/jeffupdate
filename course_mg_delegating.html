@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Delegating Effectively | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#174DFF;
+  --accent-light:#e0e8ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#e0e8ff;
+  --good-border:#174DFF;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#000633 0%,#0d1f6e 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(23,77,255,.25);color:rgba(255,255,255,.8);border-color:rgba(23,77,255,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card p{font-size:13.5px;line-height:1.6;color:#374151;margin-bottom:8px;}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.matrix-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0;}
+.matrix-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px;}
+.matrix-card.q1{border-top:4px solid #f43f5e;}
+.matrix-card.q2{border-top:4px solid var(--warn-border);}
+.matrix-card.q3{border-top:4px solid var(--accent);}
+.matrix-card.q4{border-top:4px solid #10b981;}
+.matrix-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;color:var(--muted);}
+.matrix-action{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:6px;}
+.matrix-desc{font-size:13px;color:#374151;line-height:1.5;}
+.four-steps{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.step-row{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;gap:14px;align-items:flex-start;}
+.step-num{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--white);font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-content{flex:1;}
+.step-title{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.step-desc{font-size:13px;color:#374151;line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#0d3acc;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#0d3acc;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .two-col,.matrix-grid{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Delegating Effectively</div>
+  <div class="course-sub">Getting work done through your team — not by doing it yourself.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Delegation Matrix</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Manager Who Did Everything Herself</div>
+  <div class="screen-body">When Maya got promoted to manager, she kept doing what had always made her successful — the work itself. She was fast, accurate, and high-quality. Her team appreciated that nothing slipped through the cracks. She felt in control.</div>
+  <div class="screen-body">Six months later, she was exhausted. Her team was underutilized. Nothing moved when she was out. Projects piled up on her desk alone. Her team had capable people — but they had stopped developing because Maya was always the one doing it.</div>
+  <div class="screen-body">The lesson Maya eventually learned: she had confused "doing good work" with "managing." They are not the same thing.</div>
+  <div class="hl"><strong>Delegating isn't losing control — it's multiplying your capacity.</strong> The manager who does everything has a ceiling. The manager who delegates effectively keeps raising it.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Doer vs. Multiplier</div>
+  <div class="screen-body">Most new managers default to Doer mode — it's what got them promoted. The shift to Multiplier is the actual job of management.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>The Doer</h4>
+      <ul>
+        <li>Handles work themselves</li>
+        <li>Team is underutilized</li>
+        <li>Creates a bottleneck</li>
+        <li>Ceiling = personal output</li>
+      </ul>
+      <div class="hl" style="margin-top:12px;font-size:13px;background:#fee2e2;border-left-color:#f43f5e;">Fast in the moment. <strong>Limits the team long-term.</strong></div>
+    </div>
+    <div class="col-card accent-left">
+      <h4>The Multiplier</h4>
+      <ul>
+        <li>Assigns work strategically</li>
+        <li>Builds team capability</li>
+        <li>Scales impact</li>
+        <li>Ceiling keeps rising</li>
+      </ul>
+      <div class="hl" style="margin-top:12px;font-size:13px;">Slower upfront. <strong>Compounds over time.</strong></div>
+    </div>
+  </div>
+  <div class="screen-body" style="font-size:14px;color:var(--muted);">The question isn't whether you can do it better. It's whether someone else can do it well enough — and grow in the process.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Why Managers Don't Delegate</div>
+  <div class="screen-body">Every manager has heard of delegation. Most still don't do it enough. Here's why — and why these reasons, while valid, are also barriers.</div>
+  <div class="four-steps">
+    <div class="step-row">
+      <div class="step-num" style="background:#f43f5e;">1</div>
+      <div class="step-content">
+        <div class="step-title">"I can do it faster myself."</div>
+        <div class="step-desc">True — this time. But next time, and the time after that, you'll still be the one doing it.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num" style="background:#f43f5e;">2</div>
+      <div class="step-content">
+        <div class="step-title">"I don't trust them yet."</div>
+        <div class="step-desc">Trust is built through experience. They won't earn your trust without the opportunity to try.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num" style="background:#f43f5e;">3</div>
+      <div class="step-content">
+        <div class="step-title">"If it fails, it reflects on me."</div>
+        <div class="step-desc">Yes — and your job is to set them up well enough that it doesn't. That's the manager's role.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num" style="background:#f43f5e;">4</div>
+      <div class="step-content">
+        <div class="step-title">"I actually like this work."</div>
+        <div class="step-desc">Completely understandable. Also the most honest reason — and the one that's hardest to argue with. But liking the work doesn't make it yours to keep.</div>
+      </div>
+    </div>
+  </div>
+  <div class="al"><strong>The antidote</strong> isn't pretending these feelings aren't real. It's having a process that addresses each one — which is exactly what the Delegation Matrix gives you.</div>
+</div>
+
+<!-- SCREEN 3 -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Delegation Matrix</div>
+  <div class="screen-title">Match the Task to the Approach</div>
+  <div class="screen-body">Not every task should be delegated the same way. The Delegation Matrix helps you decide your approach based on two variables: how complex the task is, and how ready your Team Member is.</div>
+  <div class="matrix-grid">
+    <div class="matrix-card q1">
+      <div class="matrix-label">High Complexity + Low Readiness</div>
+      <div class="matrix-action">Do It Yourself</div>
+      <div class="matrix-desc">Or coach side-by-side. Don't delegate complex work to someone not yet ready — it sets them up to fail.</div>
+    </div>
+    <div class="matrix-card q3">
+      <div class="matrix-label">High Complexity + High Readiness</div>
+      <div class="matrix-action">Brief and Trust</div>
+      <div class="matrix-desc">Delegate with one scheduled check-in. Set the standard clearly, then get out of the way.</div>
+    </div>
+    <div class="matrix-card q2">
+      <div class="matrix-label">Low Complexity + Low Readiness</div>
+      <div class="matrix-action">Coach Through It</div>
+      <div class="matrix-desc">Assign with heavy guidance. Use it as a development opportunity — they learn, you get it done.</div>
+    </div>
+    <div class="matrix-card q4">
+      <div class="matrix-label">Low Complexity + High Readiness</div>
+      <div class="matrix-action">Assign and Release</div>
+      <div class="matrix-desc">Fully hand off with minimal check-in. This is the clearest delegation opportunity — take it.</div>
+    </div>
+  </div>
+  <div class="hl"><strong>The most common mistake:</strong> treating all tasks and all people the same. Match your approach to the quadrant — not your comfort level.</div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Four Delegation Moves</div>
+  <div class="screen-body">Deciding to delegate is only the first step. How you delegate determines whether it works.</div>
+  <div class="four-steps">
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">Choose the right person</div>
+        <div class="step-desc">Skill match AND capacity match. A capable person with no bandwidth will fail just as predictably as someone without the skill.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <div class="step-title">Brief fully</div>
+        <div class="step-desc">Not just what to do — but why it matters and what "done right" looks like. Context creates ownership. Without the why, they're executing a task. With it, they're solving a problem.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <div class="step-title">Grant authority</div>
+        <div class="step-desc">They need access, permission, and visibility to actually do it. Delegating without authority is setting someone up to fail before they start.</div>
+      </div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <div class="step-title">Check in once, then trust</div>
+        <div class="step-desc">Schedule one touchpoint. That's accountability — not hovering. After the check-in, trust the process.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 5 -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Delegation Matrix</div>
+  <div class="screen-title">Scenario: The Right Assignment</div>
+  <div class="screen-body">Raya has been on your team for 3 years and has handled similar projects before. You're swamped, and a new reporting deliverable is 70% in her wheelhouse. What do you do?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Do it yourself — it's too important to risk on someone else.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Delegate to Raya with a full briefing and one midpoint check-in.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Ask Raya to shadow you while you do it so she learns for next time.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Deprioritize the deliverable — you don't have the bandwidth either way.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6 -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Delegation Matrix</div>
+  <div class="screen-title">Scenario: When the Work Needs Rework</div>
+  <div class="screen-body">You delegated a project to Jordan, a newer Team Member. At the check-in, the work needs significant rework — Jordan missed key requirements. What's your next move?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Take the project back and finish it yourself — it'll be faster.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Coach Jordan through what needs to change and why — let him fix it.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Give Jordan a complete redo with fully rewritten instructions.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Mark it as done and lower your standards this one time.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7 -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Scenario: The Task You've Always Done</div>
+  <div class="screen-body">You have a recurring task you've done for 2 years — monthly data reporting, about 3 hours, well-documented. Your Team Member Sam has asked for more operational responsibility. What's the best move?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Keep doing it yourself — you know it best and it's efficient.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Delegate to Sam with clear docs, then review the first output together.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Wait until Sam specifically requests this exact task before delegating.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Split it — Sam does half, you do half, for now.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8 -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Scenario: Missing Authority</div>
+  <div class="screen-body">You want to delegate a task to a Team Member, but you realize they won't have the system access needed to complete it. What do you do first?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Delegate anyway and see if they can figure out the access themselves.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Ensure access is in place before briefing them on the task.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Do it yourself this time and plan to properly delegate it next cycle.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Ask them to request access themselves without giving them the full context yet.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9 -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Scenario: Different Method, Same Result</div>
+  <div class="screen-body">Your Team Member completes a delegated task. The results meet the standard — but they did it completely differently than you would have. What's the right call?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Redo the work your way before it goes out — consistency matters.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Accept the output — different method, standard met, move on.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Have a conversation about doing it your way next time.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Reduce how much you delegate to this person going forward.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10 -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — When you delegate a task, you transfer accountability to the Team Member.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11 -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Which of the following is NOT one of the Four Delegation Moves?</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Choose the right person</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — Brief fully</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Eliminate all risk of failure</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — Grant authority</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12 -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — High-readiness Team Members should receive frequent check-ins to ensure quality on delegated work.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13 -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — In the Delegation Matrix, what's the right approach when a task is complex AND the Team Member is low-readiness?</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Assign and Release</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Brief and Trust</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Do it yourself or coach side-by-side</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Skip the task until they're ready</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14 -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — Explaining the "why" behind a delegated task is optional if the Team Member already understands what to do.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15 -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Delegation only becomes a habit when you practice it deliberately. Use the prompts below to plan your first (or next) intentional handoff.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. Name a recurring task you've been holding onto. Who on your team could you delegate it to?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Task and person…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Using the Delegation Matrix — what zone does that task/person combination fall into?</div>
+    <div class="apply-sub">Low/High complexity vs. Low/High readiness — which quadrant?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Quadrant and your reasoning…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. What would your briefing include? What does "done right" look like for this task?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Key briefing points and success criteria…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What authority does this person need — system access, permissions, contacts, or visibility — to actually complete it?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Access and authority needed…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. What's the one check-in point you'd schedule? When and what would you review?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Check-in timing and agenda…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved ✓</div>
+  </div>
+</div>
+
+<!-- SCREEN 16 -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🎯</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Delegating Effectively. The managers who develop their teams are the ones who hand off work with intention — and then get out of the way.</div>
+  </div>
+  <div class="commitments">
+    <h4>Your commitments going forward:</h4>
+    <div class="commit-item">Identify one recurring task to delegate this week — map it to the Matrix first.</div>
+    <div class="commit-item">Brief the assignee on the what, why, and standard — not just the task itself.</div>
+    <div class="commit-item">Grant authority upfront — don't make them ask for access.</div>
+    <div class="commit-item">Schedule one check-in, then trust the process.</div>
+    <div class="commit-item">When work needs correction, coach through it — don't rescue it.</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Complete Course →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {label:'Foundation',           start:0, end:5},
+  {label:'The Delegation Matrix',start:3, end:7},
+  {label:'Practice',             start:7, end:10},
+  {label:'Pulse Check',          start:10,end:15},
+  {label:'Apply It',             start:15,end:16},
+  {label:'Complete',             start:16,end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Raya is high-readiness, and this task is moderate complexity — that\'s the "Brief and Trust" zone. Hand off clearly, set the standard, schedule one check-in. Doing it yourself when you have a capable person available is a missed development opportunity and a bottleneck you\'re creating for yourself.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> When delegated work needs correction, coaching Jordan through what needs to change — and letting him fix it — builds skill and accountability. Taking the project back signals that Jordan doesn\'t need to own the outcome, and ensures every future problem gets returned to your desk.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> This is a clear "Assign and Release" situation — well-documented task, capable and motivated person. Holding onto work you could delegate stunts Sam\'s development and keeps you in the weeds. A first-output review is the right safety net.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Delegating without authority is setting someone up to fail before they start. "Grant authority" means more than permission — it means access, contacts, and the resources they\'ll actually need. Solve that before the handoff, not after.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Perfectionism kills delegation culture. Different method does not mean wrong method. If the standard was met, the work is done. Overriding a completed task that met requirements teaches your team that they can\'t really own anything — you\'ll always take it back.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> You transfer responsibility (doing the work) but you retain accountability (the outcome). Delegation means you\'re responsible for setting them up to succeed. The work is theirs — but the result is still yours as the manager.' },
+  11: { correct:'C', feedback:'<strong>C is right.</strong> Risk elimination isn\'t a delegation move — it\'s a myth. Delegation involves calibrated risk, not zero risk. Your job is to minimize it through good briefing and check-ins, not remove it entirely.' },
+  12: { correct:'B', feedback:'<strong>False.</strong> High-readiness means high trust. Over-checking a capable person signals distrust and erodes the autonomy that keeps strong performers engaged. One scheduled touchpoint is accountability — constant checking is micromanagement.' },
+  13: { correct:'C', feedback:'<strong>C is right.</strong> High complexity plus low readiness means don\'t delegate this one yet. Either do it yourself, or use it as a coaching opportunity where you work through it together. Delegating complex work to someone not yet ready sets them up to fail.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> The "why" creates ownership and better judgment. When something unexpected happens mid-task, a person who knows why the work matters makes better decisions than someone who only knows what to do. Why = context = capability.' }
+};
+
+const KEY = 'course_mg_delegating_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

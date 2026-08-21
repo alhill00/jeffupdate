@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Retention Conversations | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#174DFF;
+  --accent-light:#e0e8ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#e0e8ff;
+  --good-border:#174DFF;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#000633 0%,#0d1f6e 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(23,77,255,.25);color:rgba(255,255,255,.8);border-color:rgba(23,77,255,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.stat-box{background:var(--dark);border-radius:12px;padding:20px 24px;margin:18px 0;text-align:center;}
+.stat-number{font-size:48px;font-weight:900;color:var(--accent);line-height:1;}
+.stat-label{font-size:14px;color:rgba(255,255,255,.75);margin-top:8px;line-height:1.5;}
+.driver-list{display:flex;flex-direction:column;gap:8px;margin:16px 0;}
+.driver-item{background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;}
+.driver-num{font-size:14px;font-weight:800;color:var(--accent);flex-shrink:0;min-width:20px;}
+.driver-content strong{font-size:14px;color:var(--dark);}
+.driver-content p{font-size:13px;color:var(--muted);margin-top:2px;line-height:1.4;}
+.driver-content .influence{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-top:4px;}
+.driver-content .influence.yes{color:var(--accent);}
+.driver-content .influence.partial{color:var(--warn-border);}
+.stay-qs{display:flex;flex-direction:column;gap:10px;margin:18px 0;}
+.stay-q{background:var(--dark);border-radius:10px;padding:16px 20px;display:grid;grid-template-columns:24px 1fr;gap:12px;align-items:start;}
+.stay-q-num{font-size:16px;font-weight:900;color:var(--accent);}
+.stay-q-content h4{font-size:14px;font-weight:700;color:var(--white);margin-bottom:4px;}
+.stay-q-content p{font-size:13px;color:rgba(255,255,255,.7);line-height:1.4;}
+.after-box{background:var(--card);border:2px solid var(--accent);border-radius:12px;padding:18px;margin:16px 0;}
+.after-box h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.after-step{font-size:14px;color:#374151;line-height:1.6;margin-bottom:8px;padding-left:20px;position:relative;}
+.after-step::before{content:'→';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#0d3acc;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#0d3acc;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .stay-q{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Retention Conversations</div>
+  <div class="course-sub">Having the conversations that keep your best people — before they're already gone.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Stay Conversation</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Exit Interview Is Too Late</div>
+  <div class="screen-body">By the time a Team Member is filling out an exit survey, the decision has already been made. The decision was probably made weeks or months ago — and the interview is a formality.</div>
+  <div class="screen-body">The highest-leverage retention conversation isn't the exit interview. It's the stay conversation — the one you have while there's still nothing to lose and everything to gain.</div>
+  <div class="screen-body">Most managers have never had one. Not because they don't care — but because they assume engaged Team Members don't need one. That assumption is exactly backward. The people you most need to stay are the ones you're least likely to worry about.</div>
+  <div class="hl"><strong>The stay conversation is a proactive investment.</strong> It doesn't happen when something is wrong — it happens before something goes wrong. And it's often the difference between a Team Member who stays and one who quietly stops trying.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Five Drivers of Attrition</div>
+  <div class="screen-body">People leave for reasons. Most of those reasons were addressable — before they became the reason.</div>
+  <div class="driver-list">
+    <div class="driver-item">
+      <div class="driver-num">1</div>
+      <div class="driver-content">
+        <strong>Manager Relationship</strong>
+        <p>Feeling unseen, under-supported, or managed without care for them as a person.</p>
+        <div class="influence yes">Manager-influenceable</div>
+      </div>
+    </div>
+    <div class="driver-item">
+      <div class="driver-num">2</div>
+      <div class="driver-content">
+        <strong>No Visible Growth Path</strong>
+        <p>No development, no stretch, no sense that there's a next chapter. Stagnation feels like a ceiling.</p>
+        <div class="influence yes">Manager-influenceable</div>
+      </div>
+    </div>
+    <div class="driver-item">
+      <div class="driver-num">3</div>
+      <div class="driver-content">
+        <strong>Feeling Invisible or Underutilized</strong>
+        <p>Capable of more than they're doing. Not asked for their ideas. Work that doesn't feel meaningful.</p>
+        <div class="influence yes">Manager-influenceable</div>
+      </div>
+    </div>
+    <div class="driver-item">
+      <div class="driver-num">4</div>
+      <div class="driver-content">
+        <strong>Better Offer Elsewhere</strong>
+        <p>Compensation, role scope, or flexibility that significantly exceeds what they have here.</p>
+        <div class="influence partial">Partially influenceable</div>
+      </div>
+    </div>
+    <div class="driver-item">
+      <div class="driver-num">5</div>
+      <div class="driver-content">
+        <strong>Culture or Team Friction</strong>
+        <p>Team conflict, poor values alignment, or a working environment that feels exhausting or hostile.</p>
+        <div class="influence yes">Manager-influenceable</div>
+      </div>
+    </div>
+  </div>
+  <div class="hl"><strong>Four of the five top attrition drivers are manager-influenceable.</strong> Not all — but most. Which means most retention is a management problem, not an HR problem.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Data Most Managers Haven't Seen</div>
+  <div class="screen-body">Gallup's research on voluntary attrition found something that should change how every manager thinks about retention:</div>
+  <div class="stat-box">
+    <div class="stat-number">52%</div>
+    <div class="stat-label">of Team Members who voluntarily left their job say their manager could have done something to prevent it</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-number">&lt;50%</div>
+    <div class="stat-label">of those people were ever asked what it would have taken to keep them — before they left</div>
+  </div>
+  <div class="screen-body">More than half of voluntary departures were preventable. Fewer than half of those people were ever asked. That's not a compensation gap — that's a conversation gap.</div>
+  <div class="hl"><strong>The stay conversation is the gap-closer.</strong> It's the conversation that surfaces what's driving disengagement before it becomes a resignation letter.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Stay Conversation</div>
+  <div class="screen-title">Four Questions for a Quarterly Stay Conversation</div>
+  <div class="screen-body">The stay conversation isn't an interview or an interrogation. It's a 20-minute listening conversation — one of the most valuable investments you make in a quarter. Four questions. That's all.</div>
+  <div class="stay-qs">
+    <div class="stay-q">
+      <div class="stay-q-num">1</div>
+      <div class="stay-q-content">
+        <h4>"What about your work is most energizing right now?"</h4>
+        <p>Opens with strength and engagement — establishes a positive frame before the harder questions.</p>
+      </div>
+    </div>
+    <div class="stay-q">
+      <div class="stay-q-num">2</div>
+      <div class="stay-q-content">
+        <h4>"What's been most frustrating or draining?"</h4>
+        <p>The question most managers avoid — but the one that surfaces what's actually at risk. Listen. Don't immediately fix.</p>
+      </div>
+    </div>
+    <div class="stay-q">
+      <div class="stay-q-num">3</div>
+      <div class="stay-q-content">
+        <h4>"Is there anything you'd like more of — or less of — in your role?"</h4>
+        <p>Invites specific input on the conditions of their work. Often surfaces something small and actionable.</p>
+      </div>
+    </div>
+    <div class="stay-q">
+      <div class="stay-q-num">4</div>
+      <div class="stay-q-content">
+        <h4>"Where do you want to be in 1–2 years, and how can I help?"</h4>
+        <p>Connects to development and shows you're invested in their future — not just their current output.</p>
+      </div>
+    </div>
+  </div>
+  <div class="al"><strong>This is a listening conversation, not a performance conversation.</strong> Don't fix everything in the room. Listen, take notes, and follow up on one thing.</div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What to Do With What You Hear</div>
+  <div class="screen-body">A stay conversation with no follow-through is worse than no conversation. If you ask and don't act, you've signaled that the conversation was performative — and trust goes down, not up.</div>
+  <div class="after-box">
+    <h4>After the Stay Conversation:</h4>
+    <div class="after-step">Act on one thing — not everything, but something specific they named.</div>
+    <div class="after-step">Name it when you do: "You mentioned X was frustrating — I changed Y." Closing the loop is as important as the action itself.</div>
+    <div class="after-step">Check back next quarter — and in the next 1:1. Ask if it helped.</div>
+    <div class="after-step">Keep a note of what they said — use it to be a more informed manager in every future conversation.</div>
+  </div>
+  <div class="hl"><strong>The compound interest of listening + acting is the retention investment.</strong> One stay conversation, consistently followed up, builds more trust over a year than almost any other management behavior.</div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Stay Conversation</div>
+  <div class="screen-title">The Bored Strongest Performer</div>
+  <div class="screen-body">Your strongest Team Member seems bored lately — less energized in meetings, shorter in 1:1s, going through the motions. You haven't had a stay conversation in six months. What do you do?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Wait for the annual review — address disengagement formally when you have the structured opportunity.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Have a stay conversation now — start with what's energizing and what isn't, and listen for what's pulling her away or keeping her engaged.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Assign her a new project without discussing it — give her something new to be interested in.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Tell her you've noticed a change and ask directly if she's thinking about leaving.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Stay Conversation</div>
+  <div class="screen-title">When They Mention a Recruiter</div>
+  <div class="screen-body">In a stay conversation, a Team Member mentions she got a call from a recruiter last week. She says she's not seriously looking — but the call was interesting. How do you respond?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Ask her directly if she's seriously considering leaving — you need to know.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Thank her for sharing it, ask what the role was and what about it caught her attention.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Remind her of what's valuable about her current role and why she should stay.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Escalate to HR immediately — this is a flight risk situation that needs HR involvement.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Practice -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When You Can't Fix What They Named</div>
+  <div class="screen-body">In a stay conversation, a Team Member names something that's draining her — but it's something you genuinely can't change (compensation limits, an org structure decision above you). How do you respond?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Acknowledge what she said and move on — don't dwell on something you can't fix.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Be honest about what's within your control and what isn't — then ask what you <em>can</em> do that would help most.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Promise to look into it — buy time and follow up when you have more information.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Explain why the constraint exists — help her understand the business reasoning.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Practice -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">The "Everything's Fine" Team Member</div>
+  <div class="screen-body">You try to have a stay conversation with a Team Member and he gives you vague, positive answers to everything. "Things are great." "I really like the team." You sense there might be more but can't get to it. What do you do?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Accept it — if he says everything is fine, take him at his word.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Go deeper with more specific questions — ask about a specific recent project, a moment he felt most/least energized, or what he'd change about one aspect of his role.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Tell him you sense there might be more and push him to be honest.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Ask his teammates if they know what's going on.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Practice -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Staying Proactive With the Satisfied</div>
+  <div class="screen-body">One of your Team Members is genuinely happy — great relationship, interesting work, no red flags. You're tempted to skip the stay conversation. Should you?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Yes — save the stay conversation for people who are at risk. Satisfied people don't need it.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>No — satisfied people today can be unsatisfied people in six months, especially if they feel their manager stopped paying attention. The stay conversation is an investment, not a rescue.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Do a shorter version — 5 minutes instead of 20, just to check the box.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Send a quick survey instead of a conversation — it's less time-intensive and still gets the signal.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — The exit interview is the highest-leverage retention conversation a manager can have.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — According to Gallup research, approximately what percentage of voluntary departures involved a manager who could have done something to prevent the departure?</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — About 15%</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — About 30%</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — About 52%</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — About 75%</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — In a stay conversation, if a Team Member names something frustrating, the manager's first move should be to immediately fix or address it in the same conversation.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — When a Team Member mentions they received a call from a recruiter, the best response is to ask what about the opportunity caught their attention.</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — Stay conversations are most valuable when a Team Member is already showing signs of disengagement or flight risk.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Retention is a habit, not a crisis response. Use these prompts to start building the habit.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. Who on your team is most at risk of disengagement right now — and why do you think that?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="[Name] because I've noticed…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Draft the four stay questions for your next 1:1 with that person — personalized to what you already know about them.</div>
+    <div class="apply-sub">Adapt the four questions to sound natural with this specific person.</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Q1: …&#10;Q2: …&#10;Q3: …&#10;Q4: …" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. What's one thing a Team Member has told you — in any recent conversation — that you haven't acted on yet?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="[Name] mentioned… and I haven't yet…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What one action will you take on that — and when will you tell them you did it?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="I'll do… by… and I'll tell them in our next…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. When will you schedule stay conversations with each of your direct reports this quarter?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="[Name]: …&#10;[Name]: …&#10;[Name]: …" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🔒</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Retention Conversations. The managers who keep their best people are the ones who ask before there's a reason to — and then actually do something with what they hear.</div>
+  </div>
+  <div class="commitments">
+    <h4>What retention-focused managers do differently:</h4>
+    <div class="commit-item">Schedule a stay conversation with every direct report this quarter — before there's a reason to.</div>
+    <div class="commit-item">Listen more than they fix — in the conversation itself.</div>
+    <div class="commit-item">Act on one thing each Team Member named — and tell them they did.</div>
+    <div class="commit-item">Make the stay conversation a quarterly habit, not a crisis response.</div>
+    <div class="commit-item">Ask "what caught your attention" when a recruiter comes up — not "are you leaving?"</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {name:'Foundation', end:5},
+  {name:'The Stay Conversation', end:7},
+  {name:'Practice', end:10},
+  {name:'Pulse Check', end:15},
+  {name:'Apply It', end:16},
+  {name:'Complete', end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Asking "are you thinking about leaving?" (D) is not a stay conversation — it\'s a crisis question that creates awkwardness and can feel accusatory. The stay conversation starts with energy and drain, and naturally surfaces what\'s pulling someone away or keeping them. Lead with curiosity, not alarm. And waiting for the annual review (A) is exactly the delay that lets disengagement become a decision.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> A recruiter call is signal, not intent. Asking what caught her attention is the most useful move — you may learn about a gap in her current role that you can actually address. Jumping to defensive reassurance (C) closes the conversation down. Alarm or escalation (D) is wildly disproportionate to signal. Stay curious.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Honesty about what\'s within your control — and what isn\'t — is more respectful than a vague promise or an explanation that doesn\'t address her experience. "I can\'t change X, but what could I do that would actually help?" shifts from the constraint to what\'s possible. That\'s a real conversation. The constraint doesn\'t have to end the conversation.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Vague positive answers usually mean the person doesn\'t feel safe going deeper yet — or that the questions weren\'t specific enough to get past the surface. Try more specific prompts: "Tell me about a moment this month where you felt most energized" or "If you could change one thing about how we work together, what would it be?" Specificity unlocks honesty.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Satisfied people today are not guaranteed to be satisfied people tomorrow — especially if they sense that the manager\'s attention has moved on. The stay conversation is an investment in the relationship, not a rescue operation. The most common statement in exit interviews: "I didn\'t feel like my manager really knew how I was doing." The stay conversation fixes that.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> The exit interview is the lowest-leverage retention conversation — the decision is already made. The stay conversation — proactive, quarterly, before there\'s any reason to leave — is the high-leverage move. It surfaces what\'s at risk before it becomes a resignation, when there\'s still something to act on.' },
+  11: { correct:'C', feedback:'<strong>C — About 52%.</strong> More than half of voluntary departures involved a manager who could have done something to keep the person. And fewer than half of those people were ever asked what it would have taken. That\'s not a compensation problem — it\'s a conversation gap. The stay conversation is the intervention.' },
+  12: { correct:'B', feedback:'<strong>False.</strong> The stay conversation is a listening conversation — not a problem-solving session. Rushing to fix things in the room often feels dismissive, like you\'re trying to get past the discomfort rather than really hearing it. Listen, take notes, act on one thing after the conversation, and name what you did when you do it.' },
+  13: { correct:'A', feedback:'<strong>True.</strong> A recruiter call is signal — it means something about the person\'s current situation made an outside opportunity interesting enough to take the call. Asking what caught their attention is the most useful response: you may discover a gap in their current role that you can actually address. That\'s information. Alarm or defensiveness closes the conversation.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> Stay conversations are most valuable BEFORE there are any signs of risk — as a proactive investment in the relationship and as an ongoing listening practice. By the time someone is showing flight risk signals, you\'re often already behind. The satisfied Team Member who feels seen and heard is far more likely to stay satisfied than the one who was fine until they weren\'t.' }
+};
+
+const KEY = 'course_mg_retention_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Running Effective Meetings | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#174DFF;
+  --accent-light:#e0e8ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#e0e8ff;
+  --good-border:#174DFF;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+
+.course-header{background:linear-gradient(135deg,#000633 0%,#0d1f6e 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(23,77,255,.25);color:rgba(255,255,255,.8);border-color:rgba(23,77,255,.4);}
+
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body + .screen-body{margin-top:-8px;}
+
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+
+.arch-grid{display:flex;flex-direction:column;gap:10px;margin:18px 0;}
+.arch-row{background:var(--dark);border-radius:10px;padding:16px 20px;display:grid;grid-template-columns:44px 1fr 1fr;gap:12px;align-items:center;}
+.arch-badge{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--white);font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.arch-word{color:var(--white);font-size:15px;font-weight:700;}
+.arch-word span{display:block;font-size:12px;font-weight:400;color:rgba(255,255,255,.6);margin-top:2px;}
+.arch-note{color:rgba(255,255,255,.85);font-size:13px;font-style:italic;line-height:1.4;}
+
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#0d3acc;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#0d3acc;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .arch-row{grid-template-columns:40px 1fr;gap:10px;}
+  .arch-note{display:none;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Running Effective Meetings</div>
+  <div class="course-sub">Making meetings worth the time you're spending on them.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Meeting Architecture</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Math Nobody Does</div>
+  <div class="screen-body">A 10-person, 1-hour meeting costs 10 hours of company time. Not 1 hour — 10. Most managers run 5 to 10 meetings per week. Multiply that across a department of leaders, each running their own meeting load.</div>
+  <div class="screen-body">Meetings are the single largest discretionary use of team time. They're also the most underexamined.</div>
+  <div class="hl"><strong>The question isn't "should we meet?" — it's "what justifies this investment?"</strong> Every meeting is a choice to spend collective time on something. The best managers treat that choice with the same rigor they'd apply to any resource decision.</div>
+  <div class="al"><strong>Reality check:</strong> If your team spends 6 hours per week in meetings, and the meeting quality is low, that's 6 hours per person per week that could be redirected to actual work — or to fewer, better meetings.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three Traps That Waste Everyone's Time</div>
+  <div class="screen-body">Most meeting problems fall into one of three categories. Most managers have experienced all three — sometimes in the same week.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Trap 1: Should've Been an Email</h4>
+      <ul>
+        <li>Status updates with no decisions</li>
+        <li>FYIs that don't require dialogue</li>
+        <li>Information that could be read in 3 minutes</li>
+      </ul>
+    </div>
+    <div class="col-card red-left">
+      <h4>Trap 2: No Clear Outcome</h4>
+      <ul>
+        <li>No one knows what "productive" looks like</li>
+        <li>Meeting ends with "great discussion"</li>
+        <li>Action items are vague or absent</li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-card red-left" style="margin:0 0 18px;">
+    <h4>Trap 3: Wrong People in the Room</h4>
+    <ul>
+      <li>Decision-maker is absent — no one can actually decide</li>
+      <li>Too many passengers — people attending who have nothing to contribute</li>
+      <li>Relevant expertise missing — discussion circles without resolution</li>
+    </ul>
+  </div>
+  <div class="screen-body" style="font-size:14px;color:var(--muted);">The fix for all three starts before the meeting is even scheduled.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Agenda vs. Purpose — They're Not the Same</div>
+  <div class="screen-body">Most meeting invites have an agenda. Very few have a purpose. These are different things.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Agenda</h4>
+      <ul>
+        <li>A list of topics to cover</li>
+        <li>"Discuss Q3 priorities"</li>
+        <li>"Review project status"</li>
+        <li>Tells you what you'll talk about</li>
+        <li>Ends with: "Good discussion"</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Purpose</h4>
+      <ul>
+        <li>An outcome you're driving toward</li>
+        <li>"Align on top 3 Q3 priorities and assign owners"</li>
+        <li>"Identify blockers and decide who resolves each"</li>
+        <li>Tells you what success looks like</li>
+        <li>Ends with: decisions and next steps</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hl"><strong>If you can't write a one-sentence purpose for the meeting, the meeting isn't ready to be scheduled.</strong> The purpose also answers the first question anyone should ask: "Does this need to be a meeting?"</div>
+</div>
+
+<!-- SCREEN 3: FRAMEWORK -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Meeting Architecture</div>
+  <div class="screen-title">A Structure That Works Every Time</div>
+  <div class="screen-body">Effective meetings follow a predictable structure. It doesn't have to be rigid — but it has to be intentional.</div>
+  <div class="arch-grid">
+    <div class="arch-row">
+      <div class="arch-badge">PRE</div>
+      <div class="arch-word">Before the Meeting<span>Set up for success</span></div>
+      <div class="arch-note">Written purpose + right people + materials sent 24hrs in advance</div>
+    </div>
+    <div class="arch-row">
+      <div class="arch-badge">2m</div>
+      <div class="arch-word">Opening<span>Set the frame</span></div>
+      <div class="arch-note">State the purpose, time available, and the decision to be made</div>
+    </div>
+    <div class="arch-row">
+      <div class="arch-badge">MID</div>
+      <div class="arch-word">Discussion<span>Information → Options → Decision</span></div>
+      <div class="arch-note">Structure the conversation: share, discuss, converge — don't let it wander</div>
+    </div>
+    <div class="arch-row">
+      <div class="arch-badge">5m</div>
+      <div class="arch-word">Close<span>Lock in the output</span></div>
+      <div class="arch-note">Decision or action items — with owners and deadlines, out loud</div>
+    </div>
+    <div class="arch-row">
+      <div class="arch-badge">24h</div>
+      <div class="arch-word">Follow-Up<span>Make it stick</span></div>
+      <div class="arch-note">Notes with decisions and next steps distributed within 24 hours</div>
+    </div>
+  </div>
+  <div class="hl"><strong>The "should this be a meeting?" test:</strong> If no decision is needed and no real-time dialogue is required, it's probably an email. When in doubt, send it and offer a meeting only if questions arise.</div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Running the Room</div>
+  <div class="screen-body">The hardest part of running a meeting isn't the structure — it's managing what happens in the room. Three situations every manager faces:</div>
+  <div class="two-col">
+    <div class="col-card accent-left">
+      <h4>The Tangent</h4>
+      <ul>
+        <li>The discussion drifts somewhere important-but-not-now</li>
+        <li>Move: "That's worth a real conversation — let me park it."</li>
+        <li>Capture it visibly. Come back to it only if time allows.</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>The Time Crunch</h4>
+      <ul>
+        <li>15 minutes in, 20 minutes of content left</li>
+        <li>Move: "We're getting close on time — let's get to the decision."</li>
+        <li>Name the trade-off, make the call, move on.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-card accent-left" style="margin:0 0 18px;">
+    <h4>The Quiet Room</h4>
+    <ul>
+      <li>One or two voices dominate; others go silent</li>
+      <li>Move: Directed questions — "Sam, what's your read on this?"</li>
+      <li>Quieter voices often hold the most useful perspective. Create the opening.</li>
+    </ul>
+  </div>
+  <div class="screen-body" style="font-size:14px;color:var(--muted);">Running the room is a skill. The three moves above handle 80% of the situations you'll face.</div>
+</div>
+
+<!-- SCREEN 5: SCENARIO -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Meeting Architecture</div>
+  <div class="screen-title">The Meeting That Should Have Been an Email</div>
+  <div class="screen-body">You're 15 minutes into a 30-minute team meeting. You realize nothing here requires a decision and there's no real-time dialogue needed — you're mostly reading updates. What do you do?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Finish the meeting — ending it early would feel disorganized and people already made time for it.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Stop, acknowledge it, and give everyone 15 minutes back — then move this content to a shared doc going forward.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Speed through the rest as fast as possible so at least the content gets covered.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Open it up for discussion to justify the time — even if there's nothing to decide.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: SCENARIO -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Meeting Architecture</div>
+  <div class="screen-title">Pulling a Derailed Discussion Back</div>
+  <div class="screen-body">A team meeting that was supposed to decide on a new process has turned into a 20-minute debate about a historical decision that can't be changed. The group is spinning. You have 10 minutes left.</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Let the conversation run — if it's important to them, it's important to address.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Interrupt clearly: "I want to park this — we can't change what happened, but we can decide on the path forward. Let's use the last 10 minutes to do that."</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Call a new meeting to address the historical issue separately before making any decisions today.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>End the meeting early since the purpose can't be accomplished — try again next week.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: PRACTICE -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When the Group Isn't Converging</div>
+  <div class="screen-body">Your team has been discussing three possible approaches to a project for 25 minutes. No one's wrong — but no one's agreeing either. The meeting is supposed to end in 5 minutes with a decision. What do you do?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Call for a vote — majority rules, and you need to move forward.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Name the two closest options, state the trade-off clearly, and make the call — or explicitly delegate the decision with a deadline.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Schedule another meeting to give people more time to think it through.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Ask everyone to send you their preference by email after the meeting so you can decide in private.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: PRACTICE -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Decision-Maker Is Absent</div>
+  <div class="screen-body">You're in a meeting to decide on a budget reallocation. The person who needs to approve it didn't show up. The team is ready to discuss. What do you do?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Make a provisional decision as a group — document it and get approval later.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Use the time to do the prep work — align on options, document the trade-offs, so the decision-maker can review and decide quickly.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Cancel the meeting and reschedule when everyone can attend.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Proceed with the full discussion and decision anyway — you'll brief them separately.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: PRACTICE -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">No Clear Decision Was Reached</div>
+  <div class="screen-body">A meeting just ended. The discussion was good — but you're not confident everyone left with the same understanding of what was decided or who owns next steps. What do you do in the next 24 hours?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Trust that people will figure it out — the discussion was thorough enough.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Send a follow-up message within 24 hours that names the decision made (or not made), lists action items with owners and deadlines, and sets the next checkpoint.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Ask one team member to send out notes so you don't have to.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Schedule a follow-up meeting to close the loop in person.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: PULSE -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — "Let's discuss Q3 priorities" is a meeting purpose, not just an agenda item.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: PULSE -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — You realize 10 minutes into a meeting that no decision is needed and the information could have been shared in a doc. The best move is:</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Finish the meeting anyway — people already blocked the time</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — End it early, give the time back, and move the content to a shared doc</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Add discussion to justify the meeting time</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — Speed through the content as fast as possible</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: PULSE -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — When a discussion goes off on an important but off-topic tangent, the best move is:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Follow the tangent — if it's important, it's worth the time</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Park it visibly and return to the meeting purpose</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Shut it down — tangents are always a waste of time</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — Let the group decide whether to continue or redirect</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: PULSE -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — Meeting notes with decisions and action items should be sent out:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Within 24 hours of the meeting</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Within the week, when you have time</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Only when action items were unclear</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Meeting notes are optional if the discussion was clear</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: PULSE -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — A meeting without a decision-maker present should always be cancelled.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: APPLY IT -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Meeting quality improves fast when you apply even one of these changes consistently. Use the prompts below to audit your current meeting patterns.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Think about your last 5 meetings. How many had a written purpose (not just an agenda topic)? Which ones should have been emails?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Your honest assessment…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Which of your recurring meetings has the least clear purpose? What would you change about it?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Meeting name and what you'd change…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Draft a one-sentence meeting purpose for your next team meeting. Follow this structure: "[Verb] on [topic] so that [outcome]."</div>
+    <div class="apply-sub">Example: "Align on the top 3 Q3 priorities so that every TM knows where to focus their time."</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Your meeting purpose…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's one habit from the Meeting Architecture you'll apply to your next scheduled meeting?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="The specific habit and the meeting…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. Is there a meeting on your calendar this week that should be cancelled or converted to a doc? Name it.</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Meeting name and what you'll do instead…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: COMPLETE -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🗓️</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Running Effective Meetings. The best managers don't just run good meetings — they make meetings optional when better alternatives exist.</div>
+  </div>
+  <div class="commitments">
+    <h4>Your commitments going forward:</h4>
+    <div class="commit-item">Never schedule a meeting without a written purpose — one sentence, outcome-focused</div>
+    <div class="commit-item">Send relevant materials 24 hours before every meeting that requires preparation</div>
+    <div class="commit-item">Close every meeting with decisions and owners named out loud</div>
+    <div class="commit-item">Follow up with notes within 24 hours of every meaningful meeting</div>
+    <div class="commit-item">Ask "should this be a meeting?" before scheduling — and say no when it shouldn't</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {name:'Foundation',            end:5},
+  {name:'The Meeting Architecture',end:7},
+  {name:'Practice',              end:10},
+  {name:'Pulse Check',           end:15},
+  {name:'Apply It',              end:16},
+  {name:'Complete',              end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Giving people their time back is an act of respect — and it models the standard you want to hold for every meeting. Capturing this content in a shared doc going forward prevents the same trap from recurring.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Parking the tangent honors that it matters while protecting the meeting\'s purpose. "We can\'t change what happened, but we can decide the path forward" is a clean redirect. A meeting that can\'t be saved by a good move often can be.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> When a group isn\'t converging, the manager\'s job is to narrow the field, name the trade-off clearly, and either make the call or explicitly delegate it with a deadline. More time rarely produces more alignment — a clear decision does.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> If the decision-maker is absent, don\'t make the decision without them — but don\'t waste the group\'s time either. Doing the prep work — aligning on options and trade-offs — means the decision can be made in minutes when they\'re available.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Following up within 24 hours with a written summary of what was decided and who owns what is the move that separates "great meeting" from "meeting that actually mattered." Ambiguity after a meeting is worse than having skipped it.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> "Discuss Q3 priorities" is an agenda item — a topic. A purpose names the outcome: "Align on top 3 Q3 priorities and assign owners." The purpose tells you what success looks like at the end of the meeting.' },
+  11: { correct:'B', feedback:'<strong>B is right.</strong> Ending early and giving time back is the right move. It signals that you value people\'s time — and it builds the habit of only holding meetings that actually justify the investment.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> "Let\'s park that" is one of the most useful moves in meeting facilitation. It acknowledges the tangent matters without letting it consume the meeting. Capture it visibly and come back to it if time allows.' },
+  13: { correct:'A', feedback:'<strong>Within 24 hours.</strong> Follow-up notes within 24 hours while the context is fresh, decisions are clear, and action items are still top of mind. Waiting until "when you have time" usually means it never happens — or it\'s too late to be useful.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> Not every meeting requires a decision — some are preparation for a decision. If you can make productive use of the time (aligning on options, doing prep work, clarifying trade-offs), the time doesn\'t have to be lost. Just don\'t make the decision without the person who needs to make it.' }
+};
+
+const KEY = 'course_mg_meetings_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

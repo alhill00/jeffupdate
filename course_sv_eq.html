@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emotional Intelligence & Self-Awareness | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f4fbfd;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#0077A8;
+  --accent-light:#d0eef7;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#d0eef7;
+  --good-border:#0077A8;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+
+.course-header{background:linear-gradient(135deg,#0a3d4a 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#00A0C6;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+
+.section-nav{background:#0a3d4a;padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(0,119,168,.25);color:rgba(255,255,255,.8);border-color:rgba(0,119,168,.4);}
+
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body + .screen-body{margin-top:-8px;}
+
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+
+.eq-grid{display:flex;flex-direction:column;gap:10px;margin:18px 0;}
+.eq-row{background:var(--dark);border-radius:10px;padding:16px 20px;display:grid;grid-template-columns:44px 1fr 1fr;gap:12px;align-items:center;}
+.eq-icon{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--white);font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.eq-word{color:var(--white);font-size:15px;font-weight:700;}
+.eq-word span{display:block;font-size:12px;font-weight:400;color:rgba(255,255,255,.6);margin-top:2px;}
+.eq-q{color:rgba(255,255,255,.85);font-size:13px;font-style:italic;line-height:1.4;}
+
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#eef7fb;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#eef7fb;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:#0077A8;color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#005f87;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#005f87;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(0,119,168,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+
+@media(max-width:600px){
+  .eq-row{grid-template-columns:40px 1fr;gap:10px;}
+  .eq-q{display:none;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Supervisor Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Emotional Intelligence &amp; Self-Awareness</div>
+  <div class="course-sub">Understanding how you land on others — your default style, triggers, and how stress changes your leadership.</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label">0 of 16</div>
+</div>
+
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The EQ Framework</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0: Hook -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Leader Who Didn't Know How They Landed</div>
+  <div class="screen-body">Jordan had always been the go-to person on the team — calm under pressure, fast at decisions, clear communicator. Then Jordan got promoted. Two months in, a team member asked to transfer.</div>
+  <div class="screen-body">When Jordan asked why, the feedback was hard to hear: "When things get stressful, you get short and dismissive. I don't feel safe asking questions."</div>
+  <div class="screen-body">Jordan had no idea. The behaviors that felt like efficiency to Jordan felt like aggression to the team.</div>
+  <div class="hl"><strong>Self-awareness isn't knowing your strengths.</strong> It's knowing how you land on others — especially when things get hard.</div>
+</div>
+
+<!-- SCREEN 1: Concept -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What EQ Actually Is</div>
+  <div class="screen-body">Emotional Intelligence isn't about being nice or suppressing feelings. It's about four things:</div>
+  <div class="screen-body">
+    <strong>1. Knowing your own emotional state.</strong><br>
+    <strong>2. Managing that state intentionally.</strong><br>
+    <strong>3. Reading others' emotional state accurately.</strong><br>
+    <strong>4. Using that awareness to manage relationships well.</strong>
+  </div>
+  <div class="hl">Most leaders are stronger in some areas than others. The first step is knowing where you are — not assuming you're strong everywhere just because you care about your team.</div>
+</div>
+
+<!-- SCREEN 2: Concept -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Your Default Style Under Pressure</div>
+  <div class="screen-body">Every leader has a default mode when things get stressful. Some go quiet. Some get sharp. Some over-communicate. Some disappear.</div>
+  <div class="screen-body">Your team learns your pattern fast — and starts managing around it.</div>
+  <div class="screen-body">The question isn't whether you have a stress response. It's whether you're aware of it and can choose your response instead of defaulting to it.</div>
+  <div class="al"><strong>The gap between stimulus and response is where EQ lives.</strong> A half-second of awareness — "I'm triggered right now" — changes everything about what you do next.</div>
+</div>
+
+<!-- SCREEN 3: EQ Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The EQ Framework</div>
+  <div class="screen-title">Four Domains of Emotional Intelligence</div>
+  <div class="screen-body">Each domain builds on the one before it. Self-awareness is the foundation — without it, the others don't stick.</div>
+  <div class="eq-grid">
+    <div class="eq-row">
+      <div class="eq-icon">1</div>
+      <div class="eq-word">Self-Awareness<span>Know your state</span></div>
+      <div class="eq-q">"How am I showing up right now?"</div>
+    </div>
+    <div class="eq-row">
+      <div class="eq-icon">2</div>
+      <div class="eq-word">Self-Management<span>Choose your response</span></div>
+      <div class="eq-q">"What do I want to model here?"</div>
+    </div>
+    <div class="eq-row">
+      <div class="eq-icon">3</div>
+      <div class="eq-word">Social Awareness<span>Read others accurately</span></div>
+      <div class="eq-q">"What's really going on for this person?"</div>
+    </div>
+    <div class="eq-row">
+      <div class="eq-icon">4</div>
+      <div class="eq-word">Relationship Management<span>Build trust, navigate tension</span></div>
+      <div class="eq-q">"What does this person need from me to feel safe?"</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4: Scenario — Foundation -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Carrying Your Last Meeting Into the Next One</div>
+  <div class="screen-body">You've just come from a frustrating meeting with your leader. Your team member walks in for a scheduled 1:1 looking a little nervous.</div>
+  <div class="screen-body">What's the high-EQ move?</div>
+  <div class="options" id="opts-4">
+    <div class="opt" onclick="pickOpt(4,'A')"><span class="opt-letter">A</span><span>Get through the 1:1 quickly — you're not in the right headspace for a long conversation.</span></div>
+    <div class="opt" onclick="pickOpt(4,'B')"><span class="opt-letter">B</span><span>Take 60 seconds before the 1:1 to consciously shift your state, then open with genuine curiosity about how they're doing.</span></div>
+    <div class="opt" onclick="pickOpt(4,'C')"><span class="opt-letter">C</span><span>Be transparent about your frustration so they understand your mood isn't about them.</span></div>
+    <div class="opt" onclick="pickOpt(4,'D')"><span class="opt-letter">D</span><span>Reschedule — it's not fair to give them a distracted version of you.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-4"></div>
+</div>
+
+<!-- SCREEN 5: Framework deep dive -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The EQ Framework</div>
+  <div class="screen-title">Triggers — Know Yours Before They Know You</div>
+  <div class="screen-body">Every leader has emotional triggers: situations that reliably produce a strong reaction. Common ones include being questioned in front of others, a team member not following through, feeling like your effort isn't recognized, or navigating constant ambiguity.</div>
+  <div class="screen-body">Knowing your triggers doesn't eliminate them. It gives you a half-second of awareness before you react — and that half-second is everything.</div>
+  <div class="hl"><strong>Name your triggers.</strong> Write them down if you have to. The leaders who know what sets them off are the leaders who have the most control over what they do next.</div>
+</div>
+
+<!-- SCREEN 6: Scenario — Framework -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The EQ Framework</div>
+  <div class="screen-title">When Someone Pushes Back in Public</div>
+  <div class="screen-body">A team member pushes back on a decision you made in a team meeting. You feel your face get warm.</div>
+  <div class="screen-body">What's the most emotionally intelligent response in the moment?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Defend your decision clearly and confidently — showing uncertainty undermines your authority.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Take a breath, acknowledge their perspective out loud, and ask what they'd suggest instead.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Tell them you'll talk about it later — handling it publicly creates awkwardness.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Agree with them in the moment to reduce tension, then address it privately afterward.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario — Practice -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">The Team Member You Can't Read</div>
+  <div class="screen-body">One of your team members rarely shows emotion and is hard to read. You're not sure how they're doing.</div>
+  <div class="screen-body">The highest-EQ approach is:</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Assume they're fine — if something were wrong, they'd say so.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Ask directly: "I notice I'm not always sure how you're doing — how are you really?"</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Watch for behavioral signals over the next few weeks before assuming anything.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Ask their close work friend to give you an informal update.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario — Practice -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Critical Feedback in the Moment</div>
+  <div class="screen-body">You get critical feedback from a peer in a meeting. Your immediate internal reaction is strong disagreement.</div>
+  <div class="screen-body">What do you do?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Respond immediately and clearly so they don't think you agree.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Write down what they said, say "Thank you — I want to think about that," and revisit it later.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Stay completely silent so as not to escalate.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Ask your leader to weigh in on who's right.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario — Practice -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When Your Stress Response Affects the Team</div>
+  <div class="screen-body">You notice that when you're stressed, you become very directive and stop asking for input. Your team has started going quiet in meetings.</div>
+  <div class="screen-body">What's the most effective response?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Tell the team you're under pressure and ask them to bear with you temporarily.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Name the pattern to the team: "I've noticed I've been more directive lately. I want to make sure I'm still hearing from you. What haven't I been asking about?"</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Work harder to control the stress so the team doesn't see it.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Wait until the stress period passes — the team will adjust.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — Emotional intelligence primarily means staying calm and not showing strong emotions as a leader.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Knowing your emotional triggers helps you avoid having emotional reactions.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — "Social awareness" in the EQ model means:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Being aware of social norms in the workplace</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Accurately reading others' emotional states, even when they don't say what they feel</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Being aware of how your social media presence affects your leadership brand</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — Understanding the social dynamics of your team</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — A team member seems disengaged but hasn't said anything. A high-EQ leader:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Waits for the team member to raise it themselves — adults should advocate for their own needs</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Documents the disengagement in case it becomes a performance issue later</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Notices the signal and opens a caring, direct conversation to explore what's going on</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Assumes it's a personal issue and gives the person space</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — Self-management means hiding your emotions so your team doesn't see them.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">EQ develops through reflection and deliberate practice. Use these prompts honestly.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. What's your default behavior when you're stressed or under pressure? (Be honest — what do others probably notice?)</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Your stress response pattern…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What's one emotional trigger at work that reliably produces a strong reaction in you?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="The situation that gets to you…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Think of a team member who's hard for you to read. What's one question you'll ask them this week to better understand how they're doing?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="The team member and your question…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's one thing you'll do differently in your next difficult conversation to respond rather than react?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Your specific intention…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. Who could give you honest feedback about how you land on others? How will you ask them?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="The person and your ask…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🧠</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Emotional Intelligence &amp; Self-Awareness. The leaders who develop the most are the ones willing to ask: how do I actually land on others — not just how do I intend to land?</div>
+  </div>
+  <div class="commitments">
+    <h4>What high-EQ leaders do differently:</h4>
+    <div class="commit-item">Know your stress-response pattern — and name it to yourself before important conversations</div>
+    <div class="commit-item">Ask "How am I showing up right now?" before high-stakes interactions</div>
+    <div class="commit-item">Notice what others aren't saying, not just what they are</div>
+    <div class="commit-item">Create a 60-second reset habit before conversations when you're carrying stress</div>
+    <div class="commit-item">Seek honest feedback about your impact regularly — not just when there's a problem</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.office.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div><!-- end course-main -->
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation',     start:0, end:4},
+  {label:'The EQ Framework',start:3, end:6},
+  {label:'Practice',       start:7, end:9},
+  {label:'Pulse Check',    start:10,end:14},
+  {label:'Apply It',       start:15,end:15},
+  {label:'Complete',       start:16,end:16}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  4: { correct:'B', feedback:'<strong>B is right.</strong> The 60-second reset is the single most practical EQ tool for leaders. Before any important conversation, a brief pause to intentionally shift your internal state — slow breath, clear head, remind yourself what this person needs from you — meaningfully changes how you show up. Full transparency about your frustration (C) can work, but only if brief; otherwise it burdens them with your emotional state.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Acknowledging their perspective doesn\'t mean agreeing with it. "I hear you — tell me more about your concern" buys you a moment to regulate, signals psychological safety, and might actually surface useful information. Defending reflexively when you feel challenged is the ego talking, not the leader.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Quiet team members often get overlooked because they don\'t demand attention. High social awareness means noticing the absence of signal, not just the presence of it. A direct, caring question — not a probe — is usually the most effective move.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> The gap between stimulus and response is where EQ lives. Writing it down signals you took it seriously. "I want to think about that" buys you time without conceding. Later, when your emotional response has passed, you can assess the feedback on its merits — not in the heat of your reaction.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Naming the impact of your behavior openly is one of the highest-trust moves a leader can make. It doesn\'t require self-criticism — just honesty. "I want to make sure I\'m still hearing from you" signals that their input matters even when you\'re under pressure, and it invites them to re-engage.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> EQ is about awareness and intentional response — not suppression. A leader who never shows any emotion actually signals inauthenticity and creates distance. The goal is appropriate expression of emotion, not none.' },
+  11: { correct:'B', feedback:'<strong>False.</strong> Knowing your triggers doesn\'t eliminate the reaction — it creates awareness in the moment, which gives you a choice about how to respond. The reaction still happens; what changes is whether you act on it automatically or consciously.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> Social awareness is specifically about accurately reading others\' emotional states — what they\'re really feeling, not just what they\'re saying. This is the foundation for responding effectively to your team as people, not just as task performers.' },
+  13: { correct:'C', feedback:'<strong>C is right.</strong> High social awareness means noticing what\'s not being said. Disengagement is a signal. Waiting for them to raise it risks losing the person before you ever had the conversation. A caring, direct opening — "I\'ve noticed you seem a little less engaged lately — is there something going on I should know about?" — demonstrates you\'re paying attention and that you care.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> Self-management means choosing your response intentionally — not suppressing or hiding. Authentic leaders share appropriate emotions appropriately. What changes with self-management is that you\'re choosing whether and how to express what you feel, rather than defaulting to whatever comes first.' }
+};
+
+const KEY = 'course_sv_eq_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

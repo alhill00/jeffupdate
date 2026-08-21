@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Communicating at the Director Level | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#faf8ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#6D28D9;
+  --accent-light:#ede9fe;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#ede9fe;
+  --good-border:#6D28D9;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#1a0a3d 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(109,40,217,.25);color:rgba(255,255,255,.8);border-color:rgba(109,40,217,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.stack-grid{display:flex;flex-direction:column;gap:0;margin:18px 0;border-radius:10px;overflow:hidden;border:1.5px solid var(--border);}
+.stack-row{background:var(--card);padding:14px 18px;display:flex;gap:14px;align-items:flex-start;border-bottom:1px solid var(--border);}
+.stack-row:last-child{border-bottom:none;}
+.stack-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--white);font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.stack-content h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:3px;}
+.stack-content p{font-size:13px;color:#374151;line-height:1.5;}
+.stack-content .ex{font-size:12px;color:var(--accent);font-style:italic;margin-top:4px;}
+.num-cards{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.num-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;}
+.num-badge{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--white);font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.num-content h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.num-content p{font-size:13.5px;color:#374151;line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#5b21b6;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#5b21b6;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(109,40,217,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Director Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Communicating at the Director Level</div>
+  <div class="course-sub">Shifting from informing your team to shaping how the org understands its work.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Director Message</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">A Different Communication Job</div>
+  <div class="screen-body">The shift from manager to director isn't just more responsibilities — it's a fundamentally different communication job. Managers communicate to their team: what we're working on, what's expected, how are you doing. That's a vertical, internal job.</div>
+  <div class="screen-body">Directors communicate across the org, up to executives, and outward to stakeholders. They carry strategy into the language of each audience. They connect the org's work to enterprise-level context that most people on the front line never see. They shape the narrative — where we were, where we are, where we're going.</div>
+  <div class="screen-body">The communication skill that got you here — clear, direct, good with your team — is necessary but not sufficient for this level. The new skill is scale: making your message land across audiences, levels, and contexts that require different framing.</div>
+  <div class="hl"><strong>At director level, communication IS strategy.</strong> The story you tell about your function's work shapes how leadership resources it, how peers partner with it, and how your team understands what they're building.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Directors Communicate That Managers Don't</div>
+  <div class="screen-body">The content of director-level communication is different — not just the audience. Here's what you're now responsible for communicating that a manager isn't.</div>
+  <div class="num-cards">
+    <div class="num-card">
+      <div class="num-badge">1</div>
+      <div class="num-content">
+        <h4>Strategic Rationale</h4>
+        <p>Not just what we're doing, but why it matters at the organization level. Team Members want to understand how their work connects to something larger. That context only comes from director level and above.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">2</div>
+      <div class="num-content">
+        <h4>Org-Wide Context</h4>
+        <p>What's happening across the company that affects how your function operates, what's being prioritized, and where the constraints are. You carry information your managers don't have access to — sharing the right amount of it is part of your job.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">3</div>
+      <div class="num-content">
+        <h4>Uncertainty</h4>
+        <p>At director level, you're often communicating before things are settled. How you name uncertainty — without causing panic or signaling incompetence — is a distinct communication skill.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">4</div>
+      <div class="num-content">
+        <h4>Narrative Arc</h4>
+        <p>The through-line that helps people make sense of change over time. Where we were, where we are, where we're going — and why the distance traveled matters. This is the story only you can tell from your vantage point.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Executive Communication Gap</div>
+  <div class="screen-body">Executives filter communication through a very specific lens. Every briefing, update, or request gets screened for three questions: Is it on track? Is there a risk? What do you need from me?</div>
+  <div class="screen-body">Directors who lead with context before the point lose the room — not because execs are impatient, but because their job requires them to triage enormous volumes of information. When you front-load background, you're making them do the work of extracting the signal from your message. When you lead with the headline, you're respecting their processing load.</div>
+  <div class="al"><strong>The context-first habit</strong> is deeply ingrained from years of building the case before the recommendation. At director level, it works against you. The case comes after the headline — not before it.</div>
+  <div class="hl"><strong>One sentence test:</strong> Can you say what you need your exec to know in one sentence? If not, the message isn't clear enough yet. Clarity happens in the preparation, not in the room.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Director Message</div>
+  <div class="screen-title">The Director Communication Stack</div>
+  <div class="screen-body">Use this four-layer structure for every significant communication — exec updates, cross-functional alignment, change announcements, briefings. The order matters every time: headline first.</div>
+  <div class="stack-grid">
+    <div class="stack-row">
+      <div class="stack-num">1</div>
+      <div class="stack-content">
+        <h4>The Headline</h4>
+        <p>What they need to know in one sentence. No setup, no context, no "so basically what happened was." The point.</p>
+        <div class="ex">"The Q3 launch is on track — one dependency to flag."</div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-num">2</div>
+      <div class="stack-content">
+        <h4>The Status</h4>
+        <p>On track / At risk / Needs action. Give it a label. This tells your exec immediately how to hold it and whether it needs more of their attention.</p>
+        <div class="ex">"Status: at risk. We have a path, but it requires a decision from you by Friday."</div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-num">3</div>
+      <div class="stack-content">
+        <h4>The Decision or Ask</h4>
+        <p>What you need, specifically, by when. If you don't have an ask, say so — but be explicit. "No action needed, just keeping you informed" is a complete and valid message.</p>
+        <div class="ex">"I need your approval to proceed with Option B before Friday's vendor call."</div>
+      </div>
+    </div>
+    <div class="stack-row">
+      <div class="stack-num">4</div>
+      <div class="stack-content">
+        <h4>The Context</h4>
+        <p>Supporting detail for those who want it. Put it here — not at the top. If they ask questions, you have it. If they don't need it, you haven't buried your headline.</p>
+        <div class="ex">"Background: the vendor dependency shifted when X happened three weeks ago…"</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Communicating Uncertainty Without Losing Credibility</div>
+  <div class="screen-body">At director level, you'll regularly be asked to communicate before things are settled. Pretending to have certainty you don't have is far more credibility-destroying than acknowledging uncertainty clearly.</div>
+  <div class="screen-body">The instinct to project confidence — to avoid looking like you don't have it together — often leads directors to hedge, equivocate, or go quiet when things are ambiguous. The result is communication that reads as evasive or confused, not confident.</div>
+  <div class="hl"><strong>The Uncertainty Formula:</strong> "Here's what we know. Here's what we don't yet. Here's when we'll know more. Here's what we're doing in the meantime." This four-part structure gives your audience everything they need to hold the situation appropriately — without false confidence and without unnecessary alarm.</div>
+  <div class="screen-body">This formula works in all-hands, 1:1s with your CPO, and org-wide email. The specifics change; the structure doesn't.</div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Director Message</div>
+  <div class="screen-title">Briefing an Exec on a Project at Risk</div>
+  <div class="screen-body">You have an unexpected 90-second window with your CPO before a meeting. Your biggest Q4 initiative is at risk — a vendor missed a milestone and the timeline is threatened. You need to brief them. What do you say first?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>"So we've been working with this vendor since March, and things were going really well until about three weeks ago when their lead engineer left…"</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>"The Q4 initiative is at risk — vendor missed a key milestone. We have a recovery plan and I need your approval on Option B by Friday. Can I send a one-pager tonight?"</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>"I wanted to give you a heads-up that we might have a situation developing. It might be fine, but it might not be — I'll know more by end of week."</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>"Everything is generally fine, but there's one small thing I wanted to flag. I'm sure we'll figure it out."</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Director Message</div>
+  <div class="screen-title">Communicating a Change to a Skeptical Audience</div>
+  <div class="screen-body">You're announcing a process change to your management team that several of them will not welcome — it adds work to their plates without immediate benefit to them. How do you open this communication?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Lead with the business case in detail — walk through every data point so they understand this is fully justified before you name the change.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Name the change first, then the why, then acknowledge what it costs them — don't hide the difficulty, and don't bury the rationale in context they have to dig through.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Open by thanking them for their continued hard work, then ease into the change — cushioning the message reduces resistance.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Have each manager hear the news from their own leader before the group meeting — it's softer that way.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">A Hard Question at the All-Hands</div>
+  <div class="screen-body">During your quarterly all-hands, a Team Member asks: "What's going to happen to our team structure with the new software implementation?" You don't have a final answer yet — decisions are still being made at the executive level. What do you say?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>"Nothing is changing — your jobs are safe." (You believe this is likely true, even if it's not confirmed.)</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>"That's a fair question. Here's what I know: the implementation is focused on efficiency, not headcount reduction. What we don't yet know is the final structural impact — we expect that decision by end of month. In the meantime, our focus is on getting our team ready for the transition."</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>"I can't answer that right now — those decisions are above my level." (Honest and accurate.)</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Redirect: "Great question — let me follow up with each of you individually so we can have that conversation in the right setting."</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">The Org-Wide Message</div>
+  <div class="screen-body">You need to send an org-wide email announcing a new initiative that affects everyone in your org differently — some are excited, some are skeptical, some are worried about workload. Which approach is most effective?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Write a comprehensive message that addresses every possible concern so there are no follow-up questions.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Lead with the headline and why it matters, name what's changing and what isn't, acknowledge the questions people will have, and provide a specific channel for follow-up — don't try to answer everything in one message.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Send the message through managers first — let them customize the framing for their specific teams before it hits everyone's inbox.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Wait until all the details are settled before communicating — partial information causes more anxiety than no information.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">After a Miscommunication</div>
+  <div class="screen-body">Two weeks after a major announcement, you learn your message was widely misunderstood — a key part of the rationale was lost in translation, and a significant portion of the org interpreted the change as a cost-cutting measure. What do you do?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Issue a correction that names the misunderstanding and restates the accurate rationale — quickly and directly.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Let it settle — reopening the conversation draws more attention to the gap and makes it seem more significant than it is.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Identify which managers spread the misunderstanding and address it with them first, then let them correct it with their teams.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Acknowledge the miscommunication directly, own the communication design as the source of it (not blame-seeking), restate the actual rationale clearly, and create a way for Team Members to ask follow-up questions.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — The Director Communication Stack puts supporting context and background first to establish credibility before the headline.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — When briefing an exec, you should lead with your recommendation or headline before providing supporting context.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — The Uncertainty Formula includes: what we know, what we don't yet, when we'll know more, and:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Who is responsible for the uncertainty</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — What we're doing in the meantime</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — What the worst-case scenario looks like</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — Why certainty wasn't achieved sooner</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — When an executive receives a briefing, they are primarily filtering for:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Thoroughness of the analysis and completeness of the data</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Is it on track? Is there a risk? What do you need from me?</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Relationship with the person presenting and their track record</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Whether the team understands the details behind the recommendation</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — The primary difference between director-level and manager-level communication is:</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Directors communicate more frequently and in more detail</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — Directors communicate across the org, upward, and to stakeholders — not just to their own team</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — Directors use more formal language and written communication</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — Directors are expected to communicate only when there is a specific decision to make</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Use these prompts to apply the Director Communication Stack to something you're working on right now.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. What is the most complex project or initiative you're currently leading?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="The initiative is…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Draft a headline-first update on that initiative — one sentence.</div>
+    <div class="apply-sub">Headline + status (on track / at risk / needs action)</div>
+    <textarea class="apply-input" id="apply-1" placeholder="[Initiative name] is [status] — [the one thing they need to know]." oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Identify one message you need to send org-wide — headline, status, and ask.</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Headline: … Status: … Ask: …" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. Apply the Uncertainty Formula to one current ambiguity in your work.</div>
+    <div class="apply-sub">What we know / What we don't yet / When we'll know more / What we're doing in the meantime</div>
+    <textarea class="apply-input" id="apply-3" placeholder="What we know: … What we don't yet: … When we'll know more: … In the meantime: …" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. Name one communication habit you're changing this week.</div>
+    <textarea class="apply-input" id="apply-4" placeholder="I'm going to stop/start…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">📢</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Communicating at the Director Level. The directors who communicate best don't say more — they say the right thing first, name their confidence clearly, and make it easy for every audience to know what they need to hold.</div>
+  </div>
+  <div class="commitments">
+    <h4>Three commitments for director-level communication:</h4>
+    <div class="commit-item">Lead every exec communication with the headline — context comes after the point, every time</div>
+    <div class="commit-item">Name your confidence level before the supporting detail — strong, moderate, or limited</div>
+    <div class="commit-item">Make "here's what we don't know and when we'll know it" a standard part of your updates on complex initiatives</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation',          end:5},
+  {label:'The Director Message',end:7},
+  {label:'Practice',            end:10},
+  {label:'Pulse Check',         end:15},
+  {label:'Apply It',            end:16},
+  {label:'Complete',            end:17}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> This is the Director Communication Stack in action: headline (at risk), status (vendor missed milestone), ask (approval on Option B by Friday), and a clear offer to follow up with context (the one-pager). In 90 seconds, your exec knows exactly what\'s happening and what they need to do. Option A buries the lead in background. Option C signals vagueness. Option D minimizes a real risk.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Naming the change first, then the why, then acknowledging the cost to the audience is respectful and clear. Audiences in difficult-message situations need to understand the change before they can absorb the rationale — not after paragraphs of context. Cushioning (C) or softening (A) delays the news and can read as evasive. Fragmented rollout (D) creates inconsistency.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> This is the Uncertainty Formula precisely applied: what we know (focus is efficiency, not headcount), what we don\'t yet (final structural impact), when we\'ll know more (end of month), what we\'re doing in the meantime (preparing the team). Option A offers false assurance that could undermine your credibility later. Option C is honest but abandons the audience. Option D deflects without information.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Org-wide communication doesn\'t try to address every concern in one message — it does the most important things well: headline and why it matters, what\'s changing and what isn\'t, acknowledgment of the questions people will have, and a clear channel for follow-up. Comprehensive (A) often means unreadable. Waiting for settled details (D) means the rumor mill fills the gap.' },
+  9: { correct:'D', feedback:'<strong>D is right.</strong> Correcting a widespread miscommunication requires directness, ownership, and a clear path forward. Letting it settle (B) allows a false narrative to harden. Blaming the managers (C) is deflection. Option A is close but doesn\'t fully own the design of the communication as the source of the problem. Taking responsibility for the miscommunication — not just restating the message — is what builds trust.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> The Director Communication Stack puts the Headline first — what they need to know in one sentence. Context and background go last, not first. The instinct to build context before the point is deeply ingrained, but at director level, it works against you. Lead with the signal, not the story.' },
+  11: { correct:'A', feedback:'<strong>True.</strong> Headline first, every time — that\'s the core principle of executive communication at director level. Executives are filtering for the signal, and they can\'t find it when it\'s buried under background. The recommendation comes first; context follows for those who want it.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> The four elements of the Uncertainty Formula are: what we know, what we don\'t yet, when we\'ll know more, and what we\'re doing in the meantime. The last element is what separates credible uncertainty communication from a helpless shrug — it shows leadership continuity even when outcomes are unclear.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> Executives are triaging enormous volumes of information. They filter every communication for three questions: Is it on track? Is there a risk? What do you need from me? When your message answers those three questions quickly, you\'re communicating effectively at this level. Everything else is supporting detail.' },
+  14: { correct:'B', feedback:'<strong>B is right.</strong> The fundamental shift at director level is the scope of the communication job — from your team to the org, to executives, to cross-functional partners and stakeholders. The content also changes: you\'re now responsible for strategic rationale, org-wide context, uncertainty, and narrative arc — not just task-level clarity.' }
+};
+
+const KEY = 'course_dr_communicating_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

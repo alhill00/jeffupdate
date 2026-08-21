@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leading Through Uncertainty | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{--accent:#000633;--accent-light:#eef2ff;--dark:#000633;--white:#fff;--muted:#6b7280;--border:#e5e7eb;--card:#fff;--warn:#fff3cd;--warn-border:#ffc107;--good:#eef2ff;--good-border:#000633;--bad:#ffe4e6;--bad-border:#f43f5e;}
+.course-header{background:linear-gradient(135deg,#000633 0%,#000d4d 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:#174DFF;border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:var(--dark);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:#174DFF;color:var(--white);border-color:#174DFF;}
+.sec-pill.done{background:rgba(23,77,255,.15);color:rgba(255,255,255,.75);border-color:rgba(23,77,255,.3);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid #174DFF;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.move-grid{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.move-card{background:var(--dark);border-radius:10px;padding:18px 20px;display:grid;grid-template-columns:48px 1fr;gap:16px;align-items:start;}
+.move-num{width:40px;height:40px;border-radius:50%;background:#174DFF;color:var(--white);font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.move-name{font-size:16px;font-weight:800;color:var(--white);margin-bottom:4px;}
+.move-desc{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){background:#f8f9ff;border-color:#000633;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){background:#f8f9ff;border-color:#000633;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:#000633;}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:#000633;color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#174DFF;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:#000633;color:#000633;}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:#000633;color:var(--white);}
+.btn-next:hover:not(:disabled){background:#174DFF;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.35);}
+.nav-dot.active-dot{background:#000633;}
+@media(max-width:600px){.two-col{grid-template-columns:1fr;}.move-card{grid-template-columns:1fr;}.move-num{display:none;}.course-main{padding:20px 14px;}.section-nav{padding:10px 14px;}.progress-wrap{padding:12px 14px;}}
+</style>
+</head>
+<body>
+<div class="course-header">
+  <div class="course-meta">VP Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Leading Through Uncertainty</div>
+  <div class="course-sub">Navigating ambiguity at scale — when the path isn't clear and the org is looking to you.</div>
+</div>
+<div class="progress-wrap">
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progress-bar" style="width:0%"></div></div>
+  <div class="progress-label" id="progress-label">0 of 16</div>
+</div>
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Uncertainty Framework</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+<div class="course-main">
+
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">You Are the Direction</div>
+  <div class="screen-body">The defining test of VP leadership is not the well-resourced initiative with a clear plan and full executive alignment. It is the situation where the path is genuinely unclear, the data is incomplete, and the organization is waiting to see how you respond.</div>
+  <div class="screen-body">At lower levels of leadership, uncertainty can be deferred upward — "let me check with my manager." At VP level, you are frequently the most senior person in the room. The organization cannot defer above you. You are the direction.</div>
+  <div class="screen-body">What uncertainty does to organizations when leadership doesn't name it: anxiety rises, speculation fills the void, collaboration decreases, performance degrades, and talented people begin exploring exits. The presence of uncertainty is not the problem — it's what leadership does with it that determines the organizational outcome.</div>
+  <div class="hl"><strong>The VP's job in uncertainty is not to eliminate it before communicating.</strong> It's to name it honestly, anchor to what doesn't change, build the best available partial plan, and set a timeline for the next update.</div>
+</div>
+
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Uncertainty Does to Organizations</div>
+  <div class="screen-body">Organizational responses to unaddressed uncertainty are predictable enough to map. Understanding the progression helps a VP intervene earlier — before the damage compounds.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Unaddressed Uncertainty</h4>
+      <ul>
+        <li>Anxiety rises as Team Members fill the vacuum with speculation</li>
+        <li>Informal networks become the primary information channel</li>
+        <li>Collaboration decreases — people protect their turf under threat</li>
+        <li>Risk tolerance drops — decision-making becomes conservative or frozen</li>
+        <li>Talent vulnerability increases — top performers with options begin to consider them</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Named and Structured Uncertainty</h4>
+      <ul>
+        <li>Anxiety is reduced — the vacuum is replaced with what's actually known</li>
+        <li>Leadership retains credibility as the information source</li>
+        <li>Team Members can focus energy on things they can control</li>
+        <li>Trust in VP increases — honesty in hard moments builds more than reassurance</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Making Decisions in Uncertainty</div>
+  <div class="screen-body">The VP trap: waiting for certainty before deciding. Certainty is often unavailable on the timeline the org needs a direction. The alternative is calibrated decision-making — a process that works with incomplete information rather than being blocked by it.</div>
+  <div class="hl"><strong>Calibrated decision-making:</strong> "Based on what we know, I'm confident enough to move in this direction. Here's my confidence level and why. Here's what would cause me to revisit this call. Here's when we'll know more." Then move.</div>
+  <div class="screen-body">This is fundamentally different from guessing. Calibrated decisions are explicit about confidence level, explicit about the conditions for revision, and explicit about the timeline. This transparency is what makes the decision trustworthy despite the uncertainty — not the pretense of certainty that nobody believes anyway.</div>
+  <div class="al"><strong>The cost of waiting for certainty:</strong> While you wait, the vacuum fills. People make local decisions that may be contradictory. The cost of coordination failure grows. When you do communicate, you are correcting a narrative rather than building one.</div>
+</div>
+
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Uncertainty Framework</div>
+  <div class="screen-title">Four Moves for Navigating Uncertainty</div>
+  <div class="screen-body">In sequence — four moves that turn unstructured uncertainty into something an organization can work with.</div>
+  <div class="move-grid">
+    <div class="move-card">
+      <div class="move-num">1</div>
+      <div class="div">
+        <div class="move-name">Name It</div>
+        <div class="move-desc">"We are in genuine uncertainty. Here's what we know. Here's what we don't know yet." Naming the uncertainty directly is stabilizing — it replaces speculation with the VP's clear-eyed acknowledgment of reality.</div>
+      </div>
+    </div>
+    <div class="move-card">
+      <div class="move-num">2</div>
+      <div class="div">
+        <div class="move-name">Anchor to Constants</div>
+        <div class="move-desc">"Here's what doesn't change: our values, our commitment to each other, our mission." In uncertainty, people need to know what the ground is. Anchoring to constants provides the stable footing from which uncertainty can be navigated.</div>
+      </div>
+    </div>
+    <div class="move-card">
+      <div class="move-num">3</div>
+      <div class="div">
+        <div class="move-name">Build the Partial Plan</div>
+        <div class="move-desc">"Here's the direction we're moving in, even though we don't have every answer." Even a partial plan beats paralysis. Direction with open questions is more useful than perfect information that hasn't arrived yet.</div>
+      </div>
+    </div>
+    <div class="move-card">
+      <div class="move-num">4</div>
+      <div class="div">
+        <div class="move-name">Set a Clarity Timeline</div>
+        <div class="move-desc">"We'll know more by [specific date]. I'll update you then." A timeline commits to a future communication and reduces the anxiety created by indefinite uncertainty. Keep the timeline.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Constants That Don't Change</div>
+  <div class="screen-body">Anchoring to constants in uncertainty requires knowing in advance what those constants are. In many organizations, they are named but not felt — values listed on a wall that don't function as real anchors in difficult moments.</div>
+  <div class="screen-body">For constants to work as anchors in uncertainty, they must be:</div>
+  <div class="two-col">
+    <div class="col-card accent-left">
+      <h4>What Makes Constants Real</h4>
+      <ul>
+        <li>Referenced consistently in steady-state, not just in crisis</li>
+        <li>Connected to specific behaviors, not just words</li>
+        <li>Demonstrated by VP behavior — not just declared</li>
+        <li>Tested and held in previous moments of pressure</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Useful Anchors in Most Orgs</h4>
+      <ul>
+        <li>The team's relationship to each other</li>
+        <li>The mission or purpose of the function</li>
+        <li>Specific commitments the VP has made and kept</li>
+        <li>What the VP will continue to protect regardless of what changes</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hl"><strong>The test:</strong> If you say "our values don't change" in a difficult moment, and Team Members mentally recall a recent instance where those values were violated, the anchor doesn't hold. Constants must be real to be useful.</div>
+</div>
+
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Uncertainty Framework</div>
+  <div class="screen-title">Communicating About a Shift Still Being Finalized</div>
+  <div class="screen-body">A significant strategic shift is being discussed at the executive level. Nothing has been decided. However, informal communication has already reached your organization — Team Members know something is being considered, and anxiety is building. You don't yet have the full picture.</div>
+  <div class="screen-body">What do you do?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Wait until the executive decision is finalized — communicating about an unresolved situation will increase anxiety rather than reduce it.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Name the uncertainty directly: "I know there's been some informal communication about potential changes. Here's what I know, here's what I don't know yet, and here's when I expect more clarity." Then deliver on the timeline.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Reassure your team that you're staying on top of it and that you'll communicate when there's news — this manages expectations without adding to the anxiety.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Have your director layer address the informal communication in their team conversations — they know their teams best and can calibrate the message appropriately.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Uncertainty Framework</div>
+  <div class="screen-title">Team Losing Confidence in Direction</div>
+  <div class="screen-body">After three months of ambiguity on a major initiative — caused by external factors outside your control — you can see your team losing confidence. They're executing, but energy is declining. Some of your best directors are asking whether the initiative is still the right priority. You don't yet have the clarity they want.</div>
+  <div class="screen-body">What's your move?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Increase the energy around the initiative — communicate more enthusiasm and urgency to build momentum.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Name the ambiguity explicitly, acknowledge the impact honestly, anchor to what remains constant (the rationale, the team, the commitment), share your partial plan, and set a specific date for the next update.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Pause the initiative until external factors resolve — protecting the team's energy through a pause is better than continued uncertainty.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Have 1:1 conversations with each director to understand their specific concerns before communicating anything broadly.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Significant Decision with Unavailable Data</div>
+  <div class="screen-body">A resource allocation decision with significant implications must be made. The data you'd ideally have won't be available for another six weeks. The decision, however, needs to be made now — waiting will create a downstream cascade that costs more than a decision made with incomplete data. </div>
+  <div class="screen-body">What's the right approach?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Push the timeline — the decision quality improvement from having better data is worth the downstream cost of waiting.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Make a calibrated decision based on available information: state your confidence level, the rationale, what would cause you to revisit it, and when. Then move and monitor.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Delegate the decision to your director layer — they're closer to the operational reality and can make a better-informed call.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Make the decision but communicate it as provisional — "we'll know if this is right in six weeks" — so expectations are managed appropriately.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Holding Steady When the Board Wants Certainty</div>
+  <div class="screen-body">In a board session, a board member presses you for certainty on an outcome that is genuinely uncertain. "I need to know definitively — will this strategy deliver the target by Q4?" You don't know. You could project confidence you don't have. You could say something that would be reassuring but not accurate.</div>
+  <div class="screen-body">What do you say?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>"Based on current trajectory, we're targeting Q4 delivery." — frame it as a target rather than a certainty, which is technically accurate without undermining confidence.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>"I'm not able to give you that certainty, and I don't want to. Here's what I'm confident about: [specific elements]. Here's what remains uncertain and why. Here's the condition under which Q4 becomes achievable." Be honest about the structure of the uncertainty.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>"Yes — our plan is built for Q4 delivery." — project confidence because a VP who expresses uncertainty to the board undermines investor confidence in leadership.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>"Let me come back to you on that with a more precise analysis — I don't want to give you an unreliable number in the room."</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When You Were Wrong About a Direction You Committed To</div>
+  <div class="screen-body">You publicly committed to a strategic direction six months ago. New information has made clear the direction needs to change. Your team has invested significantly in the original direction. You need to announce the change. The challenge: you need to maintain credibility on the new direction while acknowledging you were wrong about the previous one.</div>
+  <div class="screen-body">What's your approach?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Frame the change as an "evolution" of the original direction — credibility is preserved better if continuity is emphasized.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Be direct: "The direction I committed to was the right call with the information available. New information changes the calculus. Here's what changed, here's the new direction, and here's how I'm thinking about what we do with the work already done."</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Let the new direction emerge naturally as you move attention toward it — the best transitions are organic rather than announced as course corrections.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Take accountability for the error directly but minimize the discussion — dwelling on what went wrong is less useful than momentum toward what's next.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — At VP level, uncertainty can be deferred upward to more senior leadership when the path isn't clear.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — "Naming the uncertainty" as the first move in the uncertainty framework means:</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Admitting that leadership doesn't know what to do</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — Stating clearly what is known and what is not yet known, replacing speculation with honest clarity</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Delegating the uncertainty communication to the director layer</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — Documenting the uncertainty in writing before communicating verbally</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — A partial plan is more useful than waiting for a complete one because:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Partial plans can always be expanded later without loss of credibility</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Direction with open questions gives the org something to work with and prevents the vacuum that forms during paralysis</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — It is faster to communicate and allows more frequent updates</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — It signals appropriate humility about VP knowledge limits</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — Setting a clarity timeline ("We'll know more by X date") is important because it:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Signals to the board when the VP expects to have full resolution</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Commits to a future communication and reduces the anxiety created by indefinite uncertainty</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Creates accountability for the director layer to have answers ready</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Provides HR with a timeline for workforce planning purposes</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — Calibrated decision-making in uncertainty means making decisions while being explicit about confidence level, conditions for revisiting, and timeline for more information.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Navigate Your Current Uncertainty</div>
+  <div class="screen-body">Use the four moves to assess and structure the most significant uncertainty your organization is navigating right now.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. Name It: What is the most significant uncertainty facing your organization right now? Have you named it explicitly to your team, or has it been left to speculation?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Describe the uncertainty and whether you've named it…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Anchor to Constants: What doesn't change regardless of how this uncertainty resolves? Name 3 real constants — things the org can count on from you.</div>
+    <textarea class="apply-input" id="apply-1" placeholder="List 3 real constants — not aspirational ones…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Partial Plan: What is the best direction you can commit to right now, even without full certainty? What are the open questions?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="State the partial direction and name the open questions honestly…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. Clarity Timeline: When will you have more information? When will you next update your organization on this uncertainty?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="State the specific date and what you'll communicate then…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. What calibrated decision are you currently delaying that the org needs in order to move? What's your confidence level, and what would change your call?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Name the decision, your confidence, and the condition for revision…" oninput="saveApply(4)"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🧭</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Leading Through Uncertainty. VPs who lead well in ambiguity don't wait for certainty — they name the uncertainty, anchor to what's real, build the best available plan, and keep their word on when they'll return with more.</div>
+  </div>
+  <div class="commitments">
+    <h4>Your uncertainty leadership commitments:</h4>
+    <div class="commit-item">Name the uncertainty before the vacuum fills — say what you know and what you don't, and do it first</div>
+    <div class="commit-item">Anchor to constants that are real, not aspirational — and demonstrate them in how you act during the ambiguity</div>
+    <div class="commit-item">Build and communicate the partial plan — direction with open questions is more useful than paralysis</div>
+    <div class="commit-item">Set a clarity timeline and keep it — your follow-through on the commitment is the trust-building act</div>
+    <div class="commit-item">Make calibrated decisions when the org needs direction — state confidence level, rationale, and conditions for revision</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+<script>
+const TOTAL=17;
+const SECTIONS=[{label:'Foundation',end:5},{label:'The Uncertainty Framework',end:7},{label:'Practice',end:10},{label:'Pulse Check',end:15},{label:'Apply It',end:16},{label:'Complete',end:17}];
+const SECTION_MAP=[0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SCENARIO_ANSWERS={
+  5:{correct:'B',feedback:'<strong>B is right.</strong> The uncertainty has already reached the org through informal channels — silence now means the VP is behind the narrative rather than ahead of it. Naming what you know, what you don\'t know, and when you\'ll have more is the stabilizing move. Waiting for finalization (A) extends the vacuum period. Vague reassurance (C) — "I\'m on top of it" — doesn\'t replace the speculation that\'s already circulating. Director-routing (D) without a VP statement leaves the most credible voice absent.'},
+  6:{correct:'B',feedback:'<strong>B is right.</strong> This is precisely the scenario the four-move framework is built for. Naming the ambiguity honestly, acknowledging its impact, anchoring to constants (the rationale, the team, the commitment), sharing the partial plan, and setting a clarity date are all available even without having the certainty the team wants. Performed enthusiasm (A) when energy is already declining reads as disconnected. Pausing without clarity on what comes next (C) can extend the uncertainty further.'},
+  7:{correct:'B',feedback:'<strong>B is right.</strong> This is the calibrated decision scenario. Making the decision with explicit confidence level, rationale, revision conditions, and a monitoring timeline is the right move when waiting has a real cost. Pushing the timeline (A) transfers the cost forward without eliminating it. Delegating a strategic resource decision (C) without VP judgment abdicates ownership. Labeling the decision "provisional" (D) upfront can undermine its authority and reduce team commitment to it.'},
+  8:{correct:'B',feedback:'<strong>B is right.</strong> Honest clarity to the board — even when that clarity is "I can\'t give you certainty on this" — builds more credibility than projecting confidence that isn\'t there. Board members who press for certainty typically already suspect the answer — what they\'re evaluating is whether the VP will be straight with them. "Based on current trajectory" (A) is somewhat better but still evasive. "Yes" with false certainty (C) creates a credibility risk when the target is missed.'},
+  9:{correct:'B',feedback:'<strong>B is right.</strong> Direct acknowledgment — that the original direction was the right call given the information available, that new information changes the calculus — is the most credible approach. It respects the team\'s investment in the original direction, models intellectual honesty, and gives them a clear rationale for why the new direction is the right call now. "Evolution" framing (A) for what is genuinely a direction change is often read as spin. Organic emergence (C) without acknowledgment leaves the team wondering whether leadership sees what they see.'}
+};
+const PULSE_ANSWERS={
+  10:{correct:'B',feedback:'<strong>False.</strong> At VP level, you are frequently the most senior person in the room. The organization cannot defer above you — you are the direction. This is the defining difference from manager and director levels, where uncertainty can be escalated. At VP level, navigating uncertainty is a core leadership responsibility, not one that can be handed upward.'},
+  11:{correct:'B',feedback:'<strong>B is right.</strong> Naming the uncertainty means stating clearly what is known and what is not — replacing speculation with honest clarity. This is stabilizing because it removes the vacuum that speculation fills. It doesn\'t mean admitting helplessness — it means being honest about the structure of the situation.'},
+  12:{correct:'B',feedback:'<strong>B is right.</strong> Direction with open questions gives the organization something to work with. The vacuum that forms during paralysis is more damaging than a partial plan — it fills with speculation, local contradictory decisions, and declining confidence in leadership. A partial plan that is honest about what it doesn\'t cover is more trustworthy than a complete plan that performs certainty it doesn\'t have.'},
+  13:{correct:'B',feedback:'<strong>B is right.</strong> Setting a clarity timeline commits to a future communication — and that commitment is itself stabilizing. When Team Members know when the next update will come, they can focus their energy on the present rather than anxiously monitoring for signals. Keeping the timeline is the trust-building act. Breaking it erodes more credibility than the uncertainty itself.'},
+  14:{correct:'A',feedback:'<strong>True.</strong> Calibrated decision-making is explicit about three things: confidence level (how certain am I?), conditions for revision (what would change my call?), and timeline for more information (when will we know more?). This transparency is what makes the decision trustworthy despite the uncertainty — it replaces the pretense of certainty with an honest account of how the decision was made.'}
+};
+const KEY='course_vp_uncertainty_v1';
+let state={cur:0,max:0,answered:{},choices:{},apply:{}};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s)state=s;}catch(e){}showScreen(state.cur);buildDots();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+n).classList.add('active');state.cur=n;if(n>state.max)state.max=n;updateProgress();updatePills();updateNav();restoreScreen(n);save();window.scrollTo(0,0);}
+function updateProgress(){const pct=Math.round((state.max/(TOTAL-1))*100);document.getElementById('progress-bar').style.width=pct+'%';document.getElementById('progress-label').textContent=state.max+' of '+(TOTAL-1);}
+function updatePills(){const sec=SECTION_MAP[state.cur];SECTIONS.forEach((s,i)=>{const pill=document.getElementById('pill-'+i);if(!pill)return;pill.className='sec-pill';if(i===sec)pill.classList.add('active');else if(state.max>=s.end)pill.classList.add('done');});}
+function updateNav(){document.getElementById('btn-prev').disabled=state.cur===0;const nextBtn=document.getElementById('btn-next');const needsAnswer=(state.cur in SCENARIO_ANSWERS||state.cur in PULSE_ANSWERS);const answered=state.answered[state.cur];nextBtn.disabled=(state.cur===TOTAL-1)||(needsAnswer&&!answered);nextBtn.textContent=state.cur===TOTAL-2?'Finish →':'Next →';}
+function buildDots(){const wrap=document.getElementById('nav-dots');wrap.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='nav-dot';if(i===state.cur)d.classList.add('active-dot');else if(i<=state.max)d.classList.add('done-dot');wrap.appendChild(d);}}
+function navigate(dir){const next=state.cur+dir;if(next<0||next>=TOTAL)return;showScreen(next);buildDots();}
+function restoreScreen(n){if(n in SCENARIO_ANSWERS&&state.choices[n])restoreScenario(n,state.choices[n]);if(n in PULSE_ANSWERS&&state.choices[n])restorePulse(n,state.choices[n]);if(n===15)restoreApply();}
+function pickOpt(screenIdx,chosen){if(state.answered[screenIdx])return;state.answered[screenIdx]=true;state.choices[screenIdx]=chosen;save();restoreScenario(screenIdx,chosen);updateNav();}
+function restoreScenario(screenIdx,chosen){const answer=SCENARIO_ANSWERS[screenIdx];const container=document.getElementById('opts-'+screenIdx);if(!container)return;container.querySelectorAll('.opt').forEach(opt=>{const letter=opt.querySelector('.opt-letter').textContent;opt.classList.add('locked');if(letter===answer.correct)opt.classList.add('correct');else if(letter===chosen)opt.classList.add('wrong');else opt.classList.add('dimmed');});const fb=document.getElementById('fb-'+screenIdx);if(fb){fb.innerHTML=answer.feedback;fb.className='feedback-box show'+(chosen!==answer.correct?' wrong-fb':'');}}
+function pickPulse(screenIdx,chosen){if(state.answered[screenIdx])return;state.answered[screenIdx]=true;state.choices[screenIdx]=chosen;save();restorePulse(screenIdx,chosen);updateNav();}
+function restorePulse(screenIdx,chosen){const answer=PULSE_ANSWERS[screenIdx];const container=document.getElementById('pulse-'+screenIdx);if(!container)return;const opts=container.querySelectorAll('.pulse-opt');opts.forEach((opt,i)=>{const letter=String.fromCharCode(65+i);opt.classList.add('locked');if(letter===answer.correct)opt.classList.add('correct');else if(letter===chosen)opt.classList.add('wrong');else opt.classList.add('dimmed');});const fb=document.getElementById('pfb-'+screenIdx);if(fb){fb.innerHTML=answer.feedback;fb.className='feedback-box show'+(chosen!==answer.correct?' wrong-fb':'');}}
+function saveApply(idx){const el=document.getElementById('apply-'+idx);if(!el)return;state.apply[idx]=el.value;save();const saved=document.getElementById('saved-'+idx);if(saved){saved.style.display='block';setTimeout(()=>saved.style.display='none',1500);}}
+function restoreApply(){for(let i=0;i<=4;i++){const el=document.getElementById('apply-'+i);if(el&&state.apply[i])el.value=state.apply[i];}}
+load();
+</script>
+</body>
+</html>

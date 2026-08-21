@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Communication at Scale | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{--accent:#000633;--accent-light:#eef2ff;--dark:#000633;--white:#fff;--muted:#6b7280;--border:#e5e7eb;--card:#fff;--warn:#fff3cd;--warn-border:#ffc107;--good:#eef2ff;--good-border:#000633;--bad:#ffe4e6;--bad-border:#f43f5e;}
+.course-header{background:linear-gradient(135deg,#000633 0%,#000d4d 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:#174DFF;border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:var(--dark);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:#174DFF;color:var(--white);border-color:#174DFF;}
+.sec-pill.done{background:rgba(23,77,255,.15);color:rgba(255,255,255,.75);border-color:rgba(23,77,255,.3);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid #174DFF;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.sys-grid{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.sys-card{background:var(--dark);border-radius:10px;padding:18px 20px;}
+.sys-num{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.sys-name{font-size:17px;font-weight:800;color:var(--white);margin-bottom:6px;}
+.sys-desc{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){background:#f8f9ff;border-color:#000633;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){background:#f8f9ff;border-color:#000633;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:#000633;}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:#000633;color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#174DFF;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:#000633;color:#000633;}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:#000633;color:var(--white);}
+.btn-next:hover:not(:disabled){background:#174DFF;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.35);}
+.nav-dot.active-dot{background:#000633;}
+@media(max-width:600px){.two-col{grid-template-columns:1fr;}.course-main{padding:20px 14px;}.section-nav{padding:10px 14px;}.progress-wrap{padding:12px 14px;}}
+</style>
+</head>
+<body>
+<div class="course-header">
+  <div class="course-meta">VP Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Communication at Scale</div>
+  <div class="course-sub">Moving from informing your team to shaping how an entire organization understands its work.</div>
+</div>
+<div class="progress-wrap">
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progress-bar" style="width:0%"></div></div>
+  <div class="progress-label" id="progress-label">0 of 16</div>
+</div>
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The VP Message Architecture</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+<div class="course-main">
+
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">You Are Building a Narrative Now</div>
+  <div class="screen-body">At VP level, the communication job has changed. You are no longer primarily informing your team about what's happening. You are shaping how an entire organization understands its work — what it believes its purpose is, where it believes it's headed, and what it believes matters.</div>
+  <div class="screen-body">This is organizational narrative. It determines whether Team Members feel like they're part of something with direction and meaning — or executing tasks in a vacuum. The VP who builds narrative intentionally creates alignment that multiplies effort. The VP who doesn't creates an org that narrates itself, usually less accurately and more anxiously than reality warrants.</div>
+  <div class="hl"><strong>Three shifts that define VP communication:</strong> Informing your team → Building organizational narrative. Speaking directly → Transmitting through managers. Reactive to questions → Proactively shaping understanding before questions form.</div>
+</div>
+
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Silence Costs at Scale</div>
+  <div class="screen-body">The VP communication failure most often isn't bad communication. It's absent communication. When a VP goes silent — between announcements, during uncertainty, when they're focused on other things — the org doesn't stay neutral. It fills the vacuum with the most available interpretation, which is almost always the most anxious one.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>What Silence Produces</h4>
+      <ul>
+        <li>Worst-case speculation spreads laterally</li>
+        <li>Managers improvise direction without context</li>
+        <li>Team Members read absence as disengagement</li>
+        <li>Trust erodes without a single incident to name</li>
+        <li>By the time VP communicates, the narrative must be corrected rather than built</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>What Proactive Communication Produces</h4>
+      <ul>
+        <li>VP controls the narrative before vacuum forms</li>
+        <li>Managers have context to represent VP intent accurately</li>
+        <li>Team Members experience active VP leadership even in steady-state periods</li>
+        <li>Uncertainty lands differently when direction exists</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">How to Write at VP Scale</div>
+  <div class="screen-body">VP-level written communication carries weight that manager-level communication doesn't. Every org-wide message, every quarterly letter, every strategic update is read more carefully and interpreted more broadly than the VP typically expects. Three rules for writing at scale:</div>
+  <div class="hl"><strong>Rule 1: Every sentence earns its place.</strong> Long VP messages get skimmed. Important content buried in paragraph six doesn't exist. Write shorter than you think you need to. Every sentence should either advance the narrative, provide essential context, or ask something of the reader.</div>
+  <div class="hl"><strong>Rule 2: Write to the most skeptical reader.</strong> Your message will be read by people who are skeptical, anxious, or looking for contradictions. If a sentence can be misread, it will be. Read your draft as someone who doesn't trust the framing yet.</div>
+  <div class="hl"><strong>Rule 3: The first sentence determines if it gets read.</strong> If the opening is generic ("I'm excited to share..."), you've already lost the reader's best attention. Start with the most important thing.</div>
+</div>
+
+<div class="screen" id="screen-3">
+  <div class="screen-label">The VP Message Architecture</div>
+  <div class="screen-title">VP Communication System</div>
+  <div class="screen-body">Effective VP communication isn't a series of good individual messages — it's a system that operates predictably, consistently, and bidirectionally.</div>
+  <div class="sys-grid">
+    <div class="sys-card">
+      <div class="sys-num">Element 1</div>
+      <div class="sys-name">Core Narrative</div>
+      <div class="sys-desc">3–5 consistent themes repeated in every channel, every quarter. The org learns what you stand for through repetition. If your themes change every quarter, the org has no narrative — only updates.</div>
+    </div>
+    <div class="sys-card">
+      <div class="sys-num">Element 2</div>
+      <div class="sys-name">Communication Cadence</div>
+      <div class="sys-desc">Predictable rhythm: monthly all-hands, quarterly letters, weekly signal of some kind. Predictability reduces anxiety — the org knows when VP communication is coming and doesn't fill the gap with speculation.</div>
+    </div>
+    <div class="sys-card">
+      <div class="sys-num">Element 3</div>
+      <div class="sys-name">Bidirectional Loops</div>
+      <div class="sys-desc">Skip-levels, pulse surveys, town halls with open Q&amp;A, trusted interpreters. VP communication that has no honest return channel loses contact with reality. The loop is what keeps the narrative accurate.</div>
+    </div>
+    <div class="sys-card">
+      <div class="sys-num">Element 4</div>
+      <div class="sys-name">Manager Enablement</div>
+      <div class="sys-desc">Brief your director layer before major announcements. If they learn from the same message as the rest of the org, they cannot support it accurately. Pre-briefed managers are your communication multiplier.</div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The VP Communication Failure Patterns</div>
+  <div class="screen-body">Three VP communication failure patterns that are common enough to name specifically:</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Information Without Narrative</h4>
+      <ul>
+        <li>Updates that describe what's happening without connecting to meaning or direction</li>
+        <li>Org receives data but not interpretation</li>
+        <li>Team Members are informed but not aligned</li>
+      </ul>
+    </div>
+    <div class="col-card red-left">
+      <h4>Volume Without Cadence</h4>
+      <ul>
+        <li>Irregular bursts of communication</li>
+        <li>Periods of silence followed by floods</li>
+        <li>Org can't build rhythmic understanding — it's reactive</li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-card red-left" style="margin-top:14px;border-left:4px solid #f43f5e;">
+    <h4>One-Directional Without Loop</h4>
+    <ul>
+      <li>VP sends messages but has no reliable mechanism for accurate signal to return</li>
+      <li>Communication becomes increasingly detached from what Team Members actually experience</li>
+      <li>VP is surprised by engagement data, survey results, or retention patterns they didn't anticipate</li>
+    </ul>
+  </div>
+</div>
+
+<div class="screen" id="screen-5">
+  <div class="screen-label">The VP Message Architecture</div>
+  <div class="screen-title">Communicating a Strategy Pivot Org-Wide</div>
+  <div class="screen-body">You need to communicate a significant strategy pivot to your organization — one that changes priorities many people have been working toward. The pivot is well-reasoned and has executive alignment. Your concern is that the message lands as credible and energizing rather than disorienting or trust-damaging.</div>
+  <div class="screen-body">What's your communication architecture for this?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Send an all-hands communication to the full org simultaneously — directness and transparency are more important than sequencing in a high-trust situation.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Brief the director layer first with full context and Q&amp;A, then communicate to the org with the core narrative — ensuring managers can support the message before it lands.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Let the director layer communicate the pivot to their teams in their own words — it will land better in smaller, more relational contexts.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Send the communication simultaneously to the org and directors — treating everyone equally signals respect for the whole organization.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<div class="screen" id="screen-6">
+  <div class="screen-label">The VP Message Architecture</div>
+  <div class="screen-title">Message Badly Misinterpreted Through the Chain</div>
+  <div class="screen-body">You sent a message about resource prioritization that was intended to clarify strategic focus. It has been interpreted by many Team Members as a signal that a major restructure is imminent. Several directors communicated it in ways that amplified the anxiety. Your trusted interpreters are telling you the misinterpretation is widespread.</div>
+  <div class="screen-body">What's your first move?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Send a correction directly to all Team Members clarifying your original intent — going direct is faster and prevents further distortion through the management layer.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Correct the message directly to the org and simultaneously debrief with directors on what amplified the anxiety — so you fix the current misread and prevent future distortion.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Let directors correct the misinterpretation in their teams — they know their people and can address the anxiety in the right context.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Wait and observe — correcting the message immediately may amplify the anxiety by drawing more attention to the misread.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Quarterly All-Hands That Produces Energy, Not Info Overload</div>
+  <div class="screen-body">You're designing your quarterly all-hands. Last quarter's session was described in survey feedback as "information-heavy" and "I'm not sure what we're supposed to do differently after." You want this one to produce genuine alignment and energy, not just information transfer.</div>
+  <div class="screen-body">Which design principle guides the session?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Increase the amount of content to be more comprehensive — "information-heavy" feedback means they wanted more context, not less.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Design around 2–3 core narrative themes — everything in the session reinforces those themes, with time for genuine Q&amp;A and a clear "what changes for you" takeaway.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Shift from VP presentation to panel format — variety in speakers reduces information fatigue.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Cut the all-hands to 30 minutes — brevity signals respect for the team's time and forces prioritization.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Communicating a Difficult Org-Wide Message</div>
+  <div class="screen-body">You need to communicate an org-wide message that involves a significant reduction in headcount in one part of the organization. You've been asked by the CEO to communicate it as a "strategic realignment." You believe that framing is accurate but also incomplete — the human cost is real and the org will see it.</div>
+  <div class="screen-body">How do you draft the communication?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Use the "strategic realignment" framing as directed — executive alignment on messaging is important and the framing is technically accurate.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Use the strategic framing and explicitly acknowledge the human cost — both are true, and acknowledging only one damages credibility with people who can see the other.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Lead entirely with the human impact — Teams Members will respond better if they feel leadership prioritizes people over strategy.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Have HR draft the message — they're best positioned to navigate the sensitive human dimensions of this communication.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Building a Communication Rhythm When There Isn't One</div>
+  <div class="screen-body">You've realized your communication with your organization has been largely reactive — you communicate when something important happens, but there's no predictable cadence. Team Members sometimes hear about significant org developments informally before they hear from you. You want to change this.</div>
+  <div class="screen-body">What's the right first step?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Send an all-hands immediately to demonstrate active communication — breaking the reactive pattern is most important, content can develop over time.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Design the cadence first: decide on monthly all-hands, a quarterly letter, and a weekly signal — then commit to the rhythm publicly so the org can predict when VP communication will come.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Ask your director layer to communicate on a more consistent schedule — the cadence issue is most visible at the manager level, not the VP level.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Increase the volume of communications you send — more messages will naturally create the perception of regularity over time.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — VP communication at scale is primarily about informing the organization of decisions and updates as they occur.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — When a VP is silent during a period of organizational uncertainty, the org typically:</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Remains neutral until the VP communicates</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — Fills the vacuum with the most anxious available interpretation</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Assumes everything is fine because no bad news has arrived</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — Looks to the director layer for signals rather than to the VP</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — A bidirectional communication loop at VP scale is important because:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — It gives Team Members more opportunities to be heard by senior leadership</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — It ensures accurate signal reaches the VP, keeping the narrative connected to what the org actually experiences</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — It improves Team Member satisfaction scores by demonstrating that leadership listens</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — It reduces the number of direct escalations that reach VP level</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — Manager enablement as a VP communication element means briefing your director layer before major announcements so they can support the message accurately.</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — The first of the three VP writing rules is that the first sentence determines if the message gets read.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Build Your VP Communication System</div>
+  <div class="screen-body">Communication at VP scale is a system, not a series of good individual messages. Use these prompts to assess and design yours.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. Core Narrative: What are your 3–5 consistent themes right now? Write them in one sentence each. Would a Team Member three levels down be able to name them?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="State your 3–5 themes. Be specific — not aspirational…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Communication Cadence: Is there a predictable communication rhythm in your org right now? Where are the gaps that create vacuums?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Describe current cadence and where the vacuum exists…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Bidirectional Loop: What mechanism exists for honest signal to reliably reach you? Who are your trusted interpreters?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Assess the loop and name 2–3 people who tell you what the org really thinks…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. Manager Enablement: Before the last major announcement, did your director layer know first? What's your current pre-briefing practice?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Describe the current reality and what you want to change…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. Draft the first sentence of the most important communication you need to send in the next 30 days — using Rule 3 (start with the most important thing).</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Write the opening sentence — make it earn its place…" oninput="saveApply(4)"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">📢</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Communication at Scale. VPs who build narrative — not just send updates — create organizations that understand their work, believe in their direction, and perform with alignment that ad hoc communication can never achieve.</div>
+  </div>
+  <div class="commitments">
+    <h4>Your communication at scale commitments:</h4>
+    <div class="commit-item">Define 3–5 narrative themes and repeat them deliberately this quarter across every channel and setting</div>
+    <div class="commit-item">Build one predictable communication rhythm this quarter — monthly all-hands, quarterly letter, or weekly signal</div>
+    <div class="commit-item">Create or strengthen one bidirectional mechanism so honest signal can reliably reach you</div>
+    <div class="commit-item">Brief directors before every major announcement — they are your communication multiplier</div>
+    <div class="commit-item">Write to the most skeptical reader — every VP message will be read that way</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+<script>
+const TOTAL=17;
+const SECTIONS=[{label:'Foundation',end:5},{label:'The VP Message Architecture',end:7},{label:'Practice',end:10},{label:'Pulse Check',end:15},{label:'Apply It',end:16},{label:'Complete',end:17}];
+const SECTION_MAP=[0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SCENARIO_ANSWERS={
+  5:{correct:'B',feedback:'<strong>B is right.</strong> The director layer pre-brief is essential for significant pivots. If directors learn from the same message as the org, they cannot field questions or support the message accurately — and they feel disrespected in the process. A simultaneous send to everyone (D) may feel egalitarian but leaves your most important communication multipliers unable to help. Director-only routing (C) for a significant pivot removes your VP voice from the message and increases distortion risk.'},
+  6:{correct:'B',feedback:'<strong>B is right.</strong> Both actions are needed. Correcting the message directly addresses the immediate misread with VP authority. Debriefing directors on what amplified the anxiety builds future capability and addresses the systemic issue. Going direct without the director debrief (A) fixes this instance but not the pattern. Waiting (D) allows the misinterpretation to compound. Director-only correction (C) is slower and less authoritative than a direct VP message for an org-wide misread.'},
+  7:{correct:'B',feedback:'<strong>B is right.</strong> The feedback tells you exactly what went wrong — information was prioritized over narrative and actionability. Designing around 2–3 core themes, with genuine Q&A and a clear takeaway, solves both problems: the org leaves understanding what you stand for and knowing what\'s different for them. More content (A) solves the opposite of the right problem. Panel format (C) may improve variety without solving alignment. Thirty minutes (D) may be appropriate but isn\'t the primary design principle — clarity is.'},
+  8:{correct:'B',feedback:'<strong>B is right.</strong> When a message involves both a legitimate strategic rationale and a real human cost, acknowledging only one damages credibility with everyone who can see the other dimension. The org will see the human cost — leading only with "strategic realignment" (A) signals that leadership is more concerned with framing than honesty. Leading only with human impact (C) without the strategic rationale is incomplete and doesn\'t build the understanding that makes the decision credible.'},
+  9:{correct:'B',feedback:'<strong>B is right.</strong> Designing the cadence and committing to it publicly is the structural fix. Predictability reduces anxiety because the org knows when VP communication will come — and stops filling the gap with speculation. Sending an immediate all-hands without a committed cadence (A) is one good communication, not a system change. Delegating cadence to directors (C) doesn\'t establish VP-level predictability. Volume without cadence (D) creates the "irregular burst" failure pattern.'}
+};
+const PULSE_ANSWERS={
+  10:{correct:'B',feedback:'<strong>False.</strong> VP communication at scale is primarily about building organizational narrative — shaping how the org understands its work, what it believes its purpose is, where it\'s headed, and what matters. Informing about decisions and updates is one function; it\'s not the primary purpose at VP level.'},
+  11:{correct:'B',feedback:'<strong>B is right.</strong> Organizations fill leadership vacuums with the most anxious available interpretation. Neutrality is not a stable state under uncertainty — people need to make sense of their situation, and in the absence of VP signal, they make sense of it with whatever information is available, which is usually incomplete and often worst-case.'},
+  12:{correct:'B',feedback:'<strong>B is right.</strong> The bidirectional loop is the mechanism that keeps VP communication connected to organizational reality. Without it, the VP\'s narrative increasingly diverges from what Team Members actually experience — and the VP is eventually surprised by data (engagement surveys, turnover, performance) they didn\'t see coming.'},
+  13:{correct:'A',feedback:'<strong>True.</strong> Manager enablement means ensuring your director layer knows major messages before the rest of the org does. They cannot support, clarify, or build on a message they receive at the same time as everyone else. Pre-briefed managers are the VP\'s primary communication multiplier.'},
+  14:{correct:'B',feedback:'<strong>False.</strong> The three VP writing rules are: 1) Every sentence earns its place, 2) Write to the most skeptical reader, and 3) The first sentence determines if it gets read. Rule 3 is about the opening sentence — which is correct. But Rule 1 is the first rule listed, not Rule 3. The sequence matters in the course architecture.'}
+};
+const KEY='course_vp_comms_scale_v1';
+let state={cur:0,max:0,answered:{},choices:{},apply:{}};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s)state=s;}catch(e){}showScreen(state.cur);buildDots();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+n).classList.add('active');state.cur=n;if(n>state.max)state.max=n;updateProgress();updatePills();updateNav();restoreScreen(n);save();window.scrollTo(0,0);}
+function updateProgress(){const pct=Math.round((state.max/(TOTAL-1))*100);document.getElementById('progress-bar').style.width=pct+'%';document.getElementById('progress-label').textContent=state.max+' of '+(TOTAL-1);}
+function updatePills(){const sec=SECTION_MAP[state.cur];SECTIONS.forEach((s,i)=>{const pill=document.getElementById('pill-'+i);if(!pill)return;pill.className='sec-pill';if(i===sec)pill.classList.add('active');else if(state.max>=s.end)pill.classList.add('done');});}
+function updateNav(){document.getElementById('btn-prev').disabled=state.cur===0;const nextBtn=document.getElementById('btn-next');const needsAnswer=(state.cur in SCENARIO_ANSWERS||state.cur in PULSE_ANSWERS);const answered=state.answered[state.cur];nextBtn.disabled=(state.cur===TOTAL-1)||(needsAnswer&&!answered);nextBtn.textContent=state.cur===TOTAL-2?'Finish →':'Next →';}
+function buildDots(){const wrap=document.getElementById('nav-dots');wrap.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='nav-dot';if(i===state.cur)d.classList.add('active-dot');else if(i<=state.max)d.classList.add('done-dot');wrap.appendChild(d);}}
+function navigate(dir){const next=state.cur+dir;if(next<0||next>=TOTAL)return;showScreen(next);buildDots();}
+function restoreScreen(n){if(n in SCENARIO_ANSWERS&&state.choices[n])restoreScenario(n,state.choices[n]);if(n in PULSE_ANSWERS&&state.choices[n])restorePulse(n,state.choices[n]);if(n===15)restoreApply();}
+function pickOpt(screenIdx,chosen){if(state.answered[screenIdx])return;state.answered[screenIdx]=true;state.choices[screenIdx]=chosen;save();restoreScenario(screenIdx,chosen);updateNav();}
+function restoreScenario(screenIdx,chosen){const answer=SCENARIO_ANSWERS[screenIdx];const container=document.getElementById('opts-'+screenIdx);if(!container)return;container.querySelectorAll('.opt').forEach(opt=>{const letter=opt.querySelector('.opt-letter').textContent;opt.classList.add('locked');if(letter===answer.correct)opt.classList.add('correct');else if(letter===chosen)opt.classList.add('wrong');else opt.classList.add('dimmed');});const fb=document.getElementById('fb-'+screenIdx);if(fb){fb.innerHTML=answer.feedback;fb.className='feedback-box show'+(chosen!==answer.correct?' wrong-fb':'');}}
+function pickPulse(screenIdx,chosen){if(state.answered[screenIdx])return;state.answered[screenIdx]=true;state.choices[screenIdx]=chosen;save();restorePulse(screenIdx,chosen);updateNav();}
+function restorePulse(screenIdx,chosen){const answer=PULSE_ANSWERS[screenIdx];const container=document.getElementById('pulse-'+screenIdx);if(!container)return;const opts=container.querySelectorAll('.pulse-opt');opts.forEach((opt,i)=>{const letter=String.fromCharCode(65+i);opt.classList.add('locked');if(letter===answer.correct)opt.classList.add('correct');else if(letter===chosen)opt.classList.add('wrong');else opt.classList.add('dimmed');});const fb=document.getElementById('pfb-'+screenIdx);if(fb){fb.innerHTML=answer.feedback;fb.className='feedback-box show'+(chosen!==answer.correct?' wrong-fb':'');}}
+function saveApply(idx){const el=document.getElementById('apply-'+idx);if(!el)return;state.apply[idx]=el.value;save();const saved=document.getElementById('saved-'+idx);if(saved){saved.style.display='block';setTimeout(()=>saved.style.display='none',1500);}}
+function restoreApply(){for(let i=0;i<=4;i++){const el=document.getElementById('apply-'+i);if(el&&state.apply[i])el.value=state.apply[i];}}
+load();
+</script>
+</body>
+</html>

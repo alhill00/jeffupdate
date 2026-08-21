@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reading the Room | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#174DFF;
+  --accent-light:#e0e8ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#e0e8ff;
+  --good-border:#174DFF;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#000633 0%,#0d1f6e 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(23,77,255,.25);color:rgba(255,255,255,.8);border-color:rgba(23,77,255,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.signal-stack{display:flex;flex-direction:column;gap:10px;margin:18px 0;}
+.signal-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;gap:14px;align-items:flex-start;}
+.signal-icon{font-size:22px;flex-shrink:0;min-width:32px;}
+.signal-content{flex:1;}
+.signal-title{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.signal-desc{font-size:13px;color:#374151;line-height:1.5;}
+.habit-stack{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.habit-row{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;gap:14px;align-items:flex-start;}
+.habit-num{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--white);font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.habit-content{flex:1;}
+.habit-title{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.habit-desc{font-size:13px;color:#374151;line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#0d3acc;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#0d3acc;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Reading the Room</div>
+  <div class="course-sub">Picking up on what's not being said — and responding to what your team actually needs.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Signals</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Manager Who Ran Great Meetings</div>
+  <div class="screen-body">She ran tight meetings. Agenda, decisions, action items — captured and sent within the hour. Her calendar was full, her output was consistent, and nobody ever complained to her face. She thought things were going well.</div>
+  <div class="screen-body">Then turnover started creeping up. Engagement scores dropped. A strong performer left without warning. The exit interview said the same thing she'd heard from others: "It felt like nothing was really being seen."</div>
+  <div class="screen-body">The signals had been there. Quieter tone in messages. One TM going from energized to flat over six weeks. Less initiative on projects. She just hadn't been reading them.</div>
+  <div class="hl"><strong>Great managers don't just run the meeting — they read the room.</strong> Signals appear before problems do. Catching them early is the difference between a check-in and a crisis.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Behavior Before Words</div>
+  <div class="screen-body">Most teams communicate through behavior long before they communicate through words. By the time someone says "I'm struggling" or "I'm thinking about leaving," they've usually been signaling it for weeks.</div>
+  <div class="screen-body">Absenteeism. A normally chatty Team Member going quiet. Lower output quality on a high performer. Changed tone in Slack. These are data points — and leaders who catch them early respond to problems when they're still manageable.</div>
+  <div class="hl"><strong>Leaders who miss signals respond to crises.</strong> Leaders who catch signals early respond to problems. Same situation — very different timing, very different cost.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three Conversations</div>
+  <div class="screen-body">What people say in a group meeting, what they say in a 1:1, and what they say in the hallway afterward are three different conversations. Reading the room means understanding which one is the real one — and creating space for it.</div>
+  <div class="screen-body">The meeting conversation is what's safe to say in front of everyone. The 1:1 conversation is what's safe to say to you. The hallway conversation is what's actually happening. Your job as a manager is to close the gap between them.</div>
+  <div class="al"><strong>If the hallway conversation is consistently louder than the meeting conversation,</strong> you have a safety problem — or a listening problem. Either way, it's yours to solve.</div>
+</div>
+
+<!-- SCREEN 3 -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Signals</div>
+  <div class="screen-title">Five Categories of Signals</div>
+  <div class="screen-body">Team behavior communicates in patterns. Learning to recognize which category a signal falls into helps you respond with the right intervention.</div>
+  <div class="signal-stack">
+    <div class="signal-card">
+      <div class="signal-icon">⚡</div>
+      <div class="signal-content">
+        <div class="signal-title">Energy Signals</div>
+        <div class="signal-desc">Lower participation, flat tone, less humor than usual, visibly disconnected in meetings. Energy is often the first thing to shift when something is wrong.</div>
+      </div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-icon">📊</div>
+      <div class="signal-content">
+        <div class="signal-title">Output Signals</div>
+        <div class="signal-desc">Slower completion, lower quality work, more errors than usual. When someone's output changes without a workload change, it's worth a conversation.</div>
+      </div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-icon">🤝</div>
+      <div class="signal-content">
+        <div class="signal-title">Relationship Signals</div>
+        <div class="signal-desc">Visible tension between Team Members, reduced collaboration, short responses in shared channels. Relationship friction shows up fast and spreads slow.</div>
+      </div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-icon">💬</div>
+      <div class="signal-content">
+        <div class="signal-title">Communication Signals</div>
+        <div class="signal-desc">Shorter responses, less proactive initiative, avoiding check-ins or going quiet when they were previously responsive. Communication patterns shift before people say anything.</div>
+      </div>
+    </div>
+    <div class="signal-card">
+      <div class="signal-icon">📅</div>
+      <div class="signal-content">
+        <div class="signal-title">Attendance Signals</div>
+        <div class="signal-desc">More PTO requests in clusters, increased call-outs, arriving late or leaving early when that wasn't the pattern before. Attendance behavior can reflect disengagement or burnout.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Seeing vs. Checking</div>
+  <div class="screen-body">Seeing is passive. You notice things as they come to you. Checking is deliberate — you actively look for signals and create conditions for them to surface.</div>
+  <div class="habit-stack">
+    <div class="habit-row">
+      <div class="habit-num">1</div>
+      <div class="habit-content">
+        <div class="habit-title">Start every 1:1 with "How are you actually doing?"</div>
+        <div class="habit-desc">Pause long enough to mean it. The silence after the question is where the real answer often lives. Don't rescue it too quickly.</div>
+      </div>
+    </div>
+    <div class="habit-row">
+      <div class="habit-num">2</div>
+      <div class="habit-content">
+        <div class="habit-title">Notice changes, not just states</div>
+        <div class="habit-desc">Someone who's always quiet is different from someone who suddenly went quiet. The signal isn't the baseline — it's the deviation from the baseline.</div>
+      </div>
+    </div>
+    <div class="habit-row">
+      <div class="habit-num">3</div>
+      <div class="habit-content">
+        <div class="habit-title">Trust your instincts</div>
+        <div class="habit-desc">If a Team Member's energy feels different and you can't name why, trust that and check in. Your gut is often picking up on real data before your brain has processed it.</div>
+      </div>
+    </div>
+  </div>
+  <div class="hl"><strong>Checking is a skill, not a trait.</strong> It improves with deliberate practice — and it starts with one habit: look for changes, not just states.</div>
+</div>
+
+<!-- SCREEN 5 -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Signals</div>
+  <div class="screen-title">Scenario: The Withdrawn High Performer</div>
+  <div class="screen-body">A Team Member who was one of your most engaged voices has become noticeably withdrawn over the past month — fewer comments in meetings, shorter messages, declining optional team events. What do you do first?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Bring it up in the next team meeting — ask everyone how they're doing and see if it surfaces.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Schedule a 1:1 check-in with a curious, open question — no agenda except understanding what's changed.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Monitor for another few weeks to see if it's a pattern before you say anything.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Start a performance conversation — withdrawn behavior can signal disengagement from the role.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6 -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Signals</div>
+  <div class="screen-title">Scenario: Visible Tension in the Room</div>
+  <div class="screen-body">In a team meeting, two Team Members have a sharp exchange. The tension is visible — others notice. It's not the first time. After the meeting, what's your move?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Address it in the next team meeting — bring the tension into the open so everyone can clear the air.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Check in privately with each person separately before any group intervention.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Let them work it out — adults don't need a manager to mediate every disagreement.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Send a team-wide message reminding everyone of professional expectations.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7 -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Scenario: Low Energy After a Big Project</div>
+  <div class="screen-body">Your team just finished a major push. The project wrapped well — but now energy is flat. People are completing work but not initiating anything. The mood has shifted. How do you respond?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Get back to business — they did a good job and now there's more work to do.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Deliberately acknowledge the effort, name the energy shift you're seeing, and create a moment to reset before moving on.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Push the next project immediately — momentum is easier to maintain than to restart.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Give the team a few days off if possible and don't address it explicitly.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8 -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Scenario: Output Quality Drop</div>
+  <div class="screen-body">A strong performer's output quality has dropped noticeably over the past two weeks — more errors, less attention to detail. Their workload hasn't changed. What's your first move?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Have a performance conversation — declining quality needs to be addressed directly and formally.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Open a 1:1 with curiosity: "I've noticed a shift in your work lately — how are you doing?"</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Give them more direct feedback on each piece of work until quality improves.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Wait to see if it resolves itself — everyone has off weeks.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9 -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Scenario: "Everything's Fine"</div>
+  <div class="screen-body">Your team says everything is fine. Meetings run smoothly. No one is complaining. But the signals say something different — lower energy, less initiative, more "just enough" work. How do you handle the gap?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Trust the words — if they say it's fine, take it at face value. Don't create problems that aren't there.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Name what you're observing without accusing: "I've noticed some things lately and want to check in — not looking to assign blame, just want to understand what's real."</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Run an anonymous survey to surface what people won't say directly.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Raise your expectations and see if performance responds — sometimes people just need a push.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10 -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — A Team Member who has always been quiet is showing the same signal as one who suddenly went quiet.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11 -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — When a Team Member's output drops, what's the most useful first response?</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Start a formal performance conversation immediately</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — Open with curiosity in a 1:1 before drawing any conclusions</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Give direct feedback on each piece of substandard work</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — Wait a few more weeks to see if it's a real pattern</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12 -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — When two Team Members have visible tension, the best first step is to address it in the full group so everyone can clear the air together.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13 -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — Which signal category is typically the FIRST to shift when something is wrong?</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Attendance Signals</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Output Signals</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Energy Signals</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Relationship Signals</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14 -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — If your gut tells you something is off with a Team Member but you can't name exactly what — you should trust that instinct and check in.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15 -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Reading the room only improves when you practice it deliberately. Use these prompts to apply the signal framework to your team right now.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. Who on your team has seemed different lately — energy, output, or engagement? What have you noticed?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Name or role, and specific observations…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. When did you last ask a Team Member "How are you actually doing?" and wait for a real answer?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="When and with whom — and what you heard…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Which signal category (energy, output, relationship, communication, attendance) is showing up most on your team right now?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Category and what you're seeing…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What conversation are you avoiding that the signals are pointing toward?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Be honest — what are you not saying yet?" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. What's one deliberate check-in you'll schedule in the next week based on what you've noticed?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Who, when, and your opening question…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved ✓</div>
+  </div>
+</div>
+
+<!-- SCREEN 16 -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">👁️</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Reading the Room. The managers who catch problems early are the ones who are actively looking — not waiting to be told.</div>
+  </div>
+  <div class="commitments">
+    <h4>Your commitments going forward:</h4>
+    <div class="commit-item">In your next three 1:1s, open with "How are you actually doing?" and let the silence work.</div>
+    <div class="commit-item">Identify one signal category showing up on your team — and name it in a 1:1 this week.</div>
+    <div class="commit-item">Notice changes, not just states — who is different this week compared to three weeks ago?</div>
+    <div class="commit-item">If your gut says something's off, trust it and check in. Don't wait for the data to scream.</div>
+    <div class="commit-item">Make space for the real conversation — not just the meeting conversation.</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Complete Course →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {label:'Foundation',  start:0, end:5},
+  {label:'The Signals', start:3, end:7},
+  {label:'Practice',    start:7, end:10},
+  {label:'Pulse Check', start:10,end:15},
+  {label:'Apply It',    start:15,end:16},
+  {label:'Complete',    start:16,end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> The 1:1 is the right place for this — not a group meeting and not a performance conversation. Silence signals something changed, and the only way to find out what is through a direct, curious, private check-in. A group prompt won\'t reach the person whose safety has shifted.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Private first — always. You need to understand each person\'s perspective separately before any group intervention. Going straight to the group amplifies tension rather than defusing it. Private conversations give you the full picture before you decide what, if anything, needs to happen publicly.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Post-push flatness is real — and invisible to managers who don\'t look for it. Naming what you\'re observing ("You all just delivered something significant and I\'m noticing the energy has shifted — that makes sense") is a signal that you\'re paying attention. Getting straight back to business without acknowledgment accelerates disengagement.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Curiosity before conclusions. A quality drop from a strong performer is almost always a signal — and the signal could be personal, workload-related, or motivational. A performance framing before you understand what\'s happening assigns blame before you have information. Start with "how are you doing" and listen.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> "Everything\'s fine" and flat signals together mean the real conversation isn\'t happening yet. Naming what you observe — without accusation — opens the door: "I\'m not concerned, I just want to understand." An anonymous survey can supplement but doesn\'t replace the direct conversation you\'re having with people who trust you.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> A Team Member who has always been quiet is just their baseline. A Team Member who suddenly went quiet is a signal. The skill is noticing the change from their own pattern — not comparing them to someone else\'s baseline.' },
+  11: { correct:'B', feedback:'<strong>B is right.</strong> Curiosity first. A quality drop from a strong performer almost always has a cause — and understanding it before drawing conclusions leads to better outcomes. Performance framing before you know what\'s happening is both unfair and less effective.' },
+  12: { correct:'B', feedback:'<strong>False.</strong> Group intervention amplifies tension — it doesn\'t resolve it. Each person needs to be heard privately first. That gives you context, demonstrates care, and prevents either person from feeling publicly exposed. The group conversation, if needed at all, comes after.' },
+  13: { correct:'C', feedback:'<strong>C is right.</strong> Energy tends to shift first — before output, before attendance, before anything verbal. A change in presence, tone, or participation in meetings often precedes other signals by days or weeks. Catching the energy shift early means you can address it before it cascades.' },
+  14: { correct:'A', feedback:'<strong>True.</strong> Your instincts as a manager are data. If something feels different and you can\'t name it yet, that\'s your brain processing nonverbal and contextual cues faster than your conscious mind. Trust it and check in. The cost of checking in unnecessarily is almost zero. The cost of ignoring a real signal is much higher.' }
+};
+
+const KEY = 'course_mg_reading_room_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

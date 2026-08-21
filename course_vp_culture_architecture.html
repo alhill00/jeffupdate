@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Culture Architecture | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#000633;
+  --accent-light:#eef2ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#eef2ff;
+  --good-border:#000633;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#000633 0%,#000d4d 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:#174DFF;border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:var(--dark);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:#174DFF;color:var(--white);border-color:#174DFF;}
+.sec-pill.done{background:rgba(23,77,255,.15);color:rgba(255,255,255,.75);border-color:rgba(23,77,255,.3);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid #174DFF;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.lever-grid{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.lever-card{background:var(--dark);border-radius:10px;padding:18px 20px;}
+.lever-num{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.lever-name{font-size:17px;font-weight:800;color:var(--white);margin-bottom:6px;}
+.lever-diag{font-size:13px;color:rgba(255,255,255,.75);font-style:italic;line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){background:#f8f9ff;border-color:#000633;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){background:#f8f9ff;border-color:#000633;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:#000633;}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:#000633;color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#174DFF;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:#000633;color:#000633;}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:#000633;color:var(--white);}
+.btn-next:hover:not(:disabled){background:#174DFF;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.35);}
+.nav-dot.active-dot{background:#000633;}
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">VP Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Culture Architecture</div>
+  <div class="course-sub">Designing — not inheriting — the organizational culture that determines long-term performance.</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label">0 of 16</div>
+</div>
+
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Architecture Model</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Culture Is Not the Values on the Wall</div>
+  <div class="screen-body">Walk into almost any organization and you'll find a culture statement somewhere — on a poster, in the annual report, at the bottom of a slide deck. It describes the culture leadership aspires to. It rarely describes the culture that actually exists.</div>
+  <div class="screen-body">Culture, in practice, is the answer to one question: <em>How do things actually get done here?</em> It's what people do when no one is watching. It's what gets rewarded and what gets tolerated. It's what new hires learn in their first 90 days — not from orientation, but from observation.</div>
+  <div class="screen-body">The gap between stated culture and lived culture is the most important gap a VP can close. And closing it isn't a values exercise. It's a design problem.</div>
+  <div class="hl"><strong>The architecture insight:</strong> Culture is not built by declaring values. It is built by designing the systems, stories, incentives, and behaviors that make certain ways of working natural — and others unlikely.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Gap Between Stated and Lived Culture</div>
+  <div class="screen-body">Most culture failures aren't failures of intent. Leaders genuinely believe in the values they declare. The failure is a design failure — the systems, incentives, and day-to-day behaviors that surround Team Members don't reinforce the stated values. They contradict them.</div>
+  <div class="two-col">
+    <div class="col-card accent-left">
+      <h4>Stated Culture</h4>
+      <ul>
+        <li>"We value transparency"</li>
+        <li>"We develop our people"</li>
+        <li>"We act with urgency"</li>
+        <li>"We put the Guest first"</li>
+      </ul>
+    </div>
+    <div class="col-card red-left">
+      <h4>What the System Says</h4>
+      <ul>
+        <li>Bad news gets punished</li>
+        <li>Promotions go to top performers regardless of leadership</li>
+        <li>Decisions take three approval layers</li>
+        <li>Internal metrics are the real scorecard</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al"><strong>The rule:</strong> When stated culture and system design conflict, the system wins. Every time. Culture change that doesn't redesign the system is aspirational at best.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Culture Change Is Self-Reinforcing</div>
+  <div class="screen-body">One reason culture change feels impossible is that culture is self-reinforcing. The behaviors that are rewarded attract more of those behaviors. The stories that get told teach everyone else how to succeed. The norms that go unchallenged become the rules everyone follows without being told.</div>
+  <div class="screen-body">This is bad news if you inherited a culture you want to change. It's good news once you understand that the same self-reinforcing loop works in your favor when you intervene thoughtfully.</div>
+  <div class="hl"><strong>The self-reinforcing loop:</strong> Incentives shape behavior → Behavior generates stories → Stories teach norms → Norms shape what gets tolerated → Tolerance signals what incentives really reward → back to start.</div>
+  <div class="screen-body">VPs who change culture interrupt this loop at multiple points simultaneously. Changing only one element — say, the stated values — leaves the rest of the loop intact. Change the system and the tolerance and the stories, and the loop starts working for you.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Architecture Model</div>
+  <div class="screen-title">Five Culture Architecture Levers</div>
+  <div class="screen-body">Culture doesn't change through declarations. It changes through five specific levers that VPs control — and can redesign.</div>
+  <div class="lever-grid">
+    <div class="lever-card">
+      <div class="lever-num">Lever 1</div>
+      <div class="lever-name">Incentive Design</div>
+      <div class="lever-diag">Diagnostic: What behaviors does your performance and recognition system actually reward — not what it claims to reward?</div>
+    </div>
+    <div class="lever-card">
+      <div class="lever-num">Lever 2</div>
+      <div class="lever-name">Story Architecture</div>
+      <div class="lever-diag">Diagnostic: What stories does leadership tell, repeat, and celebrate? Who are the heroes in those stories, and what did they do?</div>
+    </div>
+    <div class="lever-card">
+      <div class="lever-num">Lever 3</div>
+      <div class="lever-name">System Design</div>
+      <div class="lever-diag">Diagnostic: What does your process make easy versus hard? What decisions require approval that shouldn't? Where does urgency go to die?</div>
+    </div>
+    <div class="lever-card">
+      <div class="lever-num">Lever 4</div>
+      <div class="lever-name">Tolerance Calibration</div>
+      <div class="lever-diag">Diagnostic: What behaviors continue unchecked in your org? What norm violations has leadership let slide — and what has that signaled?</div>
+    </div>
+    <div class="lever-card">
+      <div class="lever-num">Lever 5</div>
+      <div class="lever-name">Norm Setting Through Behavior</div>
+      <div class="lever-diag">Diagnostic: What does your own behavior model? Your Team Members study how you act in pressure, in conflict, in recognition — and replicate it.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Lag Effect — Why Culture Change Feels Invisible</div>
+  <div class="screen-body">Here is the reason most culture change efforts fail or get abandoned: the results of culture investment are invisible for 12 to 18 months. You change an incentive system in January. You don't see the behavior shift reliably until Q3 or Q4. Leaders conclude the change didn't work. They reverse course. The culture learns that announced changes don't stick.</div>
+  <div class="screen-body">The lag effect is not a sign of failure. It is the natural rhythm of system change. What you do today becomes visible in the culture well after you've moved on to the next priority.</div>
+  <div class="hl"><strong>The critical corollary:</strong> The first behavior you let slide after announcing a new norm tells the org the real rule. Not your words — your tolerance. If you announce a culture of direct feedback and then say nothing when a senior leader bulldozes someone in a meeting, the culture has received its real instruction.</div>
+  <div class="screen-body">Change the system before waiting for the behavior. Then protect the norm through what you tolerate — or refuse to.</div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Architecture Model</div>
+  <div class="screen-title">When the Incentive System Contradicts the Culture</div>
+  <div class="screen-body">Your org has a stated value of "Team Member development." In your quarterly talent review, you realize your recognition program has awarded only individual contributors who hit personal metrics — no recognition has gone to managers who developed their teams, even when team outcomes were exceptional. Your director layer has noticed.</div>
+  <div class="screen-body">What's the right VP move?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Acknowledge the gap in the next all-hands and reaffirm your commitment to development as a value.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Redesign the recognition criteria to explicitly reward development outcomes — and make the first award visible and meaningful.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Ask HR to add a development metric to performance reviews and monitor it next cycle.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Send a note to your director layer reminding them that development is a priority and to track it more deliberately.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Architecture Model</div>
+  <div class="screen-title">The High Performer Who Is a Culture Tax</div>
+  <div class="screen-body">One of your highest-performing directors consistently hits their numbers. They're also consistently described by their direct reports as dismissive, siloing information, and competing with peers rather than collaborating. Your other directors have started behaving more territorially. You believe it's because they're following the model they see rewarded.</div>
+  <div class="screen-body">What do you do?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Coach the director privately but leave their role and recognition status unchanged — performance results are hard to argue with.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Address the behavior directly and make clear it is part of how you evaluate leadership — separate from individual results. Make the standard explicit to your whole director layer.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Talk to the other directors about not modeling the behavior they observe — each leader is responsible for their own choices.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Move the director to a role with fewer people dependencies so the culture tax is minimized.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Designing a Recognition Moment That Transmits Signal</div>
+  <div class="screen-body">You want to use an upcoming all-hands to recognize a Team Member in a way that deliberately transmits a culture message — specifically around the value of helping others succeed at their own expense. Which recognition approach sends the clearest signal?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Recognize the top performer of the quarter by name and result — this sends a clear message about what outcomes matter.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Tell a specific story: name the Team Member, describe the moment they gave up something to help a colleague succeed, and explain why that behavior is exactly what you're building toward.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Do a team-level recognition so no one feels singled out, but make the category about collaboration.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Add a "culture champion" award category and let the team nominate each other — participation builds buy-in.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Two VPs With Different Standards</div>
+  <div class="screen-body">You and a peer VP lead adjacent organizations. Your peer publicly tolerates behaviors you've specifically worked to change in your org — interrupting in meetings, dismissing input from front-line leaders, making unilateral decisions that affect shared Team Members. Your own Team Members are noticing the difference and asking why standards differ across VPs.</div>
+  <div class="screen-body">What's the right approach?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Reinforce your own standards clearly with your org and let the peer VP manage their own culture — you're only accountable for yours.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Raise the inconsistency with your peer VP directly — not as a complaint, but as a shared leadership standard issue that affects both of your organizations.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Escalate to the CPO that peer VP standards are misaligned — this is a leadership team coherence issue.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Tell your Team Members that different leaders have different styles and help them understand that your org's norms are what they should follow.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Making a Change That Goes Against Past Norms You Set</div>
+  <div class="screen-body">You've decided to change a norm you yourself established two years ago — specifically around how decisions get escalated to you. You previously encouraged everything to come up. You now want your directors making more of those calls themselves. Team Members are confused. Some are resisting. A few directors aren't sure they have your backing.</div>
+  <div class="screen-body">What do you do first?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Announce the new expectation clearly in a team meeting and begin holding directors accountable immediately.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Name the shift explicitly — acknowledge that you're changing what you previously modeled, explain why, and confirm that directors have your backing when they make the call and it doesn't work out perfectly.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Let the new norm emerge organically — you'll start redirecting decisions back to directors without making a big announcement.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Document the new decision rights framework and share it as an org chart update so it's official.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — Culture architecture refers to deliberately designing the systems and behaviors that shape how things actually get done — as opposed to declaring values.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — When stated culture and system design are in conflict, which one typically wins?</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — The stated culture, because leadership repeatedly reinforces it</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — The system design, because it shapes daily behavior regardless of declared intent</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Neither — they balance each other over time</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — It depends on how clearly the values are communicated</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — The lag effect means that culture changes today typically won't be fully visible for:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — 30 to 60 days</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — 3 to 6 months</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — 12 to 18 months</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — 3 to 5 years</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — Story architecture as a culture lever means:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Writing a compelling origin story for the organization's founding</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Deliberately choosing which stories leaders tell and repeat, because those stories teach others what success looks like</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Creating a storytelling training program for managers</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Using case studies from other organizations to illustrate culture principles</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — A VP's personal behavior is a culture lever because:</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Team Members are required to follow VP behavior by policy</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — VP actions are studied, discussed, and replicated across the organization at scale</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — VPs model behavior but Team Members are free to choose differently</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — It's only a significant factor if the VP manages more than 100 people</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Design Your Culture Architecture</div>
+  <div class="screen-body">Use the five levers to reflect on where your most important culture design opportunities are right now.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Incentive Design: What behavior is your current recognition or performance system actually rewarding — and is it what you want?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Describe the gap between intended and actual incentive signal…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Tolerance Calibration: What behavior are you currently tolerating in your org that directly contradicts a stated value?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Name the behavior and why it's been allowed to continue…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Story Architecture: What story could you tell — in your next all-hands or leadership meeting — that would transmit the culture signal you most want to send?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Describe the story: who, what happened, what it means…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. Norm Setting Through Behavior: What norm do you want your org to have that you have not yet consistently modeled yourself?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Name the norm and one specific behavior you'll model this month…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. System Design: What process in your org currently makes the wrong behavior easier than the right one — and what would you change?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Describe the process and the change you'd make…" oninput="saveApply(4)"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🏛</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Culture Architecture. The VPs who shape culture don't talk about it more — they design for it more deliberately.</div>
+  </div>
+  <div class="commitments">
+    <h4>Your culture architecture commitments:</h4>
+    <div class="commit-item">Audit one incentive system this quarter — confirm it rewards what the culture claims to value</div>
+    <div class="commit-item">Tell one story deliberately in the next 30 days that transmits the culture signal you most want to send</div>
+    <div class="commit-item">Name and address one tolerance that contradicts a stated value — and do it visibly enough that the org notices</div>
+    <div class="commit-item">Develop your director layer's culture-building skills — they are your culture levers at scale</div>
+    <div class="commit-item">Model the norm before declaring it — your behavior is the most credible culture signal you have</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation', end:5},
+  {label:'The Architecture Model', end:7},
+  {label:'Practice', end:10},
+  {label:'Pulse Check', end:15},
+  {label:'Apply It', end:16},
+  {label:'Complete', end:17}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Redesigning the recognition criteria is the only lever that addresses the root cause. Acknowledging the gap without changing the system (A) leaves the contradiction intact. Adding a performance review metric (C) helps but is slower and less visible. A reminder note (D) asks people to change behavior without changing what the system rewards.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> A high performer who is a culture tax must be addressed directly — and the standard must be made explicit to the whole director layer, because they are watching. Coaching privately without changing the accountability signal (A) leaves the org reading the old message. Moving them to reduce impact (D) avoids the real issue and signals that results can override values.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Story architecture works when it is specific and connected to the value you want to transmit. A generic top-performer recognition (A) sends a results signal, not a culture signal. Team recognition (C) dilutes the lesson. A new award category (D) without a story teaches the category, not the behavior. The story is the vessel — it must name a person, describe a moment, and explain the meaning.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> The peer-to-peer conversation is the right first move. Your Team Members deserve clarity, and your peer may not realize the impact. Keeping it siloed in your org (A) is appropriate for your norms but doesn\'t address the broader leadership coherence issue. Escalating immediately (C) skips the peer relationship. Telling your org to ignore what they observe (D) erodes your credibility.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> When you are changing a norm you established, you must name the change explicitly. Announcing new expectations without acknowledging the shift (A) leaves people confused about whether the old signal still applies. Organic emergence (C) creates ambiguity for too long. A documentation update (D) formalizes without building the psychological permission directors need to actually act differently.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'A', feedback:'<strong>True.</strong> Culture architecture is exactly this — deliberate design of the systems, incentives, stories, tolerances, and behaviors that shape how work actually happens. Declared values without architecture are aspirational only.' },
+  11: { correct:'B', feedback:'<strong>B is right.</strong> System design wins because it shapes daily behavior. People respond to what the system makes easy, rewarding, and consequence-free — not to what the poster says. This is why culture change without system change almost always fails.' },
+  12: { correct:'C', feedback:'<strong>C is right.</strong> The lag effect means 12 to 18 months. This is the hard truth that causes leaders to abandon culture initiatives too early — the results aren\'t visible quickly enough, so the effort feels like it isn\'t working. Stay the course and protect the early norms.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> Story architecture is about deliberately choosing and repeating stories that transmit the culture message you want. Stories are how organizations learn what success looks like and who the heroes are. The stories leaders tell become the instruction manual for behavior.' },
+  14: { correct:'B', feedback:'<strong>B is right.</strong> VP behavior operates at organizational scale. Every action — how you run a meeting, what you react to, what you let pass — is studied, discussed, and replicated across your organization. This is not metaphorical. Your norms become their norms.' }
+};
+
+const KEY = 'course_vp_culture_arch_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

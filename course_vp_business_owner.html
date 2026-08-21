@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Owner Mindset | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#000633;
+  --accent-light:#eef2ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#eef2ff;
+  --good-border:#000633;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+
+.course-header{background:linear-gradient(135deg,#000633 0%,#000d4d 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:#174DFF;border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+
+.section-nav{background:var(--dark);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:#174DFF;color:var(--white);border-color:#174DFF;}
+.sec-pill.done{background:rgba(23,77,255,.15);color:rgba(255,255,255,.75);border-color:rgba(23,77,255,.3);}
+
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#174DFF;margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+
+.hl{background:var(--accent-light);border-left:4px solid #174DFF;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+
+.card-grid{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.framework-card{background:var(--dark);border-radius:10px;padding:18px 20px;display:flex;gap:16px;align-items:flex-start;}
+.framework-num{width:36px;height:36px;border-radius:50%;background:#174DFF;color:var(--white);font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.framework-content{flex:1;}
+.framework-title{color:var(--white);font-size:15px;font-weight:700;margin-bottom:4px;}
+.framework-desc{color:rgba(255,255,255,.8);font-size:13px;line-height:1.5;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.col-card p{font-size:13.5px;line-height:1.6;color:#374151;margin-top:8px;}
+
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f8f9ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f8f9ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:#174DFF;margin-top:4px;display:none;}
+
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#174DFF;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:#174DFF;font-weight:700;}
+
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#174DFF;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.35);}
+.nav-dot.active-dot{background:var(--accent);}
+
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">VP Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Business Owner Mindset</div>
+  <div class="course-sub">Operating your function like an owner — with accountability for outcomes, not just activities.</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label">0 of 17</div>
+</div>
+
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Owner Framework</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Two Ways to Hold a VP Seat</div>
+  <div class="screen-body">There are two distinct versions of VP leadership, and they produce very different organizational outcomes.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Senior Management Mode</h4>
+      <ul>
+        <li>Executing well within the plan</li>
+        <li>Reporting accurately on activities</li>
+        <li>Supporting strategy set by others</li>
+        <li>Staying in functional lane</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Business Ownership Mode</h4>
+      <ul>
+        <li>Deeply accountable for outcomes</li>
+        <li>Proactively making calls when needed</li>
+        <li>Treating the function like it's yours to build and protect</li>
+        <li>Taking positions beyond functional lane</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hl"><strong>The distinction matters:</strong> Senior managers wait for the strategy. Owners help shape it, pressure-test it, and hold themselves accountable for executing it — even when it's hard.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Business Ownership Actually Means</div>
+  <div class="screen-body">Operating as a business owner at the VP level isn't a mindset shift — it's a behavior shift. Three behaviors signal the difference:</div>
+  <div class="card-grid">
+    <div class="framework-card">
+      <div class="framework-num">1</div>
+      <div class="framework-content">
+        <div class="framework-title">Proactive Risk Surfacing</div>
+        <div class="framework-desc">Owners raise risks before they're asked. They don't wait for the quarterly review to say "we have a problem." They surface it when they first see it — with a recommended path.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">2</div>
+      <div class="framework-content">
+        <div class="framework-title">Resource Calls Based on Outcomes</div>
+        <div class="framework-desc">Owners treat budget and headcount as investments, not entitlements. They make resource calls based on what produces outcomes — not what's politically safe or historically allocated.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">3</div>
+      <div class="framework-content">
+        <div class="framework-title">Taking Positions Beyond Your Lane</div>
+        <div class="framework-desc">Owners speak up on business questions outside their functional lane when they have a relevant perspective. They don't stay quiet to avoid conflict. They share the view and let the right person decide.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three Things That Stop VPs From Operating as Owners</div>
+  <div class="screen-body">These three barriers are real. They're also the reason many VPs plateau before reaching C-suite.</div>
+  <div class="card-grid">
+    <div class="framework-card">
+      <div class="framework-num">1</div>
+      <div class="framework-content">
+        <div class="framework-title">Functional Tunnel Vision</div>
+        <div class="framework-desc">Deep expertise in your function creates a frame that makes everything look like a functional problem. Owners zoom out. They ask what the business needs — not just what their function is good at delivering.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">2</div>
+      <div class="framework-content">
+        <div class="framework-title">Risk Aversion on Positions Outside Your Lane</div>
+        <div class="framework-desc">Speaking up on questions outside your function feels risky — you might be wrong, you might overstep, someone might push back. Owners speak anyway, with appropriate humility and data.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">3</div>
+      <div class="framework-content">
+        <div class="framework-title">Short-Term Pressure</div>
+        <div class="framework-desc">Quarterly metrics, immediate deliverables, and visible urgency crowd out the long-horizon thinking that business owners do. Owners protect time for the 12-24 month view, even when the 30-day view is loud.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Owner Framework</div>
+  <div class="screen-title">Four Ownership Behaviors</div>
+  <div class="screen-body">Business ownership at the VP level shows up in four specific behavior categories. Rate yourself honestly on each.</div>
+  <div class="card-grid">
+    <div class="framework-card">
+      <div class="framework-num">1</div>
+      <div class="framework-content">
+        <div class="framework-title">Proactive Accountability</div>
+        <div class="framework-desc">Surface risks before asked. Own outcomes regardless of where the problem originates. Don't wait to be caught — bring the issue with a recommended path.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">2</div>
+      <div class="framework-content">
+        <div class="framework-title">Resource Stewardship</div>
+        <div class="framework-desc">Treat budget, headcount, and time as investments — not entitlements. Make resource calls that protect what's most strategic, not what's most visible or politically safe.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">3</div>
+      <div class="framework-content">
+        <div class="framework-title">Cross-Functional Judgment</div>
+        <div class="framework-desc">Take positions on business questions beyond your function when you have a relevant perspective. The VP who stays quiet outside their lane is perceived as functional, not executive.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">4</div>
+      <div class="framework-content">
+        <div class="framework-title">Long-Horizon Thinking</div>
+        <div class="framework-desc">Decisions that optimize for 12-24 months, not just the next quarter. Owners ask: what does this decision create or foreclose two years from now?</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4: Foundation -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Owners Do That Managers Don't</div>
+  <div class="screen-body">The difference between business ownership and senior management becomes most visible in three specific situations.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Manager Response</h4>
+      <ul>
+        <li>Waits to be asked about the risk</li>
+        <li>Defends the budget as allocated</li>
+        <li>Stays quiet outside functional domain</li>
+        <li>Optimizes for this quarter's metrics</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Owner Response</h4>
+      <ul>
+        <li>Surfaces the risk proactively with a path</li>
+        <li>Reallocates resources to protect what matters most</li>
+        <li>Offers the cross-functional perspective</li>
+        <li>Asks what this decision creates in 18 months</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al"><strong>The ceiling:</strong> VPs who operate in manager mode consistently will plateau at director-plus. Business owners are the ones the C-suite selects from. The behaviors are learnable — but they require a deliberate shift.</div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Owner Framework</div>
+  <div class="screen-title">Problem Outside Your Lane</div>
+  <div class="screen-body">In a cross-functional meeting, you observe a dynamic in another team's work that you believe is creating significant Guest experience risk. It's not your function. Raising it will likely create friction with a peer VP. What do you do?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Stay quiet — it's not your function and raising it will create unnecessary conflict.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Raise it in the meeting: "I want to flag something I'm seeing that I think creates risk for the Guest experience. I could be missing context — here's what I'm observing."</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Bring it to your CEO privately so they can address it without you taking the political hit.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Email the peer VP after the meeting with your concern so it's documented but low-conflict.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Owner Framework</div>
+  <div class="screen-title">Budget Shortfall</div>
+  <div class="screen-body">You're told mid-year that your function needs to cut 15% of its budget. You have the discretion to decide where the cuts come from. What's your ownership approach?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Cut evenly across all team budgets to distribute the pain fairly and avoid political conflict.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Identify which investments most directly drive strategic outcomes and protect those — cut harder in areas of lower strategic impact, even if that's politically harder.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Push back on the cut entirely — accept no reduction unless the business case is made to your satisfaction.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Cut the newest or lowest-visibility programs first, since they have the fewest stakeholders to disappoint.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Short-Term Right, Long-Term Wrong</div>
+  <div class="screen-body">A decision is on the table that would hit this quarter's numbers but would create significant capability debt over the next 18 months — deprioritizing a development investment that your team needs. Your CEO is leaning toward the short-term move.</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Agree with the CEO — they have broader context and you don't want to appear to prioritize your function's interests.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Share your long-horizon concern directly: "I want to flag the 18-month implication of this before we decide. Here's what I think it costs us." Let them decide with the full picture.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Agree in the meeting, then quietly preserve the development investment by reallocating budget without disclosure.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Defer the decision by asking for a 30-day analysis period to build the business case.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Owning What Isn't Technically Yours</div>
+  <div class="screen-body">A Guest experience failure occurred because of a breakdown between your function and an adjacent team. Technically the failure originated in the other team's process. Your CEO asks what happened.</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>"The breakdown was in the other team's process — our part worked as designed. They need to fix their side."</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>"There was a handoff failure between our teams. I own the coordination that should have prevented this — here's what I'm doing to make sure it doesn't happen again."</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Ask the other VP to take the lead on the explanation since the failure originated there.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Provide a detailed technical explanation of exactly where the breakdown occurred and whose system was responsible.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Outcome vs. Activity</div>
+  <div class="screen-body">Your function has completed every planned initiative this year — on time, within budget. But the strategic outcome those initiatives were supposed to produce hasn't materialized. In your end-of-year review, what's your business owner stance?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Present the activity record — every initiative delivered as planned. The outcome gap is a broader business problem.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Own the outcome gap directly: "We executed our plan. The outcome we were after didn't materialize — and that's on me to understand and fix. Here's my diagnosis and what I'm changing."</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Attribute the outcome gap to external factors — market conditions, dependencies on other teams, resource constraints.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Request a new set of success metrics that better reflect what your function can control.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — A VP operating in "business owner mode" is primarily distinguished by how well they execute the strategy set by their CEO.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Which of the four ownership behaviors is most directly about how a VP manages budget and headcount?</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Proactive Accountability</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — Resource Stewardship</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Cross-Functional Judgment</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — Long-Horizon Thinking</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — A VP who stays in their functional lane and doesn't weigh in on cross-functional decisions is demonstrating appropriate VP-level discipline.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — When a VP's function executes every planned initiative on time but the strategic outcome doesn't materialize, a business owner stance is to:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Present the activity record as proof of functional success</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Own the outcome gap and present a diagnosis and plan to fix it</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Attribute the gap to factors outside the function's control</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Request a metrics redesign that better measures what the function delivers</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — VPs who plateau before the C-suite level typically do so because of poor functional performance rather than a failure to demonstrate business ownership.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Business ownership is a behavioral shift, not a mindset shift. Use these prompts to identify where you're already operating as an owner — and where you're not yet.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. What outcome are you most accountable for? What are you most busy with? Where is the gap between those two things?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Your accountability vs. your busyness…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Where are you operating in manager mode vs. owner mode right now? What would change if you shifted?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="The specific situation and the shift…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. What's one cross-functional position you hold but haven't shared? Who needs to hear it, and what's stopping you?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="The position and the barrier…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's a risk you're currently aware of that you haven't surfaced yet? What's your plan to raise it?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="The risk and how you'll surface it…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. Is your time invested in what matters most or what's loudest? Name one thing you'll deprioritize to protect long-horizon work.</div>
+    <textarea class="apply-input" id="apply-4" placeholder="What you'll protect and what you'll deprioritize…" oninput="saveApply(4)"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🔑</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Business Owner Mindset. The VPs who reach the C-suite are the ones who treated the function like it was theirs to build and protect — not theirs to manage and report on.</div>
+  </div>
+  <div class="commitments">
+    <h4>Five commitments of VPs who operate as owners:</h4>
+    <div class="commit-item">Surface the next risk before asked — with a recommended path, not just the problem.</div>
+    <div class="commit-item">Take one position this quarter on a cross-functional question outside your lane.</div>
+    <div class="commit-item">Audit your time — cut one loud thing to protect one important thing.</div>
+    <div class="commit-item">Make at least one resource decision based purely on strategic outcome, not political safety.</div>
+    <div class="commit-item">Own the outcome gap, not just the activity record — ask what's not working and what you're changing.</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Complete Course →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {name:'Foundation', end:5},
+  {name:'The Owner Framework', end:7},
+  {name:'Practice', end:10},
+  {name:'Pulse Check', end:15},
+  {name:'Apply It', end:16},
+  {name:'Complete', end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Business owners raise the flag in the room — with appropriate humility and an invitation for more context. Staying quiet to avoid friction is manager behavior. Going around the peer to the CEO is political, not direct. Raising it cleanly in the meeting, framed as observation not accusation, is the owner move.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Resource stewardship means allocating cuts based on strategic impact, not political comfort. Even distribution feels fair but often protects the wrong things. Owners make the harder call: protect what matters most, cut harder where the strategic return is lower, and be transparent about the rationale.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Long-horizon thinking means raising the 18-month implication before the decision is made — not after. A business owner shares the full picture and lets the right person decide with complete information. Agreeing to avoid conflict, then quietly preserving what you want, is the opposite of ownership.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Owners take accountability for outcomes that touch their function, even when the technical failure originated elsewhere. "Here\'s what I\'m doing to prevent it" is the owner signal. Pointing to the other team\'s failure — even if accurate — marks you as a functional defender, not an organizational leader.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Activity records without outcome accountability are a manager\'s report, not an owner\'s. Business owners hold themselves accountable for results, not just execution. Owning the outcome gap — with a diagnosis and a plan — is what separates VPs who build trust with C-suite from those who plateau.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Excellent execution is a threshold requirement for a VP, not a differentiator. Business ownership is distinguished by proactive risk surfacing, cross-functional judgment, long-horizon thinking, and accountability for outcomes — behaviors that go well beyond executing a given plan.' },
+  11: { correct:'B', feedback:'<strong>B is right.</strong> Resource Stewardship is the ownership behavior that addresses how VPs treat budget, headcount, and time — as investments to be allocated based on strategic return, not as entitlements to protect.' },
+  12: { correct:'B', feedback:'<strong>False.</strong> Staying in functional lane is manager behavior. At the VP level, the expectation is cross-functional judgment — the ability to offer a relevant perspective on business questions beyond your immediate domain. VPs who only speak on functional matters are perceived as functional leaders, not executive ones.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> Business owners are accountable for outcomes, not just activities. When the outcome doesn\'t materialize despite clean execution, an owner asks what\'s wrong with the theory — and takes accountability for fixing the approach. Activity records without outcome accountability are a reporting posture, not an ownership one.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> Most VPs who plateau before the C-suite perform well functionally. The gap is typically in business ownership behaviors — proactive risk surfacing, cross-functional judgment, long-horizon thinking, and accountability for outcomes rather than activities. Functional excellence is necessary but not sufficient for C-suite selection.' }
+};
+
+const KEY = 'course_vp_business_owner_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

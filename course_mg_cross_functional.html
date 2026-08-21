@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cross-Functional Collaboration | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#174DFF;
+  --accent-light:#e0e8ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#e0e8ff;
+  --good-border:#174DFF;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+
+.course-header{background:linear-gradient(135deg,#000633 0%,#0d1f6e 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(23,77,255,.25);color:rgba(255,255,255,.8);border-color:rgba(23,77,255,.4);}
+
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body + .screen-body{margin-top:-8px;}
+
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+
+.framework-grid{display:flex;flex-direction:column;gap:10px;margin:18px 0;}
+.framework-row{background:var(--dark);border-radius:10px;padding:16px 20px;display:grid;grid-template-columns:44px 1fr 1fr;gap:12px;align-items:center;}
+.framework-num{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--white);font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.framework-word{color:var(--white);font-size:15px;font-weight:700;}
+.framework-word span{display:block;font-size:12px;font-weight:400;color:rgba(255,255,255,.6);margin-top:2px;}
+.framework-note{color:rgba(255,255,255,.85);font-size:13px;font-style:italic;line-height:1.4;}
+
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#0d3acc;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#0d3acc;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .framework-row{grid-template-columns:40px 1fr;gap:10px;}
+  .framework-note{display:none;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Cross-Functional Collaboration</div>
+  <div class="course-sub">Getting things done with people who don't report to you.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Partnership Model</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Ceiling of the Silo</div>
+  <div class="screen-body">Most of the work that actually matters crosses departmental lines. A product decision needs Operations. A Guest experience initiative needs Tech. A people process needs Finance and Legal. Cross-functional work isn't the exception — it's where outcomes happen.</div>
+  <div class="screen-body">A leader who can only get things done within their own team has a ceiling. Their impact stops at their org chart.</div>
+  <div class="hl"><strong>A leader who knows how to partner across functions multiplies their impact</strong> — and builds the visibility that leads to broader responsibility. Cross-functional credibility is one of the clearest signals of readiness for more.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Why Cross-Functional Is Hard — and It's Not Personal</div>
+  <div class="screen-body">Cross-functional collaboration fails constantly. Not because people are difficult — but because the structure makes it hard.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>The Structural Realities</h4>
+      <ul>
+        <li>No authority over the other team</li>
+        <li>Competing priorities and different deadlines</li>
+        <li>Different definitions of success</li>
+        <li>Unclear ownership at the seams</li>
+        <li>No shared accountability system</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>The Wrong Interpretation</h4>
+      <ul>
+        <li>"They don't care about our work"</li>
+        <li>"Their leader doesn't prioritize this"</li>
+        <li>"It's a personality conflict"</li>
+        <li>"They're not collaborative people"</li>
+        <li>"We need to escalate to get anything done"</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al"><strong>The mistake is treating structural problems as personal failures.</strong> Most cross-functional friction has nothing to do with the people involved — it's about the system they're operating in.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Pattern That Plays Out Every Time</div>
+  <div class="screen-body">Here's the most common cross-functional failure sequence — you've probably seen it, or been in it.</div>
+  <div class="framework-grid">
+    <div class="framework-row">
+      <div class="framework-num">1</div>
+      <div class="framework-word">The Assumption<span>Your priority = everyone's priority</span></div>
+      <div class="framework-note">"This is urgent for us — they'll know it needs to happen."</div>
+    </div>
+    <div class="framework-row">
+      <div class="framework-num">2</div>
+      <div class="framework-word">The Silence<span>Partner team doesn't respond</span></div>
+      <div class="framework-note">They're managing 12 other priorities that are also urgent to someone.</div>
+    </div>
+    <div class="framework-row">
+      <div class="framework-num">3</div>
+      <div class="framework-word">The Escalation<span>Goes to your leader</span></div>
+      <div class="framework-note">"I can't get their team to move on this."</div>
+    </div>
+    <div class="framework-row">
+      <div class="framework-num">4</div>
+      <div class="framework-word">The Conflict<span>VPs get involved, relationship damaged</span></div>
+      <div class="framework-note">Now it's a political problem, not a work problem.</div>
+    </div>
+  </div>
+  <div class="hl"><strong>Most of this was avoidable with one early conversation.</strong> The kind where you name both sides' priorities and ask what success looks like for both teams.</div>
+</div>
+
+<!-- SCREEN 3: FRAMEWORK -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Partnership Model</div>
+  <div class="screen-title">Four Elements of a Real Partnership</div>
+  <div class="screen-body">Effective cross-functional work is built on partnership, not requests. The Partnership Model gives you four things to establish before you need anything.</div>
+  <div class="framework-grid">
+    <div class="framework-row">
+      <div class="framework-num">1</div>
+      <div class="framework-word">Shared Problem<span>Understand before asking</span></div>
+      <div class="framework-note">"Here's what we're trying to solve — does that match what you see?"</div>
+    </div>
+    <div class="framework-row">
+      <div class="framework-num">2</div>
+      <div class="framework-word">Named Constraints<span>Both sides' limits on the table</span></div>
+      <div class="framework-note">"Here's what I can and can't do — what about your team?"</div>
+    </div>
+    <div class="framework-row">
+      <div class="framework-num">3</div>
+      <div class="framework-word">Shared Success<span>What does "this worked" look like?</span></div>
+      <div class="framework-note">Define the win together — not just what's a win for you.</div>
+    </div>
+    <div class="framework-row">
+      <div class="framework-num">4</div>
+      <div class="framework-word">Clear Rhythm<span>Single POC + communication cadence</span></div>
+      <div class="framework-note">Who talks to whom, how often, on what — agreed upfront.</div>
+    </div>
+  </div>
+  <div class="hl"><strong>The relationship account:</strong> Deposit before you withdraw. Build goodwill with cross-functional partners before you need a favor. The manager who only shows up when they need something is the one who gets deprioritized when priorities compete.</div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Influence Without Authority</div>
+  <div class="screen-body">You can't order a cross-functional partner to prioritize your work. So how you frame the ask matters enormously.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>The Requester Frame</h4>
+      <ul>
+        <li>"I need your team to do X by Friday."</li>
+        <li>Positions you as the demanding party</li>
+        <li>Creates a transactional dynamic</li>
+        <li>Easy to deprioritize when things get busy</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>The Partner Frame</h4>
+      <ul>
+        <li>"We have a problem I think we can both help solve."</li>
+        <li>Positions you as a collaborator</li>
+        <li>Creates shared ownership</li>
+        <li>Harder to ignore when it's your problem too</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hl"><strong>Shared problem, not your problem that needs their help.</strong> The frame changes the conversation — and the relationship.</div>
+</div>
+
+<!-- SCREEN 5: SCENARIO -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Partnership Model</div>
+  <div class="screen-title">Partner Team Isn't Responding</div>
+  <div class="screen-body">You've sent two messages to a cross-functional partner requesting a data pull your team needs. No response after a week. The work is blocked. What do you do?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Escalate to your leader — if they can't respond to your messages, their leader needs to know.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Pick up the phone or walk over — find them directly, acknowledge they're probably slammed, and ask for 5 minutes to align on timing.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Send a third message, this time CC'ing your leader to signal urgency.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Work around them — find the data another way so you're not dependent on their team.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: SCENARIO -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Partnership Model</div>
+  <div class="screen-title">Competing Priorities Stalling Shared Work</div>
+  <div class="screen-body">A cross-functional project you're co-leading has stalled. The partner team keeps deprioritizing your shared milestones because of internal deadlines. The project is falling behind. What's your move?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Escalate to leadership on both sides — if it's not getting done, the right people need to weigh in.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Sit down with the partner lead, surface both teams' current priorities, and renegotiate the timeline or scope together — then document the agreement.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Take over the work yourself so it gets done — your team can absorb the additional load for now.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Wait them out — their internal deadlines will pass and then they'll have capacity.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: PRACTICE -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">How to Escalate Without Burning the Bridge</div>
+  <div class="screen-body">A cross-functional blocker is affecting your team's ability to deliver. You've tried to resolve it directly and haven't been able to. You need to escalate. What's the right approach?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Tell your leader about the problem and let them handle it however they see fit.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Tell your leader you're escalating and why — and let the partner lead know you're doing so before your leader reaches out. Keep the relationship intact by not making it a surprise.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Send an email to both your leader and the partner leader at the same time, so everyone has the same information.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Don't escalate — it will damage the relationship and you'll need them again in the future.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: PRACTICE -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When Cross-Functional Work Fails</div>
+  <div class="screen-body">A joint initiative between your team and another department didn't deliver. The outcome fell short and both teams are pointing at each other. You need to debrief it. What's your move?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Document your team's contributions so it's clear where the gaps were on their side.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Request a joint debrief with both teams — focus on what structural gaps (ownership, communication, clarity) led to the failure, not who failed.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Debrief your own team separately and move on — cross-functional post-mortems rarely go well.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Raise it with your leader and let them facilitate the debrief to remove bias.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: PRACTICE -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Building Goodwill Before You Need It</div>
+  <div class="screen-body">You know you'll need significant help from the Finance team in Q4. It's currently Q2. You have no current asks. What's the highest-leverage thing you can do right now?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Do nothing — you don't want to come across as transactional by building a relationship you'll later need something from.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Reach out to your Finance counterpart now — learn what they're working on, offer to help where you can, and build the relationship before the pressure is on.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Wait until Q3 and give them plenty of advance notice of your Q4 needs.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Ask your leader to connect you with the Finance leader — relationships built at that level carry more weight.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: PULSE -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — Cross-functional friction is usually caused by difficult personalities on the other team.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: PULSE -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — The "relationship account" concept means:</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Tracking what favors you're owed from cross-functional partners</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — Building goodwill before you need something — deposit before you withdraw</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Maintaining a formal record of cross-functional commitments</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — Keeping relationships strictly professional to avoid complications</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: PULSE -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — When framing a cross-functional ask, the most effective approach is:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Lead with urgency so they understand the stakes</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Frame it as a shared problem, not your problem that needs their help</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Be specific about the exact deliverable so they can say yes or no clearly</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — Have your leader reach out first to establish priority</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: PULSE -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — When escalating a cross-functional issue to leadership, you should:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Do it immediately so leadership can intervene before the situation gets worse</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Tell the partner lead you're escalating before your leader reaches out — don't let it be a surprise</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Avoid escalating — it always damages the cross-functional relationship</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Let your leader decide whether to loop in the other leader</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: PULSE -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — The first element of the Partnership Model is agreeing on success metrics for both teams.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: APPLY IT -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Cross-functional skill is built in real relationships with real stakes. Use the prompts below to identify your most important cross-functional partnership right now.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Who is a cross-functional partner you currently need — or will need in the next quarter?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Name, team, and what you need from them…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What is your ask — and what might their constraints or priorities be right now?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Your ask and their likely perspective…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. What does shared success look like for both teams? Define it from their perspective, not just yours.</div>
+    <textarea class="apply-input" id="apply-2" placeholder="What a win looks like for both sides…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What can you offer them — a deposit in the relationship account — before you make your ask?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Something useful you can do for them first…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. How will you open the conversation? Write the first thing you'll say — partner frame, not requester frame.</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Your opening line…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: COMPLETE -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🤝</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Cross-Functional Collaboration. The leaders who get the most done across functions are the ones who invest in relationships before they need them.</div>
+  </div>
+  <div class="commitments">
+    <h4>Your commitments going forward:</h4>
+    <div class="commit-item">Build the relationship before you need the favor — deposit before you withdraw</div>
+    <div class="commit-item">Frame cross-functional asks as shared problems, not your problem that needs their help</div>
+    <div class="commit-item">Name both sides' constraints early — don't assume your priority is their priority</div>
+    <div class="commit-item">Agree on shared success before you start, not after something goes wrong</div>
+    <div class="commit-item">If you escalate, tell the partner lead first — surprises kill relationships</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {name:'Foundation',          end:5},
+  {name:'The Partnership Model',end:7},
+  {name:'Practice',            end:10},
+  {name:'Pulse Check',         end:15},
+  {name:'Apply It',            end:16},
+  {name:'Complete',            end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Async messages can pile up unnoticed when someone is slammed. A direct conversation — by phone or in person — acknowledges their workload and makes you a person, not another message. Escalating before trying to connect directly is a fast way to damage the relationship.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Competing priorities are a structural reality — not a character flaw. The solution is a direct conversation that puts both teams\' constraints on the table and renegotiates together. Absorbing their work or waiting it out both create new problems.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Escalation is sometimes necessary — but how you do it matters enormously. Giving the partner lead a heads-up before your leader reaches out keeps the relationship intact. Being ambushed by your VP is a relationship-defining moment — and not in a good way.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Joint debriefs focused on structural gaps — not blame — are how cross-functional teams get better. Who documented what contributions is a defensive move. A good debrief asks: what ownership was unclear? What communication broke down? What would we set up differently?' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Building a cross-functional relationship before you need something is exactly how you fill the relationship account. Reaching out to learn what they\'re working on — and looking for ways to help — isn\'t transactional. It\'s how real partnerships form.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Most cross-functional friction is structural — no authority, competing priorities, unclear ownership, different definitions of success. Treating it as a personality problem leads to escalation and damaged relationships instead of structural fixes.' },
+  11: { correct:'B', feedback:'<strong>B is right.</strong> The relationship account is the idea that you need to make deposits — goodwill, help, responsiveness — before you make withdrawals (big asks, urgent requests). Managers who only show up when they need something get deprioritized when priorities compete.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> "We have a shared problem" positions you as a partner, not a requester. It changes the power dynamic, creates shared ownership, and makes the conversation much easier to say yes to. Urgency without partnership creates pressure — which pushes people away, not toward you.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> Escalation is sometimes necessary — but letting the partner lead know first is how you preserve the relationship. Being blindsided by your VP calling their VP is one of the most damaging things that can happen cross-functionally. Give them the chance to respond before the call comes from above.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> The first element of the Partnership Model is shared understanding of the problem — making sure both teams agree on what you\'re actually solving, not just the ask. Shared success (element 3) comes after you\'ve established the shared problem and named constraints on both sides.' }
+};
+
+const KEY = 'course_mg_cross_functional_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

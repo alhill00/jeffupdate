@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Communicating Clearly | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#174DFF;
+  --accent-light:#e0e8ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#e0e8ff;
+  --good-border:#174DFF;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+
+/* HEADER */
+.course-header{background:linear-gradient(135deg,#000633 0%,#0d1f6e 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+/* PROGRESS */
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+
+/* SECTION PILLS */
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(23,77,255,.25);color:rgba(255,255,255,.8);border-color:rgba(23,77,255,.4);}
+
+/* MAIN */
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+
+/* SCREEN CARDS */
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body + .screen-body{margin-top:-8px;}
+
+/* HIGHLIGHT / ALERT BOXES */
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+
+/* TWO-COLUMN */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+
+/* FRAMEWORK GRID */
+.framework-grid{display:flex;flex-direction:column;gap:10px;margin:18px 0;}
+.framework-row{background:var(--dark);border-radius:10px;padding:16px 20px;display:grid;grid-template-columns:44px 1fr 1fr;gap:12px;align-items:center;}
+.framework-letter{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--white);font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.framework-word{color:var(--white);font-size:15px;font-weight:700;}
+.framework-word span{display:block;font-size:12px;font-weight:400;color:rgba(255,255,255,.6);margin-top:2px;}
+.framework-q{color:rgba(255,255,255,.85);font-size:13px;font-style:italic;line-height:1.4;}
+
+/* MODE CARDS */
+.mode-grid{display:flex;flex-direction:column;gap:10px;margin:18px 0;}
+.mode-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;border-left:4px solid var(--accent);}
+.mode-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--accent);margin-bottom:6px;}
+.mode-title{font-size:15px;font-weight:700;color:var(--dark);margin-bottom:6px;}
+.mode-desc{font-size:13.5px;color:#374151;line-height:1.5;}
+
+/* SCENARIO OPTIONS */
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+
+/* PULSE CHECK */
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+
+/* APPLY IT */
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+
+/* COMPLETE */
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#0d3acc;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+
+/* NAV */
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#0d3acc;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .framework-row{grid-template-columns:40px 1fr;gap:10px;}
+  .framework-q{display:none;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Communicating Clearly</div>
+  <div class="course-sub">Getting your message through — in meetings, messages, and hard conversations.</div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<!-- SECTION PILLS -->
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Clear Message</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<!-- MAIN -->
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Manager Who Communicated Thoroughly — and Nobody Got It</div>
+  <div class="screen-body">David was meticulous. Every staff meeting he gave thorough, detailed updates — context, background, nuance. His team nodded. Nobody questioned him. He felt good about it.</div>
+  <div class="screen-body">Two weeks later, the same team was heading in two completely different directions on the same project. When he dug in, he discovered half the team had interpreted the meeting one way, and the other half had heard something entirely different.</div>
+  <div class="screen-body">David had communicated. Nobody had received.</div>
+  <div class="hl"><strong>Communication isn't measured by what you said — it's measured by what landed.</strong> A message isn't "sent" until it's been received and understood.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Transmission Myth</div>
+  <div class="screen-body">Most leaders believe the problem is not enough communication. So they add more — more updates, more Slack messages, more all-hands, more emails. The quantity goes up. The confusion doesn't go down.</div>
+  <div class="screen-body">The real problem is almost never quantity. It's clarity.</div>
+  <div class="hl"><strong>Clarity is not dumbing down your message.</strong> It's respecting the listener's time and cognitive load enough to be precise. Clear communicators aren't less sophisticated — they're more disciplined.</div>
+  <div class="al"><strong>The pattern:</strong> When a message fails, most managers send more of the same message rather than a clearer version of it. More repetition amplifies confusion — it doesn't resolve it.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Four Modes. Most Managers Overuse One.</div>
+  <div class="screen-body">Every manager communicates across four distinct modes. Each one has a purpose, and each one fails when you use it in the wrong context.</div>
+  <div class="mode-grid">
+    <div class="mode-card">
+      <div class="mode-label">Mode 1</div>
+      <div class="mode-title">Informing</div>
+      <div class="mode-desc">Sharing context, updates, and FYI. No action required. The listener just needs to know.</div>
+    </div>
+    <div class="mode-card">
+      <div class="mode-label">Mode 2</div>
+      <div class="mode-title">Directing</div>
+      <div class="mode-desc">Clear expectations, tasks, and deadlines. The listener needs to do something specific by a specific time.</div>
+    </div>
+    <div class="mode-card">
+      <div class="mode-label">Mode 3</div>
+      <div class="mode-title">Coaching</div>
+      <div class="mode-desc">Questions, reflection, and development. The listener needs to think, not be told.</div>
+    </div>
+    <div class="mode-card">
+      <div class="mode-label">Mode 4</div>
+      <div class="mode-title">Influencing</div>
+      <div class="mode-desc">Persuasion, advocacy, and change. The listener needs to be moved — not just informed.</div>
+    </div>
+  </div>
+  <div class="screen-body" style="font-size:14px;color:var(--muted);">Most managers overuse one mode — usually informing or directing — and underuse the others. The skill is matching mode to moment.</div>
+</div>
+
+<!-- SCREEN 3: FRAMEWORK -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Clear Message</div>
+  <div class="screen-title">The BLUF Framework — Bottom Line Up Front</div>
+  <div class="screen-body">Most communication buries the point. BLUF flips the structure: lead with what matters, then back it up.</div>
+  <div class="framework-grid">
+    <div class="framework-row">
+      <div class="framework-letter">1</div>
+      <div class="framework-word">Lead with the point<span>What do you need them to know or do?</span></div>
+      <div class="framework-q">"We're shifting the Q3 launch to October. Here's why and what changes."</div>
+    </div>
+    <div class="framework-row">
+      <div class="framework-letter">2</div>
+      <div class="framework-word">Context next<span>Why does it matter? What does it connect to?</span></div>
+      <div class="framework-q">"The vendor delay affects two dependencies. Leadership made the call Tuesday."</div>
+    </div>
+    <div class="framework-row">
+      <div class="framework-letter">3</div>
+      <div class="framework-word">Details last<span>Only what they actually need</span></div>
+      <div class="framework-q">"The new milestones are below. You own items 3 and 5."</div>
+    </div>
+  </div>
+  <div class="hl"><strong>Also critical: match the channel to the message.</strong> Urgent or complex = synchronous (call or meeting). FYI or async-okay = Slack or email. Sensitive or high-stakes = 1:1, never text.</div>
+  <div class="al"><strong>The anti-pattern:</strong> Starting with backstory, burying the ask, and leaving people to infer the point. This isn't thoughtfulness — it's transferring your mental load to your listener.</div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">When Clarity Feels Unkind</div>
+  <div class="screen-body">Leaders often go vague to soften a hard message. "We might need to rethink some things" when the reality is "we're changing this process and some of you won't like it."</div>
+  <div class="screen-body">It feels compassionate. It isn't.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Vague delivery</h4>
+      <ul>
+        <li>Creates anxiety — what does "rethink" mean?</li>
+        <li>Fuels rumors — people fill the gap themselves</li>
+        <li>Erodes trust — they sense you're not being straight</li>
+        <li>Delays the team's ability to adapt</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Compassionate clarity</h4>
+      <ul>
+        <li>Direct about the fact</li>
+        <li>Thoughtful about the delivery</li>
+        <li>Gives people what they need to move forward</li>
+        <li>Respects their ability to handle hard news</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hl"><strong>Vagueness doesn't protect people — it creates a vacuum that anxiety fills.</strong> Being clear about a hard thing is an act of respect, not cruelty.</div>
+</div>
+
+<!-- SCREEN 5: SCENARIO -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Clear Message</div>
+  <div class="screen-title">Delivering Hard News to Your Team</div>
+  <div class="screen-body">You need to tell your team that a project they've worked on for months has been deprioritized by leadership. It's not cancelled — but work stops now and it's unclear when it restarts.</div>
+  <div class="screen-body">What's the right way to deliver this?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Send a Slack message that morning explaining the news briefly — no need to make it a bigger deal than it is.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Call a team meeting, lead with the decision, then give the context and Q&amp;A time — acknowledge the work they put in.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Drop it into the weekly update without singling it out — it's one of several updates and you don't want to over-dramatize it.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Tell each person individually over the next few days so no one is blindsided in a group setting.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: SCENARIO -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Clear Message</div>
+  <div class="screen-title">Giving Honest Feedback on a Presentation</div>
+  <div class="screen-body">A team member asks for feedback on a presentation deck they've prepared. You review it — it needs significant revision. The structure is off, the core message is buried, and two slides won't land with the audience.</div>
+  <div class="screen-body">What do you do?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Say "Good start — a few things to polish" and give general encouragement to avoid discouraging them.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Be specific about the 2-3 most important things that need to change and why — name the actual problems.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Rewrite the key sections yourself and send back the revised deck — it's faster and they'll learn from seeing the fix.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Say it looks fine and let it go — the presentation itself will show them what needs to change.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: PRACTICE -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Choosing the Right Channel</div>
+  <div class="screen-body">A team member makes a significant error that affected a guest experience. The situation is resolved, but you need to address it with them. What's the right channel?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Send a Slack message — it's documented and gives them time to think before responding.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Schedule a 1:1 meeting — this is sensitive, complex, and deserves a real conversation.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Email the team member with the feedback — it creates a record and is less confrontational.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Bring it up at the next team meeting — others might benefit from hearing it too.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: PRACTICE -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Structuring a Time-Sensitive Ask</div>
+  <div class="screen-body">You need something from a cross-functional partner by end of day — a data pull that will affect a decision tomorrow morning. You're going to Slack them. Using BLUF, which message lands best?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>"Hey — been working on the Q3 analysis and running into a gap. We're presenting tomorrow and I think the data you have would really help fill out the picture. Any chance you could send the August report when you get a chance?"</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>"Quick ask: I need the August report by 5pm today for tomorrow's Q3 presentation. Can you send it over? Happy to explain the context if helpful."</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>"Do you have a few minutes to talk about the Q3 analysis? I have some questions about the data."</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>"Not sure if this is in your wheelhouse — but if you have the August report that would be amazing. No worries if not!"</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: PRACTICE -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When Someone Misunderstood Your Message</div>
+  <div class="screen-body">You sent a clear directive last week. A team member acted on it — but in the wrong direction. When you follow up, they cite your exact message as the reason for what they did. What's your move?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Re-read your original message and point out where it clearly said what you meant — ask them to re-read it.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Acknowledge the disconnect, clarify what you meant now, and note how you could have said it more clearly the first time.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Accept that miscommunication happens and focus entirely on fixing the outcome rather than the communication.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Send the corrected direction to the whole team so everyone is aligned going forward.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: PULSE -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — In the BLUF framework, context and background should come before the main point.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: PULSE -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — A team member is frustrated and needs to talk through a conflict with a colleague. What communication mode is most appropriate?</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Directing: give them clear guidance on how to handle it</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — Informing: share how conflict resolution typically works</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Coaching: ask questions to help them think through their options</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — Influencing: help them see why the relationship matters</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: PULSE -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — The primary problem with most manager communication is:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Not enough frequency — managers should communicate more often</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Lack of clarity — more information doesn't fix a message that wasn't clear to begin with</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Wrong tone — most managers come across too formally</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — Too much jargon — simplifying vocabulary solves most problems</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: PULSE -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — A manager who goes vague on a hard message to avoid discomfort is:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Being compassionate — softening a hard message is part of good leadership</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Creating more harm — vagueness breeds anxiety, rumor, and distrust</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Buying time — useful when you don't have all the information yet</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Appropriate — not everything needs to be said directly</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: PULSE -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — A sensitive performance issue should be addressed:</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Via email so there's a written record</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — In a team meeting so everyone hears the same message</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — In a private 1:1 conversation — sensitive topics require a human channel</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — Over Slack — it's lower pressure and gives them time to think</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: APPLY IT -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Clarity is a skill that gets sharper with deliberate practice. Use the prompts below to apply BLUF to something real in your work right now.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Think of a recent communication that went sideways — someone misunderstood, missed the point, or acted differently than expected. What was it?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Describe the situation briefly…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Reconstruct that message using BLUF. What's the bottom line you should have led with?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="The point, up front…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. What channel should that message have used — and why?</div>
+    <div class="apply-sub">Urgent/complex = call or meeting. FYI/async-okay = Slack or email. Sensitive = 1:1.</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Channel and reasoning…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. Is there a hard message you've been going vague on? Name it directly here — what do you actually need to say?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="The real message, said plainly…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. When will you deliver that message — and in what channel?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Day, time, and channel…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: COMPLETE -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">📡</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Communicating Clearly. The managers people trust most aren't the most articulate — they're the ones whose words actually land.</div>
+  </div>
+  <div class="commitments">
+    <h4>Your commitments going forward:</h4>
+    <div class="commit-item">Lead every important message with the point first — BLUF, always</div>
+    <div class="commit-item">Match channel to message type before you send anything significant</div>
+    <div class="commit-item">Name the hard thing directly — don't bury it in context or soften it into vagueness</div>
+    <div class="commit-item">When a message fails, rewrite it for clarity — don't just repeat it louder</div>
+    <div class="commit-item">Use the right mode: inform, direct, coach, or influence — not just one of them</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div><!-- end course-main -->
+
+<!-- NAV -->
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {name:'Foundation',       end:5},
+  {name:'The Clear Message',end:7},
+  {name:'Practice',         end:10},
+  {name:'Pulse Check',      end:15},
+  {name:'Apply It',         end:16},
+  {name:'Complete',         end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> This is significant news that affects people who invested real work. It deserves a synchronous conversation — where you can lead with the decision (BLUF), give context, and open Q&amp;A. Slack or a buried update treats a human moment like a logistics update.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Specific, honest feedback on the 2-3 most important things is exactly what they need to improve. "Good start" is vague and unhelpful. Rewriting it for them removes the learning. Letting it go is a failure to manage.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Sensitive messages — feedback on errors, conflict, performance — require a synchronous, private channel. Slack and email remove tone, create anxiety, and produce paper trails that can feel punitive. A 1:1 conversation gives you the ability to listen, respond, and connect.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> BLUF leads with the ask and the deadline immediately. The reader knows what you need, when, and why in the first sentence. Option A buries the ask in backstory. Option C doesn\'t even make the ask. Option D hedges to the point of being unhelpful.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> When someone misinterprets your message, the communication failed — regardless of what you intended. Acknowledging the disconnect and owning the clarity gap models accountability and prevents it from happening again. Option A puts the burden entirely on them.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> BLUF = Bottom Line Up Front. The point comes first, then context, then details. Leading with context forces your listener to hold everything in their head until the punchline — which creates cognitive load and confusion.' },
+  11: { correct:'C', feedback:'<strong>C is right.</strong> When someone is frustrated and needs to work through conflict, coaching mode is the right tool. Questions help them think through what they want and what options exist — far more useful than telling them what to do or how conflict resolution typically works.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> The core problem is clarity, not frequency. Sending more of the same unclear message amplifies confusion. Clear communication means the receiver can act on it without guessing what you meant.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> Vagueness on hard messages creates exactly what leaders are trying to avoid — anxiety, rumors, and distrust. Compassionate clarity means being direct about the fact and thoughtful about the delivery — not removing the fact entirely.' },
+  14: { correct:'C', feedback:'<strong>C is right.</strong> Sensitive performance issues belong in private 1:1 conversations. Email creates a paper-trail feel without dialogue. Slack removes tone. A team meeting humiliates. The 1:1 allows for real conversation, listening, and human connection.' }
+};
+
+const KEY = 'course_mg_communicating_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

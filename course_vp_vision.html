@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Casting Vision | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{--accent:#000633;--accent-light:#eef2ff;--dark:#000633;--white:#fff;--muted:#6b7280;--border:#e5e7eb;--card:#fff;--warn:#fff3cd;--warn-border:#ffc107;--good:#eef2ff;--good-border:#000633;--bad:#ffe4e6;--bad-border:#f43f5e;}
+.course-header{background:linear-gradient(135deg,#000633 0%,#000d4d 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:#174DFF;border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:var(--dark);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:#174DFF;color:var(--white);border-color:#174DFF;}
+.sec-pill.done{background:rgba(23,77,255,.15);color:rgba(255,255,255,.75);border-color:rgba(23,77,255,.3);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid #174DFF;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.vision-grid{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.v-card{background:var(--dark);border-radius:10px;padding:18px 20px;}
+.v-num{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.v-name{font-size:17px;font-weight:800;color:var(--white);margin-bottom:6px;}
+.v-desc{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;margin-bottom:8px;}
+.v-test{font-size:12px;color:rgba(255,255,255,.5);font-style:italic;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){background:#f8f9ff;border-color:#000633;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){background:#f8f9ff;border-color:#000633;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:#000633;}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:#000633;color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#174DFF;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:#000633;color:#000633;}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:#000633;color:var(--white);}
+.btn-next:hover:not(:disabled){background:#174DFF;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.35);}
+.nav-dot.active-dot{background:#000633;}
+@media(max-width:600px){.two-col{grid-template-columns:1fr;}.course-main{padding:20px 14px;}.section-nav{padding:10px 14px;}.progress-wrap{padding:12px 14px;}}
+</style>
+</head>
+<body>
+<div class="course-header">
+  <div class="course-meta">VP Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Casting Vision</div>
+  <div class="course-sub">Creating a compelling picture of where you're going and why it matters — at organizational scale.</div>
+</div>
+<div class="progress-wrap">
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progress-bar" style="width:0%"></div></div>
+  <div class="progress-label" id="progress-label">0 of 16</div>
+</div>
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Vision Framework</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+<div class="course-main">
+
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Question Vision Actually Answers</div>
+  <div class="screen-body">Vision is not the strategic plan. It's not the aspirational values statement. It's not the annual all-hands tagline. Vision is the answer to one deeply human question that every Team Member is implicitly asking about their work: <em>Does what I do matter, and is it going somewhere?</em></div>
+  <div class="screen-body">When the answer to that question is clear and real, people bring more. They tolerate difficulty more. They make better tradeoffs between short-term comfort and long-term direction. They tell the story of their work to others in ways that attract talent and build credibility.</div>
+  <div class="screen-body">When the answer is unclear or absent, people optimize locally. They execute well without connecting execution to meaning. They leave not because their work is bad but because the work doesn't feel like it's part of something worth building toward.</div>
+  <div class="hl"><strong>VP vision responsibility:</strong> You are the primary architect of the answer to that question for hundreds of people. Not the only voice — but the most visible one. What vision are you casting, and is it landing?</div>
+</div>
+
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Makes Vision Fail</div>
+  <div class="screen-body">Most vision statements fail for predictable reasons — not because leadership doesn't care, but because the common practices of vision communication are structurally weak.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Vision That Fails</h4>
+      <ul>
+        <li>Abstract — "best in class," "world-class," "excellence"</li>
+        <li>Inconsistent — different framing in every setting</li>
+        <li>Disconnected — not connected to daily work</li>
+        <li>Infrequent — only repeated at the annual all-hands</li>
+        <li>Organizational — describes the org, not the people doing the work</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Vision That Works</h4>
+      <ul>
+        <li>Concrete — specific enough to know if you've arrived</li>
+        <li>Consistent — same framing in every setting, every quarter</li>
+        <li>Connected — Team Members can trace their daily work to it</li>
+        <li>Repeated — in every meeting, every message, every recognition moment</li>
+        <li>Personal — "the work we're doing" not just "the strategy"</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Vision Transmission Problem</div>
+  <div class="screen-body">The most common vision failure is not a weak vision — it's a transmission failure. The VP has a clear picture of where the organization is going. That picture exists clearly in the VP's mind and is occasionally shared. But it never reaches the manager three levels down with enough clarity to be useful to that manager's team.</div>
+  <div class="hl"><strong>The test:</strong> Ask someone three layers below you: "What are we trying to build in the next two years?" If the answer is blank, or generic, or disconnected from what you actually believe — you have a transmission problem, not a vision problem.</div>
+  <div class="screen-body">Transmission problems happen because:</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Why Vision Doesn't Transmit</h4>
+      <ul>
+        <li>VP communicates the vision once and moves on</li>
+        <li>Each level interprets and adapts rather than translating</li>
+        <li>Vision is not connected to day-to-day decisions managers make</li>
+        <li>No mechanism to test whether it has landed</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>How to Fix It</h4>
+      <ul>
+        <li>Repeat the same vision framing in every setting</li>
+        <li>Give managers language to translate it to their team context</li>
+        <li>Connect vision to decisions being made right now</li>
+        <li>Ask regularly whether it's landing — and listen to the answer</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Vision Framework</div>
+  <div class="screen-title">Four Vision Components</div>
+  <div class="screen-body">A vision that transmits at scale is built from four components — each addressing a different question Team Members are asking.</div>
+  <div class="vision-grid">
+    <div class="v-card">
+      <div class="v-num">Component 1</div>
+      <div class="v-name">The Picture</div>
+      <div class="v-desc">Concrete and vivid — specific enough that you'd know if you'd arrived. Not "excellence" but "an organization where every Guest interaction leaves them more likely to fly with us again, and every Team Member knows how their work created that outcome."</div>
+      <div class="v-test">Test: Can someone who hears it visualize specifically what success looks like?</div>
+    </div>
+    <div class="v-card">
+      <div class="v-num">Component 2</div>
+      <div class="v-name">The Purpose</div>
+      <div class="v-desc">Why it matters — to the organization, to Guests, and to the people doing the work. Purpose is what connects "what we're building" to "why this is worth building." Without it, the picture is a destination without a reason to care about arriving.</div>
+      <div class="v-test">Test: Can a Team Member explain why their work matters to someone outside the organization?</div>
+    </div>
+    <div class="v-card">
+      <div class="v-num">Component 3</div>
+      <div class="v-name">The Path</div>
+      <div class="v-desc">High-level narrative of how you'll get there — not the full strategic plan, but enough direction that Team Members understand what the next chapter of the journey looks like and what their role in it is.</div>
+      <div class="v-test">Test: Does the team have a shared understanding of the next 12–18 months of movement toward the picture?</div>
+    </div>
+    <div class="v-card">
+      <div class="v-num">Component 4</div>
+      <div class="v-name">The Connection</div>
+      <div class="v-desc">How this vision connects to each person's specific work. This is the translation layer — VP vision cannot transmit at scale without managers and directors who can make the connection between the organizational vision and the daily work of their teams.</div>
+      <div class="v-test">Test: Can each Team Member state how their work contributes to the picture?</div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Testing Whether Vision Is Landing</div>
+  <div class="screen-body">The only meaningful test of vision is whether it has reached the people who are supposed to be guided by it. Feeling confident about the vision you've articulated is not the test. Saying it again is not the test. The test is what happens three levels down.</div>
+  <div class="hl"><strong>The skip-level vision test:</strong> Ask someone three layers below you: "What are we trying to build in the next two years?" Listen carefully. Where the signal breaks down is exactly where to intervene — not with more vision communication to the org, but with better translation support for the layer where clarity ends.</div>
+  <div class="screen-body">Common findings from this test:</div>
+  <div class="two-col">
+    <div class="col-card accent-left">
+      <h4>When Vision Is Landing</h4>
+      <ul>
+        <li>Team Member answers with specific language that matches VP framing</li>
+        <li>They can connect their daily work to the larger picture</li>
+        <li>They express ownership — "we're trying to…" not "the company says…"</li>
+      </ul>
+    </div>
+    <div class="col-card red-left">
+      <h4>When Vision Isn't Landing</h4>
+      <ul>
+        <li>Blank, generic, or "whatever the company priorities are" responses</li>
+        <li>Vision described in terms of metrics rather than meaning</li>
+        <li>Team Member can't connect their work to any larger picture</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Vision Framework</div>
+  <div class="screen-title">Recasting Vision for a Team That's Lost Momentum</div>
+  <div class="screen-body">Your organization has been through 18 months of high change with significant wins and significant losses. Team Member engagement is declining. In interviews and skip-levels, you hear "I'm not sure what we're building anymore." The direction has changed multiple times in response to business conditions. You need to recast vision in a way that is credible — not performative.</div>
+  <div class="screen-body">What's the right approach?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Create a compelling vision deck and present it at the next all-hands — a well-designed vision presentation will rebuild clarity and energy.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Acknowledge what the last 18 months have been before recasting — validate the difficulty, name what was built and what was lost, then offer a clear and specific picture of where you're headed and why it's worth going there.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Focus on wins from the period to rebuild confidence — momentum comes from recognizing what worked before it comes from what's next.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Have directors communicate the renewed vision in their team settings — the vision will land better in small groups than in a large formal setting.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Vision Framework</div>
+  <div class="screen-title">Translating Org-Level Vision to Functional Level</div>
+  <div class="screen-body">The company-level vision is powerful at the organizational level but abstract for your function. Team Members in your org hear "be the most Guest-centric airline" but don't connect it to the operational or technical work they do. You need to create a functional-level vision that connects to the company vision without being redundant or disconnected.</div>
+  <div class="screen-body">What's your approach?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Adopt the company vision directly for your function — consistency with the enterprise vision is more important than functional specificity.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Build a functional vision that answers: "What does our specific work enable the Guest-centric airline vision to be?" — connect the enterprise picture to the specific contribution your function makes.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Let each director create their own vision for their team — they're closest to the work and best positioned to make the connection meaningful.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Focus on operational excellence as the functional vision — your team can understand and rally around being the best at what they do.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Vision in Conflict with CEO Priorities</div>
+  <div class="screen-body">You've been building toward a vision you've articulated clearly and repeatedly for your function. A new CEO priority shifts resource and attention in a direction that appears to conflict with the vision you've been casting. Team Members are noticing the tension.</div>
+  <div class="screen-body">What do you do?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Continue communicating the original vision — temporary priority shifts don't change the long-term direction.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Name the tension explicitly: "You may be noticing a shift in what we're focused on right now. Here's how I see this priority connecting to the direction we've been building toward — and here's where it may require us to update our picture."</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Recast the vision to align fully with the CEO priority — organizational alignment is more important than functional vision consistency.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Avoid addressing the tension publicly — discussing conflicts between VP and CEO priorities reduces Team Member confidence in leadership alignment.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Communicating Vision Through Managers</div>
+  <div class="screen-body">You've articulated your vision clearly in multiple all-hands sessions. But skip-level feedback reveals that Team Members three levels down are describing "the company's priorities" in ways that don't reflect the specific vision you've been casting. Directors are communicating priorities effectively but not vision. What do you do?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Increase the frequency of all-hands vision communication — the issue is repetition, and more direct VP communication will solve it.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Invest in enabling your director layer to translate and communicate the vision in their own team settings — give them the language, the framing, and explicit expectation that they are the vision transmission mechanism.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Send a written vision statement to all Team Members directly — bypassing the management layer removes the translation distortion.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Simplify the vision to a single memorable sentence so translation across layers is easier and less likely to be distorted.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Creating Vision for a High-Change Team</div>
+  <div class="screen-body">Your team has been through so much change that any vision you cast gets mentally filed as "we'll see." Team Members have seen strategies come and go. They're skeptical of vision statements — they've heard them before and seen them abandoned. You need to cast a vision that is different in kind from what they've experienced, not just in content.</div>
+  <div class="screen-body">What makes this vision land differently?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Make it more aspirational and inspiring — the previous visions were too operational and didn't create enough emotional connection.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Make it more concrete, acknowledge the history honestly, commit to repeating it consistently rather than pivoting, and connect it to decisions being made right now — so it's experienced as real rather than declared.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Involve the team in building the vision — co-creation creates the ownership that top-down vision casting can't achieve after multiple failed iterations.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Defer on vision until the current change period stabilizes — casting vision during instability creates credibility risk when events require adjustment.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — Vision is essentially the same as the strategic plan, communicated in more inspiring language.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — The vision transmission problem occurs when:</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — The VP's vision is unclear or internally inconsistent</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — The vision exists clearly in the VP's mind but doesn't reach Team Members multiple levels down with enough clarity to be useful</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — The vision is communicated too frequently and Team Members become desensitized to it</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — Team Members disagree with the vision direction</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — The "Connection" component of the vision framework refers to:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Linking the vision to industry benchmarks and external examples</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — How the vision connects to each person's specific daily work — the translation layer that makes organizational vision personally meaningful</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — The relationship between the functional vision and the company-level vision</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — The emotional resonance created by inspiring language and storytelling</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — The best test of whether vision is landing is how clearly the VP can articulate it.</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — What distinguishes vision that "works" from vision that "fails"?</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Inspiring language vs. operational language</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — Concrete and connected vs. abstract and infrequent</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — Co-created with the team vs. developed by leadership alone</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — Long-term horizon vs. short-term focus</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Build Your Vision</div>
+  <div class="screen-body">Use the four components to assess and strengthen the vision you're casting for your organization.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. The Picture: State your vision in one clear, concrete sentence. It should be specific enough that you'd know if you'd arrived.</div>
+    <div class="apply-sub">Avoid "excellence," "world-class," and "best in class" — be specific.</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Write your vision in one specific sentence…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. The Purpose: Why does this vision matter — to your organization, to Guests, and to the people doing the work?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Articulate the purpose in 2–3 sentences…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Landing Test: Ask a trusted Team Member three levels below you what you're building toward. What do you expect they'll say — and what does that tell you?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Predict the answer and assess what it reveals about transmission…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's missing from how you're currently casting vision? (Repetition? Connection to daily work? Director enablement? Specificity?)</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Name the gap in your current vision communication…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. What is one action in the next 30 days that would most improve vision transmission — not just vision quality?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Describe the specific action and how it improves transmission…" oninput="saveApply(4)"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🔭</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Casting Vision. The VPs whose organizations feel direction and purpose aren't better visionaries — they're better transmitters. They repeat, connect, test, and adjust until the picture lives three levels down, not just in their own mind.</div>
+  </div>
+  <div class="commitments">
+    <h4>Your vision casting commitments:</h4>
+    <div class="commit-item">State your vision in one clear, concrete sentence — and repeat it deliberately in every setting this quarter</div>
+    <div class="commit-item">Create one mechanism to test whether vision is landing three levels down — and listen honestly to what you find</div>
+    <div class="commit-item">Enable your director layer to translate the vision to their team context — give them the language, not just the picture</div>
+    <div class="commit-item">Connect vision to decisions being made right now — make the picture relevant to the present, not just the future</div>
+    <div class="commit-item">When vision and priorities appear to conflict, name the tension directly — credibility comes from honesty, not from pretending the conflict doesn't exist</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+<script>
+const TOTAL=17;
+const SECTIONS=[{label:'Foundation',end:5},{label:'The Vision Framework',end:7},{label:'Practice',end:10},{label:'Pulse Check',end:15},{label:'Apply It',end:16},{label:'Complete',end:17}];
+const SECTION_MAP=[0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SCENARIO_ANSWERS={
+  5:{correct:'B',feedback:'<strong>B is right.</strong> A team that has lost momentum and is questioning direction needs to be met honestly before it can be led forward. Acknowledging the difficulty of the period, naming what was built and what was lost, and then offering a clear specific picture — connected to why it\'s worth going there — is the credible recasting approach. A polished deck (A) without honest acknowledgment of the period reads as performance, not leadership.'},
+  6:{correct:'B',feedback:'<strong>B is right.</strong> Functional vision should answer: "What does our specific work enable the enterprise vision to be?" This creates a functional picture that is specific enough to be meaningful to the people doing the work, while explicitly connecting to the company-level direction. Adopting company vision directly (A) doesn\'t answer the "what do we specifically do" question. Delegating to directors (C) without a VP-level functional vision leaves each director creating something disconnected.'},
+  7:{correct:'B',feedback:'<strong>B is right.</strong> Naming the tension explicitly — and describing how you see the current priority connecting to the longer-term direction — is the honest and stabilizing move. Team Members are already noticing the conflict. Avoiding it (D) signals that leadership doesn\'t see what they see. Continuing the original vision unchanged (A) when there is a genuine conflict leaves Team Members to reconcile the dissonance themselves. Recasting completely (C) destroys the continuity the original vision was building.'},
+  8:{correct:'B',feedback:'<strong>B is right.</strong> The director layer is the vision transmission mechanism — they are present in 90% of the conversations where vision needs to land. Enabling them to translate and communicate vision in their own team settings is the highest-leverage investment. More direct VP all-hands (A) doesn\'t solve the layer-by-layer transmission problem. Direct written statements (C) bypass managers but don\'t build their capability to connect vision to daily work for their teams.'},
+  9:{correct:'B',feedback:'<strong>B is right.</strong> For a skeptical team with vision fatigue, what makes the difference is not more inspiration — it\'s more concreteness, honest acknowledgment of the history, consistent repetition rather than pivoting, and visible connection to decisions being made now. The team has learned that vision statements get abandoned; the way to change that learning is to demonstrate — through behavior, not words — that this one doesn\'t.'}
+};
+const PULSE_ANSWERS={
+  10:{correct:'B',feedback:'<strong>False.</strong> Vision answers the deeply human question: "Does what I do matter, and is it going somewhere?" It is not the strategic plan (which describes how) or the aspirational statement (which describes values). Vision is a picture of what success looks like and why it\'s worth working toward — concrete, connected, and repeated.'},
+  11:{correct:'B',feedback:'<strong>B is right.</strong> The transmission problem is the most common vision failure. The VP has a clear picture that exists in their mind and is occasionally shared. But it never reaches the people doing the work with enough clarity and specificity to guide their decisions. The transmission gap is what separates vision casting from vision landing.'},
+  12:{correct:'B',feedback:'<strong>B is right.</strong> The Connection component is the translation layer — how the organizational vision connects to each specific person\'s daily work. Without it, vision stays at the organizational level and never becomes personally meaningful. Directors and managers are the primary vehicles for this connection — they translate VP vision into team-level relevance.'},
+  13:{correct:'B',feedback:'<strong>False.</strong> The only meaningful test of vision is whether it has reached the people who are supposed to be guided by it. The test is not the VP\'s clarity or articulation — it\'s what someone three levels below can say about what the organization is building and how their work connects to it. VP clarity without transmission is a vision in the VP\'s head, not in the organization.'},
+  14:{correct:'B',feedback:'<strong>B is right.</strong> Vision that works is concrete (specific enough to know if you\'ve arrived) and connected (Team Members can trace their daily work to it) and repeated consistently. Vision that fails is abstract, inconsistent, disconnected from daily work, and communicated only at the annual all-hands. The distinction is not about language quality — it\'s about specificity, repetition, and connection.'}
+};
+const KEY='course_vp_vision_v1';
+let state={cur:0,max:0,answered:{},choices:{},apply:{}};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s)state=s;}catch(e){}showScreen(state.cur);buildDots();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+n).classList.add('active');state.cur=n;if(n>state.max)state.max=n;updateProgress();updatePills();updateNav();restoreScreen(n);save();window.scrollTo(0,0);}
+function updateProgress(){const pct=Math.round((state.max/(TOTAL-1))*100);document.getElementById('progress-bar').style.width=pct+'%';document.getElementById('progress-label').textContent=state.max+' of '+(TOTAL-1);}
+function updatePills(){const sec=SECTION_MAP[state.cur];SECTIONS.forEach((s,i)=>{const pill=document.getElementById('pill-'+i);if(!pill)return;pill.className='sec-pill';if(i===sec)pill.classList.add('active');else if(state.max>=s.end)pill.classList.add('done');});}
+function updateNav(){document.getElementById('btn-prev').disabled=state.cur===0;const nextBtn=document.getElementById('btn-next');const needsAnswer=(state.cur in SCENARIO_ANSWERS||state.cur in PULSE_ANSWERS);const answered=state.answered[state.cur];nextBtn.disabled=(state.cur===TOTAL-1)||(needsAnswer&&!answered);nextBtn.textContent=state.cur===TOTAL-2?'Finish →':'Next →';}
+function buildDots(){const wrap=document.getElementById('nav-dots');wrap.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='nav-dot';if(i===state.cur)d.classList.add('active-dot');else if(i<=state.max)d.classList.add('done-dot');wrap.appendChild(d);}}
+function navigate(dir){const next=state.cur+dir;if(next<0||next>=TOTAL)return;showScreen(next);buildDots();}
+function restoreScreen(n){if(n in SCENARIO_ANSWERS&&state.choices[n])restoreScenario(n,state.choices[n]);if(n in PULSE_ANSWERS&&state.choices[n])restorePulse(n,state.choices[n]);if(n===15)restoreApply();}
+function pickOpt(screenIdx,chosen){if(state.answered[screenIdx])return;state.answered[screenIdx]=true;state.choices[screenIdx]=chosen;save();restoreScenario(screenIdx,chosen);updateNav();}
+function restoreScenario(screenIdx,chosen){const answer=SCENARIO_ANSWERS[screenIdx];const container=document.getElementById('opts-'+screenIdx);if(!container)return;container.querySelectorAll('.opt').forEach(opt=>{const letter=opt.querySelector('.opt-letter').textContent;opt.classList.add('locked');if(letter===answer.correct)opt.classList.add('correct');else if(letter===chosen)opt.classList.add('wrong');else opt.classList.add('dimmed');});const fb=document.getElementById('fb-'+screenIdx);if(fb){fb.innerHTML=answer.feedback;fb.className='feedback-box show'+(chosen!==answer.correct?' wrong-fb':'');}}
+function pickPulse(screenIdx,chosen){if(state.answered[screenIdx])return;state.answered[screenIdx]=true;state.choices[screenIdx]=chosen;save();restorePulse(screenIdx,chosen);updateNav();}
+function restorePulse(screenIdx,chosen){const answer=PULSE_ANSWERS[screenIdx];const container=document.getElementById('pulse-'+screenIdx);if(!container)return;const opts=container.querySelectorAll('.pulse-opt');opts.forEach((opt,i)=>{const letter=String.fromCharCode(65+i);opt.classList.add('locked');if(letter===answer.correct)opt.classList.add('correct');else if(letter===chosen)opt.classList.add('wrong');else opt.classList.add('dimmed');});const fb=document.getElementById('pfb-'+screenIdx);if(fb){fb.innerHTML=answer.feedback;fb.className='feedback-box show'+(chosen!==answer.correct?' wrong-fb':'');}}
+function saveApply(idx){const el=document.getElementById('apply-'+idx);if(!el)return;state.apply[idx]=el.value;save();const saved=document.getElementById('saved-'+idx);if(saved){saved.style.display='block';setTimeout(()=>saved.style.display='none',1500);}}
+function restoreApply(){for(let i=0;i<=4;i++){const el=document.getElementById('apply-'+i);if(el&&state.apply[i])el.value=state.apply[i];}}
+load();
+</script>
+</body>
+</html>

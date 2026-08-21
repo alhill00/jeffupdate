@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Performance Reviews | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#174DFF;
+  --accent-light:#e0e8ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#e0e8ff;
+  --good-border:#174DFF;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#000633 0%,#0d1f6e 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(23,77,255,.25);color:rgba(255,255,255,.8);border-color:rgba(23,77,255,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.four-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:18px 0;}
+.four-card{background:var(--dark);border-radius:10px;padding:16px 18px;}
+.four-card h4{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
+.four-card p{font-size:13px;color:rgba(255,255,255,.85);line-height:1.5;}
+.bias-list{display:flex;flex-direction:column;gap:8px;margin:16px 0;}
+.bias-item{background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;}
+.bias-item strong{color:var(--dark);font-size:14px;}
+.bias-item p{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.4;}
+.steps-list{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.step-row{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--white);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-text{font-size:14px;color:#374151;line-height:1.5;}
+.step-text strong{color:var(--dark);}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#0d3acc;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#0d3acc;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .two-col,.four-grid{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Performance Reviews</div>
+  <div class="course-sub">Making your review conversations honest, specific, and actually useful.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Honest Review</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Manager Who Wrote Glowing Reviews</div>
+  <div class="screen-body">David was known for being easy to work for. He kept things positive, avoided awkward conversations, and wrote generous performance reviews — "exceeds expectations" for almost everyone. His team loved him. Or so he thought.</div>
+  <div class="screen-body">When one of his strongest Team Members applied for a promotion, she didn't get it. David was blindsided. The feedback from the panel: her reviews were glowing but vague, and she had no record of being coached through development areas.</div>
+  <div class="screen-body">The feedback that would have helped her grow — the honest, specific kind — had never been given. David had protected the relationship. He'd failed the career.</div>
+  <div class="hl"><strong>A performance review is only valuable when it's honest.</strong> A review that avoids the hard truth isn't a kindness — it's a missed opportunity disguised as one.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three Goals. One Conversation. That's the Problem.</div>
+  <div class="screen-body">Most managers dread review season. Not because they don't care — but because they're trying to do three things at once inside one conversation.</div>
+  <div class="two-col">
+    <div class="col-card accent-left">
+      <h4>What They're Trying To Do</h4>
+      <ul>
+        <li>Evaluate performance fairly</li>
+        <li>Motivate the person forward</li>
+        <li>Avoid damaging the relationship</li>
+      </ul>
+    </div>
+    <div class="col-card red-left">
+      <h4>Why It Doesn't Work</h4>
+      <ul>
+        <li>Honest evaluation can feel demotivating</li>
+        <li>Motivation can inflate the rating</li>
+        <li>Protecting the relationship softens everything</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al"><strong>These goals pull in opposite directions.</strong> The manager who tries to do all three ends up doing none of them well — and the Team Member leaves without the signal they actually needed.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Two Review Failure Modes</div>
+  <div class="screen-body">Most review problems come from one of two failure modes. Both are management failures dressed up as kindness.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>The Inflation Mode</h4>
+      <p style="font-size:14px;color:#374151;line-height:1.6;margin-bottom:10px;">Everyone is "exceeds" or "meets." Nobody gets a real signal. Ratings have no meaning. High performers don't know they're high performers. Low performers don't know there's a problem.</p>
+      <p style="font-size:13px;color:var(--muted);font-style:italic;">Result: The rating system becomes organizational noise.</p>
+    </div>
+    <div class="col-card red-left">
+      <h4>The Recency Mode</h4>
+      <p style="font-size:14px;color:#374151;line-height:1.6;margin-bottom:10px;">The review reflects the last 4 weeks, not the full year. A strong Q1–Q3 gets erased by a difficult Q4. Or a great December rescues a mediocre year.</p>
+      <p style="font-size:13px;color:var(--muted);font-style:italic;">Result: The person who performed well doesn't feel seen.</p>
+    </div>
+  </div>
+  <div class="hl"><strong>Both feel easier in the moment.</strong> Inflation avoids conflict. Recency requires less tracking. But both rob Team Members of the honest picture they need to actually grow.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Honest Review</div>
+  <div class="screen-title">What Makes a Performance Review Actually Work</div>
+  <div class="screen-body">A high-quality review has four components — and names the biases that undermine it.</div>
+  <div class="four-grid">
+    <div class="four-card">
+      <h4>1. Specific Evidence</h4>
+      <p>Behaviors and outcomes — not adjectives. "In Q2, she led the process redesign that cut onboarding time by 40%" — not "she's a team player."</p>
+    </div>
+    <div class="four-card">
+      <h4>2. Honest Assessment</h4>
+      <p>Includes real development areas — not just strengths. If there's nothing to develop, the review isn't honest or it's missing something.</p>
+    </div>
+    <div class="four-card">
+      <h4>3. Forward Focus</h4>
+      <p>Where do we go from here? Not just what happened. The best reviews spend as much time on the future as they do on the past.</p>
+    </div>
+    <div class="four-card">
+      <h4>4. Conversational</h4>
+      <p>Their response matters as much as your assessment. A review delivered as a monologue is half a review. Their perspective belongs in it.</p>
+    </div>
+  </div>
+  <div class="bias-list">
+    <div class="bias-item"><strong>Recency Bias</strong><p>The last few weeks dominate what you recall about the whole year.</p></div>
+    <div class="bias-item"><strong>Halo Effect</strong><p>One strength colors everything — strengths in one area inflate ratings in all areas.</p></div>
+    <div class="bias-item"><strong>Leniency Bias</strong><p>Rating everyone positively to avoid conflict — the most common review failure.</p></div>
+    <div class="bias-item"><strong>Similarity Bias</strong><p>Rating people who remind you of yourself higher than those who approach work differently.</p></div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Structuring the Review Conversation</div>
+  <div class="screen-body">The document is not the review. The conversation is. Here's how to structure it so both people leave with clarity.</div>
+  <div class="steps-list">
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div class="step-text"><strong>Ask for their self-assessment first.</strong> "Before I share mine, how would you describe your year?" This surfaces their perception and sets up a real dialogue — not a download.</div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">2</div>
+      <div class="step-text"><strong>Validate what they got right.</strong> Start with specific evidence for their strengths. This earns credibility for what comes next.</div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">3</div>
+      <div class="step-text"><strong>Add your perspective where it differs.</strong> Use specific evidence, not impressions. "Here's what I observed" beats "I feel like."</div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">4</div>
+      <div class="step-text"><strong>Name development areas directly.</strong> Not buried in the summary. Not softened until invisible. Specific behavior, specific impact.</div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">5</div>
+      <div class="step-text"><strong>End with forward.</strong> "What does growth look like for you in the next 12 months?" The last thing they hear should be where they're going — not where they've been.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Honest Review</div>
+  <div class="screen-title">The Self-Assessment Gap</div>
+  <div class="screen-body">Your Team Member's self-assessment is significantly more positive than your assessment. She rates herself "exceeds" in three areas where you see "meets" or below. How do you handle the conversation?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Adjust your rating upward to avoid conflict — the gap is too uncomfortable to navigate directly.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Start with your assessment and move through it without engaging with her self-assessment.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Acknowledge where you see it differently and walk through the specific evidence for your view.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Defer the conversation — send your assessment in writing first and discuss later.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Honest Review</div>
+  <div class="screen-title">The Warm Relationship, Hard Rating</div>
+  <div class="screen-body">You need to give a Team Member a "needs improvement" rating. She's been on your team for 3 years and the relationship is warm — you genuinely like her. How do you approach this?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Soften the rating to avoid damaging a relationship that matters to the team.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Be direct about the rating, specific about why, and clear about what improvement looks like and by when.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Wait until next cycle — give her one more chance before it's official.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Put it in writing first and ask her to review before you discuss in person.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Practice -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When They Push Back</div>
+  <div class="screen-body">Your Team Member disagrees with your review in the meeting — emotionally, saying you don't see their contributions. The tone is hurt, not hostile. What's your move?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Defend your position with authority — you've done the assessment and you stand by it.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Pause, ask them to share the specific contributions they feel were missed, listen carefully, and then respond with your evidence.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Agree to revisit the review after they've had time to process their emotions.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Stand firm and end the conversation — emotions aren't useful here.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Practice -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Systematic Inflation</div>
+  <div class="screen-body">Mid-review season, you realize your ratings have been systematically inflated — nearly everyone is "exceeds." You suspect leniency bias has crept in. What do you do?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Stick with the ratings — calibration is a broader org problem, not yours to fix alone.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Recalibrate before finalizing, even if some conversations will be uncomfortable as a result.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Submit the ratings and note your awareness of the inflation in the comments section.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Ask HR to handle the recalibration so it doesn't come from you.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Practice -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">The Mixed Performance Picture</div>
+  <div class="screen-body">A Team Member's year was genuinely strong in 3 of 4 performance areas — and clearly weak in one. How should the review reflect this?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Round up — strong overall performance means a strong overall rating.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Rate the overall performance honestly and name the development area specifically in the written review.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Focus the review on the weak area and note the strengths briefly.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Average the four areas mathematically to arrive at the rating.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — Asking a Team Member for their self-assessment before sharing yours gives them too much control over the narrative.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Which review bias produces the most systemic rating inflation across a team?</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Recency bias</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — Halo effect</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Leniency bias</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — Similarity bias</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — A development area is only worth including in a performance review if it affected performance this year.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — What makes feedback in a performance review "specific"?</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Including the rating descriptor next to the feedback</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Citing behaviors and outcomes with enough context to be recognizable</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Using a standardized rating scale</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Writing more than two paragraphs per area</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — Keeping the review conversation shorter is generally better practice than allowing it to run long.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">The review document is the starting point. The conversation is where it becomes useful. Use these prompts to prepare for your next cycle.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. For one Team Member, draft two sentences of evidence-based feedback for a strength.</div>
+    <div class="apply-sub">No adjectives — cite a behavior or outcome with context.</div>
+    <textarea class="apply-input" id="apply-0" placeholder="In [month/quarter], [name] did X which resulted in Y…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. For the same Team Member, draft two sentences of evidence-based feedback for a development area.</div>
+    <div class="apply-sub">No adjectives — specific behavior and its impact.</div>
+    <textarea class="apply-input" id="apply-1" placeholder="When [situation], [name] tended to [behavior], which created [impact]…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. What review bias are you most prone to? How has it shown up in past reviews?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="I tend toward [bias] because…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's the most uncomfortable honest assessment you need to give this cycle? Write the opening line.</div>
+    <textarea class="apply-input" id="apply-3" placeholder="I want to share something directly…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. What forward-looking question will you close every review with this cycle?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="What do you want to build in the next…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">📋</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Performance Reviews. The managers who change careers are the ones who tell the truth with care — and do it before it's too late to matter.</div>
+  </div>
+  <div class="commitments">
+    <h4>What honest review managers do differently:</h4>
+    <div class="commit-item">Ask for the self-assessment before sharing yours — every review, every cycle.</div>
+    <div class="commit-item">Name one real development area for every Team Member — with specific evidence, not impressions.</div>
+    <div class="commit-item">Audit ratings for leniency bias before submitting — not after calibration.</div>
+    <div class="commit-item">Prepare for the conversation, not just the document — they're different things.</div>
+    <div class="commit-item">End every review with a forward question: "What do you want to build in the next 12 months?"</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {name:'Foundation', end:5},
+  {name:'The Honest Review', end:7},
+  {name:'Practice', end:10},
+  {name:'Pulse Check', end:15},
+  {name:'Apply It', end:16},
+  {name:'Complete', end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'C', feedback:'<strong>C is right.</strong> The gap between self-assessment and manager assessment is a development conversation in itself. Walking through specific evidence is the only way to make the feedback real and actionable — abstract disagreement never closes the gap. Adjusting the rating upward (A) robs the TM of honest signal. Ignoring their view (B) shuts down the dialogue. Deferring (D) delays a conversation that needs to happen face-to-face.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> A soft rating delivered out of relationship protection is a disservice — it robs the Team Member of the honest signal they need to change direction. "Needs improvement" delivered with specificity and support is kinder than "meets expectations" delivered without honesty. The relationship can handle the truth. What it cannot handle long-term is a manager who withholds it.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Emotional pushback is information — something they feel is being missed. Pausing to ask what specific contributions they feel were overlooked shifts the conversation from defensiveness to evidence. You may learn something useful. And even if the rating holds, they leave feeling heard rather than dismissed.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Submitting inflated ratings knowing they\'re inflated is a management failure. The uncomfortable recalibration conversation is far better than the organizational credibility damage of reviews that don\'t mean anything. Noting inflation in comments (C) doesn\'t fix the ratings. Blaming calibration (A) passes the buck on a problem you created.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> The rating reflects the whole person\'s performance — not just the average of four boxes. But the written review must name the development area with the same specificity as the strengths. Strong TMs lose the most when managers round up instead of being honest about the one area that would make them exceptional.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Self-assessment first is one of the highest-value moves in a performance conversation. It surfaces their perception, honors their ownership of the year, and gives you critical context for where your view differs. Skipping it turns a review into a download instead of a dialogue.' },
+  11: { correct:'C', feedback:'<strong>C — Leniency bias</strong> produces the most systemic inflation. It\'s the tendency to rate everyone positively to avoid conflict — and it\'s so common that entire teams\' ratings become meaningless. Recency and halo bias affect individual ratings; leniency bias corrupts the whole system.' },
+  12: { correct:'B', feedback:'<strong>False.</strong> Development areas that haven\'t yet affected performance are the most valuable ones to name — they\'re preventable. Waiting until a gap causes visible performance problems means you\'ve waited too long. The best feedback catches a pattern before it becomes a problem.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> Specific feedback is anchored in observable behavior and measurable outcome — with enough context that the person could picture the moment. "Excellent communicator" is not specific. "In the Q3 leadership meeting, you reframed the vendor concern in a way that shifted the team\'s perspective" is.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> A 15-minute performance review cannot be effective. These conversations require genuine exchange — especially when there\'s a rating the person didn\'t expect, or a development area they need to understand. Rushing signals that the feedback isn\'t actually that important to you.' }
+};
+
+const KEY = 'course_mg_performance_reviews_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

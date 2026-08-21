@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Running Meetings at Director Level | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#faf8ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#6D28D9;
+  --accent-light:#ede9fe;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#ede9fe;
+  --good-border:#6D28D9;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#1a0a3d 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(109,40,217,.25);color:rgba(255,255,255,.8);border-color:rgba(109,40,217,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.meet-cards{display:flex;flex-direction:column;gap:14px;margin:18px 0;}
+.meet-card{background:var(--card);border:1.5px solid var(--border);border-left:4px solid var(--accent);border-radius:10px;padding:16px 18px;}
+.meet-card h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.meet-card ul{padding-left:18px;font-size:13.5px;line-height:1.8;color:#374151;}
+.num-cards{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.num-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;}
+.num-badge{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--white);font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.num-content h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.num-content p{font-size:13.5px;color:#374151;line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#5b21b6;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#5b21b6;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(109,40,217,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Director Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Running Meetings at Director Level</div>
+  <div class="course-sub">Shaping the conversations that shape the organization.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Director Meeting</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Your Meetings Teach</div>
+  <div class="screen-body">At the director level, the meetings you run set the tone for how your org operates. Not just because they consume time — but because they model something. Every meeting you facilitate demonstrates how you think decisions should be made, whether status reporting and decision-making are the same thing, and whether it's safe to disagree with senior people in the room.</div>
+  <div class="screen-body">A bad director meeting doesn't just waste an hour. It teaches the org something — that reporting out is the same as alignment, that questions from the leader are rhetorical, that bringing a problem without a solution isn't welcome.</div>
+  <div class="screen-body">The meetings you run are a form of culture. The norms they establish get replicated by your managers in their meetings, and by their direct reports in theirs. One hour in a room with you ripples three levels down.</div>
+  <div class="hl"><strong>The director's meeting job</strong> is different from the manager's. You're not just running meetings — you're teaching your managers how to run them.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three Meetings Directors Often Run Badly</div>
+  <div class="screen-body">These are the most common traps — not because directors aren't skilled, but because the format defaults get set wrong and never get reset.</div>
+  <div class="num-cards">
+    <div class="num-card">
+      <div class="num-badge">1</div>
+      <div class="num-content">
+        <h4>The Leadership Team Meeting Where Everyone Reports Out</h4>
+        <p>Every function gets 10 minutes. Updates are shared, heads nod, the meeting ends. Nothing was decided. Nothing was challenged. No one is more aligned than before. This meeting exists to feel like coordination without doing the work of it.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">2</div>
+      <div class="num-content">
+        <h4>The All-Hands Where the Leader Presents and Nobody Asks Questions</h4>
+        <p>The director delivers a well-prepared presentation. Silence for questions. A few people say thank you. The room files out. Engagement was performed, not built. The silence was compliance, not alignment.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">3</div>
+      <div class="num-content">
+        <h4>The Strategy Session That Produces a Deck But No Alignment</h4>
+        <p>A full day of discussion. A polished output. Three weeks later, each function is executing a slightly different version of what was agreed. The meeting felt productive; the alignment wasn't real.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Culture Modeling Job</div>
+  <div class="screen-body">How you behave in meetings teaches people what's valued. Do you ask questions you don't know the answer to — or only the ones that demonstrate your knowledge? Do you change your mind publicly when someone brings a better argument — or do you defend your original position? Do you name when someone's input changed your thinking — or let that go unacknowledged?</div>
+  <div class="screen-body">These behaviors accumulate into a culture. A culture where leaders are curious, revisable, and generous with credit runs very different meetings than one where leaders are certain, defensive, and focused on demonstrating command.</div>
+  <div class="al"><strong>The hardest part of meeting culture</strong> is that your behavior in the room communicates more than any stated norm. You can say "I want dissent" and then respond in ways that teach people never to offer it again.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Director Meeting</div>
+  <div class="screen-title">Three Director Meeting Types</div>
+  <div class="screen-body">Not every meeting has the same job. The facilitation failure is running all three types the same way. Know what type you're running before it starts — and design it accordingly.</div>
+  <div class="meet-cards">
+    <div class="meet-card">
+      <h4>Decision Meetings</h4>
+      <ul>
+        <li>Explicit decision needed — name it on the agenda</li>
+        <li>Right people in the room — decision-makers, not just stakeholders</li>
+        <li>Options pre-read before the meeting, not introduced in it</li>
+        <li>Time-boxed deliberation with a clear decision owner</li>
+        <li>Decision and owner recorded before the meeting ends</li>
+      </ul>
+    </div>
+    <div class="meet-card">
+      <h4>Alignment Meetings</h4>
+      <ul>
+        <li>Complex cross-functional initiative requiring shared understanding</li>
+        <li>Goal: build shared mental model, surface concerns early</li>
+        <li>Concerns are features, not threats — surface them deliberately</li>
+        <li>End with explicit "what did we just agree to" not assumed</li>
+        <li>Agree on next steps with owners and timelines</li>
+      </ul>
+    </div>
+    <div class="meet-card">
+      <h4>Culture and Rhythm Meetings</h4>
+      <ul>
+        <li>Leadership team norms, quarterly planning, team health</li>
+        <li>Celebrate wins and learn from failures explicitly</li>
+        <li>Not about information — about belonging, identity, and trust</li>
+        <li>Protect these from getting replaced by operational content</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Creating Psychological Safety in the Room</div>
+  <div class="screen-body">The higher the title, the more carefully people manage their input. When a director is in the room, people instinctively calibrate — what does this person value? What's safe to say? What response will their challenge get?</div>
+  <div class="screen-body">Psychological safety in a director-level room isn't an HR concept — it's a decision quality issue. Better decisions come from rooms where people say what they actually think, not what they believe you want to hear.</div>
+  <div class="num-cards">
+    <div class="num-card">
+      <div class="num-badge">1</div>
+      <div class="num-content">
+        <h4>Ask a Question You Don't Know the Answer To</h4>
+        <p>Modeling intellectual humility — genuinely not knowing, and being curious — teaches the room that not-knowing is safe here. The opposite (asking questions you already know the answer to) teaches them you're testing, not learning.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">2</div>
+      <div class="num-content">
+        <h4>Disagree with Yourself in Public</h4>
+        <p>"Here's where I've changed my view on this." When leaders revise their position publicly, they demonstrate that being wrong is survivable — and that the goal is getting it right, not being right.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">3</div>
+      <div class="num-content">
+        <h4>Call Out When Someone's Input Changed Your Thinking</h4>
+        <p>"That reframed it for me — I was thinking about it differently before this conversation." Naming the influence makes it visible and repeatable. It tells the room: your input has power here.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Director Meeting</div>
+  <div class="screen-title">The Status-Reporting Leadership Meeting</div>
+  <div class="screen-body">Your weekly leadership team meeting has drifted into a round-robin of status updates. Everyone reports what they're working on, a few questions are asked, and the meeting ends. Nothing is ever actually decided in the meeting. You realize this has been the pattern for months. What do you do?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Cancel the meeting — if nothing is being decided, the time isn't justified.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Redesign the meeting explicitly: move status updates to async, reserve meeting time for the one or two decisions or alignment topics that actually need the group — and name that shift to the team.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Add a decision-focused agenda item each week while keeping the status reports — it gives everyone coverage while adding substance.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Ask each person to limit their update to two minutes — the problem is length, not format.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Director Meeting</div>
+  <div class="screen-title">When Nobody Challenges the Senior Person</div>
+  <div class="screen-body">Your CPO is in a strategy meeting you're facilitating. They share a strong directional view early in the discussion. After that, the rest of the room largely agrees — ideas build on the CPO's framing rather than challenging it. You're not sure the best thinking is surfacing. What do you do?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Let it run — the CPO's perspective carries strategic weight, and it's reasonable for others to build on it rather than challenge it.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Create structured space for challenge: "Before we build further on this direction, let's spend five minutes on what might be wrong with it or what we'd need to believe for it to be right. I'll start."</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Pull a few people aside after the meeting to get their real views — the room isn't the right place for it.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Ask the CPO to step out for a portion of the discussion so the group can think independently first.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">The Manager Who Dominates Every Meeting</div>
+  <div class="screen-body">One of your managers has a strong presence and consistently takes up significantly more airtime than anyone else in your leadership team meetings — not through interruption, but through length and frequency of comments. Others have gotten quieter over the past few months. What do you do?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Address it publicly in the meeting: "Let's hear from some folks who haven't spoken yet."</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Have a private conversation with the manager: name the pattern, share the impact (others are getting quieter), and ask for their self-awareness about it — then redesign the meeting structure to create more distributed input.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Redistribute speaking time by going around the table — structured turns give everyone equal airtime.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Don't intervene — some people are simply more vocal, and the team will self-correct over time.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">The Strategy Session That Needs Real Alignment</div>
+  <div class="screen-body">You're planning a half-day strategy session with your leadership team on a major org initiative. Previous strategy sessions have produced decks and discussions but not real alignment — three weeks later the functions were executing differently. How do you design this one differently?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Make the session more interactive — use polling and breakout groups to increase engagement.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Build in an explicit alignment check at the end: "What did we just decide? What are we each doing differently because of this conversation? Let's name it before we leave." Have someone document decisions and owners in real time.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Follow up with a recap deck within 48 hours so everyone has the same reference point going forward.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Invite more stakeholders — broader representation leads to stronger buy-in.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">After a Decision Made in the Room Turns Out Wrong</div>
+  <div class="screen-body">Your leadership team made a clear decision in a meeting three weeks ago. You're now learning the decision was based on a flawed assumption — and the cost of executing it is becoming apparent. How do you handle this?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Reverse the decision quietly without calling explicit attention to the fact that it was wrong — minimize disruption.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Call the team together, name what you've learned, acknowledge the assumption was wrong, make the reversal or adjustment transparent, and use it as a teaching moment for how to surface flawed assumptions earlier in future decisions.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Identify whose analysis led to the flawed assumption and address it directly with them — accountability is important in decision-making culture.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Adjust the execution to minimize the impact of the bad decision without formally revisiting it — the decision stands, but you course-correct quietly.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — All three director meeting types (Decision, Alignment, Culture) should be facilitated using the same approach.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Asking a question you already know the answer to in a meeting is a reliable way to build psychological safety.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — Silence from participants after you ask for questions in a meeting most often indicates:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — The communication was clear and there's genuine alignment</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — People have learned through experience what kinds of responses are welcome — and are managing accordingly</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — People are processing and will follow up individually</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — The meeting ran too long and people are disengaged</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — In a Decision Meeting, options should ideally be introduced and deliberated within the meeting itself so everyone hears the same information at the same time.</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — The best follow-through practice after a Decision Meeting is:</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Send a detailed recap deck summarizing all the context discussed</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — Share decisions and owners within 24 hours — brief and specific</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — Trust the participants to remember and act on their commitments</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — Follow up in the next weekly meeting to review what was decided</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Audit your current meeting practice and identify one concrete change to make this week.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Audit your last three leadership meetings — which type were they? (Decision / Alignment / Culture)</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Meeting 1: … type. Meeting 2: … type. Meeting 3: … type." oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. For each: what was actually decided, and who didn't speak?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Meeting 1 decided: … Didn't speak: … Meeting 2…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. What norm did you model in those meetings — intentionally or not?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="I modeled… which probably taught the room…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. Which psychological safety move do you use least — and why?</div>
+    <div class="apply-sub">Ask a question you don't know the answer to / Disagree with yourself publicly / Name when someone changed your thinking</div>
+    <textarea class="apply-input" id="apply-3" placeholder="I use the least… because…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. What one change makes your next leadership meeting better?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="In my next leadership meeting I will…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🗣️</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Running Meetings at Director Level. The meetings you run are the org's clearest window into what you value. Run them like you mean it.</div>
+  </div>
+  <div class="commitments">
+    <h4>Three commitments for director-level meetings:</h4>
+    <div class="commit-item">Define the meeting type before it starts — Decision, Alignment, or Culture — and design it accordingly</div>
+    <div class="commit-item">Create conditions for dissent — use at least one psychological safety move in every significant meeting</div>
+    <div class="commit-item">Follow up every Decision Meeting with decisions and owners within 24 hours — no exceptions</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation',          end:5},
+  {label:'The Director Meeting',end:7},
+  {label:'Practice',            end:10},
+  {label:'Pulse Check',         end:15},
+  {label:'Apply It',            end:16},
+  {label:'Complete',            end:17}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> The root problem isn\'t length or lack of topics — it\'s format. Status reporting doesn\'t require a synchronous meeting. Moving updates async and reserving meeting time for decisions and alignment is the structural fix. Adding a decision item while keeping the status reports (C) still buries the decision in status theater.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Creating structured space for challenge — especially in a room where a senior person has stated a view — is the director\'s facilitation job. "What might be wrong with this?" is a psychologically safe invitation because it\'s explicitly permitted by the facilitator. Going around (D) could be seen as undermining the CPO and isn\'t necessary — the right facilitation move keeps everyone in the room.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> A private conversation plus structural redesign addresses both the behavior and the conditions that are producing it. Public redirection (A) can feel embarrassing and may not solve the pattern. Equal turns (C) doesn\'t address the underlying dynamic and can feel forced. Not intervening (D) allows the quieting of voices to continue — which is a culture and decision quality problem.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> The alignment gap in strategy sessions comes from not explicitly naming what was decided and what each person will do differently. Interactive exercises (A) and recap decks (C) feel like engagement but don\'t close the alignment loop. The meeting has to end with everyone naming their specific commitment out loud — not assumed, explicitly stated.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Transparency about the wrong decision is more credible than quietly reversing it. When leaders model that being wrong is survivable and addressable, they build a culture where people surface errors faster. Quiet reversal (A) prevents learning. Blame-finding (C) creates a culture where people hide mistakes to avoid being identified.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Each meeting type has a different job and requires different facilitation. Decision meetings need pre-read options, time-boxed deliberation, and explicit decision recording. Alignment meetings need structured concern-surfacing. Culture meetings need space for connection and reflection — not operational content. Running all three the same way is why strategy sessions produce decks instead of alignment.' },
+  11: { correct:'B', feedback:'<strong>False.</strong> Asking questions you already know the answer to is testing, not learning — and people in the room can usually sense the difference. It teaches the room that questions from the leader are evaluative, not curious. Genuine psychological safety comes from asking questions where you actually don\'t know the answer and are visibly open to the response.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> Silence after questions in a director-led meeting is almost never genuine alignment or genuine processing — it\'s pattern recognition. People have observed, over time, what types of responses are welcome and have calibrated accordingly. The director is responsible for the culture that produces the silence — and for redesigning it.' },
+  13: { correct:'B', feedback:'<strong>False.</strong> Options should be pre-read before a Decision Meeting, not introduced in it. When options are introduced in the room, you spend meeting time getting people up to speed rather than deliberating. Pre-reading ensures everyone arrives with the same information and the meeting time is used for the actual decision conversation.' },
+  14: { correct:'B', feedback:'<strong>B is right.</strong> A brief, specific follow-up with decisions and owners within 24 hours is the standard — not a comprehensive recap, not next-meeting review, and certainly not trusting people to remember. The 24-hour window keeps accountability crisp and prevents the common drift where what was "decided" becomes reinterpreted over the following week.' }
+};
+
+const KEY = 'course_dr_meetings_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

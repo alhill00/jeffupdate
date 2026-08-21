@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coaching Your Managers | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#faf8ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#6D28D9;
+  --accent-light:#ede9fe;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#ede9fe;
+  --good-border:#6D28D9;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+
+.course-header{background:linear-gradient(135deg,#1a0a3d 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#c4b5fd;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+
+.section-nav{background:var(--dark);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(109,40,217,.25);color:rgba(255,255,255,.8);border-color:rgba(109,40,217,.4);}
+
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+
+.card-grid{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.framework-card{background:var(--dark);border-radius:10px;padding:18px 20px;display:flex;gap:16px;align-items:flex-start;}
+.framework-num{width:36px;height:36px;border-radius:50%;background:var(--accent);color:var(--white);font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.framework-content{flex:1;}
+.framework-title{color:var(--white);font-size:15px;font-weight:700;margin-bottom:4px;}
+.framework-desc{color:rgba(255,255,255,.8);font-size:13px;line-height:1.5;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.col-card p{font-size:13.5px;line-height:1.6;color:#374151;margin-top:8px;}
+
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#5b21b6;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#5b21b6;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(109,40,217,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Director Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Coaching Your Managers</div>
+  <div class="course-sub">Developing the leadership layer between you and the work.</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label">0 of 17</div>
+</div>
+
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Manager Development Model</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Leverage Point Most Directors Miss</div>
+  <div class="screen-body">A director's organizational impact is multiplied or limited by the quality of their management layer. A director who develops excellent managers has built something that outlasts their own tenure.</div>
+  <div class="screen-body">The most important coaching a director does isn't to their own team — it's to the people leading their teams.</div>
+  <div class="hl"><strong>The multiplier principle:</strong> Developing one manager well reaches every Team Member on that manager's team. Your real coaching leverage lives one level down from where most directors are focused.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Coaching Managers Actually Requires</div>
+  <div class="screen-body">Coaching a manager is fundamentally different from coaching a Team Member on a task problem. When you coach a manager, you're doing three things simultaneously:</div>
+  <div class="card-grid">
+    <div class="framework-card">
+      <div class="framework-num">1</div>
+      <div class="framework-content">
+        <div class="framework-title">Building Their Leadership Judgment</div>
+        <div class="framework-desc">The judgment that determines how their team performs — the hardest thing to develop and the most important to your organization.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">2</div>
+      <div class="framework-content">
+        <div class="framework-title">Developing Their Self-Awareness</div>
+        <div class="framework-desc">What kind of leader are they? Where are their blind spots? Self-awareness is the foundation of growth at every leadership level.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">3</div>
+      <div class="framework-content">
+        <div class="framework-title">Expanding Their Leadership Identity</div>
+        <div class="framework-desc">Who do they see themselves becoming? The identity shift from task-doer to people-developer is a fundamental transformation — and you're the one positioned to accelerate it.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Most Common Director Coaching Failure</div>
+  <div class="screen-body">The most common director coaching failure is becoming a manager's extra layer of approval.</div>
+  <div class="screen-body">When a director is involved in decisions their manager should own, the manager stops developing judgment and starts checking with you for every call.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>What This Looks Like</h4>
+      <ul>
+        <li>Manager escalates decisions they should own</li>
+        <li>Director is managing two levels down</li>
+        <li>Middle layer becomes a relay station</li>
+        <li>Manager stops growing</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>What Breaks</h4>
+      <ul>
+        <li>Manager's judgment never develops</li>
+        <li>Director's time is consumed below their level</li>
+        <li>Organization loses a leadership layer</li>
+        <li>Team members feel distance from real decision-making</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al"><strong>The result:</strong> Manager stops growing, director is managing two levels down, and the middle layer becomes a relay station instead of a leadership layer.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Manager Development Model</div>
+  <div class="screen-title">Three Coaching Focus Areas</div>
+  <div class="screen-body">Director-level coaching of managers operates across three distinct development dimensions. Know which one each coaching conversation is serving.</div>
+  <div class="card-grid">
+    <div class="framework-card">
+      <div class="framework-num">1</div>
+      <div class="framework-content">
+        <div class="framework-title">Judgment Development</div>
+        <div class="framework-desc">Help managers make the hard call without checking with you. Not "what should I do?" but "what are you thinking and what's driving that?" Help them articulate their own reasoning, then test it.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">2</div>
+      <div class="framework-content">
+        <div class="framework-title">Team Health</div>
+        <div class="framework-desc">Are their teams actually healthy? Retention, engagement, psychological safety, bench depth. Directors often see lagging indicators before managers do — "what do you see in your team that you're not seeing?" is the coaching question.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">3</div>
+      <div class="framework-content">
+        <div class="framework-title">Leadership Range</div>
+        <div class="framework-desc">Can they lead in different modes — directing, coaching, influencing, inspiring — or only one gear? The development challenge is expanding their range to match what each situation requires.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4: Foundation -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Calibrating Your Involvement</div>
+  <div class="screen-body">Two coaching failure modes pull in opposite directions. Too directive: give them the answer, they learn to wait for it. Too permissive: step back so far they flounder and lose confidence.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Too Directive</h4>
+      <p>Give them the answer → they learn to wait for it. Creates dependency. Manager stops developing judgment.</p>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Too Permissive</h4>
+      <p>Step back so far they flounder → they lose confidence. Creates anxiety. Manager stops taking initiative.</p>
+    </div>
+  </div>
+  <div class="hl"><strong>Calibration point:</strong> Match your involvement to their readiness for each type of decision. High-stakes, low-readiness = more direct coaching with shared reasoning. Lower-stakes, higher-readiness = self-directed coaching with you as sounding board. The problem type, not the person's overall level, determines the approach.</div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Manager Development Model</div>
+  <div class="screen-title">The Escalated Performance Issue</div>
+  <div class="screen-body">A manager on your team escalates a performance issue about one of their Team Members, asking you how to handle it. They've had 1:1s with the Team Member and documented concerns, but want to know what you'd do.</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Tell them exactly what steps to take in what order.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Ask what they've tried, what their read on the situation is, and what they're considering next — then add your perspective.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Handle the situation directly with the Team Member.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Connect them with HR and step back entirely.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Manager Development Model</div>
+  <div class="screen-title">Strong Results, Hesitant Team</div>
+  <div class="screen-body">Your highest-performing manager has a strong, directive style. Their team hits all their numbers. But you've noticed Team Members in their team seem hesitant to offer ideas in meetings.</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Leave it — results are results.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Give the manager team health data and open a coaching conversation about what they're observing.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Announce to the management layer that psychological safety is a priority.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Move one of the hesitant Team Members to a different team.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">The Cross-Functional Blind Spot</div>
+  <div class="screen-body">A manager keeps making decisions that create downstream work for other teams — they're not thinking cross-functionally.</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Step in when you see it happening and make the calls yourself.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>In a coaching conversation, help them build the habit of asking "who else does this decision affect?" before finalizing.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Add a review step where they check with you before cross-functional decisions.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Send a note to the affected teams to come directly to you with issues.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">The Manager Who Won't Give Hard Feedback</div>
+  <div class="screen-body">A newer manager is struggling to give real feedback — her Team Members like her, but nobody gets the hard truth. Her team's performance is fine but slipping slightly.</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Have a direct conversation about the performance trend and what it signals.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Coach her by having her reflect on a specific recent instance where harder feedback was warranted — what did she say, what did she leave out, and why?</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Send a training resource on giving feedback.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Model the feedback conversation for her by giving feedback to her Team Member yourself.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">No Succession Depth</div>
+  <div class="screen-body">You're reviewing your management layer and realize one of your managers has essentially no succession depth. If they left tomorrow, their team would be in trouble. Your manager hasn't raised this.</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Raise it in their review as a development concern.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Open a proactive conversation: "I want to talk about the bench on your team. If you needed to step away for 6 weeks tomorrow, who would cover, and how confident are you?"</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Begin building that relationship with their high-potential Team Members yourself.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Create a formal succession plan document for them to fill out.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — A director who can answer every question their managers ask is demonstrating high coaching effectiveness.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Which of the following is the best indicator that a manager's judgment is developing?</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — They're escalating fewer decisions to you</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — They're asking more thoughtful questions</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Their team results are improving</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — They've completed their development plan</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — "Leadership range" means being able to adapt your communication style to different personalities.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — A manager on your team describes a team health issue as a "talent problem." What's the most useful coaching response?</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — "Let's build a performance plan for the Team Member."</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — "What does the Team Member do well, and what have you tried to address the gap?"</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — "Have you considered replacing them?"</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — "I'll review their last performance rating."</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — When coaching a manager through a difficult team decision, you should share your own recommendation upfront to save time.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">The development of your management layer is the highest-leverage work you do. Use these prompts to move from concepts to commitments.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Map each manager on your team against the three coaching areas: Judgment, Team Health, Leadership Range. Who's strongest in each? Where are the biggest gaps?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Your assessment…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Which manager are you most likely to answer rather than coach? What's the next question they escalate that you'll turn back to them?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Name the manager and the question…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Name a manager on your team who has one gear. What's the leadership mode they're missing? What situation would help them develop it?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Manager, missing mode, development situation…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's a decision a manager on your team recently made that you would have made differently? What coaching conversation does that open?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="The decision and the coaching question it creates…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. Which manager on your team has the least bench depth? Draft the opening question for that conversation.</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Manager name and your opening question…" oninput="saveApply(4)"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🎯</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Coaching Your Managers. The directors who build great organizations aren't the ones with the best answers — they're the ones who develop the best question-askers.</div>
+  </div>
+  <div class="commitments">
+    <h4>Five commitments of directors who develop great managers:</h4>
+    <div class="commit-item">The next time a manager asks "what should I do?" — ask them what they're thinking first.</div>
+    <div class="commit-item">Have one team health conversation (not results conversation) with every manager this quarter.</div>
+    <div class="commit-item">Identify one manager whose leadership range needs expanding — design one experience that stretches it.</div>
+    <div class="commit-item">Stop being an extra approval layer. Name one decision type you'll stop reviewing.</div>
+    <div class="commit-item">Coach the specific instance, not the abstract principle — every coaching conversation needs a real example.</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Complete Course →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {name:'Foundation', end:5},
+  {name:'The Manager Development Model', end:7},
+  {name:'Practice', end:10},
+  {name:'Pulse Check', end:15},
+  {name:'Apply It', end:16},
+  {name:'Complete', end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> This is a judgment development moment. Asking "what are you thinking and what\'s driving that?" surfaces their reasoning so you can coach it. Giving them the answer teaches them to wait for answers. The director\'s job is to develop their manager\'s judgment on performance situations — not to be the decision-maker.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Current results don\'t predict future capability — teams with low psychological safety retain only the people who can\'t leave. The coaching conversation starts with what the manager is seeing (not what you\'re diagnosing), and helps them connect team health to their own long-term leadership effectiveness.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Adding a review step with you creates dependency. The development move is building their judgment — specifically the habit of mapping stakeholders before deciding. Coaching question: "Walk me through who was affected by that decision and what you considered." That surfaces the gap without you doing the thinking for them.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> The specific instance is the coaching material. Abstract coaching ("you need to give harder feedback") doesn\'t build the skill. Walking through a real recent situation — what she said, what she left out, what she was afraid of — surfaces the actual barrier and makes it coachable.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> The bench conversation is a development conversation, not a documentation exercise. Opening it as a real question — "if you were gone tomorrow, who covers?" — makes it concrete and personal. Your job is to develop the manager\'s awareness of team depth as a leadership responsibility, not to do the succession planning for them.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Consistently answering questions teaches managers to ask rather than decide. High coaching effectiveness means managers are increasingly deciding on their own — because their judgment has been developed, not because they got the answer.' },
+  11: { correct:'A', feedback:'<strong>A is right.</strong> The ultimate measure of judgment development is that the manager is making more decisions independently — and making them well. Escalation frequency is the clearest signal of dependency vs. capability.' },
+  12: { correct:'B', feedback:'<strong>False.</strong> Leadership range is about mode, not style. A leader with full range can direct when someone needs clear guidance, coach when they need to develop their own thinking, influence without authority when they need cross-functional alignment, and inspire when the team needs motivation. Style adaptation is a component of each mode — but range is about knowing which mode the situation calls for.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> "Talent problem" is often a premature conclusion. The coaching question surfaces what the manager actually knows, what they\'ve tried, and whether the problem is truly capability or something else — role fit, clarity, culture, or the manager relationship. Most talent problems turn out to be leadership problems in disguise.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> Sharing your recommendation upfront anchors their thinking to yours — you\'ve made it very difficult for them to reason through it independently. The development value lives in them working through the reasoning first. Share your perspective after, as input they can weigh — not as the answer they\'re expected to validate.' }
+};
+
+const KEY = 'course_dr_coaching_managers_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

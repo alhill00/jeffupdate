@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Data-Driven Decisions | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#faf8ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#6D28D9;
+  --accent-light:#ede9fe;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#ede9fe;
+  --good-border:#6D28D9;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#1a0a3d 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(109,40,217,.25);color:rgba(255,255,255,.8);border-color:rgba(109,40,217,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.num-cards{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.num-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;}
+.num-badge{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--white);font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.num-content h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.num-content p{font-size:13.5px;color:#374151;line-height:1.5;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#5b21b6;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#5b21b6;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(109,40,217,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Director Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Data-Driven Decisions</div>
+  <div class="course-sub">Using data to make better calls — not just to justify the ones you've already made.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Decision Framework</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Drowning in Data, Still Getting It Wrong</div>
+  <div class="screen-body">Every proposal Marcus brought to leadership was backed by numbers. Charts, trend lines, year-over-year comparisons. He prided himself on being data-driven. And yet quarter after quarter, the same problems surfaced. The same mistakes got made. The same conversations had to happen again.</div>
+  <div class="screen-body">It took a peer pulling him aside to name it: Marcus wasn't using data to make decisions. He was using data to defend decisions he'd already made. He would decide, then build the case. The numbers followed the conclusion — they never led to it.</div>
+  <div class="screen-body">Real data literacy looks different. It means letting data change your mind — not just validate it.</div>
+  <div class="hl"><strong>Data-driven decisions start before you look at the data.</strong> What question are you trying to answer? What would change your thinking? Those questions have to come first — or the data just confirms what you already believe.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three Data Traps at Director Level</div>
+  <div class="screen-body">The higher you go, the more data you have access to — and the easier it is to fall into these traps.</div>
+  <div class="num-cards">
+    <div class="num-card">
+      <div class="num-badge">1</div>
+      <div class="num-content">
+        <h4>Confirmation Bias</h4>
+        <p>Looking for data that supports what you already believe. The data you find first, weight most, and cite loudest is often the data that agrees with you. The rest gets filtered out.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">2</div>
+      <div class="num-content">
+        <h4>Measurement Fixation</h4>
+        <p>Optimizing for what's measured, not what matters. If your team's goal is "increase survey scores," they'll find ways to move the score — which isn't the same as improving the thing the score is supposed to measure.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">3</div>
+      <div class="num-content">
+        <h4>Precision Illusion</h4>
+        <p>Treating a 3-decimal-point number as more true than it is. A metric that's 73.4% feels more real than "about three-quarters" — but the precision is often false, and it creates false confidence in the underlying analysis.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Data Doesn't Decide. You Do.</div>
+  <div class="screen-body">Directors who say "I always follow the data" are wrong — and they're hiding behind it. Data never makes a decision. Humans do. Data informs judgment; judgment makes the call.</div>
+  <div class="screen-body">This matters because when a decision goes wrong, "the data said so" is not a sufficient answer. You still made a call about which data to look at, how to interpret it, what it meant, and what to do. That's judgment — whether you acknowledge it or not.</div>
+  <div class="al"><strong>The most dangerous data user</strong> is the one who believes they're objective. Awareness of your biases doesn't eliminate them — but pretending you don't have them makes them invisible and unchecked.</div>
+  <div class="hl"><strong>The goal isn't to eliminate judgment.</strong> It's to use data to inform better judgment — to surface what you might be missing, challenge what you assume, and slow down the decision just enough to make a better one.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Decision Framework</div>
+  <div class="screen-title">Five Steps to a Data-Informed Decision</div>
+  <div class="screen-body">Use this sequence before and during any significant decision. The order matters — especially step one.</div>
+  <div class="num-cards">
+    <div class="num-card">
+      <div class="num-badge">1</div>
+      <div class="num-content">
+        <h4>Define the Question First</h4>
+        <p>Before pulling any data, write down the specific question you're trying to answer. Not "what does the data say" — what decision are you making, and what would help you make it better?</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">2</div>
+      <div class="num-content">
+        <h4>Identify What Would Change Your Mind</h4>
+        <p>Ask yourself: what data, if you found it, would lead you to a different conclusion? If you can't name it, you're not being data-driven — you're going through the motions.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">3</div>
+      <div class="num-content">
+        <h4>Look at Leading AND Lagging Indicators</h4>
+        <p>Lagging indicators (revenue, satisfaction scores) tell you what happened. Leading indicators (pipeline, early engagement signals) tell you what's coming. You need both.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">4</div>
+      <div class="num-content">
+        <h4>Name What the Data Doesn't Tell You</h4>
+        <p>Every dataset has gaps. What's missing? What can't be measured? What do the numbers not capture? Naming these gaps explicitly is part of rigorous data analysis.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">5</div>
+      <div class="num-content">
+        <h4>Make the Call — Data + Judgment</h4>
+        <p>Use available data and your explicit judgment about what the data can't capture. Say out loud what the data told you and what you're adding from experience or context.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">When Data Is Incomplete (Which Is Usually)</div>
+  <div class="screen-body">Perfect data doesn't exist. At director level, you're regularly making significant decisions with incomplete, ambiguous, or contradictory information. The skill isn't waiting for certainty — it's deciding well anyway.</div>
+  <div class="num-cards">
+    <div class="num-card">
+      <div class="num-badge">1</div>
+      <div class="num-content">
+        <h4>Be Explicit About Confidence Level</h4>
+        <p>"Strong data on X, weaker on Y, uncertain about Z." Name it. When everyone in the room knows what you're confident in versus where you're working with limited data, the conversation is more honest and the decision is better.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">2</div>
+      <div class="num-content">
+        <h4>Decide Which Unknowns Would Actually Change the Call</h4>
+        <p>Not every gap matters equally. Identify which unknowns, if you resolved them, would actually change your recommendation. Pursue only those. The rest are noise.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">3</div>
+      <div class="num-content">
+        <h4>Set a Decision Timeline and a Review Trigger</h4>
+        <p>"We'll decide by Friday with what we have. If X changes, we revisit." This creates accountability without endless gathering — and gives you a structured way to incorporate new information later.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Decision Framework</div>
+  <div class="screen-title">When Data Contradicts Your Instinct</div>
+  <div class="screen-body">You've been preparing to recommend expanding a program based on strong anecdotal feedback from your team. The data comes back and shows flat engagement — no meaningful improvement from baseline. Your instinct says the program is working. The data says something else. What do you do?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Move forward with the recommendation — the qualitative feedback from your team is more meaningful than a single engagement metric.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Pause and investigate the gap — what's the engagement metric actually measuring, and is it the right indicator for this program's goal?</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Pull the recommendation entirely — if the data doesn't support it, it's not data-driven enough to present.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Present both — share the qualitative feedback and note the data doesn't yet show impact, and let leadership decide.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Decision Framework</div>
+  <div class="screen-title">Presenting a Recommendation at Moderate Confidence</div>
+  <div class="screen-body">You're presenting a resource request to your CPO. You have solid data on the cost side and strong directional data on expected return — but you can't prove ROI with certainty. Your CPO is analytical. What's the right approach?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Wait until you have stronger data — presenting with moderate confidence will undermine your credibility.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Present with a clear confidence breakdown: what you know with high confidence, what's directional, and what's a judgment call — and name it explicitly.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Round up your projections slightly to make the case stronger — conservative estimates lose in competitive resource environments.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Lead with the qualitative case and only mention data if asked — your CPO trusts your judgment.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When to Stop Gathering and Decide</div>
+  <div class="screen-body">Your team has been analyzing options for a process change for six weeks. Every time you're close to a recommendation, someone surfaces a new variable to investigate. The analysis is getting more refined, but no better for the decision. What's your move?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Keep gathering — incomplete analysis on a significant decision is a leadership risk. Better to take more time and get it right.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Name the pattern in the next meeting: "We've been adding variables without asking whether they'd change the recommendation. Let's identify the two remaining unknowns that actually matter and set a decision date."</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Make the call yourself without the team — they're too close to it to be objective at this point.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Escalate to your CPO — this decision is too important for the team to resolve without executive input.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When a Team Member Uses Data to Avoid Deciding</div>
+  <div class="screen-body">One of your managers keeps bringing you analysis — well-built, detailed, thoughtful — but never a recommendation. Every presentation ends with "here are the options" and a look to you to choose. You realize they're using data gathering as a way to avoid making the call. What do you do?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Make the call for them — they're giving you the analysis, and it's your job to decide at this level.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Name it directly: "I notice you've brought me analysis but not a recommendation. I want you to come back with a recommendation — your read, with your reasoning, and what you're uncertain about."</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Give them more time — they'll get comfortable making recommendations as they build confidence over time.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Reassign the decision to someone more decisive — this isn't the right person for high-stakes calls.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Interpreting Mixed Signals</div>
+  <div class="screen-body">Your engagement data shows high scores in "I feel valued" but low scores in "I understand how my work connects to our goals." Your retention data is flat — nothing alarming, nothing great. A manager tells you her team is energized. Another says his team is coasting. What's your read?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>The high "I feel valued" score is the most important signal — when Team Members feel valued, retention and performance follow.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>This is a direction issue, not an engagement issue — Team Members feel good but may not understand where they're headed, which is a leadership communication problem to address now before it erodes engagement.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Flat retention is the decisive signal — if people are staying, the situation is acceptable.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Wait for next quarter's data — one mixed reading isn't enough to draw conclusions or act on.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — Confirmation bias means you look for data that contradicts what you already believe.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — "I always follow the data" is an accurate and sufficient description of sound decision-making at director level.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — When you're unsure whether to gather more data or make a decision, the best question to ask is:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — "How much time do I have before the deadline?"</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — "Would resolving this unknown actually change my recommendation?"</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — "Is my team confident in the analysis?"</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — "Has leadership seen this level of analysis before?"</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — "Data-driven" means the data makes the decision for you, without relying on personal judgment.</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — When presenting a recommendation with uncertainty to leadership, the best approach is:</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Soften or omit the uncertain parts to avoid undermining your credibility</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — Name your confidence level explicitly — what you know, what's directional, and where you're making a judgment call</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — Only present when you have high confidence across all elements</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — Lead with the qualitative narrative and save data for the appendix</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Choose a decision you're currently working through — one where the data is incomplete or the picture is mixed. Use the prompts below to apply the framework.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. What is the specific decision you're trying to make?</div>
+    <div class="apply-sub">Write the question you're answering — not the topic, the actual decision.</div>
+    <textarea class="apply-input" id="apply-0" placeholder="The decision is…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What data would change your mind — and is any of it available?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="If I found data showing X, I would reconsider…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Rate your overall confidence level and name what's driving the uncertainty.</div>
+    <div class="apply-sub">Strong / Moderate / Limited — and why.</div>
+    <textarea class="apply-input" id="apply-2" placeholder="My confidence is… because…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What does the data NOT tell you — what's missing from this picture?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="The data doesn't capture…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. What's your decision timeline — and what would trigger a revisit?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="We decide by… We revisit if…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">📊</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Data-Driven Decisions. The directors who use data best aren't the ones with the most — they're the ones who ask better questions before they look, and name their judgment alongside it.</div>
+  </div>
+  <div class="commitments">
+    <h4>Three commitments for data-driven leadership:</h4>
+    <div class="commit-item">Define the question before pulling data — write it down before you open a spreadsheet</div>
+    <div class="commit-item">Name your confidence level when presenting — strong, moderate, or limited, and why</div>
+    <div class="commit-item">Identify one decision right now where you need to stop gathering and start deciding</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation',          end:5},
+  {label:'The Decision Framework', end:7},
+  {label:'Practice',            end:10},
+  {label:'Pulse Check',         end:15},
+  {label:'Apply It',            end:16},
+  {label:'Complete',            end:17}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> When data contradicts your instinct, the move isn\'t to dismiss the data or override it wholesale — it\'s to investigate the gap. Is the metric measuring the right thing? Is there a lag between program delivery and measurable impact? Understanding why the data and your instinct diverge is almost always more valuable than either one alone.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Naming your confidence level explicitly — what you know, what\'s directional, what\'s a judgment call — is a sign of analytical maturity, not weakness. An exec who is analytical will respect it. Inflating projections (C) is a credibility risk that compounds over time. Hiding uncertainty (A or D) is worse.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Endless analysis is often a way to avoid accountability for the decision. The director\'s job is to name the pattern and force the question: "Which remaining unknowns would actually change the recommendation?" If the answer is none, it\'s time to decide. Setting a firm decision date is a leadership act, not an impatient one.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Using data to avoid making a call is a judgment-development issue, not an analysis-quality issue. The feedback has to be direct: "I want your recommendation, with your reasoning." Making the call for them (A) removes the development moment entirely. Time alone won\'t fix a pattern this embedded (C).' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> High "I feel valued" with low "I understand how my work connects to our goals" is a direction gap — a communication and clarity problem. Team Members feeling valued but disconnected from purpose is a leading indicator of future disengagement. Acting on it now is exactly what data-informed leadership looks like.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Confirmation bias is the opposite — it\'s the tendency to seek out and weight data that <em>supports</em> what you already believe, while filtering out or underweighting contradicting information. It\'s one of the most common data traps at director level precisely because it feels like rigor.' },
+  11: { correct:'B', feedback:'<strong>False.</strong> Data never makes a decision — humans do. "Following the data" always involves judgment about which data to look at, how to interpret it, and what to do. Directors who claim to simply follow data are often hiding their judgment behind the numbers, which makes it invisible and unexamined.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> The key question isn\'t about time or team confidence — it\'s about whether resolving the unknown would actually change the recommendation. If the answer is no, gathering more is procrastination. If yes, it\'s worth the delay. This question cuts through analysis paralysis with precision.' },
+  13: { correct:'B', feedback:'<strong>False.</strong> Data informs judgment — it doesn\'t replace it. Every "data-driven" decision still involves human choices about which data to examine, how to interpret mixed signals, and what the data can\'t capture. The goal is data-informed judgment, not judgment-free data following.' },
+  14: { correct:'B', feedback:'<strong>B is right.</strong> Naming uncertainty explicitly builds more credibility than hiding it. Executives who are analytical can tell when someone is glossing over ambiguity — and they trust people less for it. "Here\'s what I know, here\'s what I\'m less certain about, here\'s where I\'m making a judgment call" is a mature, credible leadership communication.' }
+};
+
+const KEY = 'course_dr_data_decisions_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

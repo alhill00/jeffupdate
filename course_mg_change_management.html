@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leading Through Change | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#174DFF;
+  --accent-light:#e0e8ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#e0e8ff;
+  --good-border:#174DFF;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#000633 0%,#0d1f6e 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(23,77,255,.25);color:rgba(255,255,255,.8);border-color:rgba(23,77,255,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.col-card p{font-size:14px;color:#374151;line-height:1.6;}
+.curve-grid{display:flex;flex-direction:column;gap:10px;margin:18px 0;}
+.curve-card{background:var(--dark);border-radius:10px;padding:16px 20px;display:grid;grid-template-columns:28px 1fr;gap:14px;align-items:start;}
+.curve-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--white);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.curve-content h4{font-size:14px;font-weight:700;color:var(--white);margin-bottom:6px;}
+.curve-content .phase-desc{font-size:13px;color:rgba(255,255,255,.8);line-height:1.5;margin-bottom:6px;}
+.curve-content .phase-quote{font-size:12px;color:rgba(255,255,255,.55);font-style:italic;}
+.curve-content .manager-move{font-size:12px;font-weight:600;color:var(--accent);margin-top:6px;}
+.convo-stack{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.convo-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;border-left:4px solid var(--accent);}
+.convo-card h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:6px;}
+.convo-card p{font-size:13px;color:#374151;line-height:1.5;}
+.convo-card .example{font-size:12px;color:var(--muted);font-style:italic;margin-top:6px;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#0d3acc;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#0d3acc;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .curve-card{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Leading Through Change</div>
+  <div class="course-sub">Bringing your team through transitions without losing momentum or people.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Change Curve</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Reorg Nobody Left Because Of</div>
+  <div class="screen-body">Leadership announced a reorg. The new structure made sense — clearer ownership, better alignment to strategy, fewer handoffs. Leadership was energized. The announcement went out with a deck and a FAQ document.</div>
+  <div class="screen-body">Three weeks later, three Team Members had updated their resumes. Not because the change was bad. Because of how it was handled — announced, explained, and expected to be accepted. Their concerns were never surfaced. Their losses were never named.</div>
+  <div class="screen-body">Change management isn't about the change. It's about the people experiencing it.</div>
+  <div class="hl"><strong>The best-designed change fails when the human side is managed as an afterthought.</strong> Your job as a manager isn't to implement the change — it's to bring your people through it.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Resistance Isn't the Problem</div>
+  <div class="screen-body">Most change resistance isn't about the change itself. It's about loss.</div>
+  <div class="two-col">
+    <div class="col-card accent-left">
+      <h4>What People Lose in Change</h4>
+      <ul>
+        <li>Familiar routines and structures</li>
+        <li>Sense of control over their work</li>
+        <li>Relationships built over time</li>
+        <li>Identity tied to "how we do things here"</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>What This Looks Like</h4>
+      <ul>
+        <li>Skepticism about whether it will work</li>
+        <li>Frustration with the pace or process</li>
+        <li>Withdrawal from engagement</li>
+        <li>Outspoken pushback in meetings</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hl"><strong>Resistance is a sign that people cared about what existed before.</strong> Teams that don't resist change don't resist because they're adaptable — they resist because they were never invested in the first place.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Managers Get Wrong</div>
+  <div class="screen-body">Three patterns show up repeatedly when managers struggle to lead change effectively.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Announcing Without Context</h4>
+      <p>"Here's what's changing" without "here's why it's happening and what we know and don't know" creates a vacuum that anxiety fills.</p>
+    </div>
+    <div class="col-card red-left">
+      <h4>Rushing to Execution</h4>
+      <p>Expecting the team to be in Phase 4 (Commitment) before they've worked through Phase 2–3. Skipping the emotional process doesn't accelerate it — it delays it.</p>
+    </div>
+  </div>
+  <div class="col-card red-left" style="margin-bottom:16px;">
+    <h4>Treating Resistance as a Performance Issue</h4>
+    <p>When someone is frustrated or skeptical, responding with performance pressure ("I need you to get on board") shuts down the dialogue and drives the resistance underground — where it's harder to address.</p>
+  </div>
+  <div class="al"><strong>You can't force Phase 4.</strong> You can create the conditions for it — by acknowledging the loss, surfacing the concerns, and being honest about what you know and don't know.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Change Curve</div>
+  <div class="screen-title">Four Phases — and Your Role in Each</div>
+  <div class="screen-body">The Change Curve (adapted from Kübler-Ross) maps how people typically move through transition. Your job is to recognize where each person is and respond accordingly.</div>
+  <div class="curve-grid">
+    <div class="curve-card">
+      <div class="curve-num">1</div>
+      <div class="curve-content">
+        <h4>Shock / Denial</h4>
+        <div class="phase-desc">Initial reaction — disbelief or minimizing. "This won't really stick" or "It's probably not as big a deal as they're making it."</div>
+        <div class="phase-quote">"I'm sure things will go back to normal."</div>
+        <div class="manager-move">Manager's move: Provide information. Be patient. Don't interpret denial as agreement.</div>
+      </div>
+    </div>
+    <div class="curve-card">
+      <div class="curve-num">2</div>
+      <div class="curve-content">
+        <h4>Frustration / Resistance</h4>
+        <div class="phase-desc">The loss becomes real. Frustration, anger, pushback. Energy is high but pointed in the wrong direction.</div>
+        <div class="phase-quote">"I don't agree with this. This isn't how it should work."</div>
+        <div class="manager-move">Manager's move: Listen. Acknowledge the loss. Don't argue. Don't rush.</div>
+      </div>
+    </div>
+    <div class="curve-card">
+      <div class="curve-num">3</div>
+      <div class="curve-content">
+        <h4>Exploration</h4>
+        <div class="phase-desc">Energy starts to shift. "Maybe there's a way through this." Beginning to engage with the new reality.</div>
+        <div class="phase-quote">"What would it look like if this actually worked?"</div>
+        <div class="manager-move">Manager's move: Invite their ideas. Give them ownership of small pieces.</div>
+      </div>
+    </div>
+    <div class="curve-card">
+      <div class="curve-num">4</div>
+      <div class="curve-content">
+        <h4>Commitment</h4>
+        <div class="phase-desc">Fully engaged with the new reality. Contributing, building, moving forward.</div>
+        <div class="phase-quote">"I'm on board. Here's how I think we can make this work."</div>
+        <div class="manager-move">Manager's move: Sustain momentum. Recognize progress. Don't declare victory too early.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three Conversations for Every Change</div>
+  <div class="screen-body">Every significant change requires three distinct conversations — and the order matters.</div>
+  <div class="convo-stack">
+    <div class="convo-card">
+      <h4>Conversation 1: What &amp; Why</h4>
+      <p>What's changing, why it's happening, what you know and what you don't. Be honest about uncertainty — "here's what I know, here's what I'm still learning."</p>
+      <div class="example">Have this first. Context before reaction.</div>
+    </div>
+    <div class="convo-card">
+      <h4>Conversation 2: What It Means for You</h4>
+      <p>Individual impacts. What changes for this specific person. What stays the same. What they're losing, and whether you're naming it or avoiding it.</p>
+      <div class="example">This is the conversation most managers skip — and it's the one people needed most.</div>
+    </div>
+    <div class="convo-card">
+      <h4>Conversation 3: How We'll Navigate</h4>
+      <p>Their role. Your role. The check-in plan. How you'll know if it's working. When you'll revisit.</p>
+      <div class="example">This creates forward momentum — from loss to path.</div>
+    </div>
+  </div>
+  <div class="al"><strong>The order matters.</strong> "What this means for you" before "what and why" creates anxiety — people need context before they can process personal impact. Don't skip to Conversation 3 until Conversation 2 has been had.</div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Change Curve</div>
+  <div class="screen-title">The Usually-Positive Person Who Isn't</div>
+  <div class="screen-body">One of your most reliably positive Team Members is visibly resistant to a change you genuinely believe in. She's usually the one who helps others see the bright side. Now she's not. What's your move?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Remind her that the decision is made and you need the team moving forward.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Have a 1:1 — acknowledge what's being lost for her specifically, listen to her concern, and connect her to the why without dismissing the resistance.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Reassign her temporarily so her resistance doesn't affect the rest of the team.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Give her extra time — she'll come around when she sees it working.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Change Curve</div>
+  <div class="screen-title">You Disagree with the Change</div>
+  <div class="screen-body">You're implementing a change you personally have concerns about. A Team Member asks you directly: "What do you actually think about this?" How do you respond?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Tell them you disagree — it builds trust and shows you're on their side.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Be honest that you have questions, explain why leadership made this call, and commit to working through it together.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Act as if you fully support it — your job is to implement, not editorialize.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Say nothing about your personal view — redirect to the task at hand.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Practice -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When Change Takes Longer Than Expected</div>
+  <div class="screen-body">The change is taking significantly longer to take hold than anyone expected. The team is tired of the transition and starting to disengage. What's your response?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Push harder — the team needs to move faster and the fatigue is a sign they're not committed enough.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Acknowledge the fatigue directly, name what's been hard, mark visible progress, and revisit the check-in plan — the transition is real, not a failure.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Pause the change — the team isn't ready and implementation should wait.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Reassure them that it will all be worth it — keep energy positive and forward-looking.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Practice -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Leadership Transition Above You</div>
+  <div class="screen-body">Your direct manager — someone the team trusts — is leaving. You've been asked to lead the team through the transition to a new leader. What's the highest-priority action in the first week?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Focus on maintaining business continuity — keep everyone focused on the work.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Have individual conversations with each Team Member — acknowledge the loss of their trusted manager, listen to concerns, and be honest about what you know.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Send a message about how excited you are about the new leader's arrival.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Wait for the new leader to arrive before having any formal conversations — let them set the tone.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Practice -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When a Change Should Be Slowed</div>
+  <div class="screen-body">Three weeks in, your team is struggling in ways that suggest the implementation is creating real operational problems — not just transition friction. How do you tell the difference, and what do you do?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Push through — all change creates friction and slowing down now signals weakness.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Distinguish friction (normal) from operational failure (requires intervention) — if the change is creating real harm, surface it with data to your leader and advocate for a pause or revision.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Take the team vote — if most of them think it should slow down, that's your answer.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Slow it down on your own — you're closest to the team and can see what's happening.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — In the Change Curve, the Frustration/Resistance phase means the person is not committed to the organization and may need to be managed out.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Of the three change conversations, which one do most managers skip?</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — What &amp; Why</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — What It Means for You</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — How We'll Navigate</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — All three are skipped equally</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — A team that shows no resistance to a major change is a highly adaptable, high-trust team.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — When you're implementing a change you personally disagree with, the right approach is:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Share your disagreement openly to build trust with your team</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Be honest that you have questions while explaining leadership's reasoning and committing to work through it together</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Pretend to fully support it — mixed messages undermine the change</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Say nothing about your view — just implement</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — What does it mean to "acknowledge the loss" in a change conversation?</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Admitting that the change was a mistake</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — Naming specifically what is being left behind that had value — without minimizing it or rushing past it</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — Apologizing for the disruption on behalf of leadership</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — Listing the costs of the change alongside the benefits</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Change management becomes a skill when you apply it deliberately. Use these prompts to think through a change affecting your team right now.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. Identify a change affecting your team now. What is it, and why is it happening?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="The change is… It's happening because…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Map each of your Team Members on the Change Curve. Where do you think each person is right now?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="[Name]: Phase [1/2/3/4] because…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Which of the three conversations haven't you had yet with your team?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="I haven't had Conversation [1/2/3] because…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's being lost in this change that you haven't named out loud to your team yet?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="What's being lost that I haven't acknowledged: …" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. Who on your team needs the most support right now — and what specifically will you do this week?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="[Name] needs… This week I'll…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🌊</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Leading Through Change. The managers who keep their teams through transitions are the ones who name the loss, meet people where they are, and don't rush past the hard part.</div>
+  </div>
+  <div class="commitments">
+    <h4>What change-capable managers do differently:</h4>
+    <div class="commit-item">Name what's being lost alongside what's being gained — always.</div>
+    <div class="commit-item">Have all three change conversations — in order.</div>
+    <div class="commit-item">Meet people where they are on the Curve — don't try to skip them to Phase 4.</div>
+    <div class="commit-item">Acknowledge resistance before pushing for commitment.</div>
+    <div class="commit-item">Be honest when you have questions about a change — and committed to working through it together.</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {name:'Foundation', end:5},
+  {name:'The Change Curve', end:7},
+  {name:'Practice', end:10},
+  {name:'Pulse Check', end:15},
+  {name:'Apply It', end:16},
+  {name:'Complete', end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Resistance from a usually-positive person is a signal — something real is being lost for them. The 1:1 isn\'t about winning an argument or convincing her the change is good. It\'s about acknowledging the loss and helping her find the path to Phase 3. Rushing past resistance doesn\'t resolve it — it drives it underground.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Honest + committed is the calibration. Sharing that you have questions is authentic without undermining the decision. Pretending to agree when you don\'t (C) erodes trust. Undermining the decision openly (A) puts you in a professionally risky position and sends your team a mixed signal that makes their own commitment harder.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Transition fatigue is real — and the response is acknowledgment, not pressure. Naming what\'s been hard and marking visible progress helps the team see they\'re moving, not just suffering. "It will all be worth it" (D) is dismissive — people need to feel the current difficulty seen before they can look forward.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> A leadership change is a loss — even when it\'s necessary. The highest-priority move is individual conversations that acknowledge that loss, surface concerns, and give each person honest information. Focusing only on business continuity (A) skips the human side. Excitement messaging (C) lands as tone-deaf when people are grieving a trusted leader.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Friction and operational failure are different. All change creates friction — discomfort, confusion, slowed processes. Operational failure means real harm is happening to outcomes, quality, or people. If you\'re seeing the latter, the right move is to surface it with your leader with specific data and a clear recommendation — not to slow it down unilaterally (D) or push through without surfacing it.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Frustration and resistance in Phase 2 are healthy parts of the change process. They signal that the person cared about what existed before. Treating Phase 2 as a performance issue — or as evidence of disloyalty — is one of the most common and damaging manager mistakes in change. The goal is to move through Phase 2, not eliminate it.' },
+  11: { correct:'B', feedback:'<strong>B — What It Means for You</strong> is the most commonly skipped conversation. Managers announce the what and why, then jump to "here\'s the plan." The individual impact conversation — what changes for this specific person, what they\'re losing — is what most Team Members needed and never got.' },
+  12: { correct:'B', feedback:'<strong>False.</strong> A team that shows no resistance to a major change is more likely disengaged than adaptable. Real investment in "how we do things" produces real loss when those things change. Zero resistance can signal that people have already checked out — not that they\'re thriving through the transition.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> Honest + committed is the calibration. "I have questions AND I\'m working through this with you" is more trustworthy than fake enthusiasm AND less damaging than open disagreement. Sharing your disagreement (A) sets up your team for a confusing mixed signal. Pretending (C) erodes trust when they eventually see through it.' },
+  14: { correct:'B', feedback:'<strong>B is right.</strong> Acknowledging the loss means specifically naming what had value in what\'s being left behind — without minimizing it or rushing past it to the benefits. "I know this structure served us well for three years, and losing the direct collaboration you had with that team is real" is acknowledgment. "I know change is hard" is not.' }
+};
+
+const KEY = 'course_mg_change_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

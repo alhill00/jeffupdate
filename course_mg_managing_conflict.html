@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Managing Conflict | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#174DFF;
+  --accent-light:#e0e8ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#e0e8ff;
+  --good-border:#174DFF;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#000633 0%,#0d1f6e 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(23,77,255,.25);color:rgba(255,255,255,.8);border-color:rgba(23,77,255,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card.warn-left{border-left:4px solid var(--warn-border);}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card p{font-size:14px;color:#374151;line-height:1.6;}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.conflict-grid{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.conflict-card{background:var(--dark);border-radius:10px;padding:16px 20px;display:grid;grid-template-columns:1fr 2fr;gap:14px;align-items:start;}
+.conflict-type{font-size:14px;font-weight:800;color:var(--accent);}
+.conflict-type span{display:block;font-size:11px;font-weight:500;color:rgba(255,255,255,.5);margin-top:3px;text-transform:uppercase;letter-spacing:.5px;}
+.conflict-desc p{font-size:13px;color:rgba(255,255,255,.85);line-height:1.5;margin-bottom:6px;}
+.conflict-desc .action{font-size:12px;color:var(--accent);font-weight:600;}
+.steps-list{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.step-row{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--white);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-text{font-size:14px;color:#374151;line-height:1.5;}
+.step-text strong{color:var(--dark);}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#0d3acc;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#0d3acc;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .conflict-card{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Managing Conflict</div>
+  <div class="course-sub">Addressing team tensions before they become team fractures.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Conflict Approach</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Conflict He Waited Too Long to Address</div>
+  <div class="screen-body">Marcus had two Team Members with growing tension. Different working styles, different opinions on how to prioritize, different ways of communicating — and it was starting to show. Short responses in meetings. Pointedly not asking each other's input. The energy in the room had changed.</div>
+  <div class="screen-body">Marcus noticed it. He hoped it would work itself out. It didn't. Four months later, one of them started job searching. Not because the work was bad — because the team environment had become something he didn't want to come to anymore.</div>
+  <div class="screen-body">By the time Marcus finally stepped in, the tension had calcified. What could have been a two-conversation fix became a months-long team recovery.</div>
+  <div class="hl"><strong>Early intervention is always cheaper than late.</strong> Conflict doesn't resolve on its own — it just finds a quieter place to live until it doesn't.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Why Managers Avoid Conflict</div>
+  <div class="screen-body">The instinct to avoid is understandable. Most managers who let conflict go unaddressed aren't negligent — they're uncertain. And the uncertainty is real.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>What They're Afraid Of</h4>
+      <ul>
+        <li>Making it worse by getting involved</li>
+        <li>Not knowing what to say</li>
+        <li>Being seen as taking sides</li>
+        <li>Damaging the relationship further</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>What Actually Happens When You Wait</h4>
+      <ul>
+        <li>The tension grows roots</li>
+        <li>Others on the team feel it</li>
+        <li>One or both people start disengaging</li>
+        <li>Your credibility as a leader erodes</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al"><strong>Avoidance is a decision.</strong> Not stepping in is a choice — and it has consequences just as real as stepping in badly.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Avoidance Actually Does</div>
+  <div class="screen-body">The most common manager belief about unaddressed conflict: "I'm not getting involved — I'm preserving the relationship." This is almost never true.</div>
+  <div class="screen-body">Avoiding conflict doesn't preserve the relationship. It lets the relationship decay at a slower rate until it fails completely. The difference is only timing.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>What Managers Think</h4>
+      <p>"If I leave it alone, they'll work it out. It's not my place to get in the middle."</p>
+    </div>
+    <div class="col-card accent-left">
+      <h4>What's Actually Happening</h4>
+      <p>Both people are interpreting your silence as permission — or as evidence that you don't see it, don't care, or can't help.</p>
+    </div>
+  </div>
+  <div class="hl"><strong>Conflict that goes unaddressed doesn't go away.</strong> It goes underground — where it's harder to reach, more expensive to fix, and more likely to cost you someone good.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Conflict Approach</div>
+  <div class="screen-title">Three Types of Team Conflict</div>
+  <div class="screen-body">Not all conflict works the same way. Before you decide how to respond, understand what kind you're dealing with.</div>
+  <div class="conflict-grid">
+    <div class="conflict-card">
+      <div>
+        <div class="conflict-type">Task Conflict<span>Productive when managed</span></div>
+      </div>
+      <div class="conflict-desc">
+        <p>Disagreement about <em>what</em> to do — approach, priority, strategy. Can surface better solutions when handled well.</p>
+        <div class="action">Manager's move: Encourage it. Channel it toward the decision.</div>
+      </div>
+    </div>
+    <div class="conflict-card">
+      <div>
+        <div class="conflict-type">Process Conflict<span>Usually disruptive</span></div>
+      </div>
+      <div class="conflict-desc">
+        <p>Disagreement about <em>how</em> to work together — roles, workflows, communication norms. Creates friction, slows the team.</p>
+        <div class="action">Manager's move: Add structure. Clarify the working agreement.</div>
+      </div>
+    </div>
+    <div class="conflict-card">
+      <div>
+        <div class="conflict-type">Relationship Conflict<span>Always harmful</span></div>
+      </div>
+      <div class="conflict-desc">
+        <p>Personal tension — frustration with the person, not the problem. Almost always damages performance and team health.</p>
+        <div class="action">Manager's move: Address directly. Do not wait for it to pass.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Three-Conversation Approach</div>
+  <div class="screen-body">When relationship conflict requires your intervention, don't skip straight to a group confrontation. The order matters.</div>
+  <div class="steps-list">
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div class="step-text"><strong>Individual conversations first.</strong> Talk to each person separately before you ever bring them together. Listen for their perspective. Understand what they're experiencing without triangulating — don't share what the other person said.</div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">2</div>
+      <div class="step-text"><strong>Facilitate the joint conversation.</strong> Once you understand both sides, bring them together in a structured, focused conversation. Keep it anchored in behaviors — not character. Move toward a shared path forward, not a verdict.</div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">3</div>
+      <div class="step-text"><strong>Follow up separately.</strong> Resolution isn't a moment — it's a process. Check in with each person individually after to confirm the agreement held and surface anything that surfaced after the conversation.</div>
+    </div>
+  </div>
+  <div class="hl"><strong>Individual conversations before the joint one.</strong> Going directly to the group conversation without understanding each perspective first usually escalates — you're walking into the room without the information you need.</div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Conflict Approach</div>
+  <div class="screen-title">The Visible Tension</div>
+  <div class="screen-body">Two Team Members are visibly at odds — short with each other in meetings, ignoring each other's input, making the whole team uncomfortable. You've noticed it for about two weeks. What's your move?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Call them both into a meeting immediately and address the tension directly as a group.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Talk to each person separately first to understand what's actually happening from both sides.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Leave it for now — they're professionals and they'll work it out if given space.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Reassign one of them to reduce the contact points between them.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Conflict Approach</div>
+  <div class="screen-title">In the Room — It Gets Heated</div>
+  <div class="screen-body">You're facilitating a joint conversation between two Team Members in conflict. One says: "She never listens to my ideas." The other person's expression tightens — they're clearly getting defensive. What do you do?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Immediately ask the defensive person to respond — let them address it directly.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Reflect back what was said and ask the first person for a specific example before anyone responds.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Validate both sides and move quickly to action items — get past the tension.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Remind both of them to stay professional and continue.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Practice -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When It's Your Highest Performer</div>
+  <div class="screen-body">The conflict is between your highest performer and a newer Team Member. Your instinct is to take the experienced person's side — they probably see the situation more clearly. What's the risk of that instinct?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>None — experienced Team Members usually do have better read on team dynamics.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>You may be letting seniority substitute for evidence — which reinforces the behavior of the person with more status, not the person who's right.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>The newer Team Member might feel unsupported — but that's manageable.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>You risk losing the newer Team Member, who might be your problem in this situation.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Practice -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When It Resurfaces</div>
+  <div class="screen-body">You had what you thought was a successful conflict resolution conversation three weeks ago. Now the tension is back — more subtle, but clearly there. What does this tell you, and what do you do?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>The original conversation didn't work — try a different approach entirely this time.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Resolution takes time and needs reinforcement — check in individually, acknowledge that things have gotten tense again, and revisit what was agreed.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Escalate to HR — a recurring conflict is beyond manager-level resolution.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Wait and see — sometimes the tension spikes before it finally resolves.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Practice -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">To Step In — Or Not</div>
+  <div class="screen-body">Two Team Members are clearly irritated with each other — but the tension seems contained to them, not spilling into the team. They're still hitting their work. How do you decide whether to intervene?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>If work is getting done, don't intervene — adults manage their own professional relationships.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Check in individually with each person — not to address the conflict yet, but to understand whether it's actually contained or just not yet visible.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Address it publicly so the team knows you see it.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Wait for a clear performance impact before involving yourself.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — Task conflict — disagreement about what to do — is always harmful to a team and should be shut down quickly.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — When is the right time for a manager to intervene in team conflict?</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Only when performance is visibly affected</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — Only when both parties request it</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — As early as you notice relationship tension — before it escalates</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — After giving it at least 30 days to self-resolve</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — In the three-conversation approach, you should start by bringing both Team Members together for a facilitated conversation.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — In a conflict conversation, "she never listens" is more useful than "she didn't acknowledge my proposal in Tuesday's meeting" because it captures the full pattern.</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — What does "resolution" actually require to be real?</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Both people agreeing they were wrong</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — A documented agreement signed by both parties</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — A specific behavioral agreement and follow-up to confirm it held</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — HR involvement to formalize the outcome</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Conflict doesn't wait for a convenient moment. Use these prompts to think through a current or recent situation on your team.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. Name a current or recent conflict on your team. What type is it — task, process, or relationship?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Describe the conflict and classify it…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What have you done so far — and what have you avoided doing?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="What I've done… What I've been avoiding…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. What's the conversation you need to have — and with whom first?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="I need to talk to [person] about…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. Draft the opening line of that conversation — behavior-focused, not character-focused.</div>
+    <div class="apply-sub">Start with what you've observed, not how you feel about the person.</div>
+    <textarea class="apply-input" id="apply-3" placeholder="I've noticed that lately…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. When will you have this conversation — specific day and time?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="I'll have this conversation on…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🤝</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Managing Conflict. The managers who keep great teams together are the ones who address tension early — before it becomes a story about why someone left.</div>
+  </div>
+  <div class="commitments">
+    <h4>What conflict-competent managers do differently:</h4>
+    <div class="commit-item">Name conflicts early — not after they've fractured the team.</div>
+    <div class="commit-item">Have individual conversations before the joint one — always.</div>
+    <div class="commit-item">Keep the conversation anchored in behavior, not character.</div>
+    <div class="commit-item">Follow up after — resolution is a process, not a single conversation.</div>
+    <div class="commit-item">Recognize that avoidance is also a decision — and it has a cost.</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {name:'Foundation', end:5},
+  {name:'The Conflict Approach', end:7},
+  {name:'Practice', end:10},
+  {name:'Pulse Check', end:15},
+  {name:'Apply It', end:16},
+  {name:'Complete', end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Going directly to the joint conversation without understanding each perspective first almost always escalates. Individual conversations give you the information you need to facilitate effectively — and give each person the chance to feel heard before the harder conversation. Two weeks of visible tension is long enough to act; it\'s not so urgent that you should skip the individual step.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> "Never" is an absolute claim and it invites defensiveness — not resolution. Asking for a specific example moves from character claims to behavior facts, which is the only ground where real resolution is possible. Let the defensive person breathe while you gather specifics. Then you have something concrete to work with.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Seniority is not evidence. The experienced Team Member may be entirely right — or they may be the source of the problem. Your job is to understand what\'s actually happening, not to validate the person with more status. Letting seniority substitute for evidence teaches your team that authority matters more than behavior.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Recurring conflict after a resolution conversation doesn\'t mean the conversation failed — it means resolution takes reinforcement. Check in individually, acknowledge the tension returned, and revisit what was agreed. You\'re not starting over; you\'re holding the agreement. Resolution is a process, not a moment.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> "Contained" conflict is often not contained — it\'s just not yet visible. Individual check-ins are low-stakes and high-information: you find out whether the tension is actually manageable or already affecting how they engage with their work and with you. You don\'t have to name the conflict in these conversations; just listen.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Task conflict — when managed well — can surface better solutions, sharpen thinking, and prevent groupthink. The goal isn\'t to eliminate disagreement about what to do; it\'s to channel it productively. The type that\'s almost always harmful is relationship conflict — tension about the person, not the problem.' },
+  11: { correct:'C', feedback:'<strong>C is right.</strong> Early intervention is always cheaper than late. You don\'t need a performance impact to justify a conversation about team dynamics — by the time performance is visibly affected, the tension has been operating for a while. The signal is relationship friction, not delayed output.' },
+  12: { correct:'B', feedback:'<strong>False.</strong> The three-conversation approach starts with individual conversations — separately — before the joint one. Going to the group first without understanding both perspectives means you\'re walking into the room without the information you need, and potentially accelerating an escalation you weren\'t ready for.' },
+  13: { correct:'B', feedback:'<strong>False.</strong> "Never" is absolute language that triggers defensiveness and moves the conversation away from facts. "She didn\'t acknowledge my proposal in Tuesday\'s meeting" is specific, observable, and addressable. Specific behavior statements open conversations; sweeping absolutes close them.' },
+  14: { correct:'C', feedback:'<strong>C is right.</strong> Resolution requires a specific behavioral agreement — what each person will do differently — and follow-up to confirm it held. Feelings of resolution without behavioral change aren\'t resolution; they\'re a temporary cease-fire. The follow-up conversation is what turns a good conversation into a lasting change.' }
+};
+
+const KEY = 'course_mg_managing_conflict_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

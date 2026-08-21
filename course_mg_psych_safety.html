@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Psychological Safety | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#174DFF;
+  --accent-light:#e0e8ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#e0e8ff;
+  --good-border:#174DFF;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#000633 0%,#0d1f6e 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(23,77,255,.25);color:rgba(255,255,255,.8);border-color:rgba(23,77,255,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.level-stack{display:flex;flex-direction:column;gap:10px;margin:18px 0;}
+.level-card{border-radius:10px;padding:16px 20px;}
+.level-card:nth-child(1){background:#f0f4ff;border-left:4px solid #93a8f4;}
+.level-card:nth-child(2){background:#dbeafe;border-left:4px solid #3b82f6;}
+.level-card:nth-child(3){background:#c7d2fe;border-left:4px solid #6366f1;}
+.level-card:nth-child(4){background:var(--accent-light);border-left:4px solid var(--accent);}
+.level-num{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:4px;}
+.level-name{font-size:15px;font-weight:800;color:var(--dark);margin-bottom:6px;}
+.level-belief{font-size:14px;font-style:italic;color:#374151;margin-bottom:6px;}
+.level-desc{font-size:13px;color:#374151;line-height:1.5;}
+.build-kill{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.bk-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.bk-card.build{border-top:4px solid var(--accent);}
+.bk-card.kill{border-top:4px solid #f43f5e;}
+.bk-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;}
+.bk-card.build .bk-title{color:var(--accent);}
+.bk-card.kill .bk-title{color:#dc2626;}
+.bk-item{font-size:13px;color:#374151;margin-bottom:7px;padding-left:14px;position:relative;line-height:1.4;}
+.bk-item::before{content:'→';position:absolute;left:0;font-weight:700;}
+.bk-card.build .bk-item::before{color:var(--accent);}
+.bk-card.kill .bk-item::before{color:#dc2626;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#0d3acc;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#0d3acc;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .two-col,.build-kill{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Psychological Safety</div>
+  <div class="course-sub">Creating the conditions where your team speaks up, takes risks, and grows.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Four Levels</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The High-Talent Team That Went Silent</div>
+  <div class="screen-body">The team had real talent. Smart people, strong resumes, relevant experience. Ideas were flowing — just not in meetings. They flowed in the hallway, in Slack DMs, in conversations after the meeting was over. Inside the room? Agreement. Silence. Head nods.</div>
+  <div class="screen-body">Then the best performer left. Her exit interview said it plainly: "I never felt safe saying the wrong thing." Nobody had created a culture of punishment — but nobody had created a culture of safety either. And in the absence of safety, silence fills the space.</div>
+  <div class="screen-body">The data is clear: psychological safety isn't a nice-to-have. It's the #1 performance variable on teams.</div>
+  <div class="hl"><strong>Safety isn't soft.</strong> It's the condition that determines whether your team's best thinking ever reaches you — or stays in the hallway.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What the Data Actually Shows</div>
+  <div class="screen-body">Google studied 180 teams over several years — Project Aristotle — to find out what made teams perform. They measured talent, experience, structure, seniority, tenure, compensation. None of it was the top predictor.</div>
+  <div class="screen-body">The #1 predictor of team performance was <strong>psychological safety</strong> — the shared belief that it's safe to take interpersonal risks. Teams that spoke up, challenged ideas, asked questions, and admitted mistakes outperformed on every metric.</div>
+  <div class="hl"><strong>Not talent. Not structure. Not experience.</strong> Whether people feel safe enough to say what they actually think — that's what separates high-performing teams from average ones.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Nice Team vs. Safe Team</div>
+  <div class="screen-body">These are not the same thing — and confusing them is one of the most common mistakes managers make.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>A Nice Team</h4>
+      <ul>
+        <li>Avoids conflict</li>
+        <li>Agrees in meetings</li>
+        <li>Disagreement happens in the hallway</li>
+        <li>Protects feelings</li>
+        <li>Problems stay hidden</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>A Safe Team</h4>
+      <ul>
+        <li>Surfaces conflict</li>
+        <li>Disagrees in meetings</li>
+        <li>Disagreement happens in the room</li>
+        <li>Protects performance</li>
+        <li>Problems surface early</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al"><strong>A conflict-free meeting is often a sign of low safety</strong> — not high cohesion. The real conversation happens after. Your job is to bring it into the room.</div>
+</div>
+
+<!-- SCREEN 3 -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Four Levels</div>
+  <div class="screen-title">Amy Edmondson's Four Levels of Psychological Safety</div>
+  <div class="screen-body">Psychological safety isn't all-or-nothing. It develops in stages — and most managers create the first level but struggle to build levels three and four. Those are where performance lives.</div>
+  <div class="level-stack">
+    <div class="level-card">
+      <div class="level-num">Level 1</div>
+      <div class="level-name">Inclusion Safety</div>
+      <div class="level-belief">"I belong here. I am accepted."</div>
+      <div class="level-desc">The foundation. Team members feel welcome and valued as people. Most managers achieve this — it's necessary but not sufficient.</div>
+    </div>
+    <div class="level-card">
+      <div class="level-num">Level 2</div>
+      <div class="level-name">Learner Safety</div>
+      <div class="level-belief">"I can ask questions without embarrassment."</div>
+      <div class="level-desc">Team members can show gaps in knowledge, ask "dumb" questions, and make mistakes without shame. Many managers create this — but not all.</div>
+    </div>
+    <div class="level-card">
+      <div class="level-num">Level 3</div>
+      <div class="level-name">Contributor Safety</div>
+      <div class="level-belief">"I can offer ideas and input."</div>
+      <div class="level-desc">Team members actively contribute — suggestions, improvements, new approaches. This requires that past contributions were received well.</div>
+    </div>
+    <div class="level-card">
+      <div class="level-num">Level 4</div>
+      <div class="level-name">Challenger Safety</div>
+      <div class="level-belief">"I can push back on the status quo."</div>
+      <div class="level-desc">The highest level — and the hardest to build. Team members can challenge decisions, question direction, and speak truth to power. This is where real innovation and error-catching lives.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Builds It vs. What Kills It</div>
+  <div class="screen-body">Psychological safety is created — or destroyed — one moment at a time. The gap between what leaders say and what they do is where safety dies.</div>
+  <div class="build-kill">
+    <div class="bk-card build">
+      <div class="bk-title">Builds Safety</div>
+      <div class="bk-item">"What am I missing here?"</div>
+      <div class="bk-item">"Tell me more about that."</div>
+      <div class="bk-item">Thanking a question publicly</div>
+      <div class="bk-item">Acknowledging when you were wrong</div>
+      <div class="bk-item">Responding to imperfect ideas with curiosity</div>
+    </div>
+    <div class="bk-card kill">
+      <div class="bk-title">Kills Safety</div>
+      <div class="bk-item">Eye rolls or visible dismissal</div>
+      <div class="bk-item">"We already tried that."</div>
+      <div class="bk-item">Correcting someone in front of the group</div>
+      <div class="bk-item">Ignoring input, then raising the same idea yourself</div>
+      <div class="bk-item">Getting defensive when challenged</div>
+    </div>
+  </div>
+  <div class="hl"><strong>Saying "speak up" creates zero safety.</strong> Your behavioral response to input — especially imperfect input — is the only thing that does.</div>
+</div>
+
+<!-- SCREEN 5 -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Four Levels</div>
+  <div class="screen-title">Scenario: The Imperfect Idea</div>
+  <div class="screen-body">In a team meeting, a newer Team Member suggests a process change. It's directionally interesting but partially off — it needs refinement. Three other Team Members are watching your reaction. You:</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Correct the idea immediately so the team doesn't go in the wrong direction.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Thank them for thinking about it, note what's worth exploring, then redirect.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Say nothing — address it with them privately after the meeting.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Ask the group what they think before you react.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6 -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Four Levels</div>
+  <div class="screen-title">Scenario: The Silent Debrief</div>
+  <div class="screen-body">After a project fails, you're in the debrief. The room is quiet — nobody wants to be the one who "caused" the failure. Your move:</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Walk through the timeline and identify the root cause and who made the key call.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Open by sharing what YOU would have done differently — go first.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Pivot quickly to next steps — focus on solutions, not the failure.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Remind the team of your expectations and the consequences of similar outcomes.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7 -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Scenario: The Quiet High Performer</div>
+  <div class="screen-body">One of your strongest Team Members has stopped speaking up in meetings over the past month. You haven't done anything obviously wrong. What's the most likely signal — and what do you do?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>They've lost interest in the role — it's time for a performance conversation.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Something shifted their sense of safety — check in 1:1 to understand what changed.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>It's probably a personal issue — give them space and don't insert yourself.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Announce in the next meeting that you need more participation from everyone.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8 -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Scenario: The Pattern You Didn't Notice</div>
+  <div class="screen-body">You realize you've been cutting off a Team Member mid-sentence in meetings without realizing it. This has probably been happening for months. What now?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Make a mental note to stop — no need to make it a bigger deal than it is.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Address it directly in your next 1:1 — name it, own it, commit to changing.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Announce to the full team that you're working on your listening.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Nothing — if it hasn't caused an obvious problem yet, it probably won't.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9 -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Scenario: Challenged in Public</div>
+  <div class="screen-body">A Team Member challenges your recommendation in front of the senior team. They're right — but the timing is awkward. In the moment, you:</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Defend your original position to maintain credibility in the room.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Thank them for the catch, acknowledge the point, and adjust if warranted.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Pivot away from the topic and address it later when the stakes are lower.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Handle it gracefully in the meeting, then address the "how" privately afterward.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10 -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — Psychological safety means Team Members never face accountability for their performance.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11 -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Which level of psychological safety is HARDEST to create and most tied to high performance?</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Inclusion Safety</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — Learner Safety</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Contributor Safety</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — Challenger Safety</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12 -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — A team with little conflict and smooth meetings likely has high psychological safety.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13 -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — What's the single highest-leverage moment for building or destroying team safety?</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Your team's annual performance review scores</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — How you respond to input in the moment — especially imperfect input</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — How often you hold team social events</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Your written communication style in messages</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14 -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — The best way to build psychological safety is to explicitly tell your team that it's safe to speak up.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15 -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Psychological safety is built through repeated small moments — not declarations. Use these prompts to identify where you are and what to change.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. On a scale of 1–4, which level of psychological safety best describes your team right now? What evidence points to that?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Current level and evidence…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What's one thing you do — even unintentionally — that might be eroding safety on your team?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Honest reflection here…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Think of your last team meeting. Who didn't speak up? What might be behind that?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Name or role, and your hypothesis…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's one question you could ask in your next meeting to explicitly invite challenge or dissent?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Draft your question…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. What's one behavior change you'll commit to in the next two weeks to move your team one level higher?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Specific behavior change…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved ✓</div>
+  </div>
+</div>
+
+<!-- SCREEN 16 -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🛡️</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Psychological Safety. The teams that outperform aren't the ones with the most talent — they're the ones where the talent can actually speak.</div>
+  </div>
+  <div class="commitments">
+    <h4>Your commitments going forward:</h4>
+    <div class="commit-item">Ask "What am I missing?" or "What's the strongest argument against this?" in your next team meeting.</div>
+    <div class="commit-item">Respond to the next imperfect idea with curiosity before redirection.</div>
+    <div class="commit-item">In your next 1:1, ask a quiet Team Member: "What's one thing you haven't said in our meetings that's worth saying?"</div>
+    <div class="commit-item">Name one behavior of yours that might be reducing safety — say it out loud to your team.</div>
+    <div class="commit-item">Treat being correctable in public as a leadership strength, not a vulnerability.</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Complete Course →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {label:'Foundation',      start:0, end:5},
+  {label:'The Four Levels', start:3, end:7},
+  {label:'Practice',        start:7, end:10},
+  {label:'Pulse Check',     start:10,end:15},
+  {label:'Apply It',        start:15,end:16},
+  {label:'Complete',        start:16,end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Your response to imperfect input is the single biggest determinant of whether people offer it again. "What\'s worth considering here" plus a redirect is the formula — you honor the contribution without validating the wrong direction. Public correction shuts down future input, not just from this person, but from everyone watching.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Leader vulnerability unlocks team vulnerability. When you go first — "here\'s where I would have made a different call" — you model that it\'s safe to reflect honestly. Blame-seeking in a debrief destroys psychological safety and prevents learning. You go first.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Silence from a previously engaged person is almost always a signal. The 1:1 is where you find out what changed — and it\'s the right place to repair it. A group announcement about "more participation" will not reach the person whose safety has eroded.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Naming the behavior — "I\'ve noticed I\'ve been cutting you off, that\'s on me and I\'m going to fix it" — is more powerful than quietly stopping. It signals self-awareness and accountability. It also tells that person their experience was seen, not just tolerated.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Being correctable in public is one of the most powerful safety-building moves a leader can make. If you get defensive when challenged in front of others, you\'ve just demonstrated that disagreement is dangerous. "Good catch" from a leader is a green light to speak up.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Safety and accountability are not opposites. Amy Edmondson\'s research shows the highest-performing teams have both — they call each other out AND feel safe doing it. A low-accountability, high-safety team becomes a coddled team, not a high-performing one.' },
+  11: { correct:'D', feedback:'<strong>D is right.</strong> Challenger safety — the ability to push back on the status quo — is the highest and hardest level. It\'s also where real innovation and error-catching lives. Most teams never get there because leaders haven\'t explicitly invited it.' },
+  12: { correct:'B', feedback:'<strong>False.</strong> Nice teams avoid conflict to preserve relationships. Psychologically safe teams surface conflict because they trust it can be handled. A conflict-free meeting is often a sign of low safety — people say what they actually think after the meeting, not during it.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> Every piece of input your team offers is a test: is it safe to say things here? Your in-the-moment response is the answer they remember. A dismissive response — even once, even nonverbal — teaches the team what\'s really safe to say.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> Saying "it\'s safe" creates zero safety — behavior does. If your actions don\'t match the message (you dismiss input, punish questions, or react defensively), the declaration is irrelevant. Safety is demonstrated, not declared.' }
+};
+
+const KEY = 'course_mg_psych_safety_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

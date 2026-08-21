@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developing Your Direct Reports | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#174DFF;
+  --accent-light:#e0e8ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#e0e8ff;
+  --good-border:#174DFF;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#000633 0%,#0d1f6e 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(23,77,255,.25);color:rgba(255,255,255,.8);border-color:rgba(23,77,255,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.col-card p{font-size:14px;color:#374151;line-height:1.6;}
+.dev-stack{display:flex;flex-direction:column;gap:10px;margin:18px 0;}
+.dev-card{background:var(--dark);border-radius:10px;padding:16px 20px;}
+.dev-card h4{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px;}
+.dev-card p{font-size:13px;color:rgba(255,255,255,.85);line-height:1.5;}
+.dev-card .cadence{font-size:12px;color:rgba(255,255,255,.5);margin-top:6px;font-style:italic;}
+.zone-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin:16px 0;}
+.zone-card{border-radius:10px;padding:14px 16px;text-align:center;}
+.zone-card.comfort{background:#fee2e2;border:2px solid #f43f5e;}
+.zone-card.stretch{background:var(--accent-light);border:2px solid var(--accent);}
+.zone-card.panic{background:#fff3cd;border:2px solid var(--warn-border);}
+.zone-card h4{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+.zone-card.comfort h4{color:#dc2626;}
+.zone-card.stretch h4{color:var(--accent);}
+.zone-card.panic h4{color:#92400e;}
+.zone-card p{font-size:12px;line-height:1.4;color:#374151;}
+.zone-arrow{text-align:center;font-size:20px;color:var(--accent);margin:8px 0;}
+.manager-moves{display:flex;flex-direction:column;gap:8px;margin:14px 0;}
+.manager-move{background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;}
+.move-icon{font-size:16px;flex-shrink:0;}
+.move-text{font-size:13px;color:#374151;line-height:1.5;}
+.move-text strong{color:var(--dark);}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#0d3acc;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#0d3acc;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .two-col,.zone-grid{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Developing Your Direct Reports</div>
+  <div class="course-sub">Making growth happen — not just hoping for it.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Development Plan</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Person Who Left Because She Stopped Growing</div>
+  <div class="screen-body">Lauren was capable, reliable, and consistently strong. Her manager assumed she was fine — she was hitting her goals, the relationship was good, no red flags. No extra attention needed.</div>
+  <div class="screen-body">Six months later, she left. Exit interview: "I didn't feel like I was growing. I wasn't learning anything new. I felt like I'd hit a ceiling."</div>
+  <div class="screen-body">Her manager was blindsided. From the outside, Lauren had everything she needed. From the inside, she'd been quietly disengaging for months because nobody was intentionally investing in her next chapter.</div>
+  <div class="hl"><strong>Development isn't about programs.</strong> It's about intentional conversations and deliberate stretch — and it's what separates the managers who keep their best people from the ones who lose them to organizations that pay attention.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Development Myth — and the Fix</div>
+  <div class="screen-body">The most common reason managers give for not developing their people: "I don't have time." Here's the math on what it actually takes.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>What Managers Think Development Is</h4>
+      <ul>
+        <li>Training programs and workshops</li>
+        <li>Career pathing decks</li>
+        <li>Annual development plans that nobody reads</li>
+        <li>Something HR owns</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>What Development Actually Is</h4>
+      <ul>
+        <li>One career conversation per quarter</li>
+        <li>One development check-in per month in 1:1</li>
+        <li>One stretch assignment per person</li>
+        <li>Real-time feedback on the stretch work</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hl"><strong>Three deliberate conversations per quarter plus one stretch assignment per person.</strong> That's the whole program. It takes less time than you think — and produces more than any training platform.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Development vs. Performance Management</div>
+  <div class="screen-body">These are not the same conversation. Mixing them up makes both less effective.</div>
+  <div class="two-col">
+    <div class="col-card accent-left">
+      <h4>Development</h4>
+      <ul>
+        <li>Forward-looking — where are we going?</li>
+        <li>Chosen — the person has input</li>
+        <li>Builds on strengths and ambitions</li>
+        <li>Stretch by design</li>
+        <li>The person is invested in it</li>
+      </ul>
+    </div>
+    <div class="col-card red-left">
+      <h4>Performance Management</h4>
+      <ul>
+        <li>Backward-looking — what happened?</li>
+        <li>Reactive — addressing a gap</li>
+        <li>Addresses what's falling short</li>
+        <li>Often structured and formal</li>
+        <li>The person may feel defensive</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al"><strong>Keep them in separate conversations.</strong> When development feedback appears in a performance conversation, the person hears it as corrective even when it isn't. They deserve a conversation where growth is the whole point.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Development Plan</div>
+  <div class="screen-title">Three Components — and How Often to Have Them</div>
+  <div class="dev-stack">
+    <div class="dev-card">
+      <h4>1. Where They Want to Go</h4>
+      <p>Their goals — not your assumption about their goals. Ask, don't assume. "What would feel meaningful to be really good at a year from now?" gets you further than "where do you see yourself in 5 years?"</p>
+      <div class="cadence">Conversation cadence: one career conversation per quarter</div>
+    </div>
+    <div class="dev-card">
+      <h4>2. The Gap</h4>
+      <p>What they have vs. what they need to get where they want to go. Not a deficit list — a map. "Here's what I see in you that's already there, and here's what the next level requires that we can build toward."</p>
+      <div class="cadence">Conversation cadence: development check-in monthly in 1:1</div>
+    </div>
+    <div class="dev-card">
+      <h4>3. The Path</h4>
+      <p>Three levers: stretch assignments (experiences that build the capability), skill feedback (real-time coaching on the stretch work), and connections (relationships that open doors they can't open from where they sit now).</p>
+      <div class="cadence">Real-time: feedback on stretch work as it happens</div>
+    </div>
+  </div>
+  <div class="hl"><strong>Ask, don't assume.</strong> The career conversation most managers have starts with "where do you want to be?" The better opener: "What parts of your work right now feel most alive to you?" Start with energy, not destination.</div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Stretch Zone</div>
+  <div class="screen-body">Development happens in the stretch zone — not the comfort zone, and not the panic zone. Your job is to calibrate the challenge and provide the structure for learning.</div>
+  <div class="zone-grid">
+    <div class="zone-card comfort">
+      <h4>Comfort Zone</h4>
+      <p>Already mastered. No growth happening. Safe but stagnant.</p>
+    </div>
+    <div class="zone-card stretch">
+      <h4>Stretch Zone</h4>
+      <p>Hard but achievable with effort and support. This is where development lives.</p>
+    </div>
+    <div class="zone-card panic">
+      <h4>Panic Zone</h4>
+      <p>Too far beyond current skill. Leads to failure without growth. Builds fear, not capability.</p>
+    </div>
+  </div>
+  <div class="screen-body" style="font-size:14px;font-weight:700;color:var(--dark);margin-bottom:10px;margin-top:8px;">The Manager's Job in the Stretch Zone:</div>
+  <div class="manager-moves">
+    <div class="manager-move">
+      <div class="move-icon">🎯</div>
+      <div class="move-text"><strong>Calibrate the stretch.</strong> Match challenge to current skill level — hard enough to grow, not so hard they're set up to fail.</div>
+    </div>
+    <div class="manager-move">
+      <div class="move-icon">🤝</div>
+      <div class="move-text"><strong>Provide support — not solutions.</strong> Be available, ask coaching questions, but don't rescue the work. The difficulty is where the growth is.</div>
+    </div>
+    <div class="manager-move">
+      <div class="move-icon">💬</div>
+      <div class="move-text"><strong>Debrief the experience.</strong> After the stretch: "What did you learn?" Not "how did it go?" — learning, not just reporting.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Development Plan</div>
+  <div class="screen-title">The Team Member With No Direction</div>
+  <div class="screen-body">A Team Member tells you she doesn't know what she wants to do long-term. "I don't really have a five-year plan." How do you start a useful career conversation?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Skip the career conversation until she figures out what she wants — no point without a direction.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Ask questions that explore what energizes her now — start with what's most alive in her current work, not what she wants in the abstract.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Tell her what you think she should develop based on what you've observed.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Connect her with HR for a career assessment — they have the tools for this.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Development Plan</div>
+  <div class="screen-title">Struggling Midway Through a Stretch</div>
+  <div class="screen-body">You gave a Team Member a stretch assignment. Midway through, she's struggling — the scope is larger than she expected, she's not sure how to move forward, and she's starting to lose confidence. What do you do?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Take the assignment back — protect the outcome and give her something more appropriate.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Coach her through it — ask what's hard, what she's tried, what she needs — without solving it for her.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Reduce the scope of the assignment to something she can achieve confidently.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Bring in another Team Member to help without telling her — protect the outcome quietly.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Practice -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Developing Someone Who's Already Strong</div>
+  <div class="screen-body">One of your Team Members is already excellent — high performer, well above expectations. She doesn't have obvious gaps. What does development look like for her?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Leave her alone — she's exceeding expectations, so there's nothing to develop. Development is for people with gaps.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Focus on expanding her scope and visibility — stretch assignments beyond her current lane, exposure to higher-level conversations, and connection to opportunities she can't yet see.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Ask her to mentor others — she's reached the ceiling of her development so she should invest in the team.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Move her into a harder role — she's ready and further development requires a title change.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Practice -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">The Person Who Wants to Stay Put</div>
+  <div class="screen-body">A Team Member tells you clearly: "I'm not interested in moving up. I love what I do and I want to keep doing it well." What does development look like for someone who doesn't want advancement?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Skip the career conversation — if they don't want to advance, there's nothing to develop.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Focus on deepening expertise, staying current, and finding meaning in their current contribution — depth, not height.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Encourage them to reconsider — staying put isn't a sustainable path in a growing organization.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Assign development goals anyway — every Team Member needs a formal development plan regardless of their preference.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Practice -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Real-Time Developmental Feedback</div>
+  <div class="screen-body">After observing a Team Member handle a difficult Guest interaction well but miss an opportunity to de-escalate earlier, you want to give developmental feedback in the moment. How do you frame it so it doesn't feel like criticism?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>"You handled that well — but you should have de-escalated sooner."</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>"You recovered that really well. What did you notice about the moment before things got tense? I want to share an observation I had about an earlier opportunity."</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Save it for the next 1:1 — real-time feedback in the moment feels like criticism.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>"There's something you could have done differently — can I share it?"</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — Development and performance management are essentially the same conversation — both address how a Team Member is doing and what they should work on.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — When a Team Member is struggling in a stretch assignment, the manager should:</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Step in and solve the problem to protect the outcome</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — Coach through the difficulty without removing the challenge — struggling is the stretch doing its job</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Reduce the scope so they can succeed at something</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — Move the assignment to someone more capable</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — "What do you want to be in 5 years?" is one of the most effective ways to open a career development conversation.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — What's the recommended conversation cadence for Team Member development?</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Annual development review + weekly check-ins</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — One career conversation per quarter + development check-in monthly in 1:1</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Bi-annual career conversations only</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Development conversations only when the Team Member initiates them</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — After a stretch assignment, the most useful debrief question is "how did it go?"</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Development only becomes real when it moves from intention to specific action. Use these prompts to build your plan.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. For each of your Team Members, write: where they want to go, the key gap, and one stretch action for next quarter.</div>
+    <div class="apply-sub">Use what you know — you may need conversations to fill the gaps.</div>
+    <textarea class="apply-input" id="apply-0" placeholder="[Name]: Goal = … Gap = … Stretch = …" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Name the career conversation you've been avoiding. Who is it with, and why?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="I've been avoiding a career conversation with [name] because…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. For one Team Member, draft two energy-based opening questions for a career conversation.</div>
+    <div class="apply-sub">Start with what's alive in their current work — not where they want to end up.</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Q1: …&#10;Q2: …" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. Who on your team is in the comfort zone right now — doing work they've mastered but not growing? What stretch could you add?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="[Name] is in the comfort zone. A stretch I could add: …" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. Schedule the career conversation you named in #2. What day and time will you have it?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="I'll have this conversation on…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🌱</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Developing Your Direct Reports. The managers who keep their best people longest are the ones who make growth visible, intentional, and ongoing — not accidental.</div>
+  </div>
+  <div class="commitments">
+    <h4>What development-focused managers do differently:</h4>
+    <div class="commit-item">Have one career conversation with every Team Member this quarter — not annual.</div>
+    <div class="commit-item">Assign one stretch task per person — then debrief what they learned from it.</div>
+    <div class="commit-item">Distinguish development feedback from performance feedback — keep them in separate conversations.</div>
+    <div class="commit-item">Start career conversations with energy questions, not destination questions.</div>
+    <div class="commit-item">Build their stretch tolerance, not their dependency on you.</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {name:'Foundation', end:5},
+  {name:'The Development Plan', end:7},
+  {name:'Practice', end:10},
+  {name:'Pulse Check', end:15},
+  {name:'Apply It', end:16},
+  {name:'Complete', end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> "What do you want to be in 5 years?" is a terrible career conversation opener — it puts people on the spot about something they genuinely may not know. Better: "What parts of your work right now feel most alive?" and "If you could be really good at one thing you\'re not yet, what would it be?" Start with energy, not destination. Energy points the way.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Struggling is the stretch doing its job. The development happens in the difficulty — if you rescue the work, you eliminate the growth. Coach through it: "What have you tried? What\'s getting in the way? What would help?" Your availability and coaching is the support structure, not the safety net that removes the challenge.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Strong Team Members need development too — and the right kind is expansion, not remediation. Stretch assignments beyond their current lane, exposure to higher-level conversations, introductions to people and opportunities they can\'t reach from where they are. Leaving them alone (A) is how you lose them. They need to feel there\'s a ceiling to aim at, not just a floor to stand on.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Development isn\'t synonymous with advancement. For a Team Member who wants to stay in their current role, development means deepening expertise, staying current in their field, and finding new dimensions of meaning in the contribution they\'re already making. Depth, not height. Honoring that preference is good management — trying to talk them out of it is not.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> The sequence matters: validate first, then invite reflection, then add your observation. Starting with what they did well earns credibility for the harder observation. Asking what they noticed puts them in learning mode before you share your view. "But you should have…" (A) undercuts the validation and lands as criticism regardless of how it starts.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Development and performance management are distinct conversations with different purposes, different tones, and different outcomes. Development is forward-looking, chosen, and builds on strengths and ambitions. Performance management is backward-looking and reactive. When development feedback appears in a performance conversation, the person hears it as corrective — even when it isn\'t.' },
+  11: { correct:'B', feedback:'<strong>B is right.</strong> Struggling is the stretch doing its job. Coach through the difficulty — ask what\'s hard, what they\'ve tried, what they need — without solving it for them. If you rescue the work, you eliminate the growth. The struggle is not a sign of failure; it\'s a sign the stretch is appropriately calibrated.' },
+  12: { correct:'B', feedback:'<strong>False.</strong> "What do you want to be in 5 years?" is one of the worst career conversation openers. It puts people on the spot, produces rote answers, and often produces nothing useful at all. Better openers: "What parts of your current work feel most alive?" or "What would you want to be really good at that you\'re not yet?" Start with energy, not destination.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> One career conversation per quarter, plus a development check-in monthly in the 1:1. That\'s the cadence. It\'s less time than most managers fear and more frequency than most deliver. Three deliberate conversations per quarter plus one stretch assignment per person is the whole program — and it produces real development.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> "How did it go?" is an outcome question — it produces a report. The development question is "What did you learn?" — it produces reflection. What you learn from something that was hard is almost always more valuable than whether it went well. The debrief is where the experience becomes a lesson, so ask the question that opens that conversation.' }
+};
+
+const KEY = 'course_mg_developing_reports_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

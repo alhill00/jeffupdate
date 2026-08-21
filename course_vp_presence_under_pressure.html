@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Presence Under Pressure | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#000633;
+  --accent-light:#eef2ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#eef2ff;
+  --good-border:#000633;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#000633 0%,#000d4d 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:#174DFF;border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:var(--dark);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:#174DFF;color:var(--white);border-color:#174DFF;}
+.sec-pill.done{background:rgba(23,77,255,.15);color:rgba(255,255,255,.75);border-color:rgba(23,77,255,.3);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid #174DFF;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.framework-grid{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.fw-card{background:var(--dark);border-radius:10px;padding:18px 20px;display:grid;grid-template-columns:48px 1fr;gap:16px;align-items:start;}
+.fw-num{width:40px;height:40px;border-radius:50%;background:#174DFF;color:var(--white);font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.fw-content{}
+.fw-name{font-size:16px;font-weight:800;color:var(--white);margin-bottom:4px;}
+.fw-desc{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){background:#f8f9ff;border-color:#000633;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){background:#f8f9ff;border-color:#000633;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:#000633;}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:#000633;color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#174DFF;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:#000633;color:#000633;}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:#000633;color:var(--white);}
+.btn-next:hover:not(:disabled){background:#174DFF;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.35);}
+.nav-dot.active-dot{background:#000633;}
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .fw-card{grid-template-columns:1fr;}
+  .fw-num{display:none;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">VP Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Presence Under Pressure</div>
+  <div class="course-sub">How you show up in your most difficult moments determines how your organization responds to them.</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label">0 of 16</div>
+</div>
+
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Pressure Response</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Most Watched Moment</div>
+  <div class="screen-body">When the operational failure hits. When the board asks a question no one prepared for. When the key leader sends in their resignation on a Tuesday afternoon and the team finds out before you do. These are the moments that define VP credibility — not the polished all-hands or the carefully reviewed strategy deck.</div>
+  <div class="screen-body">In these moments, your Team Members are not primarily reading your plan. They are reading you. Your bearing — the steadiness or anxiety in your voice, the openness or defensiveness of your posture, what you say first before anything is prepared — is the signal the organization uses to calibrate its own response.</div>
+  <div class="screen-body">Panic from the VP produces panic in the organization. Calm — not false confidence, but functional steadiness — gives people the psychological space to keep doing their work.</div>
+  <div class="hl"><strong>The highest-leverage VP skill in a crisis is not the plan. It's the presence that creates the conditions in which a good plan can be built and executed.</strong></div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Organizational Mirror Effect</div>
+  <div class="screen-body">Teams take their emotional cues from VPs. This is not a metaphor — it reflects a real neurological phenomenon. In high-uncertainty situations, people instinctively look to authority figures for safety signals. The emotional state of the leader becomes the emotional baseline of the team.</div>
+  <div class="screen-body">What pressure does to default behaviors:</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Under Pressure, Leaders Amplify</h4>
+      <ul>
+        <li>Decisive → Controlling</li>
+        <li>Analytical → Frozen</li>
+        <li>Collaborative → Conflict-avoidant</li>
+        <li>Direct → Blunt or dismissive</li>
+        <li>Process-oriented → Bureaucratic</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>What the Org Needs Instead</h4>
+      <ul>
+        <li>Decisive and inclusive</li>
+        <li>Analytical and action-oriented</li>
+        <li>Direct and clear</li>
+        <li>Steady without being detached</li>
+        <li>Structured without being rigid</li>
+      </ul>
+    </div>
+  </div>
+  <div class="screen-body" style="font-size:14px;color:var(--muted);">The gap between your default pressure behavior and what the org needs is the gap VP development targets.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Vague Reassurance Costs</div>
+  <div class="screen-body">The instinct in crisis is to reassure. "Everything is fine." "We've got this handled." "Don't worry — I'm on it." This feels helpful and calming. In practice, vague reassurance in a credibility moment does the opposite of what's intended.</div>
+  <div class="screen-body">When people can see that things are not fine and leadership says they are, the gap between observed reality and stated message destroys trust. People don't conclude that leadership is optimistic. They conclude that leadership is either not seeing what they're seeing — or not being straight with them.</div>
+  <div class="hl"><strong>The counterintuitive truth:</strong> Honest clarity in difficult moments builds more trust than reassurance. "Here's what happened, here's what we know, here's what we're doing, and here's when we'll know more" — said calmly — is more stabilizing than "don't worry, we've got it."</div>
+  <div class="screen-body">The org can handle difficulty. What it cannot handle well is uncertainty combined with leadership that appears to be managing it rather than confronting it.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Pressure Response</div>
+  <div class="screen-title">VP Pressure Response Framework</div>
+  <div class="screen-body">Four moves — in sequence — that build the presence your org needs when the situation is difficult.</div>
+  <div class="framework-grid">
+    <div class="fw-card">
+      <div class="fw-num">1</div>
+      <div class="fw-content">
+        <div class="fw-name">Regulate First</div>
+        <div class="fw-desc">Take the 60-second window before speaking. Breathe. Your first words set the emotional tone for everyone in the room and everyone who hears the story of how you responded. Use the window.</div>
+      </div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-num">2</div>
+      <div class="fw-content">
+        <div class="fw-name">Name the Reality Clearly</div>
+        <div class="fw-desc">Say what is actually happening. Vague reassurance erodes trust faster than bad news delivered honestly. "Here's what we know. Here's what we don't know yet." The org can work with reality — it can't work with ambiguity it's being asked to ignore.</div>
+      </div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-num">3</div>
+      <div class="fw-content">
+        <div class="fw-name">Communicate the Plan</div>
+        <div class="fw-desc">Even a partial plan is stabilizing. "Here's what we're doing. Here's who is responsible. Here's when we'll have more information." The org doesn't need certainty — it needs a direction and a timeline.</div>
+      </div>
+    </div>
+    <div class="fw-card">
+      <div class="fw-num">4</div>
+      <div class="fw-content">
+        <div class="fw-name">Model Functional Certainty</div>
+        <div class="fw-desc">Not false confidence. Functional certainty: "I don't have all the answers, and we can keep working. Our ability to function doesn't depend on this being resolved." The org mirrors this and does the same.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three High-Stakes Presence Situations</div>
+  <div class="screen-body">Each of the following situations has a distinct presence challenge. The common thread: the org is watching how you show up before it listens to what you say.</div>
+  <div class="two-col">
+    <div class="col-card accent-left">
+      <h4>Boardroom Bad News</h4>
+      <ul>
+        <li>Resist the urge to over-defend</li>
+        <li>Lead with reality, then the response</li>
+        <li>Own accountability clearly</li>
+        <li>Show you understand the business impact</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Org-Wide Difficult Announcement</h4>
+      <ul>
+        <li>Write for the most anxious reader</li>
+        <li>Be first — rumor fills every vacuum</li>
+        <li>Repeat the plan cadence, not just the news</li>
+        <li>Show up in person when possible</li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-card accent-left" style="margin-top:14px;">
+    <h4>Internal Leadership Crisis — Key Person Leaves, Trust Damaged</h4>
+    <ul>
+      <li>Address the elephant in the room — the org already knows</li>
+      <li>Be honest about the impact without overstating it</li>
+      <li>Focus on continuity and what remains constant</li>
+      <li>Resist the impulse to perform normalcy too quickly</li>
+    </ul>
+  </div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Pressure Response</div>
+  <div class="screen-title">Operational Failure Reaching the Board</div>
+  <div class="screen-body">A significant operational failure in your organization has surfaced at the board level — faster than you expected and before you've had time to fully diagnose the cause. You are in the boardroom. The board chair has asked you directly: "Can you walk us through what happened?"</div>
+  <div class="screen-body">What's your opening?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>"I want to be clear that my team followed protocol throughout — this is a systemic issue that predates my tenure."</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>"Here's what I know. Here's what I'm still working to understand. And here's what we're doing right now." Then state all three clearly.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>"I'd like to get a fuller picture before I give the board an incomplete account — can we schedule time for next week?"</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>"This is being fully handled. I have my best people on it and we'll have a resolution plan by end of week."</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Pressure Response</div>
+  <div class="screen-title">Delivering News That Strategy Must Change</div>
+  <div class="screen-body">You've reached the conclusion — through data and executive alignment — that a significant part of your strategy needs to change. Your team has been working the current strategy hard for 18 months. Many believe in it. You need to communicate the change without destroying morale or credibility.</div>
+  <div class="screen-body">What's your approach?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Frame the change as an evolution rather than a reversal — emphasize continuity with the previous direction to protect morale.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Acknowledge directly what's changing and why — including what the data showed. Validate the work done under the previous strategy before describing the new direction.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Present the new strategy as if it's fully developed — uncertainty at this stage would undermine confidence in the direction.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Have your director layer communicate the change in their own 1:1s — it will land better coming from closer relationships than from a VP announcement.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Challenged by a Peer VP in the Executive Meeting</div>
+  <div class="screen-body">In an executive team meeting, a peer VP challenges your recommendation sharply — and with an edge that reads as dismissive in the room. The challenge is partially valid. You feel the impulse to defend yourself. The rest of the leadership team is watching.</div>
+  <div class="screen-body">What's the right presence move?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Defend your position firmly — backing down under public challenge signals weakness and invites future challenges.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Acknowledge the valid parts of the challenge directly, hold on the parts where you disagree, and keep the conversation on the substance rather than the tone.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Defer: "You raise some valid points — let me go back and revisit my analysis before we make a decision."</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Match the energy: make clear you found the tone inappropriate and redirect the conversation to a more professional register.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When a Key Leader Leaves and the Team Is Destabilized</div>
+  <div class="screen-body">Your highest-profile director has just resigned — unexpectedly, to join a competitor. Your team heard informally before you had a chance to communicate. There is anxiety in the org. A few Team Members have already reached out to HR asking about stability. You have a full-team call in 90 minutes.</div>
+  <div class="screen-body">How do you open that call?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>"I know you've heard about [Director's] departure. I want to be straightforward: this is a real loss, and it's okay to feel that. Here's what I know about continuity, here's what we're figuring out, and here's what hasn't changed."</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>"I'm sure you've heard the news. I want to be clear that we have a great bench and this will have minimal impact on our ability to deliver."</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>"Thank you for joining on short notice. Before we get into this, I want to make sure we're all aligned on our current priorities." Then proceed normally to build confidence through routine.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>"[Director] has made a personal career decision we all respect. I don't want to dwell on it — we have important work ahead and I'd like to focus our time there."</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Personally Uncertain But the Org Needs a Signal</div>
+  <div class="screen-body">You are personally uncertain about a significant decision you've been asked to make — you don't have all the data you want, and the options each have real risks. But the org is looking for direction and the ambiguity is starting to cost you: people are making local decisions to fill the vacuum, some of which are contradictory.</div>
+  <div class="screen-body">What do you do?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Wait for more data before communicating — an uncertain direction is worse than no direction and will need to be corrected later.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Make a calibrated decision and communicate it with appropriate confidence: "Based on what we know, I'm moving us in this direction. Here's why. If X changes, we'll revisit." Then move.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Share your uncertainty openly with the full team — transparency about the difficulty of the decision will build trust.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Convene your director layer to make the decision collectively — distributed ownership reduces the risk if the call is wrong.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — The VP Pressure Response Framework begins with communicating the plan, because direction is what the org needs most in a crisis.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — The organizational mirror effect means that teams look to VPs for emotional cues and tend to mirror their leader's state in high-uncertainty situations.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — "Functional certainty" in the VP Pressure Response Framework means:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Projecting confidence that the situation will be fully resolved quickly</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Modeling that the organization can keep functioning even while uncertainty is unresolved</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Having a complete and detailed plan before communicating</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — Delegating the emotional work of the crisis to the director layer</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — Vague reassurance ("We've got this, don't worry") typically builds more trust than honest clarity in a crisis.</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — What does the 60-second window refer to in the pressure response framework?</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — The time a VP has to draft a communication plan before rumors spread</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — The pause before speaking in a high-stakes moment, used to regulate emotional state before your words set the tone</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — The window for getting board approval before making a public statement</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — The recommended length of an initial crisis communication</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Build Your Pressure Response</div>
+  <div class="screen-body">Presence under pressure is a skill that requires deliberate preparation — not improvisation in the moment. Use these prompts to prepare before the next high-stakes situation arrives.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. What is your default behavior under pressure — and how does it get amplified when the stakes are highest?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Describe your pattern: what you do, how it reads to others…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What is your practiced alternative — the behavior you want to replace your default with in high-pressure moments?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Describe the specific behavior you're building toward…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. What is one upcoming high-stakes situation where your presence will be tested? (Board meeting, difficult announcement, team instability.)</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Describe the situation…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. For that situation: how will you prepare your presence — not just your content or plan?</div>
+    <div class="apply-sub">Think: how you'll regulate beforehand, what your opening will be, what tone you want to set.</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Describe your presence preparation…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. What would honest clarity sound like for the most difficult message you may need to deliver in the next 90 days?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Draft the opening two sentences of that message…" oninput="saveApply(4)"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">⚡</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Presence Under Pressure. The VPs who earn the most trust earn it in the hardest moments — when they show up steadily instead of performing confidence they don't have.</div>
+  </div>
+  <div class="commitments">
+    <h4>Your presence under pressure commitments:</h4>
+    <div class="commit-item">Use the 60-second regulation window before speaking in any high-stakes moment</div>
+    <div class="commit-item">Communicate reality before rumor fills the void — be first, be honest, be clear</div>
+    <div class="commit-item">Show up in person when your organization is destabilized — physical presence matters more than words</div>
+    <div class="commit-item">Model functional certainty: "We can keep working while this resolves" — and mean it</div>
+    <div class="commit-item">Prepare your presence before high-stakes meetings, not just your content or talking points</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation', end:5},
+  {label:'The Pressure Response', end:7},
+  {label:'Practice', end:10},
+  {label:'Pulse Check', end:15},
+  {label:'Apply It', end:16},
+  {label:'Complete', end:17}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Structure your response around what you know, what you don\'t, and what you\'re doing. This is honest, organized, and respects the board\'s need for reality. Deflecting to systemic causes (A) reads as evasive. Asking for a delay (C) when you\'ve been called in the room is not available to you. Vague reassurance (D) — "it\'s handled" — without substance fails the credibility test.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Acknowledging what\'s changing and validating the work done under the previous strategy are both required. Framing it only as "evolution" (A) when it is in fact a reversal reads as spin and erodes trust when people figure it out. Performing full certainty (C) about a direction still being developed will require correction later. Routing the message only through directors (D) for a significant strategic change is a presence abdication.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Acknowledge the valid parts — this demonstrates confidence and substance, not weakness. Hold your position where you disagree — this demonstrates conviction. Keep it on the substance — this demonstrates professional composure. Defending without acknowledging (A) reads as rigid. Full deference (C) when you have a position is a credibility loss. Calling out the tone publicly (D) escalates the conflict in the room.' },
+  8: { correct:'A', feedback:'<strong>A is right.</strong> Name the situation, validate the emotional reality, then give the continuity message and the what-we\'re-figuring-out message. The org already knows and has already felt the impact — denying or minimizing (B) erodes trust. Performing routine (C) when the elephant is in the room signals that leadership is managing rather than confronting. Redirecting quickly to "positive" energy (D) feels dismissive to people who are genuinely concerned.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> A calibrated decision with a clear rationale and an explicit condition for revisiting is more functional than waiting for certainty that may not come. The vacuum is already costing you. Waiting indefinitely (A) extends the damage. Sharing deep personal uncertainty broadly (C) without a direction can amplify anxiety rather than settle it. Collective decision-making (D) in this moment distributes the indecision across the org rather than resolving it.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> The framework begins with Regulate First — taking the 60-second window before speaking. You cannot communicate effectively if your own emotional state is transmitting anxiety. Regulate first, then name reality, then communicate the plan, then model functional certainty.' },
+  11: { correct:'A', feedback:'<strong>True.</strong> The organizational mirror effect is real and well-documented. In high-uncertainty situations, people instinctively look to authority figures for safety signals. Your emotional state becomes their emotional baseline. This is why your bearing in the hardest moments matters more than your words.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> Functional certainty means modeling that the organization can continue to operate while the uncertainty is resolved — not that everything is fine, not that a full resolution is imminent. "We can keep working while this resolves" is the message. This is achievable and honest, which is what makes it stabilizing.' },
+  13: { correct:'B', feedback:'<strong>False.</strong> Vague reassurance in a credibility moment actively erodes trust. When people can see that things are difficult and leadership says "don\'t worry," the gap between observed reality and the stated message signals either that leadership isn\'t seeing clearly or isn\'t being straight. Honest clarity — "here\'s what happened, here\'s what we\'re doing" — is the more stabilizing move.' },
+  14: { correct:'B', feedback:'<strong>B is right.</strong> The 60-second window is the pause before you speak — the regulation window. Your first words set the emotional tone for everyone who hears them. Using this window deliberately, even briefly, prevents your pressure state from becoming the org\'s pressure state through the mirror effect.' }
+};
+
+const KEY = 'course_vp_presence_pressure_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

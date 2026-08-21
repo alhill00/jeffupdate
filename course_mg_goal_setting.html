@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Goal-Setting | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#174DFF;
+  --accent-light:#e0e8ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#e0e8ff;
+  --good-border:#174DFF;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#000633 0%,#0d1f6e 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(23,77,255,.25);color:rgba(255,255,255,.8);border-color:rgba(23,77,255,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.col-card p{font-size:14px;color:#374151;line-height:1.6;}
+.okr-stack{display:flex;flex-direction:column;gap:0;margin:18px 0;border-radius:12px;overflow:hidden;border:1.5px solid var(--border);}
+.okr-row{padding:18px 20px;display:grid;grid-template-columns:110px 1fr;gap:16px;align-items:start;}
+.okr-row:not(:last-child){border-bottom:1px solid var(--border);}
+.okr-row:nth-child(1){background:var(--dark);}
+.okr-row:nth-child(2){background:#0d1f6e;}
+.okr-row:nth-child(3){background:#1a3080;}
+.okr-label{font-size:12px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:.5px;padding-top:3px;}
+.okr-content{color:rgba(255,255,255,.9);font-size:14px;line-height:1.5;}
+.okr-content strong{color:var(--white);}
+.okr-content .note{font-size:12px;color:rgba(255,255,255,.55);margin-top:6px;}
+.motivator-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:16px 0;}
+.motivator{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;}
+.motivator h4{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:6px;}
+.motivator p{font-size:13px;color:#374151;line-height:1.5;}
+.steps-list{display:flex;flex-direction:column;gap:10px;margin:16px 0;}
+.step-row{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:var(--white);font-size:13px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-text{font-size:14px;color:#374151;line-height:1.5;}
+.step-text strong{color:var(--dark);}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#0d3acc;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#0d3acc;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .two-col,.motivator-grid{grid-template-columns:1fr;}
+  .okr-row{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Goal-Setting</div>
+  <div class="course-sub">Setting goals your team actually owns — not just checks off.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Goal Framework</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Goals Nobody Thinks About After January</div>
+  <div class="screen-body">Jordan set clear quarterly goals with her team in January. She was thorough — every goal was documented, shared, and agreed to. By March, nobody was thinking about them. Not because they were lazy. Not because the goals were bad.</div>
+  <div class="screen-body">The goals were handed to them. Not built with them.</div>
+  <div class="screen-body">Goals people build, they own. Goals handed to them, they track — when reminded. The difference in engagement isn't the goal. It's who made it.</div>
+  <div class="hl"><strong>Co-creation is the highest-leverage move in goal-setting.</strong> The time you spend building a goal with your Team Member is the investment that makes them care about it for the rest of the quarter.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Two Goal Failure Modes</div>
+  <div class="screen-body">Most goal problems come from one of two directions — both of which make the goal feel pointless.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Activity Goals</h4>
+      <p>We did 50 things. We held 12 meetings. We completed the checklist. The team was busy — but nobody can say what changed as a result of all that activity.</p>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Outcome Goals</h4>
+      <p>We reduced onboarding time by 30%. We closed the backlog. Guest satisfaction in this area went from 72 to 81. Something measurably changed.</p>
+    </div>
+  </div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Impossible Goals</h4>
+      <p>Aspirational but unachievable — so the team disconnects from them immediately. Nobody works hard toward something they've already stopped believing in.</p>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Stretch Goals</h4>
+      <p>Hard enough to require real effort. Achievable enough to sustain belief. The best goals sit at the edge of what the team thinks is possible.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Makes a Goal Motivating</div>
+  <div class="screen-body">Not every goal motivates equally. Research on goal motivation points to four factors — and you can influence all of them.</div>
+  <div class="motivator-grid">
+    <div class="motivator">
+      <h4>Clarity</h4>
+      <p>We know what "done" looks like — specifically enough that we'd agree if we got there. Vague goals produce vague effort.</p>
+    </div>
+    <div class="motivator">
+      <h4>Challenge</h4>
+      <p>The goal is hard enough to require real effort. Easy goals don't produce pride or growth. Stretch is the point.</p>
+    </div>
+    <div class="motivator">
+      <h4>Meaning</h4>
+      <p>The person can see why it matters — to the team, to Guests, to the org. "Because leadership said so" is not meaning.</p>
+    </div>
+    <div class="motivator">
+      <h4>Autonomy</h4>
+      <p>They have some ownership over <em>how</em> they get there — not just <em>what</em> the goal is. Ownership over the path = commitment to the destination.</p>
+    </div>
+  </div>
+  <div class="hl"><strong>A goal that lacks clarity, challenge, meaning, or autonomy will underperform</strong> — even if the person executing it is capable and well-intentioned.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Goal Framework</div>
+  <div class="screen-title">OKR-Style Goal Structure</div>
+  <div class="screen-body">OKRs — Objectives and Key Results — give your goals a structure that distinguishes <em>what you're trying to achieve</em> from <em>how you'll know you achieved it</em>.</div>
+  <div class="okr-stack">
+    <div class="okr-row">
+      <div class="okr-label">Objective</div>
+      <div class="okr-content">
+        <strong>What we're trying to accomplish.</strong> Inspiring, qualitative, clear enough to guide decisions — even when specific metrics aren't available. Should answer: "Why does this matter?"
+        <div class="note">Example: "Make our onboarding experience something new Team Members talk about in month 1 and beyond."</div>
+      </div>
+    </div>
+    <div class="okr-row">
+      <div class="okr-label">Key Results</div>
+      <div class="okr-content">
+        <strong>How we know we achieved the Objective.</strong> 2–3 measurable indicators — not activities, but outcomes. Each should be falsifiable: you can tell if you hit it or not.
+        <div class="note">Example: "New hire satisfaction score above 85% at Day 30. Time-to-productivity under 6 weeks. 90-day retention above 95%."</div>
+      </div>
+    </div>
+    <div class="okr-row">
+      <div class="okr-label">Milestones</div>
+      <div class="okr-content">
+        <strong>Check-in points every 4–6 weeks.</strong> Not to micromanage — to surface whether we're on the path before it's too late to adjust.
+        <div class="note">Set the check-in rhythm in the goal-setting conversation itself — not later.</div>
+      </div>
+    </div>
+  </div>
+  <div class="hl"><strong>The co-creation rule:</strong> The best goals are co-created, not handed down. Bring the draft, ask for their input, and finalize together. This single step changes ownership.</div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Goal Conversation — Four Moves</div>
+  <div class="screen-body">Setting the goal is not enough. How you have the conversation determines whether they'll own it.</div>
+  <div class="steps-list">
+    <div class="step-row">
+      <div class="step-num">1</div>
+      <div class="step-text"><strong>Start with "why."</strong> Connect the goal to something that matters — to the team, to the Guest, to their own growth. "Leadership asked me to set this goal" is not why.</div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">2</div>
+      <div class="step-text"><strong>Ask for their input before finalizing.</strong> "What would you add to this?" or "Does this feel right given what you know about the work?" Their fingerprint on the goal is the ownership transfer.</div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">3</div>
+      <div class="step-text"><strong>Agree on how you'll measure it.</strong> Not whether it was done — whether it was actually achieved. Define success in concrete, observable terms before you start.</div>
+    </div>
+    <div class="step-row">
+      <div class="step-num">4</div>
+      <div class="step-text"><strong>Set the check-in rhythm now.</strong> In the goal-setting conversation itself — not "we'll figure it out." Specific date or cadence: "We'll review this every 4 weeks in your 1:1."</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Goal Framework</div>
+  <div class="screen-title">Busy But Not Moving</div>
+  <div class="screen-body">Your Team Member is completing tasks every week — their to-do list gets checked off, they're busy, they show up engaged. But the larger project goal hasn't moved in six weeks. What do you do?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Add more tasks to their list — clearly the scope isn't enough to move the needle.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Revisit the goal together — are the tasks actually connected to the outcome, or just adjacent to it?</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Extend the deadline — they're working hard, the timeline was probably too aggressive.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Have a performance conversation — consistent task completion without progress is a problem.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Goal Framework</div>
+  <div class="screen-title">The Business Changed. The Goal Didn't.</div>
+  <div class="screen-body">A Team Member's quarterly goal becomes irrelevant midway through — a business change shifted priorities in a way that makes the original target no longer meaningful. What do you do?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Hold the Team Member to the original goal anyway — changing mid-quarter undermines accountability.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Formally revise the goal with the Team Member to reflect current reality — explain what changed and what the new target is.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Let the goal lapse quietly and set a new one next quarter.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Replace it with a harder goal to compensate for the lost time and momentum.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Practice -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Setting a Goal for Something Hard to Measure</div>
+  <div class="screen-body">You want to set a goal around "improving team culture" for a Team Member in a leadership-adjacent role. How do you make a culture goal measurable?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Skip the measurement — culture goals are inherently qualitative and shouldn't be reduced to numbers.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Define observable behaviors and leading indicators — what would we see if culture improved? Use that as the Key Results.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Use a general rating like "culture feels better" and assess at quarter-end.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Wait for a survey score to be available — only measurable things can be goals.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Practice -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">The Goal Is Too Easy</div>
+  <div class="screen-body">A Team Member sets a quarterly goal in your goal-setting conversation that you know they'll hit by week 3. It's well within their current capability — there's no stretch to it. How do you respond?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Accept the goal — they built it, so they own it. Forcing a harder goal undermines autonomy.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Ask what they think would happen if they pushed the goal 20–30% further — open the conversation about stretch before finalizing.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Reject the goal and set a harder one yourself.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Accept it and add a second "bonus" goal they can pursue if they finish early.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Practice -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">The Off-Track Goal Check-In</div>
+  <div class="screen-body">A Team Member's goal is clearly off track at the midpoint. You need to address it in your 1:1 without it feeling like a performance conversation. What's your approach?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Name the gap directly: "You're behind on this goal — what's your plan?"</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Ask how they think things are tracking against the goal, then work through what's in the way and what would help.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Extend the deadline quietly and revisit at quarter end.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Skip the goal discussion this 1:1 — they probably know they're behind and don't need you to point it out.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — In OKR structure, Key Results should describe the activities the team will complete to achieve the Objective.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Which of the following is an outcome goal (vs. an activity goal)?</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — "Complete 10 training sessions this quarter"</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — "Attend three cross-functional planning meetings"</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — "Reduce average resolution time from 48 hours to 24 hours"</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — "Build stronger relationships with the Operations team"</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — Co-creating a goal with a Team Member takes more time but produces better ownership than assigning the goal directly.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — What makes a goal motivating? Which of these is NOT one of the four motivation factors?</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Clarity</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Speed</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Meaning</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Autonomy</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — When a goal becomes irrelevant mid-quarter, the right move is to hold the Team Member to the original goal to preserve accountability.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Goals only work when they're built well. Use these prompts to strengthen how you set goals with your team this cycle.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. Write an Objective and 3 Key Results for one Team Member on your team.</div>
+    <div class="apply-sub">Objective = inspiring and directional. Key Results = measurable outcomes, not activities.</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Objective: …&#10;KR1: …&#10;KR2: …&#10;KR3: …" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Review your current goals — are they outcome or activity goals? Mark each one.</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Goal 1: [outcome / activity]&#10;Goal 2: [outcome / activity]…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Which of your current goals was handed down vs. co-created with the Team Member?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Handed down: …&#10;Co-created: …" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's the check-in rhythm you'll set for this cycle — and when will you schedule it?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="We'll review goals every… starting…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. Is there a goal on your team that should be revised to reflect reality? What does the updated version look like?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Original goal: …&#10;Revised goal: …" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🎯</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Goal-Setting. The managers who get the most from their teams don't just set goals — they build goals with their people, then make those goals worth caring about.</div>
+  </div>
+  <div class="commitments">
+    <h4>What strong goal-setting managers do differently:</h4>
+    <div class="commit-item">Co-create at least one goal per Team Member this cycle — don't just hand it down.</div>
+    <div class="commit-item">Name the measurement before you start — not after. Outcome, not activity.</div>
+    <div class="commit-item">Set the check-in rhythm in the goal-setting conversation itself.</div>
+    <div class="commit-item">Revisit and revise when reality changes — goals are living commitments, not contracts.</div>
+    <div class="commit-item">Start the goal conversation with "why" — connect it to something that matters beyond the metric.</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {name:'Foundation', end:5},
+  {name:'The Goal Framework', end:7},
+  {name:'Practice', end:10},
+  {name:'Pulse Check', end:15},
+  {name:'Apply It', end:16},
+  {name:'Complete', end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Task completion without outcome progress is the most common goal failure. The fix is to reconnect the activity to the outcome — often the Team Member is busy but not pointed in the right direction. That\'s a goal conversation, not a performance conversation. More tasks (A) adds activity to an activity problem. Extending the deadline (C) delays confronting what\'s actually broken.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Holding someone to an irrelevant goal is demotivating and meaningless. Goals are living commitments, not contracts. Formally revising with the Team Member — "here\'s what changed and here\'s the updated target" — keeps accountability intact while reflecting reality. Letting the goal lapse quietly (C) removes accountability entirely.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Hard-to-measure goals still need measurement. The key is defining observable leading indicators — what would we see if culture improved? What behaviors would change? What would Team Members say differently? These become your Key Results. "Culture feels better" (C) is not a measure; it\'s a hope.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Autonomy matters — but so does stretch. The conversation approach is to ask, not overrule: "What would happen if you pushed this goal 20% further? What would make it genuinely challenging?" This keeps their ownership while raising the bar. Accepting an easy goal (A) underserves the Team Member\'s development and your team\'s potential.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Starting with their perception — "how do you think we\'re tracking?" — invites self-assessment before you share yours. This keeps the conversation collaborative, not corrective. It\'s the same principle as the performance review: their read comes first. You can be direct about the gap after you\'ve heard their view.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Key Results describe outcomes — measurable results that indicate whether the Objective was achieved. Activities belong in the action plan, not in the Key Results. "Train 10 people" is an activity. "Team Members score above 80% on knowledge assessment at 60 days" is a Key Result.' },
+  11: { correct:'C', feedback:'<strong>C is right.</strong> "Reduce average resolution time from 48 hours to 24 hours" is a clear outcome goal — something changed, measurably. The others are activity goals (A, B) or a vague aspiration (D) that doesn\'t specify what would be different if it were achieved.' },
+  12: { correct:'A', feedback:'<strong>True.</strong> Co-creation takes more time upfront — and produces meaningfully stronger ownership. When a Team Member has shaped the goal, they own the outcome in a way they don\'t when the goal is handed down. The investment in the conversation pays back in sustained engagement.' },
+  13: { correct:'B', feedback:'<strong>B — Speed</strong> is not one of the four motivation factors. The four are clarity (we know what "done" looks like), challenge (hard enough to require real effort), meaning (they can see why it matters), and autonomy (ownership over how to get there). Speed isn\'t a motivator — arbitrary urgency is a de-motivator.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> Holding someone to an irrelevant goal is demotivating and meaningless. Accountability doesn\'t require irrelevance — it requires honesty about what matters and a clear target for it. When reality changes, the goal should change with it. The formal revision keeps accountability alive; the irrelevant goal kills engagement.' }
+};
+
+const KEY = 'course_mg_goal_setting_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

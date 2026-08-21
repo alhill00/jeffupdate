@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leading Change at Director Level | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#faf8ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#6D28D9;
+  --accent-light:#ede9fe;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#ede9fe;
+  --good-border:#6D28D9;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#1a0a3d 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(109,40,217,.25);color:rgba(255,255,255,.8);border-color:rgba(109,40,217,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.arch-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.arch-card{background:var(--card);border:1.5px solid var(--border);border-top:4px solid var(--accent);border-radius:10px;padding:16px;}
+.arch-card h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.arch-card p{font-size:13px;color:#374151;line-height:1.5;}
+.num-cards{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.num-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;}
+.num-badge{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--white);font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.num-content h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.num-content p{font-size:13.5px;color:#374151;line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#5b21b6;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#5b21b6;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(109,40,217,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .arch-cards{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Director Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Leading Change at Director Level</div>
+  <div class="course-sub">Driving org-wide transitions when the people most affected don't report to you.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Change Architecture</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Change at a Different Scale</div>
+  <div class="screen-body">Managing change as a director means driving a transition through managers you lead, across functions you influence, and through systems you don't control. The people most affected by your change may never meet with you directly. Their experience of the transition will be filtered through a management layer you're responsible for preparing.</div>
+  <div class="screen-body">This is structurally different from manager-level change. A manager can brief their team directly, answer questions in real time, and adjust as they go. A director is operating at scale — one level up from the people experiencing the change, with a management layer as the primary communication channel.</div>
+  <div class="screen-body">That layer can be your greatest asset in a change — or the point where your message gets filtered, softened, delayed, or undermined. Preparing it is not optional.</div>
+  <div class="hl"><strong>The director change failure pattern:</strong> announce the change, give the deck, assume execution follows. Six weeks later: inconsistent rollout, confused Team Members, managers who can't answer basic questions.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Director-Level Change Requires</div>
+  <div class="screen-body">Manager-level change is largely about your team. Director-level change requires three things that managers don't have to think about in the same way.</div>
+  <div class="num-cards">
+    <div class="num-card">
+      <div class="num-badge">1</div>
+      <div class="num-content">
+        <h4>Cross-Functional Alignment Before Execution</h4>
+        <p>Changes that affect one function often ripple into others. Before you announce, you need the functions whose work intersects with yours to be informed — and ideally supportive. A change that surprises a peer director mid-execution creates friction that delays the change and damages relationships.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">2</div>
+      <div class="num-content">
+        <h4>Manager Enablement</h4>
+        <p>Your managers are the change messengers — the people who will sit with your Team Members' questions, concerns, and resistance. If they're not prepared to answer what's coming, every question that doesn't get a good answer erodes trust in the change. Preparing your managers is not briefing them — it's equipping them.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">3</div>
+      <div class="num-content">
+        <h4>Simultaneous Up and Down Communication</h4>
+        <p>You're communicating "on track" to leadership AND "here's what's hard" to your team — at the same time. These messages have to be compatible. If you're overstating progress upward or sugarcoating difficulty downward, the dissonance surfaces — and it's expensive when it does.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Director Change Failure Pattern</div>
+  <div class="screen-body">The most common director-level change failure isn't resistance — it's under-preparation. The director makes the decision, briefs the management team, and expects execution to follow naturally. What they miss is that managers can absorb a briefing without being equipped to lead the change.</div>
+  <div class="screen-body">There's a meaningful difference between a manager who understands the change and a manager who can answer "why is this happening?" from a frustrated Team Member at 7am before a shift. Briefing produces the first. Enablement produces the second.</div>
+  <div class="al"><strong>The question your managers will get:</strong> "Did you know about this?" "Why didn't we have more input?" "What does this mean for my job?" If your managers can't answer those questions confidently and consistently, the change is already in trouble — regardless of how clear your announcement was.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Change Architecture</div>
+  <div class="screen-title">Four Elements of a Change Architecture</div>
+  <div class="screen-body">Don't launch a change without these four elements in place. The absence of any one of them is a predictable failure point.</div>
+  <div class="arch-cards">
+    <div class="arch-card">
+      <h4>Change Coalition</h4>
+      <p>Who needs to be aligned before you start? Which peers and functions need to know or support it? Build the coalition before you announce — not during execution. A coalition built after the announcement is damage control, not architecture.</p>
+    </div>
+    <div class="arch-card">
+      <h4>Manager Enablement</h4>
+      <p>What do your managers need to know, say, and do? What questions will they get? Give them the talking points, the rationale, the anticipated concerns, and the answers — before the announcement reaches Team Members.</p>
+    </div>
+    <div class="arch-card">
+      <h4>Communication Cadence</h4>
+      <p>What gets communicated when and by whom? A single announcement is rarely enough. Plan your first communication, your follow-up after questions surface, and your "here's what we're hearing" update that closes the loop.</p>
+    </div>
+    <div class="arch-card">
+      <h4>Feedback Loops</h4>
+      <p>How will you know if it's working? What signals are you watching? Create a structured way to hear what's actually happening at the front line — not just what's being reported up. Feedback loops let you adjust in time to matter.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Pacing the Change</div>
+  <div class="screen-body">The timing of how you launch and communicate a change is as important as the content of the change itself. Three principles for getting the pacing right.</div>
+  <div class="num-cards">
+    <div class="num-card">
+      <div class="num-badge">1</div>
+      <div class="num-content">
+        <h4>Announce with Enough Lead Time for Managers to Prepare</h4>
+        <p>If your managers hear about the change at the same time as Team Members, they have no time to prepare, process, or position themselves as informed leaders. They'll look as surprised as everyone else — which undermines both the change and their credibility as leaders of it.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">2</div>
+      <div class="num-content">
+        <h4>Communicate the Why Before the What</h4>
+        <p>People tolerate change better when they understand why it's happening. Lead with purpose and rationale, then the specifics of what's changing. "We're doing this because X" before "here's what will be different" — not after it.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">3</div>
+      <div class="num-content">
+        <h4>Build Two-Way Communication Moments</h4>
+        <p>Not just "here's the change" but "here's what we're hearing from you." Regular updates that close the loop — acknowledging the concerns people have raised and what's being done about them — demonstrate that feedback is being received, not just collected.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Change Architecture</div>
+  <div class="screen-title">Launching Before Alignment Is Complete</div>
+  <div class="screen-body">You're driving a process change that intersects with three other functions. Two of the three are aligned. The third — a key one — hasn't fully bought in yet. Leadership pressure is mounting to announce and begin. What do you do?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Announce and begin — you have two-thirds alignment, and the third function will come around once they see the change in motion.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Hold the announcement. Request specific time with the unaligned function this week to understand their concern and find a path to alignment. Then set a firm announcement date with leadership.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Announce internally to your own org while continuing to work on cross-functional alignment — you can manage both tracks simultaneously.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Escalate to your CPO — if alignment is blocked, this is an executive-level decision, not yours to resolve.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Change Architecture</div>
+  <div class="screen-title">A Manager Actively Undermining the Change</div>
+  <div class="screen-body">Two weeks into a change rollout, you hear through a skip-level conversation that one of your managers has been telling their team privately that they don't think this change is the right move. Team members are confused about whether to follow the new process. What do you do?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Have a direct conversation with the manager: acknowledge their concern is valid, but name the impact their behavior is having — and set a clear expectation: disagree privately, commit publicly.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Go directly to the manager's team to reinforce the change — bypass the manager for now and restore clarity directly.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Let it play out — the manager will either come around as they see the change working, or their resistance will surface in performance data over time.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Find out from other managers whether this is widespread — if it's an isolated case, you can manage it quietly.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When the Change Is Taking Longer Than Expected</div>
+  <div class="screen-body">A change you announced six weeks ago with a 90-day timeline is running behind. Adoption is inconsistent across your org. You're reporting to leadership that things are "on track." Your managers know they're not. What do you do?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Keep the optimistic messaging to leadership for another two weeks — you're confident you can close the gap and don't want to cause concern prematurely.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Update leadership accurately: the timeline is at risk, here's the specific adoption gap, here's your recovery plan. Then have a direct conversation with your managers about closing the gap — together.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Extend the deadline quietly — adjust the internal milestone and continue reporting on the revised plan without flagging the change to leadership.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Ask your managers to push harder on their teams to close the adoption gap — they're responsible for their teams' compliance with the change.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Navigating a Change You Personally Disagree With</div>
+  <div class="screen-body">Your CPO has directed a structural change you're responsible for implementing. You have significant reservations — you think it solves the wrong problem. You've shared your concerns privately and been heard, but the decision stands. Now you're standing in front of your management team to roll it out. What's your approach?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Be transparent with your managers: "Honestly, this isn't the direction I would have chosen, but here's why leadership made this call and here's how we're going to make it work."</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Commit fully to the change in how you present it — your personal reservations stay private, and your job now is to lead the execution with full conviction.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Give your managers the information they need to execute while being honest that you're still working through it yourself — authenticity builds trust.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Present it as a work-in-progress and keep the door open for adjustments — this signals to your team that the change isn't fully committed.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When to Pause a Change</div>
+  <div class="screen-body">Three weeks into a rollout, your feedback loops are showing significantly more disruption than anticipated — Team Member confusion is high, two managers are struggling, and a critical process dependency wasn't accounted for. The change is causing operational problems. What do you do?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Push through — operational disruption in the first few weeks of a change is expected. Pausing signals weakness.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Assess the data, then make the call: if the dependency gap is fixable and the confusion is addressable, name the specific interventions and a timeline. If the change has a structural flaw, recommend a pause to leadership — with the specific problem and a revised plan.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Roll back to the previous state and restart the change process from the beginning — a clean restart is better than a messy rollout.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Reassign the two struggling managers to different teams temporarily — the change is sound, the execution team is the problem.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — The four elements of a change architecture are: Change Coalition, Manager Enablement, Communication Cadence, and:</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">A — Executive Approval</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">B — Feedback Loops</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'C')">C — Training Plan</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'D')">D — Risk Assessment</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — In a change announcement, you should communicate the "what" before the "why" — the specifics help people understand the rationale.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — "Manager enablement" means something different from simply briefing your managers. The difference is:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Enablement requires written documentation; briefing is verbal</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Enablement equips managers to handle questions and resistance; briefing just gets them up to speed on the change</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Enablement includes a formal training program; briefing is a summary</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — There is no meaningful difference — they're used interchangeably</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — Feedback loops in a change are primarily for collecting data to present in status reports to leadership.</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — When should you escalate significant change resistance to your CPO?</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — When any manager expresses concerns about the change</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — When resistance is structural (requires executive authority or resources to resolve) or when your exec would be surprised not to know</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — When the change timeline has slipped by more than two weeks</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — Never — directors own their change programs from start to finish</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Choose a change you're currently driving — or one on your near-term horizon — and audit your change architecture against these prompts.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. What change are you currently driving or planning?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="The change is…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Audit your change architecture — which element is missing or weakest?</div>
+    <div class="apply-sub">Change Coalition / Manager Enablement / Communication Cadence / Feedback Loops</div>
+    <textarea class="apply-input" id="apply-1" placeholder="The weakest element is… because…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Who is in your change coalition — and who should be that isn't?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Currently in coalition: … Should be added: …" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What are the three most likely questions your managers will get — and what's the answer to each?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Q1: … Answer: … Q2: … Answer: … Q3: … Answer: …" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. What's your feedback loop — how will you know if this change is landing?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="I'll know the change is landing when… I'll check by…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🔄</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Leading Change at Director Level. The directors who lead change well aren't the ones with the best decks — they're the ones who build the architecture before they announce, equip the managers who carry the message, and stay close to the front line as it unfolds.</div>
+  </div>
+  <div class="commitments">
+    <h4>Four change commitments at director level:</h4>
+    <div class="commit-item">Never announce before building the coalition — alignment before execution, every time</div>
+    <div class="commit-item">Equip your managers to answer the questions their teams will ask — talking points, rationale, and anticipated concerns</div>
+    <div class="commit-item">Create a feedback loop before you need one — know how you'll hear what's happening at the front line</div>
+    <div class="commit-item">Over-communicate the why — more than you think is necessary, and more often</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation',            end:5},
+  {label:'The Change Architecture',end:7},
+  {label:'Practice',              end:10},
+  {label:'Pulse Check',           end:15},
+  {label:'Apply It',              end:16},
+  {label:'Complete',              end:17}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Launching without a key function\'s alignment means building their resistance into your execution. They will surface their concerns during the rollout — often in ways that are more disruptive than the delay you\'re trying to avoid. Hold the announcement, resolve the alignment, set a firm date. This is the Change Coalition element of the architecture.' },
+  6: { correct:'A', feedback:'<strong>A is right.</strong> The conversation has to happen — directly and quickly. The manager\'s disagreement is legitimate; their behavior of communicating it to their team is not. The norm is clear: disagree privately, commit publicly. Going around the manager (B) undermines their authority and doesn\'t solve the behavior. Letting it play out (C) allows confusion to compound.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Update leadership accurately — the timeline is at risk, here\'s the specific gap, here\'s the recovery plan. The instinct to keep optimistic messaging going is understandable, but when your managers know the situation and leadership doesn\'t, you\'ve created a credibility gap that will surface on its own, at a worse moment. Accurate information with a plan is always stronger than delayed truth.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Your reservations are private. Your commitment to execution is public and full. This is the director standard for implementing decisions you disagree with: you\'ve had your say, the decision stands, and now your job is to lead the execution as if it were your own idea. Sharing your ambivalence with your management team (A or C) gives them permission to be ambivalent — which undermines the change before it starts.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Assess the data, then make a clear-eyed call. Not every disruption is a signal to pause — some disruption in early rollout is expected. But a structural dependency gap is different from expected friction. If it\'s fixable, name the fix and a timeline. If the change has a structural flaw, recommend a pause to leadership with specifics and a revised plan. That\'s responsible change leadership, not weakness.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>B is right.</strong> The four elements of a change architecture are Change Coalition, Manager Enablement, Communication Cadence, and Feedback Loops. Together they address the four most common failure points in director-level change: launching without alignment, managers who can\'t answer questions, a single announcement without follow-through, and no way to know if it\'s working.' },
+  11: { correct:'B', feedback:'<strong>False.</strong> Communicate the why before the what. People tolerate change better when they understand the reason — before they know the specifics of what\'s changing. "We\'re doing this because X" primes them to hear "here\'s what will be different" as a logical response to a problem rather than an unexplained disruption.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> Briefing gets managers up to speed. Enablement prepares them to lead the change with their teams — to handle questions, address concerns, and maintain their credibility as informed leaders. The test is whether a manager can answer "did you know about this?" and "why didn\'t we have more input?" at 7am before a shift — with confidence and clarity.' },
+  13: { correct:'B', feedback:'<strong>False.</strong> Feedback loops are primarily for adjustment — so you can change course in time to matter. Their purpose is to give you real-time signal about what\'s actually happening at the front line, not just to produce status report data. A feedback loop that only feeds upward without informing your own decisions is compliance theater, not change management.' },
+  14: { correct:'B', feedback:'<strong>B is right.</strong> Apply the escalation filter: escalate when resistance requires executive authority or resources to resolve, or when your exec would be surprised not to know. Manager-level concerns are yours to manage. Structural resistance — a function that won\'t comply, a resource constraint that blocks the change — may need executive authority. Use the filter to determine when it\'s yours and when it requires more.' }
+};
+
+const KEY = 'course_dr_change_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

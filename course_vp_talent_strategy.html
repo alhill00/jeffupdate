@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Talent Strategy | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#000633;
+  --accent-light:#eef2ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#eef2ff;
+  --good-border:#000633;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+
+.course-header{background:linear-gradient(135deg,#000633 0%,#000d4d 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:#174DFF;border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+
+.section-nav{background:var(--dark);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:#174DFF;color:var(--white);border-color:#174DFF;}
+.sec-pill.done{background:rgba(23,77,255,.15);color:rgba(255,255,255,.75);border-color:rgba(23,77,255,.3);}
+
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#174DFF;margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+
+.hl{background:var(--accent-light);border-left:4px solid #174DFF;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+
+.card-grid{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.framework-card{background:var(--dark);border-radius:10px;padding:18px 20px;display:flex;gap:16px;align-items:flex-start;}
+.framework-num{width:36px;height:36px;border-radius:50%;background:#174DFF;color:var(--white);font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.framework-content{flex:1;}
+.framework-title{color:var(--white);font-size:15px;font-weight:700;margin-bottom:4px;}
+.framework-desc{color:rgba(255,255,255,.8);font-size:13px;line-height:1.5;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.col-card p{font-size:13.5px;line-height:1.6;color:#374151;margin-top:8px;}
+
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f8f9ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f8f9ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:#174DFF;margin-top:4px;display:none;}
+
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#174DFF;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:#174DFF;font-weight:700;}
+
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#174DFF;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.35);}
+.nav-dot.active-dot{background:var(--accent);}
+
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">VP Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Talent Strategy</div>
+  <div class="course-sub">Building the human capability your organization needs — now and in the next cycle.</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label">0 of 17</div>
+</div>
+
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Talent Framework</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Strategy Is Only as Good as the Talent Available to Execute It</div>
+  <div class="screen-body">VP-level talent strategy means making deliberate decisions about human capability as a competitive resource — not just managing headcount and performance processes.</div>
+  <div class="screen-body">The talent risk most VPs don't see isn't the bottom of the distribution — it's the middle. Underdeveloped mid-range performers can drag an organization as much as any single low performer.</div>
+  <div class="hl"><strong>The strategic imperative:</strong> Build capability before you need it. The VP who builds talent ahead of strategy has an organizational advantage that compounds. The one who reacts to talent gaps after they appear is always behind.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Talent Conversation VPs Must Lead</div>
+  <div class="screen-body">The talent conversation at the VP level isn't just "who's performing?" It's a set of more strategic questions that most organizations never get to.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>The Operational Talent Question</h4>
+      <ul>
+        <li>Who's performing and who isn't?</li>
+        <li>Who needs a performance plan?</li>
+        <li>Who do we need to hire to fill a gap?</li>
+      </ul>
+      <p>Necessary. Not sufficient.</p>
+    </div>
+    <div class="col-card accent-left">
+      <h4>The Strategic Talent Question</h4>
+      <ul>
+        <li>Who is this organization building toward?</li>
+        <li>What capability do we need in 18 months?</li>
+        <li>Are we building, buying, or borrowing it?</li>
+      </ul>
+      <p>This is VP-level talent leadership.</p>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Build, Buy, or Borrow</div>
+  <div class="screen-body">Every capability your organization needs comes from one of three sources. Deliberate VPs make this decision explicitly — not by default.</div>
+  <div class="card-grid">
+    <div class="framework-card">
+      <div class="framework-num">1</div>
+      <div class="framework-content">
+        <div class="framework-title">Build — Develop Internally</div>
+        <div class="framework-desc">Invest in developing the capability in Team Members you already have. Slower to deploy, higher retention payoff, builds organizational knowledge. Best for capabilities that require deep cultural context.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">2</div>
+      <div class="framework-content">
+        <div class="framework-title">Buy — Bring from Outside</div>
+        <div class="framework-desc">Hire externally for capability the org doesn't have internally. Faster to capability, higher short-term cost, cultural integration risk. Best for capabilities with a steep development curve or specialized expertise.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">3</div>
+      <div class="framework-content">
+        <div class="framework-title">Borrow — Access Through Partnership</div>
+        <div class="framework-desc">Use contractors, consultants, or cross-functional borrowing to access capability without building or buying it. Best for capabilities needed temporarily or episodically.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Talent Framework</div>
+  <div class="screen-title">Five Talent Decisions VPs Own</div>
+  <div class="screen-body">These five decisions determine whether your organization has the human capability your strategy requires. Most VPs actively manage two or three of them. The best manage all five.</div>
+  <div class="card-grid">
+    <div class="framework-card">
+      <div class="framework-num">1</div>
+      <div class="framework-content">
+        <div class="framework-title">Role Criticality</div>
+        <div class="framework-desc">Which roles most immediately damage strategy if poorly filled? Not every role is equally critical — knowing which ones are lets you invest protection and development resources accurately.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">2</div>
+      <div class="framework-content">
+        <div class="framework-title">Portfolio Composition</div>
+        <div class="framework-desc">What's the performer mix and is it sustainable? An org with all high performers is rare — but one with too many under-performers in critical roles is fragile. Know your composition and manage it deliberately.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">3</div>
+      <div class="framework-content">
+        <div class="framework-title">Development Investment Allocation</div>
+        <div class="framework-desc">Where is development investment going — and is it deliberate? Investment that follows whoever asks loudest is not a talent strategy. Investment allocated to highest-return opportunities is.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">4</div>
+      <div class="framework-content">
+        <div class="framework-title">Inflow Quality</div>
+        <div class="framework-desc">Is the hiring and promotion standard consistent with strategy requirements? Inconsistent standards at the inflow create structural talent problems that take years to work out.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">5</div>
+      <div class="framework-content">
+        <div class="framework-title">Exit Management</div>
+        <div class="framework-desc">When someone is wrong for a role, how quickly does action follow recognition? Slow exits are a culture tax — they signal that performance standards are optional and drain the engagement of Team Members who are performing.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4: Foundation -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Hidden Cost of Slow Exits</div>
+  <div class="screen-body">VPs often underestimate the organizational cost of keeping someone in a role they're wrong for. The cost is not just their underperformance — it's what their presence does to everyone around them.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>What Slow Exits Actually Cost</h4>
+      <ul>
+        <li>High performers disengage when standards aren't enforced</li>
+        <li>The team adapts around the gap — building in inefficiency</li>
+        <li>The person stays longer than is good for them or the org</li>
+        <li>Leadership credibility erodes</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>What Fast, Humane Exits Produce</h4>
+      <ul>
+        <li>Clarity that performance standards are real</li>
+        <li>Energy freed from managing around the gap</li>
+        <li>An opening to bring in someone who can succeed</li>
+        <li>Leadership credibility with the people who are performing</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al"><strong>The insight:</strong> Delay isn't kindness. The VP who moves slowly on a wrong-role situation isn't being generous — they're being avoidant. The most compassionate action is often the most direct one.</div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Talent Framework</div>
+  <div class="screen-title">Promoting on Performance, Not Potential</div>
+  <div class="screen-body">Your organization has a pattern of promoting the highest-performing individual contributors into leadership roles. Several of these promotions have not worked out — the individuals were excellent in their prior roles but are struggling to lead. How do you address this?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Accept it as an inherent challenge — the best individual contributors are always the logical promotion candidates.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Change the promotion standard to assess leadership potential explicitly — separate from current performance — and build that distinction into how promotions are evaluated.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Create more robust manager training to compensate for selecting on performance rather than potential.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Hire externally for leadership roles to break the pattern of internal promotions that haven't worked.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Talent Framework</div>
+  <div class="screen-title">The Long-Tenured Leader Who's No Longer Right</div>
+  <div class="screen-body">A long-tenured, well-liked leader in your organization is no longer the right person for their role. The strategy has shifted, their skill set hasn't, and their team's results are declining. What's your approach?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Give them another year and monitor closely — tenure deserves patience.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Have a direct, honest conversation about the gap between what the role now requires and what they bring, and together evaluate whether there's a path to close it or a different role that fits better.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Restructure around them — change the role scope to fit their capabilities.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Build the business case for a transition and present it to HR without speaking with the leader first.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Investing in Someone Others Have Written Off</div>
+  <div class="screen-body">A Team Member in your org has been labeled "not a fit" by their manager after struggling for two quarters. You've observed them in a few situations and see leadership potential that isn't showing up in their current role. What do you do?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Defer to the manager's assessment — they have the most direct visibility.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Have a direct conversation with the manager: share what you've observed, explore whether there's a role fit issue vs. a capability issue, and discuss what a deliberate development investment could test.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Move the Team Member to your direct oversight so you can develop them without the manager's frame.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Say nothing — intervening in a manager's assessment would undermine their authority.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Building Capability for a Shift 18 Months Out</div>
+  <div class="screen-body">Your organization's strategy is shifting significantly in 18 months — requiring a capability your current team doesn't have. The shift isn't public yet. What's your talent strategy approach?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Wait until the strategy is public before making talent investments — premature moves create confusion.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Begin making build, buy, or borrow decisions now — identify who could develop toward the needed capability and start investing, even if the broader strategy announcement is months away.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Plan to hire externally at the time of the shift — it's the fastest path to the capability when you need it.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Build the capability case for the executive team to fund a new headcount plan before making any investments.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Critical Role, Wrong Person</div>
+  <div class="screen-body">A role critical to your strategy execution has been filled for 8 months by someone who is genuinely trying but clearly not performing at the level the role requires. The organization has adapted around them — which is creating its own inefficiency. What's your move?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Give them another quarter — 8 months isn't enough time to fully assess fit in a difficult role.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Act on what you know: have the honest conversation, name the gap clearly, determine whether there is a realistic path to the performance the role requires, and if not, begin the transition process.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Restructure the role to reduce its scope to a level they can perform at.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Add a support layer — hire someone junior under them to compensate for the performance gap without changing the leader.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — VP-level talent strategy is primarily focused on managing the bottom of the performance distribution.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — In the Talent Framework, which decision is most directly about ensuring the hiring and promotion bar matches what the strategy requires?</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Role Criticality</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — Portfolio Composition</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Inflow Quality</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — Exit Management</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — Keeping someone in a wrong-role situation longer than necessary is often a form of organizational kindness.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — Development investment allocated to whoever asks loudest is best described as:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — A fair, decentralized approach to talent development</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — An unintentional talent strategy driven by advocacy rather than need</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — An effective way to identify high-potential Team Members</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — An appropriate VP-level delegation of development decisions</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — "Borrowing" capability in the build-buy-borrow framework refers to:</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Taking Team Members on temporary assignment from another department</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — Accessing capability through contractors, consultants, or cross-functional partnerships without building or hiring for it permanently</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — Using internal mentorship to transfer skills from senior to junior Team Members</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — Sourcing talent from competitor organizations</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Talent strategy is only as good as the decisions it produces. Use these prompts to apply the five talent decisions to your current organization.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Map your top 5 most critical roles — who's in each, how strong are they, and what's the succession? Where are you most at risk?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Role by role assessment…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What capability does your strategy require in 18 months that you don't fully have today? What's your build-buy-borrow decision?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="The capability gap and your approach…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Where is development investment going in your org right now? Is it deliberate — or does it follow whoever asks loudest?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Your honest assessment of investment allocation…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. Is there a talent decision you've been avoiding? Name it and name what's stopping you from acting.</div>
+    <textarea class="apply-input" id="apply-3" placeholder="The decision and the barrier…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. One development investment you've been delaying — what would it take to act on it in the next 30 days?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="The investment and your first step…" oninput="saveApply(4)"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">💡</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Talent Strategy. The VPs who build organizations that outlast them treat human capability as a strategic resource — not a headcount problem.</div>
+  </div>
+  <div class="commitments">
+    <h4>Five commitments of VPs with real talent strategies:</h4>
+    <div class="commit-item">Identify the 5 most critical roles in your org and assess current strength in each — this quarter.</div>
+    <div class="commit-item">Make one talent decision you've been avoiding. Act on what you already know.</div>
+    <div class="commit-item">Allocate development investment deliberately — not to whoever asks loudest.</div>
+    <div class="commit-item">Build capability before you need it — make at least one forward investment this quarter.</div>
+    <div class="commit-item">Name a wrong-role situation and take action. Delay isn't kindness — it's avoidance.</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Complete Course →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {name:'Foundation', end:5},
+  {name:'The Talent Framework', end:7},
+  {name:'Practice', end:10},
+  {name:'Pulse Check', end:15},
+  {name:'Apply It', end:16},
+  {name:'Complete', end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> The pattern will continue until the inflow standard changes. Manager training (C) compensates for a flawed selection process rather than fixing it. The VP move is to change what the organization looks for in a promotion candidate — adding explicit assessment of leadership potential separate from current individual contributor performance.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Long tenure deserves direct honesty, not extended patience that delays an inevitable and often overdue conversation. The most respectful thing you can do is have the honest conversation — what the role requires, where the gap is, whether there\'s a path to close it or a better fit somewhere. Waiting another year is not generosity; it\'s avoidance.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> A VP\'s responsibility includes seeing talent that a single manager\'s frame might miss. The right intervention is with the manager — not around them. "I\'ve observed something different" opens a conversation that respects the manager\'s authority while expanding the assessment. Moving the person directly (C) would undermine the management relationship.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Talent strategy is proactive by definition. The VP who waits until the strategy is public to begin building capability will always be behind. Beginning to develop or identify internal candidates, or making a quiet external hire before the announcement, means the capability is there when the strategy launches — not six months after.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> The organization has already adapted around the gap — which means the true cost of delay is already being paid. Eight months is sufficient time to assess fit in most roles. Acting on what you know — with directness and care for the person — is the VP move. Structural workarounds (C, D) preserve a problem while hiding it.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> VP-level talent strategy is about the full portfolio — especially the middle of the distribution, which is where the most leverage lives and where talent risk is often invisible. Bottom-of-distribution management is important but it\'s threshold work, not strategy. Strategic talent thinking asks what capability the org needs to build — and invests accordingly.' },
+  11: { correct:'C', feedback:'<strong>C is right.</strong> Inflow Quality is the talent decision focused on the standard applied when people enter roles — through hiring or promotion. Inconsistent inflow standards create structural capability problems that take years to resolve. Setting and enforcing a clear standard at the point of entry is one of the highest-leverage talent moves a VP can make.' },
+  12: { correct:'B', feedback:'<strong>False.</strong> Delay in a wrong-role situation is avoidance, not kindness. The longer someone stays in a role where they\'re failing, the more organizational damage accumulates — to their confidence, to the team that adapts around them, and to the leadership credibility that tolerates it. The most compassionate action is often the most direct one.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> Development investment that follows the loudest voices is an unintentional talent strategy — it optimizes for advocacy skill, not strategic return. The result is systematic underdevelopment of Team Members who are less visible or less assertive. Deliberate investment allocation asks: where does development investment produce the highest strategic return?' },
+  14: { correct:'B', feedback:'<strong>B is right.</strong> Borrowing in the build-buy-borrow framework means accessing capability through external partners — contractors, consultants, or cross-functional arrangements — without permanently building or hiring for it. Best used for capabilities needed episodically or for a defined period rather than on an ongoing basis.' }
+};
+
+const KEY = 'course_vp_talent_strategy_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

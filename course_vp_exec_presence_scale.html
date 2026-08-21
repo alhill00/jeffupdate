@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive Presence at Scale | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{--accent:#000633;--accent-light:#eef2ff;--dark:#000633;--white:#fff;--muted:#6b7280;--border:#e5e7eb;--card:#fff;--warn:#fff3cd;--warn-border:#ffc107;--good:#eef2ff;--good-border:#000633;--bad:#ffe4e6;--bad-border:#f43f5e;}
+.course-header{background:linear-gradient(135deg,#000633 0%,#000d4d 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:#174DFF;border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:var(--dark);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:#174DFF;color:var(--white);border-color:#174DFF;}
+.sec-pill.done{background:rgba(23,77,255,.15);color:rgba(255,255,255,.75);border-color:rgba(23,77,255,.3);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid #174DFF;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.channel-grid{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.ch-card{background:var(--dark);border-radius:10px;padding:18px 20px;}
+.ch-num{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.ch-name{font-size:17px;font-weight:800;color:var(--white);margin-bottom:6px;}
+.ch-desc{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){background:#f8f9ff;border-color:#000633;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){background:#f8f9ff;border-color:#000633;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:#000633;}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:#000633;color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#174DFF;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:#000633;color:#000633;}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:#000633;color:var(--white);}
+.btn-next:hover:not(:disabled){background:#174DFF;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.35);}
+.nav-dot.active-dot{background:#000633;}
+@media(max-width:600px){.two-col{grid-template-columns:1fr;}.course-main{padding:20px 14px;}.section-nav{padding:10px 14px;}.progress-wrap{padding:12px 14px;}}
+</style>
+</head>
+<body>
+<div class="course-header">
+  <div class="course-meta">VP Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Executive Presence at Scale</div>
+  <div class="course-sub">Projecting leadership to people who've never met you — through systems, symbols, and story.</div>
+</div>
+<div class="progress-wrap">
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progress-bar" style="width:0%"></div></div>
+  <div class="progress-label" id="progress-label">0 of 16</div>
+</div>
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Scale Model</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+<div class="course-main">
+
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Presence You Can't Be In the Room For</div>
+  <div class="screen-body">At VP level, presence operates at a scale where most of the people you influence have never been in a room with you. They know you through the decisions made in your name, the stories that circulate about how you responded to something, the behaviors that your leadership makes visible and rewarded.</div>
+  <div class="screen-body">This is a fundamentally different problem than the presence challenge at manager or director level, where presence is personal — built in 1:1s, team meetings, and corridor conversations. At VP scale, the people three levels down in your organization form an impression of you almost entirely through indirect signals.</div>
+  <div class="hl"><strong>The VP presence question isn't "How do I show up in this room?"</strong> It's "What is the experience of my leadership for people who have never met me — and am I designing that intentionally?"</div>
+</div>
+
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Presence of Absence</div>
+  <div class="screen-body">What you don't do communicates as clearly as what you do. When a VP is absent from a significant moment — a major operational challenge, a team milestone, a difficult conversation that needed senior presence — the org reads meaning into it.</div>
+  <div class="two-col">
+    <div class="col-card accent-left">
+      <h4>Absence That Signals Investment</h4>
+      <ul>
+        <li>Unexpected visit to a front-line team</li>
+        <li>Showing up to a manager's meeting without being invited</li>
+        <li>Being physically present during a difficult operational period</li>
+        <li>Joining a team debrief after a major effort</li>
+      </ul>
+    </div>
+    <div class="col-card" style="border-left:4px solid #f43f5e;">
+      <h4>Absence That Signals Disengagement</h4>
+      <ul>
+        <li>Missing a significant team milestone</li>
+        <li>Never appearing at operational levels</li>
+        <li>Only visible in formal review settings</li>
+        <li>Not responding to Team Member challenges that escalated</li>
+      </ul>
+    </div>
+  </div>
+  <div class="screen-body" style="font-size:14px;color:var(--muted);">Presence investment is a calendar decision first. What you put time toward is the presence signal your org reads most clearly.</div>
+</div>
+
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three Shifts in VP Presence</div>
+  <div class="screen-body">Presence at VP level requires three fundamental shifts from how presence was built at manager or director level.</div>
+  <div class="two-col">
+    <div class="col-card accent-left">
+      <h4>From → To</h4>
+      <ul>
+        <li>Informing your team → Building organizational narrative</li>
+        <li>Direct relationships → Transmitted through managers</li>
+        <li>Reactive to opportunities → Proactive and designed</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>What Silence Costs at Scale</h4>
+      <ul>
+        <li>Vacuums fill with worst-case interpretation</li>
+        <li>Managers improvise direction without context</li>
+        <li>Team Members conclude leadership doesn't know or doesn't care</li>
+        <li>Trust erodes without a single incident to point to</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al"><strong>The cost of VP silence is not zero.</strong> In the absence of VP signal, organizations build their own narrative — usually more anxious and less accurate than reality.</div>
+</div>
+
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Scale Model</div>
+  <div class="screen-title">Four VP Presence Channels</div>
+  <div class="screen-body">At scale, VP presence operates through four channels — most of them indirect. Mastering all four is what makes a VP felt organization-wide.</div>
+  <div class="channel-grid">
+    <div class="ch-card">
+      <div class="ch-num">Channel 1</div>
+      <div class="ch-name">Message Architecture</div>
+      <div class="ch-desc">3–5 themes repeated consistently across every setting, every quarter. The org learns what you stand for through repetition, not announcements. If you can't name your 3 themes, neither can your Team Members.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-num">Channel 2</div>
+      <div class="ch-name">Symbol Investment</div>
+      <div class="ch-desc">What you visibly invest in — time, attention, personal presence, budget — communicates your real priorities more credibly than any stated priority. Your calendar is your presence map.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-num">Channel 3</div>
+      <div class="ch-name">Manager Translation</div>
+      <div class="ch-desc">Your managers are your presence in 90% of conversations. If they can't articulate your intent, priorities, and direction — you are absent in those conversations even when you think you've communicated clearly.</div>
+    </div>
+    <div class="ch-card">
+      <div class="ch-num">Channel 4</div>
+      <div class="ch-name">Narrative Control</div>
+      <div class="ch-desc">The stories told about you at scale — how you responded to a failure, who you recognized and why, what you did during a hard moment — are your presence for people who weren't there. Are they transmitting what you want?</div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">VP Communication Architecture</div>
+  <div class="screen-body">Presence at scale requires a communication architecture — not just good communication. The difference is intentionality and system.</div>
+  <div class="two-col">
+    <div class="col-card accent-left">
+      <h4>Architecture Elements</h4>
+      <ul>
+        <li>Consistent core message (3–5 themes)</li>
+        <li>Predictable cadence (monthly, quarterly)</li>
+        <li>Multiple channels (all-hands, written, 1:1, skip-levels)</li>
+        <li>Bidirectional loop (input comes back up)</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Bidirectional Mechanisms</h4>
+      <ul>
+        <li>Skip-level conversations</li>
+        <li>Pulse surveys with VP read-out</li>
+        <li>Open Q&amp;A sessions</li>
+        <li>Trusted interpreters (honest insiders)</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hl"><strong>The trusted interpreter:</strong> Every VP needs 2–3 people in the org who will tell them what people are actually saying — not what they think the VP wants to hear. Without this, presence becomes one-directional and loses contact with reality.</div>
+</div>
+
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Scale Model</div>
+  <div class="screen-title">Presence Being Misrepresented Two Levels Down</div>
+  <div class="screen-body">You discover through a skip-level conversation that your intent on a significant initiative is being communicated incorrectly by your director layer. Team Members two and three levels down believe you're pushing the initiative for political reasons, not the strategic rationale you've articulated. The misrepresentation is creating resistance.</div>
+  <div class="screen-body">What's your primary move?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Send an all-hands communication that restates the rationale directly — go around the management layer to the whole org.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Invest in your director layer's understanding of the real rationale first — equip them to translate correctly before adding another direct communication.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Hold a skip-level session to address the misrepresentation directly with the affected Team Members.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Identify which director is misrepresenting the message and correct them privately.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Scale Model</div>
+  <div class="screen-title">When the Org's Understanding Doesn't Match Your Intent</div>
+  <div class="screen-body">You conduct skip-level conversations and discover that Team Members at multiple levels describe your top priority as "efficiency and cost control" — when your stated and genuine priority has been "Guest experience and service quality." They're citing your recent decisions as evidence. The misalignment is significant.</div>
+  <div class="screen-body">What does this tell you, and what's the right response?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>The message has been distorted by the management layer — correct the communication at the director level so the right message gets through.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>The org is reading your decisions more accurately than your stated priorities. Audit the decisions you've actually made and what they signal — then align your stated and revealed priorities, or change the decisions.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Increase the volume of communication about Guest experience — more repetition of the stated priority will correct the perception.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Acknowledge the perception gap in an all-hands and reaffirm the Guest experience priority clearly.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Using Your Calendar as a Presence Signal</div>
+  <div class="screen-body">You've said publicly that Team Member development is a top priority for your organization. A review of your calendar from the last quarter shows: 0 hours on development conversations with Team Members below director level, 0 attendance at development programs, and 22 hours in budget review meetings. An opportunity arrives to attend a two-hour leadership development session your team is running.</div>
+  <div class="screen-body">What's the right VP move?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Attend and participate visibly — your presence sends a signal that no memo can replicate. Protect this time explicitly.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Send a note of support but don't attend — your time is best protected for strategic priorities and the team runs these well without you.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Attend briefly to open with remarks, then leave — this balances presence signal with time efficiency.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Ask your HRBP to represent you at the session and share your perspective on development priorities.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Communicating Complex Message Through the Management Layer</div>
+  <div class="screen-body">You need to communicate a nuanced message about an organizational priority shift that requires context to land correctly — if communicated clumsily, it will create anxiety. You're choosing between sending the message directly to all Team Members or routing through your director layer. What's the right architecture?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Send directly to all Team Members — directness builds trust and ensures no distortion in the management layer.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Brief directors first so they understand the full context and can answer questions — then send the direct communication knowing they can support it accurately.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Route only through directors — they know their teams best and can tailor the message appropriately.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Wait until the priority is fully finalized before communicating — partial communication creates more uncertainty than silence.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When to Go Direct vs. Through the Chain</div>
+  <div class="screen-body">A significant Guest-impacting operational issue has emerged. Your Team Members are experiencing it directly and are watching how the organization responds. You have a choice: address the situation through your director layer (who will cascade the response) or go direct to the affected Team Members with a VP-level message.</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Always route through the chain — VP communication that bypasses directors undermines management authority and creates confusion about hierarchy.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>In high-visibility moments where Team Members need to know leadership sees them and the situation, go direct — and brief directors simultaneously so they're not caught off guard.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Go direct only if you know the director layer will take too long — otherwise respect the chain.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Send the message through directors but ask them to attribute it to you by name so Team Members know VP leadership is engaged.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — At VP level, most of the people you influence have met you personally and form their impression through direct interaction.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Message architecture at VP scale means having 3–5 consistent themes that are repeated across every channel and setting throughout the quarter.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — Symbol investment as a VP presence channel refers to:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — The branded materials and visual identity used in VP communications</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — What the VP visibly invests in — time, personal presence, attention — which signals real priorities</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Formal awards and recognition programs run by the VP</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — Budget allocation decisions made by the VP's finance team</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — "Manager translation" as a VP presence channel means that your managers represent your presence in most Team Member conversations — and if they can't articulate your intent, you are effectively absent.</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — When there is a gap between what the VP says their priority is and what the org believes the priority to be, the most likely explanation is:</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — The management layer is misrepresenting the VP's message</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — The VP's actual decisions are revealing a different priority than the stated one</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — Team Members aren't reading communications carefully enough</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — The priority hasn't been communicated frequently enough to land</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Design Your Presence at Scale</div>
+  <div class="screen-body">Use the four presence channels to assess and improve how your leadership is experienced by people who may never meet you directly.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. Message Architecture: What are your 3–5 consistent themes? Would a Team Member three levels down be able to name them?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Name your themes and assess how consistently you repeat them…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. Symbol Investment: What does your calendar from the last 90 days say about your priorities? Does it match what you say matters most?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Describe the gap between stated and revealed priorities…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Manager Translation: Can your directors accurately articulate your top 3 priorities and your rationale? What would you need to do to improve that fidelity?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Assess translation quality and describe one action to improve it…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. Narrative Control: What story is being told about you in the org right now — in the conversations you're not in? Does it transmit the values you want?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Describe what you believe the narrative is and what you'd want it to be…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. What unexpected presence investment will you make this month — showing up somewhere you're not expected, in a way that sends a clear signal about what you value?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Describe the investment and what signal you intend it to send…" oninput="saveApply(4)"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">📡</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Executive Presence at Scale. The VPs who lead effectively at scale don't try to be everywhere — they design the channels through which their leadership is felt everywhere.</div>
+  </div>
+  <div class="commitments">
+    <h4>Your executive presence at scale commitments:</h4>
+    <div class="commit-item">Establish 3–5 consistent message themes and repeat them deliberately this quarter across every channel</div>
+    <div class="commit-item">Make one unexpected presence investment this month — show up where you're not expected, send the signal</div>
+    <div class="commit-item">Invest in your director layer's ability to represent your intent accurately — equip them before announcements</div>
+    <div class="commit-item">Audit your calendar against your stated priorities — align what you invest in with what you say matters</div>
+    <div class="commit-item">Establish at least one trusted interpreter who will tell you what the org actually thinks</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+<script>
+const TOTAL=17;
+const SECTIONS=[{label:'Foundation',end:5},{label:'The Scale Model',end:7},{label:'Practice',end:10},{label:'Pulse Check',end:15},{label:'Apply It',end:16},{label:'Complete',end:17}];
+const SECTION_MAP=[0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SCENARIO_ANSWERS={
+  5:{correct:'B',feedback:'<strong>B is right.</strong> Director layer capability is the root cause. Going directly to the full org (A) without equipping directors first creates a contradiction — the VP sends one message while directors continue to transmit a different one. A skip-level (C) addresses a symptom, not the system. Correcting one director privately (D) doesn\'t build the layer\'s overall translation capability.'},
+  6:{correct:'B',feedback:'<strong>B is right.</strong> When the org\'s reading of your decisions contradicts your stated priorities, the decisions are almost always the more credible signal. This is not a communication failure — it\'s a priority alignment failure. More communication of the stated priority (C) without changing decisions will erode trust as the gap becomes more visible, not less.'},
+  7:{correct:'A',feedback:'<strong>A is right.</strong> Symbol investment means your presence sends what words cannot. A VP attending a development session for two hours — with 22 hours of budget reviews in the same quarter — sends an unmistakable signal about what you actually value. A support note (B) says the right thing. Showing up says the truer thing. Brief attendance with departure (C) is better than absence but still primarily signals competing demands.'},
+  8:{correct:'B',feedback:'<strong>B is right.</strong> The optimal architecture for nuanced communication is: brief directors first to build their understanding and ability to field questions, then send direct VP communication so Team Members hear from you directly and directors can support it accurately. Director-only routing (C) risks distortion. Direct-only routing (A) leaves directors unable to support the message. Silence until finalization (D) extends the vacuum.'},
+  9:{correct:'B',feedback:'<strong>B is right.</strong> In high-visibility moments, VP presence going direct — while briefing directors simultaneously — is the right call. Team Members in a difficult operational moment need to know leadership sees them. Routing only through the chain (A) in these moments signals disengagement at the moment engagement matters most. Attribution by name through directors (D) is not the same as direct VP communication in impact.'}
+};
+const PULSE_ANSWERS={
+  10:{correct:'B',feedback:'<strong>False.</strong> At VP scale, most people you influence have never been in a room with you. They experience you through decisions made in your name, stories about how you responded to situations, and what gets rewarded under your leadership. This is the defining presence challenge at VP level.'},
+  11:{correct:'A',feedback:'<strong>True.</strong> Message architecture is about consistency and repetition — not variety. 3–5 themes, repeated in every all-hands, every written communication, every key conversation. If your org can\'t name your themes, you don\'t have themes — you have topics.'},
+  12:{correct:'B',feedback:'<strong>B is right.</strong> Symbol investment is about what you visibly invest in — your time, your physical presence, your attention. These signals communicate your real priorities more credibly than any stated priority. The org watches what you do, not what you say.'},
+  13:{correct:'A',feedback:'<strong>True.</strong> Manager translation is the VP\'s most important presence leverage at scale. If your managers can\'t accurately represent your priorities, intent, and direction, you are effectively absent from 90% of the conversations where your presence matters.'},
+  14:{correct:'B',feedback:'<strong>B is right.</strong> Organizations are generally more accurate readers of decisions than words. When the org\'s read of your priorities conflicts with your stated priorities, the decisions are almost always the accurate signal. This requires auditing what your decisions actually reveal — and either aligning the stated priority to match, or changing the decisions.'}
+};
+const KEY='course_vp_exec_presence_v1';
+let state={cur:0,max:0,answered:{},choices:{},apply:{}};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s)state=s;}catch(e){}showScreen(state.cur);buildDots();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+n).classList.add('active');state.cur=n;if(n>state.max)state.max=n;updateProgress();updatePills();updateNav();restoreScreen(n);save();window.scrollTo(0,0);}
+function updateProgress(){const pct=Math.round((state.max/(TOTAL-1))*100);document.getElementById('progress-bar').style.width=pct+'%';document.getElementById('progress-label').textContent=state.max+' of '+(TOTAL-1);}
+function updatePills(){const sec=SECTION_MAP[state.cur];SECTIONS.forEach((s,i)=>{const pill=document.getElementById('pill-'+i);if(!pill)return;pill.className='sec-pill';if(i===sec)pill.classList.add('active');else if(state.max>=s.end)pill.classList.add('done');});}
+function updateNav(){document.getElementById('btn-prev').disabled=state.cur===0;const nextBtn=document.getElementById('btn-next');const needsAnswer=(state.cur in SCENARIO_ANSWERS||state.cur in PULSE_ANSWERS);const answered=state.answered[state.cur];nextBtn.disabled=(state.cur===TOTAL-1)||(needsAnswer&&!answered);nextBtn.textContent=state.cur===TOTAL-2?'Finish →':'Next →';}
+function buildDots(){const wrap=document.getElementById('nav-dots');wrap.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='nav-dot';if(i===state.cur)d.classList.add('active-dot');else if(i<=state.max)d.classList.add('done-dot');wrap.appendChild(d);}}
+function navigate(dir){const next=state.cur+dir;if(next<0||next>=TOTAL)return;showScreen(next);buildDots();}
+function restoreScreen(n){if(n in SCENARIO_ANSWERS&&state.choices[n])restoreScenario(n,state.choices[n]);if(n in PULSE_ANSWERS&&state.choices[n])restorePulse(n,state.choices[n]);if(n===15)restoreApply();}
+function pickOpt(screenIdx,chosen){if(state.answered[screenIdx])return;state.answered[screenIdx]=true;state.choices[screenIdx]=chosen;save();restoreScenario(screenIdx,chosen);updateNav();}
+function restoreScenario(screenIdx,chosen){const answer=SCENARIO_ANSWERS[screenIdx];const container=document.getElementById('opts-'+screenIdx);if(!container)return;container.querySelectorAll('.opt').forEach(opt=>{const letter=opt.querySelector('.opt-letter').textContent;opt.classList.add('locked');if(letter===answer.correct)opt.classList.add('correct');else if(letter===chosen)opt.classList.add('wrong');else opt.classList.add('dimmed');});const fb=document.getElementById('fb-'+screenIdx);if(fb){fb.innerHTML=answer.feedback;fb.className='feedback-box show'+(chosen!==answer.correct?' wrong-fb':'');}}
+function pickPulse(screenIdx,chosen){if(state.answered[screenIdx])return;state.answered[screenIdx]=true;state.choices[screenIdx]=chosen;save();restorePulse(screenIdx,chosen);updateNav();}
+function restorePulse(screenIdx,chosen){const answer=PULSE_ANSWERS[screenIdx];const container=document.getElementById('pulse-'+screenIdx);if(!container)return;const opts=container.querySelectorAll('.pulse-opt');opts.forEach((opt,i)=>{const letter=String.fromCharCode(65+i);opt.classList.add('locked');if(letter===answer.correct)opt.classList.add('correct');else if(letter===chosen)opt.classList.add('wrong');else opt.classList.add('dimmed');});const fb=document.getElementById('pfb-'+screenIdx);if(fb){fb.innerHTML=answer.feedback;fb.className='feedback-box show'+(chosen!==answer.correct?' wrong-fb':'');}}
+function saveApply(idx){const el=document.getElementById('apply-'+idx);if(!el)return;state.apply[idx]=el.value;save();const saved=document.getElementById('saved-'+idx);if(saved){saved.style.display='block';setTimeout(()=>saved.style.display='none',1500);}}
+function restoreApply(){for(let i=0;i<=4;i++){const el=document.getElementById('apply-'+i);if(el&&state.apply[i])el.value=state.apply[i];}}
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sustainable Leadership | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f5f7ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#174DFF;
+  --accent-light:#e0e8ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#e0e8ff;
+  --good-border:#174DFF;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#000633 0%,#0d1f6e 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(23,77,255,.25);color:rgba(255,255,255,.8);border-color:rgba(23,77,255,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.cycle-grid{display:flex;flex-direction:column;gap:10px;margin:18px 0;}
+.cycle-row{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px 18px;display:flex;gap:14px;align-items:flex-start;}
+.cycle-icon{font-size:22px;flex-shrink:0;min-width:32px;}
+.cycle-content{flex:1;}
+.cycle-title{font-size:14px;font-weight:700;margin-bottom:4px;}
+.cycle-row.drain .cycle-title{color:#dc2626;}
+.cycle-row.restore .cycle-title{color:var(--accent);}
+.cycle-items{display:flex;flex-direction:column;gap:4px;}
+.cycle-item{font-size:13px;color:#374151;padding-left:12px;position:relative;line-height:1.4;}
+.cycle-item::before{content:'→';position:absolute;left:0;font-weight:700;color:var(--muted);}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f0f4ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#0d3acc;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#0d3acc;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Manager Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Sustainable Leadership</div>
+  <div class="course-sub">How to lead consistently without burning out — or burning your team out.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Drain Cycle</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Manager Who Burned Bright</div>
+  <div class="screen-body">He was a high performer. First in, last out. Responded to messages at 10pm. Set the tone: if you care about this work, you show up like I do. His team matched the energy — for a while. They answered messages on weekends. They worked through their PTO. They admired his commitment.</div>
+  <div class="screen-body">Then his best people started leaving. The ones who stayed were exhausted. He'd built a culture of heroics — and when the heroes ran out of fuel, the team collapsed. He thought he was modeling excellence. He was actually modeling unsustainability.</div>
+  <div class="hl"><strong>"Sustainable" isn't about working less.</strong> It's about managing energy — not just time — and modeling a pace your team can actually maintain over years, not weeks.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What Leaders Model, Teams Absorb</div>
+  <div class="screen-body">You set the culture of work by what you do — not what you say. If you answer Slack messages at 11pm, your team learns that 11pm messages are expected. If you skip lunch to power through, you signal that skipping lunch is dedication. If you praise overtime, you are programming overtime as the standard.</div>
+  <div class="screen-body">This isn't about individual choices. It's about what you're communicating — intentionally or not — every single day. Your behavior is a policy signal for your entire team.</div>
+  <div class="al"><strong>The most dangerous unsustainable leaders</strong> aren't the ones who burn themselves out. They're the ones who build teams in their image — and then wonder why turnover is high and engagement is low.</div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Energy Management, Not Time Management</div>
+  <div class="screen-body">Time is fixed — 24 hours, same for everyone. Energy is renewable — but only if you manage it. The difference between sustainable and unsustainable leaders isn't how many hours they work. It's whether they protect the conditions that let them perform well over time.</div>
+  <div class="screen-body">Context-switching drains energy faster than volume. Reactive mode drains faster than proactive mode. Saying yes to everything drains faster than saying no with context. The goal isn't to do less — it's to operate from a full tank more often.</div>
+  <div class="hl"><strong>A depleted leader makes worse decisions, gives worse feedback, and models worse behavior</strong> — regardless of how many hours they're logging. Energy is the real performance variable.</div>
+</div>
+
+<!-- SCREEN 3 -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Drain Cycle</div>
+  <div class="screen-title">The Drain-Restore Cycle</div>
+  <div class="screen-body">Sustainable leadership means understanding what drains your energy — and what restores it — and managing both deliberately. Leaders who stay in drain mode eventually burn out or burn out their teams.</div>
+  <div class="cycle-grid">
+    <div class="cycle-row drain">
+      <div class="cycle-icon">🔻</div>
+      <div class="cycle-content">
+        <div class="cycle-title">Drain Mode</div>
+        <div class="cycle-items">
+          <div class="cycle-item">Always reactive — responding to whatever comes in</div>
+          <div class="cycle-item">Constant context-switching with no recovery</div>
+          <div class="cycle-item">Always available — no boundaries on time or communication</div>
+          <div class="cycle-item">Saying yes to everything, building resentment</div>
+          <div class="cycle-item">Praising heroics and overtime as dedication</div>
+        </div>
+      </div>
+    </div>
+    <div class="cycle-row restore">
+      <div class="cycle-icon">🔋</div>
+      <div class="cycle-content">
+        <div class="cycle-title">Restore Mode</div>
+        <div class="cycle-items">
+          <div class="cycle-item">Protected deep work blocks — proactive, not reactive</div>
+          <div class="cycle-item">Deliberate transitions between tasks and contexts</div>
+          <div class="cycle-item">Defined availability — clear off-hours by practice, not policy</div>
+          <div class="cycle-item">Saying no with context — "not this week" with a reason</div>
+          <div class="cycle-item">Modeling sustainable pace as the visible standard</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hl"><strong>The cycle is a choice — made repeatedly.</strong> Every time you model restore mode, you give your team permission to do the same.</div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Visibility Culture and the Always-On Trap</div>
+  <div class="screen-body">Turning off Slack notifications on weekends isn't a personal preference — it's a policy signal. When you visibly disconnect, you tell your team it's safe to disconnect too. When you visibly stay on, you tell them the opposite — even if you never say a word about it.</div>
+  <div class="screen-body">The "always-on" trap happens when availability becomes the measure of commitment. It's not. Sustainable leaders separate their availability from their accountability. They're accountable for outcomes — not for responding to messages at all hours.</div>
+  <div class="hl"><strong>Model the behavior you want to see.</strong> If you want your team to take real breaks, take real breaks. If you want them to leave on time, leave on time. The most powerful sustainability message you can send is your own calendar.</div>
+</div>
+
+<!-- SCREEN 5 -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Drain Cycle</div>
+  <div class="screen-title">Scenario: Praising Overtime</div>
+  <div class="screen-body">A Team Member sends a message at 9pm on a Friday that she stayed late to finish a project. You're about to reply. What's the right response?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>"Great work — that's the kind of dedication that gets noticed. Team players do what it takes."</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Acknowledge the outcome on Monday — don't respond at 9pm on a Friday, and don't praise the overtime itself.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>"Thanks — make sure you take some time back next week."</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Respond immediately so she knows her work is valued.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6 -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Drain Cycle</div>
+  <div class="screen-title">Scenario: The Stakeholder Push</div>
+  <div class="screen-body">A senior stakeholder asks your team to deliver a project in half the usual time. Your team is already at capacity. You need to respond. What do you do?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Agree — stakeholders should get what they ask for and your team can find a way.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Push back with options: "We can do this timeline if we deprioritize X, or we can do the full version in the normal timeline — which matters more to you?"</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Agree, then ask the team to work extra hours to make it happen — don't burden the stakeholder with your capacity issues.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Decline firmly — your team's sustainability matters more than any one stakeholder request.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7 -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Scenario: The Manager Who Doesn't Protect</div>
+  <div class="screen-body">Your leader keeps adding work to your team's plate without removing anything. Your team is stretched. You have a 1:1 coming up. What's your approach?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Say nothing — managing up is uncomfortable and your leader probably knows best.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Name the capacity issue with specifics: "We've taken on three new priorities in the last month. Here's where we are — I need help triaging what to deprioritize."</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Tell your team to just push through — that's what leadership expects right now.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Filter what you share with your team so they don't get overwhelmed by the pressure from above.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8 -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Scenario: The High-Output Trap</div>
+  <div class="screen-body">Your team has been in "sprint mode" for three months. Results are good. But you notice people are quieter, taking more sick days, and responding more slowly than they used to. What do you do first?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Keep going — results are good and the work still needs to get done.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Name what you're seeing, acknowledge the sprint, and build in a deliberate recovery period before the next push.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Offer one team event to boost morale and keep the current pace going.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Add more structure and accountability — the signals might mean some people are coasting.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9 -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Scenario: The Protected Block</div>
+  <div class="screen-body">You want to protect one hour of deep work each morning for focused planning. But your calendar fills up with meetings from 8am on, and people message you expecting immediate responses. What's the most effective approach?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Try harder to find the time — self-discipline is the answer.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Block it on your calendar visibly, set a response expectation with your team, and hold it consistently — even imperfectly.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Wait until things calm down — right now isn't the right time to protect anything.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Accept that managers don't get deep work time — that's the role.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10 -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — "Sustainable leadership" primarily means working fewer hours and doing less.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11 -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Praising a Team Member for staying late to finish a project reinforces a sustainable team culture.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12 -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — What's the key difference between energy management and time management?</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Time management is about scheduling; energy management is just about sleep and exercise</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Time is fixed and equal for everyone; energy is renewable but must be managed deliberately to protect performance</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Energy management is only relevant for senior leaders with larger workloads</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — They are essentially the same concept applied differently</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13 -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — When a leader visibly turns off notifications on weekends, it functions as a policy signal — not just a personal choice.</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14 -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — A team that consistently sprints at high output for months without a deliberate recovery period will eventually show what symptoms?</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Higher engagement and stronger team cohesion from shared intensity</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — Turnover, disengagement, declining quality, and burnout among the people who stayed</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — Better individual performance as people adapt to higher standards</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — No lasting effects — teams recover naturally when the sprint ends</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15 -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Sustainable leadership is built one deliberate choice at a time. Use these prompts to reflect on your current patterns and identify what needs to change.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. Honestly assess your current sustainability. What's one sign that you or your team might be running unsustainably?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Specific signal or pattern…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What does your team's current pace look like — and how long can they realistically sustain it?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Current pace assessment…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. What's one thing you're doing (or modeling) that is adding to drain rather than restore? What's your plan to change it?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="The behavior and the change…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's one structural change you could make this week to protect your team's energy — a blocked calendar slot, a meeting removed, a "no" to a stakeholder?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Structural change and timing…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved ✓</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. If you could change one behavior of yours that your team watches most closely — what would it be?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="The behavior you'll change…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved ✓</div>
+  </div>
+</div>
+
+<!-- SCREEN 16 -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🔋</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Sustainable Leadership. The leaders who last are the ones who manage energy deliberately — for themselves and for their teams.</div>
+  </div>
+  <div class="commitments">
+    <h4>Your commitments going forward:</h4>
+    <div class="commit-item">Stop praising heroics — praise outcomes and recognize the effort without normalizing overtime.</div>
+    <div class="commit-item">Define and protect one deep work block per week — put it on your calendar and hold it.</div>
+    <div class="commit-item">Have the pace conversation with your leader when your team is at capacity — name it with specifics.</div>
+    <div class="commit-item">Model the behavior you want to see: leave on time, disconnect on weekends, make it visible.</div>
+    <div class="commit-item">After every sprint, build in deliberate recovery before the next push.</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Complete Course →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {label:'Foundation',      start:0, end:5},
+  {label:'The Drain Cycle', start:3, end:7},
+  {label:'Practice',        start:7, end:10},
+  {label:'Pulse Check',     start:10,end:15},
+  {label:'Apply It',        start:15,end:16},
+  {label:'Complete',        start:16,end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Praising overtime — even subtly — sets it as the cultural standard. Responding to a 9pm message at 9pm also signals that 9pm messages are expected. The most sustainable move is to acknowledge the outcome on Monday, during work hours, without highlighting the time it took.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Protecting your team from above is part of the job. Naming the tradeoff and offering options ("we can do this timeline if we drop X") gives the stakeholder real information and keeps you from silently burning your team. Saying no or presenting tradeoffs is not a failure — it\'s effective managing up.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Your leader may not know how full your team\'s plate actually is. Naming it with specifics — "three new priorities in a month" — gives them real information to work with. Filtering that information from your team or pushing through without raising it doesn\'t protect anyone — it just delays the problem and erodes trust.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Teams can sprint, but they need recovery. Naming the pattern, acknowledging the effort, and deliberately building in recovery before the next push is what separates managers who sustain high performance from ones who cycle through burnout. Staying quiet because results are good is how teams fall apart quietly.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Protected time requires structure — not willpower. Blocking it visibly, setting a response expectation (not "I\'ll respond in an hour" but "before noon"), and holding it imperfectly is better than abandoning the practice entirely. The goal is consistency, not perfection.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Sustainable leadership is about managing energy deliberately so you can lead well over time. It\'s not about volume of work — it\'s about operating from a full tank, protecting conditions for good judgment, and modeling a pace your team can maintain without burning out.' },
+  11: { correct:'B', feedback:'<strong>False.</strong> Praising overtime normalizes it. What you recognize becomes the standard. When you praise a Team Member for staying late, you signal to the entire team that staying late is what dedication looks like — even if you never intended that message.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> Time is fixed — 24 hours for everyone, non-renewable. Energy is renewable but must be managed. Two leaders with the same hours but different energy management will perform very differently. The goal of sustainable leadership is to protect the conditions that keep energy high over time.' },
+  13: { correct:'A', feedback:'<strong>True.</strong> Your behavior is a policy signal whether you intend it to be or not. When you visibly disconnect on weekends, you tell your team it\'s safe to do the same. When you stay visibly connected, you tell them the opposite — even if you\'ve never said a word about expectations.' },
+  14: { correct:'B', feedback:'<strong>B is right.</strong> Extended sprints without recovery reliably produce burnout symptoms: turnover (the best people leave first), disengagement, declining quality, and increased absenteeism. High-output periods need deliberate endpoints and recovery — not just "we\'ll slow down when things calm down," which rarely happens on its own.' }
+};
+
+const KEY = 'course_mg_sustainable_leadership_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

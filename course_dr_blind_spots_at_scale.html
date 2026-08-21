@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blind Spots at Scale | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#faf8ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#6D28D9;
+  --accent-light:#ede9fe;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#ede9fe;
+  --good-border:#6D28D9;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#1a0a3d 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(109,40,217,.25);color:rgba(255,255,255,.8);border-color:rgba(109,40,217,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.num-cards{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.num-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;}
+.num-badge{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--white);font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.num-content h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.num-content p{font-size:13.5px;color:#374151;line-height:1.5;}
+.four-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.vis-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px;}
+.vis-card h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.vis-card h4 span{width:24px;height:24px;border-radius:50%;background:var(--accent);color:var(--white);font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.vis-card p{font-size:13px;color:#374151;line-height:1.5;margin-bottom:8px;}
+.vis-card .diag-q{font-size:12px;color:var(--accent);font-style:italic;font-weight:600;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#5b21b6;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#5b21b6;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(109,40,217,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .four-grid{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Director Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Blind Spots at Scale</div>
+  <div class="course-sub">The things you don't see — and how they limit your leadership at the director level.</div>
+</div>
+
+<div class="progress-wrap" style="background:var(--dark);">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+</div>
+
+<div class="section-nav" style="background:var(--dark);">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Visibility Map</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What You Don't See</div>
+  <div class="screen-body">As a director, your decisions affect people you don't see, in conversations you're not in, about problems you don't know exist. The further you get from the front line, the wider the gap between your mental model of how things are going and how they're actually going.</div>
+  <div class="screen-body">Blind spots at scale aren't a character flaw — they're structural. The role itself creates them. Your managers filter what reaches you. Your calendar fills with meetings that keep you at altitude. The people closest to the work often don't speak freely to someone three levels up.</div>
+  <div class="screen-body">The directors who lead best at this level are the ones who know their blind spots exist, actively name them, and build systems to reduce them — not the ones who believe they've overcome them.</div>
+  <div class="hl"><strong>Self-awareness doesn't eliminate blind spots.</strong> It just means you go looking for them deliberately instead of finding out about them the hard way.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three Most Common Director Blind Spots</div>
+  <div class="screen-body">These aren't unique to any one person — they're structural features of operating at director level.</div>
+  <div class="num-cards">
+    <div class="num-card">
+      <div class="num-badge">1</div>
+      <div class="num-content">
+        <h4>Translation Gap</h4>
+        <p>What you say and what reaches the front line are often very different. By the time your message passes through two management layers, the emphasis shifts, the nuance drops, and sometimes the meaning inverts. You think you've communicated clearly. Your Team Members heard something else.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">2</div>
+      <div class="num-content">
+        <h4>Filter Effect</h4>
+        <p>Managers curate what reaches you. They share wins more than problems, escalate issues after they've tried to fix them, and soften concerns when presenting up. The picture you get is consistently more optimistic than reality — not because anyone is lying, but because people protect themselves and you from bad news.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">3</div>
+      <div class="num-content">
+        <h4>Comfort Zone</h4>
+        <p>You pay more attention to functions, topics, and people you're familiar and comfortable with. The team you built, the function you used to lead, the leader who reminds you of yourself — all get more of your attention. What's unfamiliar gets less, even if it's where the risk is.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Why You Stop Getting Honest Feedback</div>
+  <div class="screen-body">Title creates distance. The higher you go, the less honest information reaches you — not because people are dishonest, but because they're risk-averse. Telling a director they're wrong carries a different calculation than telling a peer.</div>
+  <div class="screen-body">This isn't a new problem — it's documented at every level of leadership. But it intensifies at director level because the stakes of being the person who speaks up are now real. Your Team Members and their managers are watching how you respond to challenge, disagreement, and bad news. That response pattern teaches them what's safe.</div>
+  <div class="al"><strong>If nobody ever challenges you in meetings</strong> — not your assumptions, not your recommendations, not your interpretation of data — that's not a sign your judgment is excellent. It's a sign your culture may be suppressing candor.</div>
+  <div class="hl"><strong>The quality of information you receive</strong> is a direct function of the safety people feel sharing it. Building that safety is part of your leadership job.</div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Visibility Map</div>
+  <div class="screen-title">Four Blind Spot Categories</div>
+  <div class="screen-body">Use these four categories to audit where your visibility is strongest — and where the gaps are likely to live.</div>
+  <div class="four-grid">
+    <div class="vis-card">
+      <h4><span>1</span>Team Health</h4>
+      <p>What's not being said. Who's struggling. How engaged people really are. Whether your managers are developing their teams or holding them back.</p>
+      <div class="diag-q">Ask yourself: When did I last hear something that surprised me about how my team is doing?</div>
+    </div>
+    <div class="vis-card">
+      <h4><span>2</span>Org Translation</h4>
+      <p>How your decisions actually land two or three layers down. Whether your messages arrive as intended. What your direction looks like in practice at the front line.</p>
+      <div class="diag-q">Ask yourself: Do I know how my last big decision landed with front-line Team Members?</div>
+    </div>
+    <div class="vis-card">
+      <h4><span>3</span>External Landscape</h4>
+      <p>What's changing in your market, industry, or competitive environment that you haven't been tracking. What peers at other organizations are doing differently.</p>
+      <div class="diag-q">Ask yourself: When did I last actively seek information from outside my function?</div>
+    </div>
+    <div class="vis-card">
+      <h4><span>4</span>Personal Impact</h4>
+      <p>How your own style affects others' behavior. What patterns you have in meetings, under pressure, or when challenged. What people experience when they interact with you — especially under stress.</p>
+      <div class="diag-q">Ask yourself: Who tells me hard truths about how I show up?</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4 -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Three Ways to Reduce Blind Spots</div>
+  <div class="screen-body">You can't eliminate blind spots — but you can build deliberate practices that reduce them and keep them from compounding.</div>
+  <div class="num-cards">
+    <div class="num-card">
+      <div class="num-badge">1</div>
+      <div class="num-content">
+        <h4>Skip-Level Conversations</h4>
+        <p>Regular time with Team Members two levels down, without their manager present. Not to evaluate the manager — to hear what's actually happening. Keep it informal, curious, and pattern-focused. What's working? What's getting in the way? What do you wish leadership understood better?</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">2</div>
+      <div class="num-content">
+        <h4>Deliberate Opposite-Data Seeking</h4>
+        <p>After any conclusion, ask: "What would have to be true for the opposite conclusion to be right?" Then actively look for that evidence. This is the only reliable way to counter confirmation bias — because you're intentionally looking for what contradicts you.</p>
+      </div>
+    </div>
+    <div class="num-card">
+      <div class="num-badge">3</div>
+      <div class="num-content">
+        <h4>A Trusted Feedback Channel</h4>
+        <p>At least one person who tells you hard truths — a peer, a mentor, a direct report you've built that kind of relationship with. This person has to feel genuinely safe being honest, and you have to have demonstrated over time that you receive honesty without punishing it.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Visibility Map</div>
+  <div class="screen-title">When the Summary Wasn't the Story</div>
+  <div class="screen-body">You made a resourcing decision based on a manager's summary of how the team was doing. Three weeks later, during a skip-level conversation with a team member, you learn the team has been struggling significantly — three people quietly job-searching, morale low after a reorg. The manager's summary never mentioned any of this. What do you do?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Confront the manager immediately about withholding information — accurate reporting is a core expectation.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Have a direct conversation with the manager: share what you heard, ask for their perspective, address the gap between what was reported and what's happening — and use it to reset expectations for how they communicate team health upward.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Handle the team health situation directly yourself — go to the team and address their concerns without involving the manager.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Note it as a data point but don't act until you have more corroborating information — one conversation isn't enough to draw conclusions.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Visibility Map</div>
+  <div class="screen-title">The Communication That Didn't Land</div>
+  <div class="screen-body">You announced a structural change six weeks ago — clearly explained, you thought. During a skip-level, a team member tells you that people on the front line still don't understand why the change happened, and some believe it was cost-cutting rather than the strategic rationale you shared. What's your read on this — and what do you do?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>This is a manager communication failure — they should have reinforced your message with their teams. Follow up with managers to close the gap.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>This is both a translation gap and a communication design issue — reinforce the why directly (in writing or in an all-hands), equip managers with talking points, and build in a mechanism to hear whether it's landing this time.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Don't revisit the announcement — reopening the communication will make the change feel less settled. Let it fade and focus on execution.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Survey the team to get a more statistically valid read before responding — one conversation could reflect an outlier perspective.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Running a Skip-Level Without Undermining Your Manager</div>
+  <div class="screen-body">You want to start having quarterly skip-level conversations with Team Members two levels down. One of your managers pushes back: "I appreciate the intent, but it makes my team nervous when leadership talks to them directly — they worry it means something is wrong." How do you respond?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Back off — if it creates discomfort for the manager or the team, the risk outweighs the benefit.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Name the intent clearly, involve the manager in the design, communicate the purpose to the team in advance — and be transparent that this is a standing practice, not an investigation.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Do the skip-levels anyway but don't tell the manager in advance — the value requires honest, unsolicited responses.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Tell the manager this is non-negotiable — skip-levels are a standard director practice and they need to support it.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Your Communication Style Is Being Misread</div>
+  <div class="screen-body">Your most trusted peer pulls you aside after a leadership meeting: "I want to share something as a friend — a few of your managers have mentioned privately that when you ask probing questions in meetings, it reads as skepticism or displeasure, even when you're genuinely curious. People are starting to over-prepare or hedge before they present to you." What's your response?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Thank your peer and take it seriously — this is exactly the kind of information that reduces a personal impact blind spot. Address it directly with your managers.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Appreciate the feedback but note that probing questions are appropriate leadership behavior — people should be prepared to present to their director.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Stop asking probing questions in meetings to avoid the perception — the information isn't worth the impact it's having.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Ask your peer which specific managers said this so you can address it with them directly.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">The Function You've Been Ignoring</div>
+  <div class="screen-body">You manage four functions. Three are in your professional wheelhouse — you led them before and know them well. The fourth is newer to your scope. During an annual review, your CPO mentions that the fourth function has an unusually high number of unresolved issues this quarter, and asks what you're seeing. You realize you haven't spent meaningful time there in months. What do you say — and what do you do?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Acknowledge the gap honestly — you haven't been close enough to that function. Commit to a specific set of actions and a timeline to get better visibility, starting this week.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Attribute the issues to the function's manager — they're responsible for the day-to-day, and these problems should have been escalated sooner.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Describe the issues as situational and commit to monitoring them more closely — you don't want to overstate your level of unfamiliarity with the function.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Ask for time to gather more information before responding — you want to give an accurate picture, not a reactive one.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — Blind spots at director level are primarily a result of poor self-awareness or character flaws.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — The filter effect means your managers are deliberately hiding bad news from you because they're afraid of consequences.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — Skip-level conversations are most useful when:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — You already suspect a manager is underperforming and want evidence</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — They're a standing practice that happens regularly, not just when something is wrong</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — You conduct them without telling the manager so responses are unfiltered</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — They're a replacement for 1:1s with your direct reports</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — "What would have to be true for the opposite conclusion to be right?" is an example of:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Confirmation bias in action</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Deliberate opposite-data seeking — a tool to counter confirmation bias</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — A sign of indecisiveness — strong leaders commit to conclusions</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — A coaching question better suited for team members than directors</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — If nobody ever challenges your recommendations in meetings, the most likely explanation is:</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Your judgment is consistently sound and people trust your direction</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — The culture may be suppressing candor — people have learned that challenge isn't safe</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — Your team is too junior to effectively evaluate your recommendations</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — You're operating at the right altitude — directors shouldn't need to be challenged in routine meetings</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Use the prompts below to audit your own blind spot landscape and identify one concrete action this week.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Which of the four blind spot categories is most active for you right now — and why?</div>
+    <div class="apply-sub">Team Health / Org Translation / External Landscape / Personal Impact</div>
+    <textarea class="apply-input" id="apply-0" placeholder="The most active blind spot category for me is…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. When did you last hear directly from someone two levels down — and what did you learn?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="The last time was… and I learned…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Name a recent decision where you may have had incomplete information — and what you didn't know.</div>
+    <textarea class="apply-input" id="apply-2" placeholder="The decision was… What I may have missed…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. Who is your trusted feedback channel — the person who will tell you a hard truth?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="That person is… or I need to build that relationship with…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. What's one concrete action you'll take this week to reduce a current blind spot?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="This week I will…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🔭</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Blind Spots at Scale. The directors who lead best at this level aren't the ones who have no blind spots — they're the ones who go looking for them deliberately, before they cause damage.</div>
+  </div>
+  <div class="commitments">
+    <h4>Three commitments for reducing blind spots:</h4>
+    <div class="commit-item">Schedule one skip-level per month — make it a standing practice, not a response to a problem</div>
+    <div class="commit-item">Identify your trusted feedback source — and make sure they know it's safe to be honest</div>
+    <div class="commit-item">When you get data, ask what's NOT in it — name the gap as part of your analysis</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation',       end:5},
+  {label:'The Visibility Map',end:7},
+  {label:'Practice',         end:10},
+  {label:'Pulse Check',      end:15},
+  {label:'Apply It',         end:16},
+  {label:'Complete',         end:17}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> The right response isn\'t confrontation (A) or going around the manager (C) — it\'s a direct, non-punitive conversation that surfaces the gap, invites their perspective, and resets the expectation for how team health gets communicated. This protects the skip-level relationship while addressing the filter effect directly.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> A translation gap is a system problem, not just a manager failure. When a message doesn\'t land as intended two layers down, the director owns both the reinforcement and the design of better communication. Blaming managers (A) without also redesigning the communication is incomplete. Avoiding reopening the topic (C) allows a false narrative to harden.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Skip-levels done well are transparent, not covert. When managers and Team Members understand the purpose — building visibility, not evaluating the manager — the anxiety drops. Involving the manager in the design builds trust. Going behind the manager\'s back (C) creates the exact problem you\'re trying to avoid.' },
+  8: { correct:'A', feedback:'<strong>A is right.</strong> This is a Personal Impact blind spot being surfaced through a trusted channel — exactly what you want. The right move is to take it seriously and address it directly. Defending the behavior (B) misses the point: it doesn\'t matter that probing questions are appropriate leadership behavior if the impact is over-preparation and hedging. The impact is what matters.' },
+  9: { correct:'A', feedback:'<strong>A is right.</strong> The honest answer is the right one. Acknowledging the visibility gap, owning it, and committing to a specific plan is more credible than explaining it away or pointing at the manager. Transparency about your own comfort-zone blind spot — and what you\'re doing about it — is a mark of leadership maturity, not weakness.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Blind spots at director level are primarily structural — they\'re built into the role. The altitude, the filter effect, the calendar, the title-driven distance — all create information gaps that even highly self-aware leaders have to actively work against. Self-awareness is necessary but not sufficient.' },
+  11: { correct:'B', feedback:'<strong>False.</strong> The filter effect isn\'t about dishonesty — it\'s about risk-aversion. Managers share wins more than problems, soften concerns when presenting up, and wait to escalate until they\'ve tried to fix things themselves. This is rational human behavior in organizational hierarchies, not intentional deception.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> Skip-levels are most useful as a standing practice — something Team Members expect and don\'t associate with problems or investigations. When they\'re only triggered by concerns (A), they signal that something is wrong. When they\'re covert (C), they damage manager relationships. Regularity and transparency make them safe and valuable.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> "What would have to be true for the opposite conclusion to be right?" is a deliberate practice of seeking disconfirming evidence — the most reliable counter to confirmation bias. It\'s not indecision; it\'s intellectual rigor. It specifically addresses the trap of looking only for data that supports what you already believe.' },
+  14: { correct:'B', feedback:'<strong>B is right.</strong> The absence of challenge in meetings is a signal about psychological safety, not a signal about the quality of your judgment. When people have learned — through observation — that challenging a director carries risk, they stop doing it. That silence is expensive: it means problems go unspoken and decisions go unexamined.' }
+};
+
+const KEY = 'course_dr_blind_spots_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

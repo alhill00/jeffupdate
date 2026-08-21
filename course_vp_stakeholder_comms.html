@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stakeholder Communication | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{--accent:#000633;--accent-light:#eef2ff;--dark:#000633;--white:#fff;--muted:#6b7280;--border:#e5e7eb;--card:#fff;--warn:#fff3cd;--warn-border:#ffc107;--good:#eef2ff;--good-border:#000633;--bad:#ffe4e6;--bad-border:#f43f5e;}
+.course-header{background:linear-gradient(135deg,#000633 0%,#000d4d 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:#174DFF;border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:var(--dark);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:#174DFF;color:var(--white);border-color:#174DFF;}
+.sec-pill.done{background:rgba(23,77,255,.15);color:rgba(255,255,255,.75);border-color:rgba(23,77,255,.3);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid #174DFF;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.tier-grid{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.tier-card{border-radius:10px;padding:18px 20px;background:var(--dark);}
+.tier-label{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.tier-name{font-size:17px;font-weight:800;color:var(--white);margin-bottom:8px;}
+.tier-needs{font-size:13px;color:rgba(255,255,255,.75);line-height:1.5;margin-bottom:6px;}
+.tier-failure{font-size:12px;color:rgba(255,255,255,.5);font-style:italic;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){background:#f8f9ff;border-color:#000633;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){background:#f8f9ff;border-color:#000633;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:#000633;}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:#000633;color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#174DFF;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:#000633;color:#000633;}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:#000633;color:var(--white);}
+.btn-next:hover:not(:disabled){background:#174DFF;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.35);}
+.nav-dot.active-dot{background:#000633;}
+@media(max-width:600px){.two-col{grid-template-columns:1fr;}.course-main{padding:20px 14px;}.section-nav{padding:10px 14px;}.progress-wrap{padding:12px 14px;}}
+</style>
+</head>
+<body>
+<div class="course-header">
+  <div class="course-meta">VP Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Stakeholder Communication</div>
+  <div class="course-sub">Building credibility and alignment with executives, boards, and cross-functional leaders who don't work for you.</div>
+</div>
+<div class="progress-wrap">
+  <div class="progress-bar-outer"><div class="progress-bar-inner" id="progress-bar" style="width:0%"></div></div>
+  <div class="progress-label" id="progress-label">0 of 16</div>
+</div>
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Stakeholder Map</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+<div class="course-main">
+
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Ceiling of Internal Excellence</div>
+  <div class="screen-body">A VP who is excellent with their own team but ineffective with external stakeholders has built a ceiling — and they've built it out of the best materials. They are respected by the people they manage. They are not effective with the people they need. And at VP level, the most important work almost always happens at the intersection of organizations, not within them.</div>
+  <div class="screen-body">Cross-functional initiatives require peer VP alignment. Strategic investment requires board credibility. Org-wide changes require CEO confidence. Influence over shared resources requires relationships with leaders who have no obligation to prioritize your needs.</div>
+  <div class="hl"><strong>The VP stakeholder test:</strong> Can you get a significant cross-functional initiative approved, funded, and moved when you have no direct authority over the people you need? If not, stakeholder influence is the constraint — not strategy, not execution.</div>
+</div>
+
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">VP Stakeholder Failure Patterns</div>
+  <div class="screen-body">Three failure patterns that are specific enough to name — not general communication failures, but patterns that emerge specifically at VP level with external stakeholders.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Over-Presenting to the Board</h4>
+      <ul>
+        <li>Bringing detailed operational information to a strategic audience</li>
+        <li>Defending rather than narrating</li>
+        <li>Not reading the room on what the board is actually asking</li>
+        <li>Treating it like a performance review rather than a strategic dialogue</li>
+      </ul>
+    </div>
+    <div class="col-card red-left">
+      <h4>Under-Communicating to Peers</h4>
+      <ul>
+        <li>Only engaging peer VPs when you need something</li>
+        <li>Not investing in peer relationships during low-stakes periods</li>
+        <li>Assuming alignment that hasn't been worked</li>
+        <li>Raising issues in the room rather than pre-working them</li>
+      </ul>
+    </div>
+  </div>
+  <div class="col-card red-left" style="margin-top:14px;border-left:4px solid #f43f5e;">
+    <h4>Managing Up Through Formal Channels Only</h4>
+    <ul>
+      <li>Waiting for 1:1s and formal reviews to communicate with the CEO</li>
+      <li>No proactive signal between scheduled touchpoints</li>
+      <li>CEO develops a VP impression through absence of signal, not through intentional relationship</li>
+    </ul>
+  </div>
+</div>
+
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Pre-Working: The Most Underused VP Skill</div>
+  <div class="screen-body">The most common mistake VPs make in high-stakes stakeholder communication is going into the room cold — without having pre-worked the key players.</div>
+  <div class="screen-body">Pre-working is not lobbying. It's not back-channeling. It's understanding each stakeholder's priority, sharing your key message or ask in advance, and surfacing objections before they become room dynamics that work against you.</div>
+  <div class="hl"><strong>The pre-work principle:</strong> Every significant ask, recommendation, or decision should have at least one pre-working conversation before it enters the formal setting. "I wanted to share this thinking with you before the meeting — does anything concern you?" is VP-level stakeholder communication. It builds the relationship, surfaces real objections, and prevents the meeting from becoming the first time someone engages with your idea.</div>
+  <div class="screen-body">VPs who show up having done this work operate at a fundamentally different effectiveness level than those who don't.</div>
+</div>
+
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Stakeholder Map</div>
+  <div class="screen-title">Three Stakeholder Levels</div>
+  <div class="screen-body">Different stakeholder levels have fundamentally different needs from VP communication. Treating them the same is the most common stakeholder communication mistake.</div>
+  <div class="tier-grid">
+    <div class="tier-card">
+      <div class="tier-label">Tier 1</div>
+      <div class="tier-name">Board / Executive Level</div>
+      <div class="tier-needs">Needs: Strategic narrative, honest risk assessment, decision-readiness. They are evaluating whether you understand the business context and can be trusted with significant decisions — not whether you know the operational details.</div>
+      <div class="tier-failure">Failure pattern: Over-presenting detail, defending operationally, not getting to the recommendation.</div>
+    </div>
+    <div class="tier-card">
+      <div class="tier-label">Tier 2</div>
+      <div class="tier-name">Peer VP Level</div>
+      <div class="tier-needs">Needs: Mutual priority understanding, pre-worked alignment, relationship deposits made before withdrawal moments. They are evaluating whether you're a good partner — easy to work with, aligned on shared org interests, trustworthy in their priorities.</div>
+      <div class="tier-failure">Failure pattern: Engaging only when you need something, surprising them in the room, competing rather than partnering.</div>
+    </div>
+    <div class="tier-card">
+      <div class="tier-label">Tier 3</div>
+      <div class="tier-name">Cross-Functional Directors</div>
+      <div class="tier-needs">Needs: Clear expectations, strategic context, recognition of their team's contributions. They are evaluating whether you're worth their team's effort — do you understand what you're asking for, and do you value what they deliver?</div>
+      <div class="tier-failure">Failure pattern: Treating as operational resources, not recognizing team contributions, unclear expectations.</div>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Trust as Stakeholder Currency</div>
+  <div class="screen-body">Trust is the currency that all stakeholder work runs on — and it's built slowly, spent quickly, and very difficult to rebuild once it's damaged. VP stakeholders evaluate trust along two dimensions consistently:</div>
+  <div class="two-col">
+    <div class="col-card accent-left">
+      <h4>Competence Trust</h4>
+      <ul>
+        <li>Do you know your function deeply?</li>
+        <li>Do you bring sound recommendations?</li>
+        <li>Are you honest about what you know vs. don't know?</li>
+        <li>Do your plans hold up to scrutiny?</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Character Trust</h4>
+      <ul>
+        <li>Are you straight with me even when it's uncomfortable?</li>
+        <li>Do you follow through on what you say?</li>
+        <li>Do you protect my interests when I'm not in the room?</li>
+        <li>Can I disagree with you and work with you after?</li>
+      </ul>
+    </div>
+  </div>
+  <div class="al"><strong>The trust asymmetry:</strong> Competence trust gets you in the room. Character trust keeps you there. A VP who is highly competent but low in character trust will be used but not relied on — and will never become a decision-maker in significant moments.</div>
+</div>
+
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Stakeholder Map</div>
+  <div class="screen-title">Preparing a Board Presentation</div>
+  <div class="screen-body">You're preparing a presentation for the board on your function's performance and strategic direction. The session is 30 minutes. You've been given a template with 12 slides of operational data. You have freedom to modify.</div>
+  <div class="screen-body">How do you approach this?</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Complete all 12 slides as provided — the template exists for a reason and consistency across board presentations helps the board compare across functions.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Restructure to 5–6 slides: strategic context, 3 key themes, honest risk assessment, decision you need from them. Lead with the strategic narrative, use operational data selectively to support — not as the presentation.</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Lead with the operational data to establish credibility — board members make better strategic decisions when they have the operational context first.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Ask what the board most wants to see and build from there — responding to their priorities is the most credibility-building approach.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Stakeholder Map</div>
+  <div class="screen-title">A Peer VP Blocking a Cross-Functional Initiative</div>
+  <div class="screen-body">You need cross-functional support from a peer VP to advance a significant initiative. That VP has raised concerns — some substantive, some that read as protecting their function's resources. They haven't said no, but they're not moving forward. The timeline is tight.</div>
+  <div class="screen-body">What's your move?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Escalate to the CEO — this is a cross-functional alignment issue that requires executive authority to resolve.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Request a direct 1:1 to understand their specific concerns and interests — work toward a solution that addresses both their needs and yours before escalating.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Move forward on the parts of the initiative you can control independently — create momentum that makes their support more likely.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Bring the issue to the next executive team meeting — peer accountability in the leadership team will move it faster than bilateral conversation.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">CEO Skeptical of Your Recommendation</div>
+  <div class="screen-body">You've brought a significant recommendation to the CEO. They've expressed genuine skepticism — not the polite kind, but substantive pushback on your rationale. The meeting is still active. You believe your recommendation is right.</div>
+  <div class="screen-body">What's the most effective response in the room?</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Defend your recommendation clearly — CEOs respect conviction and this is not the moment to appear uncertain.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Ask what specifically concerns them, listen to understand the actual objection, then respond to that — not to the surface challenge.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Offer to go back and revisit your analysis — deferring to the CEO on a recommendation they're skeptical about shows appropriate humility.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Find common ground immediately — identify what parts of the recommendation they agree with and build from there.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Recovering Credibility After a Stakeholder Communication Failure</div>
+  <div class="screen-body">A board presentation did not go well. You over-prepared on operational data and under-prepared on strategic narrative. Two board members asked questions you weren't expecting and you were visibly uncertain. You've received feedback that the presentation "didn't land with confidence." You have another board session in 60 days.</div>
+  <div class="screen-body">What's the right recovery approach?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Prepare more thoroughly for the next session — more data, more coverage of potential questions, more rehearsal.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Have a direct conversation with a trusted board member before the next session — understand what they needed, share how you're thinking about the next one differently, rebuild the relationship proactively.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Deliver an excellent next session — the best recovery from a credibility gap is strong performance, not conversation about past performance.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Ask the CEO to help set lower-stakes expectations for the next board session while you rebuild confidence.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Building Relationship with a Difficult-to-Engage Board Member</div>
+  <div class="screen-body">There's a board member who asks sharp questions, rarely seems satisfied with answers, and has a reputation for being hard to read. You interact with them in board sessions only. You sense they are not yet convinced of your credibility and have significant influence over the board's view of your function.</div>
+  <div class="screen-body">What's your approach?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Continue performing well in board sessions — credibility with this board member will come through consistently strong presentations, not relationship building.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Request a brief informal conversation outside the formal setting — "I'd value your perspective on how I can make our board sessions most useful for you." Build the relationship before the next evaluation moment.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Ask the CEO or board chair for context on what this board member values — use that intelligence to tailor your next presentation.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Avoid giving the board member anything that could be challenged — focus your presentation on the areas where your function is performing strongest.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — A VP who is highly effective with their own team but ineffective with external stakeholders has:</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">A — Demonstrated that team leadership is the most important VP competency</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">B — Built a ceiling on their effectiveness, because the most important VP work happens at the intersection of organizations</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'C')">C — Shown appropriate focus on the team they're directly responsible for</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'D')">D — An easily corrected gap that becomes relevant only in board-facing roles</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Pre-working a high-stakes communication means understanding stakeholder priorities, sharing your key message in advance, and surfacing objections before the formal setting.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — When communicating to a board or executive audience, the primary need is:</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Comprehensive operational data demonstrating thorough understanding of the function</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Strategic narrative, honest risk assessment, and decision-readiness</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Clear communication of Team Member performance and engagement metrics</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — Documentation of progress against quarterly targets</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — Character trust (being straight, following through, protecting others' interests) is more important than competence trust for long-term stakeholder credibility.</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — The "under-communicating to peers" VP failure pattern typically shows up as:</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — Sending too many updates to peer VPs and overwhelming them</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — Only engaging peer VPs when you need something from them, without investment in the relationship during low-stakes periods</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — Not including peer VPs in relevant strategic planning conversations</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — Failing to copy peer VPs on communications relevant to their functions</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Map Your Stakeholder Landscape</div>
+  <div class="screen-body">Stakeholder communication that works is deliberate and proactive — not reactive to the next formal setting. Use these prompts to assess your current stakeholder landscape.</div>
+  <div class="apply-section">
+    <div class="apply-label">1. Name your 5–7 most important stakeholders (board members, peer VPs, key cross-functional leaders). What is each person's primary priority right now?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="List stakeholders and their priorities…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. For each stakeholder: when was your last proactive communication (not in a formal setting)? What does that pattern tell you?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Assess the proactive communication gap by stakeholder…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Which stakeholder relationship most needs investment right now — and what is one specific action you'll take this month to make a deposit?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="Name the relationship and the specific action…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What is the next high-stakes communication or decision you need from a key stakeholder? Have you pre-worked it? If not, what would pre-working look like?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Describe the stake and your pre-work plan…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. With which stakeholder has your character trust taken a hit — and what would rebuilding it proactively look like?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Name the stakeholder and describe your rebuilding approach…" oninput="saveApply(4)"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🤝</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Stakeholder Communication. VPs who build stakeholder credibility before they need it operate at a fundamentally different level of organizational influence than those who show up only when there's something to ask for.</div>
+  </div>
+  <div class="commitments">
+    <h4>Your stakeholder communication commitments:</h4>
+    <div class="commit-item">Pre-work every high-stakes communication — share the key message and surface objections before the formal setting</div>
+    <div class="commit-item">Build peer VP relationships during low-stakes periods — make deposits before withdrawal moments arrive</div>
+    <div class="commit-item">Map your top 7 stakeholders quarterly and invest in at least one relationship proactively each month</div>
+    <div class="commit-item">Lead board presentations with strategic narrative — not operational defense</div>
+    <div class="commit-item">When stakeholder credibility is damaged, address it directly and proactively — don't wait for the next formal setting to rebuild</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div>
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+<script>
+const TOTAL=17;
+const SECTIONS=[{label:'Foundation',end:5},{label:'The Stakeholder Map',end:7},{label:'Practice',end:10},{label:'Pulse Check',end:15},{label:'Apply It',end:16},{label:'Complete',end:17}];
+const SECTION_MAP=[0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SCENARIO_ANSWERS={
+  5:{correct:'B',feedback:'<strong>B is right.</strong> Board presentations need strategic narrative, honest risk, and a clear decision ask — not comprehensive operational data. 12 slides of operational detail for a 30-minute board session is the over-presentation failure pattern. Restructuring to 5–6 slides organized around strategic themes respects the board\'s level and demonstrates VP-level thinking. Asking what they want (D) shows responsiveness but abdicates VP judgment on what they need.'},
+  6:{correct:'B',feedback:'<strong>B is right.</strong> A direct 1:1 to understand the peer VP\'s specific concerns and interests is the right first move. Most cross-functional blocks have a real concern underneath the surface behavior — understanding that concern creates the path to a mutual solution. Escalating immediately (A) skips the bilateral option and uses relationship capital with the CEO unnecessarily. Moving independently (C) may create momentum but can harden the peer VP\'s resistance. Public accountability (D) in the leadership meeting can damage the relationship permanently.'},
+  7:{correct:'B',feedback:'<strong>B is right.</strong> Asking what specifically concerns them is the highest-leverage move. CEO skepticism in the room is often about a specific element of the recommendation, not the recommendation as a whole. Listening to understand the actual objection — rather than the surface challenge — allows you to respond precisely and often to find the concern that, when addressed, shifts the conversation. Defending without listening (A) can escalate the standoff. Deferring entirely (C) when you believe your recommendation is right is a credibility loss.'},
+  8:{correct:'B',feedback:'<strong>B is right.</strong> The most effective credibility recovery is proactive, not passive. A direct conversation with a trusted board member — acknowledging what didn\'t work and sharing how you\'re thinking about it differently — rebuilds the relationship before the formal setting rather than hoping stronger performance does the work. More preparation alone (A) addresses content, not relationship. Strong next session alone (C) is necessary but insufficient — it doesn\'t address the damaged relationship.'},
+  9:{correct:'B',feedback:'<strong>B is right.</strong> Requesting an informal conversation to understand what makes board sessions useful is precisely the VP stakeholder move. It\'s direct, respectful of their expertise, and builds a relationship outside the formal evaluation setting. Board members who ask sharp questions are often the most useful advisors if a real relationship exists. Continuing to perform without building the relationship (A) leaves the impression they already have intact. Tailoring to intelligence (C) is useful but secondary to the relationship.'}
+};
+const PULSE_ANSWERS={
+  10:{correct:'B',feedback:'<strong>B is right.</strong> Internal excellence without external stakeholder effectiveness is a ceiling — and it\'s built from good materials. The most important VP work happens at the intersection of organizations: cross-functional alignment, board credibility, CEO confidence, peer relationships. None of this is accessible through team leadership alone.'},
+  11:{correct:'A',feedback:'<strong>True.</strong> Pre-working is exactly this: understand the stakeholder\'s priority, share your key message or ask in advance, and surface objections before they become room dynamics that work against you. It\'s not lobbying — it\'s the relationship and preparation work that makes formal settings more effective.'},
+  12:{correct:'B',feedback:'<strong>B is right.</strong> Board and executive audiences need strategic narrative, honest risk assessment, and decision-readiness. They are evaluating whether the VP understands the business context and can be trusted with significant decisions. Comprehensive operational detail (A) is the over-presentation failure pattern — it demonstrates the wrong kind of preparation.'},
+  13:{correct:'A',feedback:'<strong>True.</strong> Character trust is what determines whether a VP becomes a decision-maker in significant moments — not just a competent resource. Competence trust gets you in the room. Character trust keeps you there, earns you the benefit of the doubt when recommendations are challenged, and creates the kind of relationship where stakeholders will invest in your success.'},
+  14:{correct:'B',feedback:'<strong>B is right.</strong> Under-communicating to peers shows up as engaging only when you need something — treating peer relationships as transactional rather than investing in them during low-stakes periods. The result: when you need a peer VP\'s support, the relationship account is empty and "no" or indifference is the most likely response.'}
+};
+const KEY='course_vp_stakeholders_v1';
+let state={cur:0,max:0,answered:{},choices:{},apply:{}};
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s)state=s;}catch(e){}showScreen(state.cur);buildDots();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+n).classList.add('active');state.cur=n;if(n>state.max)state.max=n;updateProgress();updatePills();updateNav();restoreScreen(n);save();window.scrollTo(0,0);}
+function updateProgress(){const pct=Math.round((state.max/(TOTAL-1))*100);document.getElementById('progress-bar').style.width=pct+'%';document.getElementById('progress-label').textContent=state.max+' of '+(TOTAL-1);}
+function updatePills(){const sec=SECTION_MAP[state.cur];SECTIONS.forEach((s,i)=>{const pill=document.getElementById('pill-'+i);if(!pill)return;pill.className='sec-pill';if(i===sec)pill.classList.add('active');else if(state.max>=s.end)pill.classList.add('done');});}
+function updateNav(){document.getElementById('btn-prev').disabled=state.cur===0;const nextBtn=document.getElementById('btn-next');const needsAnswer=(state.cur in SCENARIO_ANSWERS||state.cur in PULSE_ANSWERS);const answered=state.answered[state.cur];nextBtn.disabled=(state.cur===TOTAL-1)||(needsAnswer&&!answered);nextBtn.textContent=state.cur===TOTAL-2?'Finish →':'Next →';}
+function buildDots(){const wrap=document.getElementById('nav-dots');wrap.innerHTML='';for(let i=0;i<TOTAL;i++){const d=document.createElement('div');d.className='nav-dot';if(i===state.cur)d.classList.add('active-dot');else if(i<=state.max)d.classList.add('done-dot');wrap.appendChild(d);}}
+function navigate(dir){const next=state.cur+dir;if(next<0||next>=TOTAL)return;showScreen(next);buildDots();}
+function restoreScreen(n){if(n in SCENARIO_ANSWERS&&state.choices[n])restoreScenario(n,state.choices[n]);if(n in PULSE_ANSWERS&&state.choices[n])restorePulse(n,state.choices[n]);if(n===15)restoreApply();}
+function pickOpt(screenIdx,chosen){if(state.answered[screenIdx])return;state.answered[screenIdx]=true;state.choices[screenIdx]=chosen;save();restoreScenario(screenIdx,chosen);updateNav();}
+function restoreScenario(screenIdx,chosen){const answer=SCENARIO_ANSWERS[screenIdx];const container=document.getElementById('opts-'+screenIdx);if(!container)return;container.querySelectorAll('.opt').forEach(opt=>{const letter=opt.querySelector('.opt-letter').textContent;opt.classList.add('locked');if(letter===answer.correct)opt.classList.add('correct');else if(letter===chosen)opt.classList.add('wrong');else opt.classList.add('dimmed');});const fb=document.getElementById('fb-'+screenIdx);if(fb){fb.innerHTML=answer.feedback;fb.className='feedback-box show'+(chosen!==answer.correct?' wrong-fb':'');}}
+function pickPulse(screenIdx,chosen){if(state.answered[screenIdx])return;state.answered[screenIdx]=true;state.choices[screenIdx]=chosen;save();restorePulse(screenIdx,chosen);updateNav();}
+function restorePulse(screenIdx,chosen){const answer=PULSE_ANSWERS[screenIdx];const container=document.getElementById('pulse-'+screenIdx);if(!container)return;const opts=container.querySelectorAll('.pulse-opt');opts.forEach((opt,i)=>{const letter=String.fromCharCode(65+i);opt.classList.add('locked');if(letter===answer.correct)opt.classList.add('correct');else if(letter===chosen)opt.classList.add('wrong');else opt.classList.add('dimmed');});const fb=document.getElementById('pfb-'+screenIdx);if(fb){fb.innerHTML=answer.feedback;fb.className='feedback-box show'+(chosen!==answer.correct?' wrong-fb':'');}}
+function saveApply(idx){const el=document.getElementById('apply-'+idx);if(!el)return;state.apply[idx]=el.value;save();const saved=document.getElementById('saved-'+idx);if(saved){saved.style.display='block';setTimeout(()=>saved.style.display='none',1500);}}
+function restoreApply(){for(let i=0;i<=4;i++){const el=document.getElementById('apply-'+i);if(el&&state.apply[i])el.value=state.apply[i];}}
+load();
+</script>
+</body>
+</html>

@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Building High-Performing Senior Teams | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#ffffff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#000633;
+  --accent-light:#eef2ff;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#eef2ff;
+  --good-border:#000633;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+
+.course-header{background:linear-gradient(135deg,#000633 0%,#000d4d 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#C1DDFF;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:#174DFF;border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+
+.section-nav{background:var(--dark);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:#174DFF;color:var(--white);border-color:#174DFF;}
+.sec-pill.done{background:rgba(23,77,255,.15);color:rgba(255,255,255,.75);border-color:rgba(23,77,255,.3);}
+
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#174DFF;margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body+.screen-body{margin-top:-8px;}
+
+.hl{background:var(--accent-light);border-left:4px solid #174DFF;border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+
+.card-grid{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.framework-card{background:var(--dark);border-radius:10px;padding:18px 20px;display:flex;gap:16px;align-items:flex-start;}
+.framework-num{width:36px;height:36px;border-radius:50%;background:#174DFF;color:var(--white);font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.framework-content{flex:1;}
+.framework-title{color:var(--white);font-size:15px;font-weight:700;margin-bottom:4px;}
+.framework-desc{color:rgba(255,255,255,.8);font-size:13px;line-height:1.5;}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
+.col-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:18px;}
+.col-card.accent-left{border-left:4px solid var(--accent);}
+.col-card.red-left{border-left:4px solid #f43f5e;}
+.col-card h4{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px;color:var(--dark);}
+.col-card ul{padding-left:18px;font-size:13.5px;line-height:1.7;color:#374151;}
+.col-card p{font-size:13.5px;line-height:1.6;color:#374151;margin-top:8px;}
+
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f8f9ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f8f9ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:#174DFF;margin-top:4px;display:none;}
+
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#174DFF;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:#174DFF;font-weight:700;}
+
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#174DFF;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(23,77,255,.35);}
+.nav-dot.active-dot{background:var(--accent);}
+
+@media(max-width:600px){
+  .two-col{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">VP Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Building High-Performing Senior Teams</div>
+  <div class="course-sub">Creating the leadership team dynamics that drive your organization's results.</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label">0 of 17</div>
+</div>
+
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Senior Team Model</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0 -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Team That Shapes Everything Else</div>
+  <div class="screen-body">The VP's most important team is often the leadership team of which they're a member — not the team they lead directly.</div>
+  <div class="screen-body">What makes senior leadership teams different from other teams: they require real trust that allows real disagreement, shared accountability for organizational outcomes, and the ability to challenge the CEO when the situation calls for it.</div>
+  <div class="al"><strong>The most common failure mode:</strong> Looks aligned externally. Functions as competing fiefdoms internally. Every member wins their functional battle while the organization loses the strategic war.</div>
+</div>
+
+<!-- SCREEN 1 -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">What High-Performing Senior Teams Actually Do</div>
+  <div class="screen-body">The behaviors that distinguish high-performing leadership teams aren't the ones you'd expect. They're not about harmony or alignment — they're about productive tension.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Low-Performance Senior Teams</h4>
+      <ul>
+        <li>Agreement in the room, resistance in the hallway</li>
+        <li>Functional wins prioritized over org outcomes</li>
+        <li>Hard conversations happen around the table, not at it</li>
+        <li>"They" when the org underperforms</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>High-Performance Senior Teams</h4>
+      <ul>
+        <li>Disagreement surfaces in the room, resolved together</li>
+        <li>Org-level outcomes shared across all members</li>
+        <li>Conflict happens at the table — and the team functions well after</li>
+        <li>"We" when the org underperforms</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 2 -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The VP's Role in Building the Senior Team</div>
+  <div class="screen-body">Building the senior team isn't only the CEO's job. Every VP either strengthens or weakens the team's dynamics by how they show up.</div>
+  <div class="card-grid">
+    <div class="framework-card">
+      <div class="framework-num">1</div>
+      <div class="framework-content">
+        <div class="framework-title">Invest in Understanding Peer Priorities</div>
+        <div class="framework-desc">Not to be nice — to build relational credibility that makes disagreement safe. You can't challenge a peer you don't understand. And peers won't listen to someone who hasn't listened first.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">2</div>
+      <div class="framework-content">
+        <div class="framework-title">Challenge Peers in the Room, Not Around Them</div>
+        <div class="framework-desc">Hallway conversations about peer decisions are organizational corrosion. The VP who challenges a peer's call in the exec meeting — respectfully, directly — is building team trust. The one who does it in side conversations is destroying it.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">3</div>
+      <div class="framework-content">
+        <div class="framework-title">Demonstrate Collective Accountability</div>
+        <div class="framework-desc">"We" not "them" when the org underperforms. This isn't semantics — it's the signal that you hold yourself accountable for outcomes beyond your functional lane. Senior teams that use "we" in adversity outperform those that find the team member to blame.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 3: Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Senior Team Model</div>
+  <div class="screen-title">Four Performance Conditions</div>
+  <div class="screen-body">High-performing senior teams share four conditions. Absent any one of them, team effectiveness degrades predictably.</div>
+  <div class="card-grid">
+    <div class="framework-card">
+      <div class="framework-num">1</div>
+      <div class="framework-content">
+        <div class="framework-title">Trust Under Pressure</div>
+        <div class="framework-desc">Can have hard conversations and function well after. Trust here is not friendliness — it's confidence that conflict won't result in retaliation or relationship damage that persists.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">2</div>
+      <div class="framework-content">
+        <div class="framework-title">Productive Conflict</div>
+        <div class="framework-desc">Surfaces disagreement in the room, not the hallways. Teams that eliminate conflict eliminate the process by which bad ideas get challenged. Productive conflict is a leadership team's immune system.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">3</div>
+      <div class="framework-content">
+        <div class="framework-title">Shared Accountability</div>
+        <div class="framework-desc">Each member holds themselves accountable for org-level outcomes, not just functional ones. When the organization underperforms, shared accountability means no one wins a functional argument while the business loses.</div>
+      </div>
+    </div>
+    <div class="framework-card">
+      <div class="framework-num">4</div>
+      <div class="framework-content">
+        <div class="framework-title">Collective Clarity on Priorities</div>
+        <div class="framework-desc">Explicit, agreed-upon priorities and trade-offs — not implicit competing ones. Teams that can't say what they're not doing are teams that can't align around what they are doing.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4: Foundation -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Trust Is Not Friendliness</div>
+  <div class="screen-body">The most common confusion on senior teams is mistaking friendliness for trust. A team can be cordial, collegial, and personally warm — and still have no real trust.</div>
+  <div class="two-col">
+    <div class="col-card red-left">
+      <h4>Friendliness Without Trust</h4>
+      <ul>
+        <li>Positive social dynamic</li>
+        <li>Agreement on easy things</li>
+        <li>Conflict avoided to preserve relationships</li>
+        <li>Hard conversations happen outside the room</li>
+      </ul>
+    </div>
+    <div class="col-card accent-left">
+      <h4>Trust Under Pressure</h4>
+      <ul>
+        <li>Confidence that conflict won't become retaliation</li>
+        <li>Disagreement in the room, resolution together</li>
+        <li>Hard conversations at the table</li>
+        <li>Team functions well after conflict</li>
+      </ul>
+    </div>
+  </div>
+  <div class="hl"><strong>The build strategy:</strong> Trust under pressure is built by having conflict and coming through it intact — not by avoiding conflict to keep things comfortable. The team that never disagrees is the team that can't be trusted when it says it agrees.</div>
+</div>
+
+<!-- SCREEN 5: Scenario -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Senior Team Model</div>
+  <div class="screen-title">Alignment That Isn't</div>
+  <div class="screen-body">Your leadership team consistently reaches consensus in meetings — but you've noticed that after meetings, several members are raising concerns in side conversations that they didn't raise in the room. The CEO thinks the team is highly aligned.</div>
+  <div class="options" id="opts-5">
+    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>Let it continue — if the CEO is satisfied with the alignment, surfacing the side conversations would create unnecessary tension.</span></div>
+    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>Raise the dynamic directly: "I've noticed decisions are being relitigated after meetings. I think we need to talk about how we surface disagreement in the room."</span></div>
+    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>Talk to each peer privately to encourage them to raise their concerns in the next meeting.</span></div>
+    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>Bring a facilitator in to improve meeting dynamics without naming the specific issue.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-5"></div>
+</div>
+
+<!-- SCREEN 6: Scenario -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Senior Team Model</div>
+  <div class="screen-title">The Peer Who Protects Their Function</div>
+  <div class="screen-body">A peer VP consistently advocates for decisions that benefit their function at the expense of organization-wide outcomes. They're well-liked and politically influential. How do you build trust with them while being honest about the impact?</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Compete — advocate for your function's interests with equal force to create a balance of competing voices.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Invest in genuinely understanding their priorities first, then have a direct conversation about the pattern you're seeing and what it costs the organization.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Escalate the pattern to the CEO and let them address it directly.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Accept it as their leadership style and work around it in cross-functional planning.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Raising a Concern in the Exec Meeting</div>
+  <div class="screen-body">In a leadership team meeting, a peer VP presents a decision that you believe is strategically wrong. The room is moving toward quick agreement and the CEO seems ready to close it.</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Let the decision go — raising concern now will slow the meeting and seem obstructionist.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Speak up directly: "Before we close this — I want to share a concern. I may be missing something, but here's what I'm seeing."</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Catch the CEO after the meeting to share your concern privately.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Email the peer VP after the meeting to flag your concern and suggest they reconsider.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">After a Difficult Period</div>
+  <div class="screen-body">Your leadership team just came through a difficult stretch — a major operational failure, public scrutiny, and significant internal disagreement about what went wrong. Team dynamics are strained. What do you do?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>Give it time — teams need space to recover naturally after stress.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Advocate for a structured debrief — what happened, what did we get right, what did we get wrong, and what are we doing differently? Then move forward together.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Focus on the next win — positive momentum will rebuild the team dynamic faster than any debrief.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Invest in team-building activities to rebuild the social dynamic before returning to hard strategic questions.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When Collective Accountability Has Broken Down</div>
+  <div class="screen-body">After a poor organizational performance quarter, the leadership team meeting devolves into each VP explaining why their function performed well and why other functions are responsible for the shortfall. What do you do?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Present your function's performance data clearly to ensure your team isn't blamed unfairly.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Name the dynamic: "I notice we're each defending our function's performance. I'd rather ask: what did we miss collectively, and what are we going to do about it?"</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Let the CEO facilitate — it's their role to redirect the conversation when the team loses focus.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Agree with the functional performance framing — each team needs to own its own results.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — A leadership team that avoids conflict and consistently reaches consensus is the clearest sign of high team performance.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — In the Senior Team Model, "Trust Under Pressure" is best described as:</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">A — Strong social relationships and personal warmth between team members</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">B — Confidence that conflict won't result in retaliation or persistent relationship damage</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'C')">C — Agreement on core strategic priorities across the team</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'D')">D — A track record of meeting deliverables on time</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — A VP who consistently challenges peer decisions in hallway conversations rather than in the meeting room is building productive conflict.</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — "Shared accountability" on a senior team means each VP is accountable for organizational outcomes, not just functional ones.</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — The best way for a VP to build trust with a peer VP is to invest time in understanding their priorities before raising disagreements.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Senior team effectiveness starts with honest self-assessment. Use these prompts to identify where you contribute to team performance — and where you limit it.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Rate your leadership team on each of the four conditions: Trust Under Pressure, Productive Conflict, Shared Accountability, Collective Priority Clarity. What's the lowest-scoring condition?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Your honest ratings and the biggest gap…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What do YOU do that limits the team? Where are you part of the problem you'd like to solve?</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Your honest self-assessment…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. Which peer relationship needs the most investment? What do you not yet understand about their priorities?</div>
+    <textarea class="apply-input" id="apply-2" placeholder="The peer and what you need to learn…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's a conversation your leadership team needs to have that it hasn't had? What's preventing it?</div>
+    <textarea class="apply-input" id="apply-3" placeholder="The conversation and the barrier…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. The next time the org underperforms, what will you say — and what will you not say — to demonstrate collective accountability?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Your commitment…" oninput="saveApply(4)"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🤝</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Building High-Performing Senior Teams. The leadership team you're part of shapes everything below it — and every VP either strengthens or weakens it by how they show up.</div>
+  </div>
+  <div class="commitments">
+    <h4>Four commitments of VPs who build great leadership teams:</h4>
+    <div class="commit-item">Surface disagreement in the room, not around it — every time, even when it's uncomfortable.</div>
+    <div class="commit-item">Invest in one peer relationship this quarter — understand their priorities before raising your concerns.</div>
+    <div class="commit-item">Use "we" when the org underperforms — and mean it.</div>
+    <div class="commit-item">Challenge the team on at least one priority trade-off this quarter — the conversation the team hasn't had.</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com','_blank')">Complete Course →</button>
+  </div>
+</div>
+
+</div>
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTIONS = [
+  {name:'Foundation', end:5},
+  {name:'The Senior Team Model', end:7},
+  {name:'Practice', end:10},
+  {name:'Pulse Check', end:15},
+  {name:'Apply It', end:16},
+  {name:'Complete', end:17}
+];
+
+const SCENARIO_ANSWERS = {
+  5: { correct:'B', feedback:'<strong>B is right.</strong> Post-meeting sidelining of decisions is a team trust failure — and it compounds over time. Naming the dynamic directly is the most honest and effective path forward. Encouraging individual peers privately (C) addresses it one at a time but doesn\'t fix the group norm. The team needs to surface the pattern together and choose a different one.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> The sequence matters: understand first, then challenge. Going straight to the direct conversation without understanding their priorities makes you adversarial, not credible. But avoiding the honest conversation to preserve the relationship is how the pattern continues indefinitely. Both moves — listening and challenging — are required.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Productive conflict means raising the concern at the moment it matters — in the room, before the decision closes. Post-meeting conversations with the CEO or peer email are too late and too indirect. "I may be missing something" is the right framing — it invites more information without walking away from the concern.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> Teams that skip the debrief carry the unprocessed failure into the next challenge. A structured retrospective — what happened, what we got right, what we got wrong — converts a difficult period into collective learning. Social rebuilding (D) before the hard conversation is avoidance dressed as care.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Naming the dynamic is the VP move that changes the room. "We\'re each defending our function" surfaces what\'s happening without blaming anyone, then redirects to what a leadership team conversation should look like. Defending your own function in the same mode (A) accelerates the dynamic you\'re trying to stop.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Consistent consensus without surfaced conflict is a warning sign, not a performance signal. Teams that avoid conflict eliminate their own immune system — bad ideas go unchallenged, real disagreements move to hallways, and decisions get relitigated outside the room. High-performing teams have conflict and come through it intact.' },
+  11: { correct:'B', feedback:'<strong>B is right.</strong> Trust Under Pressure is not about warmth or relationship quality. It\'s the confidence that when you challenge a peer or raise a hard concern, the team relationship survives and functions well after. This kind of trust is built by having conflict — not by avoiding it.' },
+  12: { correct:'B', feedback:'<strong>False.</strong> Hallway challenges — disagreeing with peer decisions after the meeting, in side conversations — are organizational corrosion. They relitigate decisions without resolving disagreements, and they signal to the organization that the leadership team doesn\'t actually function as a unit. Productive conflict happens in the room, at the table.' },
+  13: { correct:'A', feedback:'<strong>True.</strong> Shared accountability means that when the organization underperforms, every VP owns part of that outcome — regardless of how their individual function performed. This is the behavior that separates leadership teams from collections of functional advocates. "We" when the org underperforms is the signal of shared accountability.' },
+  14: { correct:'A', feedback:'<strong>True.</strong> Relational credibility — earned by genuinely understanding peer priorities — is what makes disagreement safe and heard. Peers who feel understood are more likely to engage with challenge rather than defend against it. The investment in understanding isn\'t politeness; it\'s the foundation of trust that makes productive conflict possible.' }
+};
+
+const KEY = 'course_vp_senior_teams_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>

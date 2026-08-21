@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recognizing Your Team | Breeze Leadership</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f4fbfd;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#0077A8;
+  --accent-light:#d0eef7;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#d0eef7;
+  --good-border:#0077A8;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+
+.course-header{background:linear-gradient(135deg,#0a3d4a 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#00A0C6;margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+
+.section-nav{background:#0a3d4a;padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(0,119,168,.25);color:rgba(255,255,255,.8);border-color:rgba(0,119,168,.4);}
+
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.screen-body + .screen-body{margin-top:-8px;}
+
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+
+.recog-cards{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.recog-card{background:var(--dark);border-radius:10px;padding:18px 20px;display:grid;grid-template-columns:52px 1fr;gap:14px;align-items:start;}
+.rc-icon{width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--white);font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.rc-content{}
+.rc-label{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:4px;}
+.rc-title{color:var(--white);font-size:15px;font-weight:700;margin-bottom:6px;}
+.rc-desc{color:rgba(255,255,255,.75);font-size:13px;line-height:1.5;}
+
+.compare-box{margin:18px 0;}
+.compare-row{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px 16px;margin-bottom:10px;}
+.compare-row.bad-example{border-left:4px solid #f43f5e;}
+.compare-row.good-example{border-left:4px solid var(--accent);}
+.compare-tag{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;}
+.compare-tag.praise{color:#dc2626;}
+.compare-tag.recognition{color:var(--accent);}
+.compare-text{font-size:14px;color:#374151;line-height:1.5;font-style:italic;}
+
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#eef7fb;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#eef7fb;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:#0077A8;color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#005f87;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#005f87;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(0,119,168,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+
+@media(max-width:600px){
+  .recog-card{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="course-header">
+  <div class="course-meta">Supervisor Level &nbsp;·&nbsp; My Skills Series</div>
+  <div class="course-title">Recognizing Your Team</div>
+  <div class="course-sub">Building a recognition habit that keeps your team motivated, seen, and connected to the work they're doing.</div>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progress-label">0 of 16</div>
+</div>
+
+<div class="section-nav">
+  <div class="sec-pill active" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Recognition Framework</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<div class="course-main">
+
+<!-- SCREEN 0: Hook -->
+<div class="screen active" id="screen-0">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">The Recognition That Lived Only in Her Head</div>
+  <div class="screen-body">Morgan had a great team member, Drew. High performer, always went above and beyond. Morgan noticed — but never said much because she assumed Drew knew how valued they were.</div>
+  <div class="screen-body">Drew gave notice. On the way out, Drew said: "I never really felt like my work mattered here."</div>
+  <div class="screen-body">Morgan was stunned. She'd thought recognition — and never said it out loud.</div>
+  <div class="hl"><strong>Recognition only works when it's delivered.</strong> Thinking it, intending it, and meaning it does nothing. Saying it — specifically, directly, on time — is the only version that counts.</div>
+</div>
+
+<!-- SCREEN 1: Concept -->
+<div class="screen" id="screen-1">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Why Recognition Fails</div>
+  <div class="screen-body">Most recognition fails for one of three reasons:</div>
+  <div class="screen-body">
+    <strong>1. It's too vague.</strong> "Great job, team!" tells nobody what they did or why it mattered.<br><br>
+    <strong>2. It's too late.</strong> Mentioning something from three weeks ago has a fraction of the impact of same-day recognition.<br><br>
+    <strong>3. It's the wrong mode.</strong> Public recognition for someone who hates being called out can backfire — making them feel uncomfortable, not motivated.
+  </div>
+  <div class="hl"><strong>Effective recognition is specific, timely, and delivered in the way the recipient actually receives it.</strong> All three matter. Missing any one of them weakens the impact significantly.</div>
+</div>
+
+<!-- SCREEN 2: Concept -->
+<div class="screen" id="screen-2">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Recognition Is Not the Same as Praise</div>
+  <div class="screen-body">These are not the same thing. One lands and sticks. The other fades in minutes.</div>
+  <div class="compare-box">
+    <div class="compare-row bad-example">
+      <div class="compare-tag praise">Praise</div>
+      <div class="compare-text">"You're amazing."</div>
+    </div>
+    <div class="compare-row good-example">
+      <div class="compare-tag recognition">Recognition</div>
+      <div class="compare-text">"When you stayed late Tuesday to fix the manifest error before the morning shift, it prevented a delay for 200 passengers. That's the kind of ownership this team runs on."</div>
+    </div>
+  </div>
+  <div class="screen-body">Praise feels good briefly. Recognition lands and sticks — because it connects the person's action to real impact.</div>
+</div>
+
+<!-- SCREEN 3: Recognition Framework -->
+<div class="screen" id="screen-3">
+  <div class="screen-label">The Recognition Framework</div>
+  <div class="screen-title">Three Elements That Make Recognition Effective</div>
+  <div class="screen-body">The SBI model (Situation, Behavior, Impact) works for recognition too — not just feedback. Here are the three elements that make it land.</div>
+  <div class="recog-cards">
+    <div class="recog-card">
+      <div class="rc-icon">S</div>
+      <div class="rc-content">
+        <div class="rc-label">Specific</div>
+        <div class="rc-title">Name the exact behavior</div>
+        <div class="rc-desc">Not "great work" — name what they did. What action, in what situation? The specificity is what makes it real.</div>
+      </div>
+    </div>
+    <div class="recog-card">
+      <div class="rc-icon">T</div>
+      <div class="rc-content">
+        <div class="rc-label">Timely</div>
+        <div class="rc-title">The closer to the action, the stronger the impact</div>
+        <div class="rc-desc">Same day is best. Same week is good. Three weeks later is better than nothing — but barely. Recognition reinforces behavior in the moment.</div>
+      </div>
+    </div>
+    <div class="recog-card">
+      <div class="rc-icon">M</div>
+      <div class="rc-content">
+        <div class="rc-label">Meaningful</div>
+        <div class="rc-title">Delivered in a mode that works for this person</div>
+        <div class="rc-desc">Public or private, verbal or written, team meeting or 1:1. Know which your team members prefer — and use it.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SCREEN 4: Scenario — Foundation -->
+<div class="screen" id="screen-4">
+  <div class="screen-label">Foundation</div>
+  <div class="screen-title">Recognition a Week Late</div>
+  <div class="screen-body">Your team member stayed late to help a colleague finish a project under pressure. A week later, you remember to mention it.</div>
+  <div class="screen-body">How could you have made this more effective?</div>
+  <div class="options" id="opts-4">
+    <div class="opt" onclick="pickOpt(4,'A')"><span class="opt-letter">A</span><span>Recognize it now — better late than never is a real principle.</span></div>
+    <div class="opt" onclick="pickOpt(4,'B')"><span class="opt-letter">B</span><span>It would have landed better if recognized the next day with specific detail about what they did and why it mattered.</span></div>
+    <div class="opt" onclick="pickOpt(4,'C')"><span class="opt-letter">C</span><span>Bring it up in the next team meeting so everyone hears it.</span></div>
+    <div class="opt" onclick="pickOpt(4,'D')"><span class="opt-letter">D</span><span>Write it into their next performance review — that's the most official recognition.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-4"></div>
+</div>
+
+<!-- SCREEN 5: Framework deep dive -->
+<div class="screen" id="screen-5">
+  <div class="screen-label">The Recognition Framework</div>
+  <div class="screen-title">Public vs. Private — Know Your People</div>
+  <div class="screen-body">Some team members love public recognition in team meetings. Others cringe. Praising someone publicly who prefers private recognition can actually make them feel uncomfortable and less likely to repeat the behavior.</div>
+  <div class="screen-body">Know your team. A simple question — <em>"How do you prefer to be recognized when you do great work?"</em> — is one of the most useful things you can learn about each person.</div>
+  <div class="hl"><strong>Recognition that makes someone uncomfortable is counterproductive.</strong> It creates a mild aversive experience around good work — which is the opposite of what you want. Simply ask, then remember the answer.</div>
+</div>
+
+<!-- SCREEN 6: Scenario — Framework -->
+<div class="screen" id="screen-6">
+  <div class="screen-label">The Recognition Framework</div>
+  <div class="screen-title">Recognizing Someone Who Hates the Spotlight</div>
+  <div class="screen-body">You have a team member who consistently goes above and beyond but is introverted and gets visibly uncomfortable with public praise.</div>
+  <div class="screen-body">Your best recognition approach is:</div>
+  <div class="options" id="opts-6">
+    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Recognize them publicly anyway — it's important for the team to hear it.</span></div>
+    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Write them a specific, thoughtful note or email that they can read privately.</span></div>
+    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Skip formal recognition and just tell them informally in passing.</span></div>
+    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Mention their contribution in a team meeting without using their name.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-6"></div>
+</div>
+
+<!-- SCREEN 7: Scenario — Practice -->
+<div class="screen" id="screen-7">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Recognizing the Whole Team, Not Just the Loudest</div>
+  <div class="screen-body">You want to build a recognition habit but worry about recognizing some team members more than others.</div>
+  <div class="screen-body">The best approach is:</div>
+  <div class="options" id="opts-7">
+    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>Recognize everyone equally — one recognition per person per month.</span></div>
+    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>Track who you've recognized recently and proactively look for things to recognize across the full team.</span></div>
+    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>Only recognize performance that clearly exceeds expectations.</span></div>
+    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>Let recognition happen naturally — forcing it makes it feel inauthentic.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-7"></div>
+</div>
+
+<!-- SCREEN 8: Scenario — Practice -->
+<div class="screen" id="screen-8">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">Do You Recognize "Just Doing Their Job"?</div>
+  <div class="screen-body">A team member does something well — but it's part of their normal job responsibilities.</div>
+  <div class="screen-body">Do you recognize it?</div>
+  <div class="options" id="opts-8">
+    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>No — recognition is for above-and-beyond; doing your job is the baseline.</span></div>
+    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>Yes — recognizing consistent excellence at the baseline reinforces the standard you want.</span></div>
+    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>Mention it in their performance review but not in the moment.</span></div>
+    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>Only recognize it if other team members are struggling with the same expectation.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-8"></div>
+</div>
+
+<!-- SCREEN 9: Scenario — Practice -->
+<div class="screen" id="screen-9">
+  <div class="screen-label">Practice</div>
+  <div class="screen-title">When Senior Leaders Don't Recognize Your Team</div>
+  <div class="screen-body">Your leader never recognizes your team's work publicly.</div>
+  <div class="screen-body">Should you?</div>
+  <div class="options" id="opts-9">
+    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>No — recognition should come from the top to have impact.</span></div>
+    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>Yes — you're your team's direct leader, and your recognition is the most meaningful to them.</span></div>
+    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>It depends on whether your leader approves of public recognition as a leadership style.</span></div>
+    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>Focus on giving individual feedback instead — that's more useful than recognition.</span></div>
+  </div>
+  <div class="feedback-box" id="fb-9"></div>
+</div>
+
+<!-- SCREEN 10: Pulse -->
+<div class="screen" id="screen-10">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">1 of 5 — "Great work, team!" is an effective form of recognition because it reaches everyone at once.</div>
+  <div class="pulse-opts" id="pulse-10">
+    <div class="pulse-opt" onclick="pickPulse(10,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(10,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-10"></div>
+</div>
+
+<!-- SCREEN 11: Pulse -->
+<div class="screen" id="screen-11">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">2 of 5 — Recognition should be saved for work that clearly exceeds expectations.</div>
+  <div class="pulse-opts" id="pulse-11">
+    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-11"></div>
+</div>
+
+<!-- SCREEN 12: Pulse -->
+<div class="screen" id="screen-12">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">3 of 5 — Which element of recognition has the strongest impact on how well it lands?</div>
+  <div class="pulse-opts" id="pulse-12">
+    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — The seniority of the person giving the recognition</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — The specificity — naming the exact behavior and its impact</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Whether it's delivered publicly or privately</div>
+    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — How formal or informal the setting is</div>
+  </div>
+  <div class="feedback-box" id="pfb-12"></div>
+</div>
+
+<!-- SCREEN 13: Pulse -->
+<div class="screen" id="screen-13">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">4 of 5 — You learn that a team member prefers private recognition. The best response is:</div>
+  <div class="pulse-opts" id="pulse-13">
+    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — Continue recognizing them publicly — normalizing recognition is important for the team</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — Shift to private recognition only for that person</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — Ask them to get more comfortable with public recognition over time</div>
+    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — Give them less recognition to avoid the discomfort</div>
+  </div>
+  <div class="feedback-box" id="pfb-13"></div>
+</div>
+
+<!-- SCREEN 14: Pulse -->
+<div class="screen" id="screen-14">
+  <div class="screen-label">Pulse Check</div>
+  <div class="screen-title">Check Your Understanding</div>
+  <div class="pulse-q">5 of 5 — Recognition from a direct supervisor matters less than recognition from senior leadership.</div>
+  <div class="pulse-opts" id="pulse-14">
+    <div class="pulse-opt" onclick="pickPulse(14,'A')">True</div>
+    <div class="pulse-opt" onclick="pickPulse(14,'B')">False</div>
+  </div>
+  <div class="feedback-box" id="pfb-14"></div>
+</div>
+
+<!-- SCREEN 15: Apply It -->
+<div class="screen" id="screen-15">
+  <div class="screen-label">Apply It</div>
+  <div class="screen-title">Make It Real</div>
+  <div class="screen-body">Recognition only becomes a habit when you build a system for it. Use these prompts to turn awareness into action.</div>
+
+  <div class="apply-section">
+    <div class="apply-label">1. Who on your team has done something worth recognizing recently that you haven't called out yet?</div>
+    <textarea class="apply-input" id="apply-0" placeholder="Name or role…" oninput="saveApply(0)"></textarea>
+    <div class="apply-saved" id="saved-0">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">2. What specifically did they do, and what was the impact? (Practice using SBI — situation, behavior, impact.)</div>
+    <textarea class="apply-input" id="apply-1" placeholder="Situation → Behavior → Impact…" oninput="saveApply(1)"></textarea>
+    <div class="apply-saved" id="saved-1">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">3. How does each person on your team prefer to be recognized — publicly or privately? Write what you know.</div>
+    <textarea class="apply-input" id="apply-2" placeholder="What you know about each person's preference…" oninput="saveApply(2)"></textarea>
+    <div class="apply-saved" id="saved-2">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">4. What's your plan for recognizing that team member this week? (What, when, how?)</div>
+    <textarea class="apply-input" id="apply-3" placeholder="Your specific plan…" oninput="saveApply(3)"></textarea>
+    <div class="apply-saved" id="saved-3">Saved</div>
+  </div>
+  <div class="apply-section">
+    <div class="apply-label">5. How will you build recognition into a consistent habit — not a one-time event?</div>
+    <textarea class="apply-input" id="apply-4" placeholder="Your recognition system or routine…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
+    <div class="apply-saved" id="saved-4">Saved</div>
+  </div>
+</div>
+
+<!-- SCREEN 16: Complete -->
+<div class="screen" id="screen-16">
+  <div class="complete-hero">
+    <div class="complete-icon">🌟</div>
+    <div class="complete-title">Course Complete</div>
+    <div class="complete-sub">You've finished Recognizing Your Team. The leaders whose teams stay engaged aren't the ones who recognize the most — they're the ones who recognize specifically, consistently, and in the way that actually lands for each person.</div>
+  </div>
+  <div class="commitments">
+    <h4>What recognition leaders do differently:</h4>
+    <div class="commit-item">Make recognition specific every time — name the behavior and the impact</div>
+    <div class="commit-item">Recognize same day whenever possible — timeliness amplifies impact</div>
+    <div class="commit-item">Know each team member's preferred mode (public/private, verbal/written)</div>
+    <div class="commit-item">Scan the full team proactively — don't only recognize who demands attention</div>
+    <div class="commit-item">Recognize consistent excellence, not just heroics — your standard is worth naming</div>
+  </div>
+  <div style="text-align:center;">
+    <button class="complete-btn" onclick="window.open('https://forms.office.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  </div>
+</div>
+
+</div><!-- end course-main -->
+
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="nav-dots"></div>
+  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTIONS = [
+  {label:'Foundation',              start:0, end:4},
+  {label:'The Recognition Framework',start:3, end:6},
+  {label:'Practice',                start:7, end:9},
+  {label:'Pulse Check',             start:10,end:14},
+  {label:'Apply It',                start:15,end:15},
+  {label:'Complete',                start:16,end:16}
+];
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+
+const SCENARIO_ANSWERS = {
+  4: { correct:'B', feedback:'<strong>B is right.</strong> Timely recognition reinforces the behavior in the moment when the person can connect your words to what they did. A week later, the connection is weaker and the impact is diluted. Same day, specific, directly to the person — that\'s the standard.' },
+  6: { correct:'B', feedback:'<strong>B is right.</strong> Written recognition is one of the most durable forms — people save notes. And for introverts, private recognition often lands much harder than public praise that makes them want to disappear. The right mode is the one they actually receive.' },
+  7: { correct:'B', feedback:'<strong>B is right.</strong> Some team members are more visible or vocal, making their contributions easier to notice. Quieter or more reliable contributors often go unrecognized not because they\'re doing less — but because they\'re not demanding attention. Proactively scanning for recognition opportunities across the whole team prevents the invisible-high-performer problem.' },
+  8: { correct:'B', feedback:'<strong>B is right.</strong> "Good work on exactly what you were supposed to do" seems redundant — but it isn\'t. Naming that you noticed consistent quality signals that you\'re paying attention and that the standard matters. People who feel seen for doing their job well are more likely to keep doing it.' },
+  9: { correct:'B', feedback:'<strong>B is right.</strong> Your recognition is often the most meaningful — because you see the work up close and your words reflect direct awareness of their contribution. Waiting for recognition from senior leaders means your team may wait indefinitely. Your voice, specific and timely, is what they\'ll remember.' }
+};
+
+const PULSE_ANSWERS = {
+  10: { correct:'B', feedback:'<strong>False.</strong> Group recognition is too vague to be meaningful. It doesn\'t tell anyone what they did right or why it mattered. It can feel perfunctory. Specific individual recognition — "Jamie, your work on the schedule conflict saved us three hours Thursday" — has impact that "great work, team" never achieves.' },
+  11: { correct:'B', feedback:'<strong>False.</strong> Consistent excellence at the standard deserves recognition too — especially for reliable performers who rarely get called out because they don\'t create problems. Recognizing quality work reinforces the standard and shows the person you\'re paying attention.' },
+  12: { correct:'B', feedback:'<strong>B is right.</strong> Specificity is what makes recognition feel real rather than performative. "You handled the escalation with the customer on Tuesday with total composure — it de-escalated a situation that could have been much worse" lands in a way that "great work this week" never does. Name the behavior. Name the impact.' },
+  13: { correct:'B', feedback:'<strong>B is right.</strong> Recognition that makes someone uncomfortable is counterproductive. It creates a mild aversive experience around good work — which is the opposite of what you want. Simply shift the mode to what works for them. This requires knowing your people — which is its own leadership act.' },
+  14: { correct:'B', feedback:'<strong>False.</strong> Research consistently shows that direct manager recognition is among the most meaningful forms for most employees. Your awareness of their specific work, delivered directly, often outweighs broad senior recognition. You see the work. Your words reflect that.' }
+};
+
+const KEY = 'course_sv_recognition_v1';
+let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
+
+function load() {
+  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
+  showScreen(state.cur);
+  buildDots();
+}
+
+function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
+
+function showScreen(n) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + n).classList.add('active');
+  state.cur = n;
+  if (n > state.max) state.max = n;
+  updateProgress();
+  updatePills();
+  updateNav();
+  restoreScreen(n);
+  save();
+  window.scrollTo(0,0);
+}
+
+function updateProgress() {
+  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
+}
+
+function updatePills() {
+  const sec = SECTION_MAP[state.cur];
+  SECTIONS.forEach((s, i) => {
+    const pill = document.getElementById('pill-' + i);
+    if (!pill) return;
+    pill.className = 'sec-pill';
+    if (i === sec) pill.classList.add('active');
+    else if (state.max >= s.end) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  document.getElementById('btn-prev').disabled = state.cur === 0;
+  const nextBtn = document.getElementById('btn-next');
+  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
+  const answered = state.answered[state.cur];
+  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
+  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
+}
+
+function buildDots() {
+  const wrap = document.getElementById('nav-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i === state.cur) d.classList.add('active-dot');
+    else if (i <= state.max) d.classList.add('done-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function navigate(dir) {
+  const next = state.cur + dir;
+  if (next < 0 || next >= TOTAL) return;
+  showScreen(next);
+  buildDots();
+}
+
+function restoreScreen(n) {
+  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
+  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
+  if (n === 15) restoreApply();
+}
+
+function pickOpt(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restoreScenario(screenIdx, chosen);
+  updateNav();
+}
+
+function restoreScenario(screenIdx, chosen) {
+  const answer = SCENARIO_ANSWERS[screenIdx];
+  const container = document.getElementById('opts-' + screenIdx);
+  if (!container) return;
+  container.querySelectorAll('.opt').forEach(opt => {
+    const letter = opt.querySelector('.opt-letter').textContent;
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('fb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function pickPulse(screenIdx, chosen) {
+  if (state.answered[screenIdx]) return;
+  state.answered[screenIdx] = true;
+  state.choices[screenIdx] = chosen;
+  save();
+  restorePulse(screenIdx, chosen);
+  updateNav();
+}
+
+function restorePulse(screenIdx, chosen) {
+  const answer = PULSE_ANSWERS[screenIdx];
+  const container = document.getElementById('pulse-' + screenIdx);
+  if (!container) return;
+  const opts = container.querySelectorAll('.pulse-opt');
+  opts.forEach((opt, i) => {
+    const letter = String.fromCharCode(65 + i);
+    opt.classList.add('locked');
+    if (letter === answer.correct) opt.classList.add('correct');
+    else if (letter === chosen) opt.classList.add('wrong');
+    else opt.classList.add('dimmed');
+  });
+  const fb = document.getElementById('pfb-' + screenIdx);
+  if (fb) {
+    fb.innerHTML = answer.feedback;
+    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
+  }
+}
+
+function saveApply(idx) {
+  const el = document.getElementById('apply-' + idx);
+  if (!el) return;
+  state.apply[idx] = el.value;
+  save();
+  const saved = document.getElementById('saved-' + idx);
+  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+}
+
+function restoreApply() {
+  for (let i = 0; i <= 4; i++) {
+    const el = document.getElementById('apply-' + i);
+    if (el && state.apply[i]) el.value = state.apply[i];
+  }
+}
+
+load();
+</script>
+</body>
+</html>
