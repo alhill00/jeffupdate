@@ -1,0 +1,884 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strategic Horizon | Director Series | Breeze Airways</title>
+<style>
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#faf8ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#6D28D9;
+  --accent-light:#ede9fe;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#ede9fe;
+  --good-border:#6D28D9;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#1a0a3d 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:var(--dark);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(109,40,217,.25);color:rgba(255,255,255,.8);border-color:rgba(109,40,217,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:18px 0;}
+.pres-card{background:var(--card);border:1.5px solid var(--border);border-top:4px solid var(--accent);border-radius:10px;padding:16px;}
+.pres-card h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.pres-card ul{padding-left:16px;font-size:12.5px;line-height:1.8;color:#374151;}
+.num-cards{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.num-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;}
+.num-badge{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--white);font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.num-content h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.num-content p{font-size:13.5px;color:#374151;line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;box-sizing:border-box;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#5b21b6;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#5b21b6;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(109,40,217,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .three-col{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="course-header">
+  <div class="course-meta">Director Series &nbsp;·&nbsp; Leadership Development</div>
+  <div class="course-title">Strategic Horizon</div>
+  <div class="course-sub">Expanding your time horizon from weeks to quarters — so you're anticipating problems before they land on your desk.</div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-wrap">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progressBar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 / 17</div>
+</div>
+
+<!-- SECTION PILLS -->
+<div class="section-nav">
+  <div class="sec-pill" id="pill-0">Foundation</div>
+  <div class="sec-pill" id="pill-1">The Three Clocks</div>
+  <div class="sec-pill" id="pill-2">Practice</div>
+  <div class="sec-pill" id="pill-3">Pulse Check</div>
+  <div class="sec-pill" id="pill-4">Apply It</div>
+  <div class="sec-pill" id="pill-5">Complete</div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="course-main">
+
+  <!-- ============================================================
+       SCREEN 0 — The Clock You're Running On (Foundation)
+       ============================================================ -->
+  <div class="screen active" id="screen-0">
+    <div class="screen-label">Foundation · Screen 1 of 3</div>
+    <div class="screen-title">The Clock You're Running On</div>
+    <div class="screen-body">
+      Most directors are excellent operators. They run tight meetings, manage performance, and keep their team moving. But there's a clock problem — and it's quietly limiting how far you'll go.
+    </div>
+    <div class="screen-body">
+      You're running on a 2–4 week horizon when the role demands a 90-day view.
+    </div>
+    <div class="al">
+      <strong>Start here:</strong> What problems are coming for your department in Q3?<br><br>
+      If you don't have a clear, specific answer ready — that's the gap this course is designed to close.
+    </div>
+    <div class="screen-body">
+      The difference between a director and a VP isn't just scope. It's how far ahead they can see. Operational excellence gets you to director. <strong>Strategic horizon gets you to VP.</strong>
+    </div>
+    <div class="hl">
+      <strong>What you'll build in this course:</strong> A concrete habit and framework — The Three Clocks — that trains you to hold 30-day, 90-day, and 12-month thinking simultaneously, so you're anticipating problems instead of reacting to them.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 1 — What a Short Horizon Costs You (Foundation)
+       ============================================================ -->
+  <div class="screen" id="screen-1">
+    <div class="screen-label">Foundation · Screen 2 of 3</div>
+    <div class="screen-title">What a Short Horizon Costs You</div>
+    <div class="screen-body">
+      By the time a problem is visible to you, you're already reactive. Think about the situations that blindsided you in the last quarter:
+    </div>
+    <div class="num-cards">
+      <div class="num-card">
+        <div class="num-badge">1</div>
+        <div class="num-content">
+          <h4>The hiring gap</h4>
+          <p>You needed to flag it 6 weeks ago. By the time it was obvious, you were scrambling — and behind on every other priority while you filled it.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">2</div>
+        <div class="num-content">
+          <h4>The team morale dip that became a resignation</h4>
+          <p>The signals were there. A Team Member going quiet. Shorter responses. A little less energy. You noticed — but there was always something more urgent. Until there wasn't.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">3</div>
+        <div class="num-content">
+          <h4>The company initiative your team wasn't ready for</h4>
+          <p>Leadership announced it. Your team looked at you. You were processing it in real time — right alongside them.</p>
+        </div>
+      </div>
+    </div>
+    <div class="hl">
+      <strong>The flying analogy:</strong> A pilot who can only see 200 feet ahead is dangerous — not because they lack skill, but because they're operating too close to the problem to change course in time. A director who only sees 2 weeks ahead is flying the same way.<br><br>
+      <strong>Reactive leaders get managed. Anticipatory leaders get trusted.</strong>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 2 — The Horizon Shift (Foundation)
+       ============================================================ -->
+  <div class="screen" id="screen-2">
+    <div class="screen-label">Foundation · Screen 3 of 3</div>
+    <div class="screen-title">The Horizon Shift</div>
+    <div class="screen-body">
+      Here's what most directors get wrong about this: they assume that seeing further ahead is a talent — something some people have and others don't. It's not.
+    </div>
+    <div class="screen-body">
+      The horizon shift isn't a personality change. It's a habit change.
+    </div>
+    <div class="screen-body">
+      You almost certainly have most of the information you need to see further ahead. You're just not in the habit of looking. The 30-day view is loud — it demands your attention, fills your calendar, and rewards you immediately for solving it. The 90-day view is quiet. It doesn't announce itself. It requires you to actively go looking.
+    </div>
+    <div class="al">
+      <strong>This course introduces The Three Clocks</strong> — a simple framework for holding three time horizons simultaneously, without adding complexity to your week.
+    </div>
+    <div class="hl">
+      <strong>Your goal by the end of this course:</strong> Name one Q3 implication that's hiding in your Q2 data right now. If you can do that, you've made the shift.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 3 — The Three Clocks (Framework)
+       ============================================================ -->
+  <div class="screen" id="screen-3">
+    <div class="screen-label">The Three Clocks · Screen 1 of 4</div>
+    <div class="screen-title">The Three Clocks</div>
+    <div class="screen-body">
+      Strategic directors don't pick one time horizon and stay there. They hold three simultaneously. Here's how to think about each clock:
+    </div>
+    <div class="num-cards">
+      <div class="num-card">
+        <div class="num-badge" style="font-size:18px;">🕐</div>
+        <div class="num-content">
+          <h4>Clock 1: 30 Days — Your Team's Reality</h4>
+          <p>What's the work? Who's struggling? What's on fire? This is where most directors already live — and where you should spend roughly half your attention. It's the execution layer.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge" style="font-size:18px;">🕒</div>
+        <div class="num-content">
+          <h4>Clock 2: 90 Days — Your Department's Trajectory</h4>
+          <p>Where are you trending? What decisions made today shape what's possible 90 days from now? This is where directors <em>need</em> to spend more time — and where most don't. It's the anticipation layer.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge" style="font-size:18px;">🕛</div>
+        <div class="num-content">
+          <h4>Clock 3: 12 Months — The Company's Direction</h4>
+          <p>Where is Breeze going? How does your department need to evolve to match it? VP-ready directors are fluent here — not just in their own function, but in the broader business direction. It's the positioning layer.</p>
+        </div>
+      </div>
+    </div>
+    <div class="hl">
+      <strong>The key insight:</strong> A director's job is to hold all three clocks simultaneously — not just the one that's loudest. The 30-day clock will always be the loudest. The skill is making sure you still hear the others.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 4 — Reading Leading vs. Lagging Indicators (Framework)
+       ============================================================ -->
+  <div class="screen" id="screen-4">
+    <div class="screen-label">The Three Clocks · Screen 2 of 4</div>
+    <div class="screen-title">Reading Leading vs. Lagging Indicators</div>
+    <div class="screen-body">
+      Here's why most directors end up reactive: they're managing from lagging data — because it's cleaner, easier to measure, and directly tied to the metrics they're accountable for.
+    </div>
+    <div class="screen-body">
+      <strong>Lagging indicators</strong> tell you what already happened. <strong>Leading indicators</strong> tell you what's coming.
+    </div>
+    <div class="three-col">
+      <div class="pres-card">
+        <h4>Pattern 1: Engagement</h4>
+        <ul>
+          <li><strong>Leading:</strong> Team Member goes quiet in meetings, shorter responses, less initiative</li>
+          <li><strong>Lagging:</strong> Resignation conversation</li>
+        </ul>
+      </div>
+      <div class="pres-card">
+        <h4>Pattern 2: Output Quality</h4>
+        <ul>
+          <li><strong>Leading:</strong> Slow, consistent decline in quality scores over 4–6 weeks</li>
+          <li><strong>Lagging:</strong> Missed metric, guest complaint, escalation</li>
+        </ul>
+      </div>
+      <div class="pres-card">
+        <h4>Pattern 3: Team Capacity</h4>
+        <ul>
+          <li><strong>Leading:</strong> Repeat absences, overtime creep, skipped development conversations</li>
+          <li><strong>Lagging:</strong> Burnout, attrition, performance gap</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hl">
+      <strong>Strategic directors learn to read leading signals</strong> — not because lagging data is useless, but because by the time a problem shows up in lagging data, your window for easy intervention has already closed.
+    </div>
+    <div class="al">
+      <strong>Practice question:</strong> In your department right now — what's a number that's still "acceptable" but has been trending in the wrong direction for 3+ weeks? That trend is a leading indicator. Name it before it names itself.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 5 — The Weekly Horizon Check (Framework)
+       ============================================================ -->
+  <div class="screen" id="screen-5">
+    <div class="screen-label">The Three Clocks · Screen 3 of 4</div>
+    <div class="screen-title">The Weekly Horizon Check</div>
+    <div class="screen-body">
+      You don't need a new system. You need three questions — run weekly, consistently. Here's the habit:
+    </div>
+    <div class="num-cards">
+      <div class="num-card">
+        <div class="num-badge">Q1</div>
+        <div class="num-content">
+          <h4>What did I learn this week that I'm not thinking about yet?</h4>
+          <p>Every week surfaces information you absorbed and filed away. This question pulls it forward — conversations, data points, reactions from your team. What registered but didn't get examined?</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">Q2</div>
+        <div class="num-content">
+          <h4>What trend am I watching that I haven't named out loud?</h4>
+          <p>You're probably tracking something — a pattern forming, a team dynamic shifting, a metric slowly moving. This question forces you to put a word to it instead of letting it remain a vague feeling.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">Q3</div>
+        <div class="num-content">
+          <h4>What decision is coming in 60–90 days that I should be preparing for now?</h4>
+          <p>Decisions made under pressure are almost always worse than decisions made with time. This question finds the upcoming decisions — staffing, structure, planning, positioning — while you still have runway.</p>
+        </div>
+      </div>
+    </div>
+    <div class="hl">
+      <strong>Run these every Friday before your week closes</strong> — or before your weekly leader 1:1. Block 15 minutes. This is not a calendar exercise. It's a mental discipline: the habit of zooming out before the next week pulls you back in.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 6 — What Your VP Is Watching (Framework)
+       ============================================================ -->
+  <div class="screen" id="screen-6">
+    <div class="screen-label">The Three Clocks · Screen 4 of 4</div>
+    <div class="screen-title">What Your VP Is Watching</div>
+    <div class="screen-body">
+      Your VP is already operating on a 12-month horizon. They're thinking about where the business needs to be, what capabilities the org needs to build, and which leaders are ready to help get there.
+    </div>
+    <div class="screen-body">
+      When you show up with only a 30-day view, you're not speaking their language — and they have to translate for you. It's not a trust issue. It's a language issue. And it quietly signals that you're managing your current role, not preparing for the next one.
+    </div>
+    <div class="hl">
+      <strong>The shift that changes the conversation:</strong><br><br>
+      When you arrive at a leadership meeting with a 90-day perspective that connects to the 12-month direction, you become someone your VP relies on — not just someone they manage. They don't have to bring you up to speed. You're already there.
+    </div>
+    <div class="screen-body">
+      This is the presence shift that happens before you even open your mouth. Walking in with horizon thinking signals readiness. And in leadership, readiness gets recognized before it gets announced.
+    </div>
+    <div class="al">
+      <strong>Next:</strong> Three scenarios to practice reading the clocks in real situations you'll actually face.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 7 — Scenario 1: The VP Question (Practice)
+       ============================================================ -->
+  <div class="screen" id="screen-7">
+    <div class="screen-label">Practice · Scenario 1 of 3</div>
+    <div class="screen-title">Scenario: The VP Question</div>
+    <div class="screen-body">
+      <strong>The situation:</strong> Your VP pulls you aside after a leadership meeting and asks: <em>"Where do you see your department in Q3? I want your read before our planning session."</em>
+    </div>
+    <div class="screen-body">
+      You have strong opinions about next month. You haven't thought much about Q3. How do you respond?
+    </div>
+
+    <div class="options" id="opts-7">
+      <div class="opt" onclick="selectOpt(7,'A',false)" id="opt-7-A">
+        <span class="opt-letter">A</span>
+        <span>"I haven't had a chance to look that far ahead — can I get back to you after I review the data?"</span>
+      </div>
+      <div class="opt" onclick="selectOpt(7,'B',false)" id="opt-7-B">
+        <span class="opt-letter">B</span>
+        <span>"Things are going well right now — I think we'll be in good shape."</span>
+      </div>
+      <div class="opt" onclick="selectOpt(7,'C',true)" id="opt-7-C">
+        <span class="opt-letter">C</span>
+        <span>"Based on the trend I'm seeing, I think our biggest Q3 challenge is going to be [X]. I'm still working out how we get ahead of it, but I want to think it through before the planning session."</span>
+      </div>
+      <div class="opt" onclick="selectOpt(7,'D',false)" id="opt-7-D">
+        <span class="opt-letter">D</span>
+        <span>"I'll put together a full Q3 plan this week and send it over."</span>
+      </div>
+    </div>
+
+    <div class="feedback-box" id="fb-7">
+      <strong>C is right — and here's why it works even when you don't have the full answer.</strong><br><br>
+      Your VP isn't asking for a finished plan. They're testing whether you're already thinking ahead. Option C shows you're looking at the horizon AND can name what you see — even if you're still working on it. That's the signal they're looking for.<br><br>
+      Option A is honest, but passive — it reveals the gap without showing the instinct. Option B is vague and says nothing. Option D over-promises when a conversation was what was needed.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 8 — Scenario 2: The Quiet Signal (Practice)
+       ============================================================ -->
+  <div class="screen" id="screen-8">
+    <div class="screen-label">Practice · Scenario 2 of 3</div>
+    <div class="screen-title">Scenario: The Quiet Signal</div>
+    <div class="screen-body">
+      <strong>The situation:</strong> Two of your highest performers have been less engaged over the past few weeks. Still hitting their numbers. Nothing dramatic. But something feels different — quieter, less initiative, shorter responses in 1:1s. Your quarterly review isn't for 6 weeks.
+    </div>
+    <div class="screen-body">
+      What's the most strategically aware response?
+    </div>
+
+    <div class="options" id="opts-8">
+      <div class="opt" onclick="selectOpt(8,'A',false)" id="opt-8-A">
+        <span class="opt-letter">A</span>
+        <span>Wait for the quarterly — if numbers stay good, it's probably fine.</span>
+      </div>
+      <div class="opt" onclick="selectOpt(8,'B',true)" id="opt-8-B">
+        <span class="opt-letter">B</span>
+        <span>Check in separately in your next 1:1 with each of them — pay attention to what they say and what they don't.</span>
+      </div>
+      <div class="opt" onclick="selectOpt(8,'C',false)" id="opt-8-C">
+        <span class="opt-letter">C</span>
+        <span>Alert HR that you may have a retention risk forming.</span>
+      </div>
+      <div class="opt" onclick="selectOpt(8,'D',false)" id="opt-8-D">
+        <span class="opt-letter">D</span>
+        <span>Assign them both a stretch project to re-engage them.</span>
+      </div>
+    </div>
+
+    <div class="feedback-box" id="fb-8">
+      <strong>B — and this is exactly what reading a leading indicator looks like in practice.</strong><br><br>
+      A quiet disengagement is a signal that typically appears 6–8 weeks before a resignation conversation. The right move is a light-touch conversation — not a formal intervention, and definitely not ignoring it.<br><br>
+      Option A treats the symptom as noise. Option C escalates too fast on incomplete information. Option D adds pressure without understanding the root. Option B reads the clock before it runs out — and keeps the door open without making it a big thing.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 9 — Scenario 3: The Initiative You Didn't See Coming (Practice)
+       ============================================================ -->
+  <div class="screen" id="screen-9">
+    <div class="screen-label">Practice · Scenario 3 of 3</div>
+    <div class="screen-title">Scenario: The Initiative You Didn't See Coming</div>
+    <div class="screen-body">
+      <strong>The situation:</strong> In an all-hands, the CPO announces a company-wide initiative that will significantly affect your department starting in Q3. You've heard nothing about it before today. Your managers look to you for a reaction. You're processing it in real time — right alongside them.
+    </div>
+    <div class="screen-body">
+      What's the most effective response in this moment?
+    </div>
+
+    <div class="options" id="opts-9">
+      <div class="opt" onclick="selectOpt(9,'A',false)" id="opt-9-A">
+        <span class="opt-letter">A</span>
+        <span>Tell your team, "This is the first I'm hearing about it — I'll find out more and get back to you."</span>
+      </div>
+      <div class="opt" onclick="selectOpt(9,'B',false)" id="opt-9-B">
+        <span class="opt-letter">B</span>
+        <span>React visibly — let your team see you're surprised so they know it's not their fault they weren't prepared.</span>
+      </div>
+      <div class="opt" onclick="selectOpt(9,'C',true)" id="opt-9-C">
+        <span class="opt-letter">C</span>
+        <span>Stay composed, acknowledge the announcement, and tell your team you'll meet this week to talk through what it means for your work.</span>
+      </div>
+      <div class="opt" onclick="selectOpt(9,'D',false)" id="opt-9-D">
+        <span class="opt-letter">D</span>
+        <span>Pull your managers aside immediately to vent your frustration about not being looped in.</span>
+      </div>
+    </div>
+
+    <div class="feedback-box" id="fb-9">
+      <strong>C — composure and a clear next step is exactly the right move.</strong><br><br>
+      You can't always see what's coming. But you can control how you respond when it arrives. Your team is reading your reaction to calibrate their own — so steady, action-oriented leadership matters here.<br><br>
+      The bigger question after this moment: <em>what signals should you have been reading that could have helped you anticipate this?</em> Your VP likely knew something was coming. Were you asking the right questions in your 1:1s? Were you looking at the 12-month clock? That's where this scenario teaches.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 10 — Pulse Check 1
+       ============================================================ -->
+  <div class="screen" id="screen-10">
+    <div class="screen-label">Pulse Check · 1 of 5</div>
+    <div class="screen-title">Pulse Check</div>
+    <div class="pulse-q">A director is scanning their team's weekly output and notices a slow but consistent 8% decline in quality scores over the past 6 weeks. Numbers are still above threshold. What's the most strategically aware response?</div>
+    <div class="pulse-opts" id="popts-10">
+      <div class="pulse-opt" onclick="selectPulse(10,'A',false)">A) Nothing — above threshold is above threshold.</div>
+      <div class="pulse-opt" onclick="selectPulse(10,'B',true)">B) Address it now as a leading indicator of a problem forming.</div>
+      <div class="pulse-opt" onclick="selectPulse(10,'C',false)">C) Wait until it crosses the threshold to avoid premature action.</div>
+      <div class="pulse-opt" onclick="selectPulse(10,'D',false)">D) Ask HR to run an engagement survey.</div>
+    </div>
+    <div class="feedback-box" id="pfb-10">
+      <strong>B is right.</strong> An 8% trend over 6 weeks is a leading indicator — and it's pointing somewhere. By the time it crosses your threshold, you're already behind. Strategic horizon thinking means you act on the trend, not the threshold. You investigate now, while you still have options.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 11 — Pulse Check 2
+       ============================================================ -->
+  <div class="screen" id="screen-11">
+    <div class="screen-label">Pulse Check · 2 of 5</div>
+    <div class="screen-title">Pulse Check</div>
+    <div class="pulse-q">Which of the following best describes the difference between a lagging and a leading indicator?</div>
+    <div class="pulse-opts" id="popts-11">
+      <div class="pulse-opt" onclick="selectPulse(11,'A',false)">A) Lagging indicators are less accurate than leading indicators.</div>
+      <div class="pulse-opt" onclick="selectPulse(11,'B',false)">B) Leading indicators are only useful in large organizations.</div>
+      <div class="pulse-opt" onclick="selectPulse(11,'C',true)">C) Lagging indicators confirm what happened; leading indicators signal what's coming.</div>
+      <div class="pulse-opt" onclick="selectPulse(11,'D',false)">D) They measure the same thing from different departments.</div>
+    </div>
+    <div class="feedback-box" id="pfb-11">
+      <strong>C is the clean definition.</strong> Lagging data is retrospective — it tells you the score after the game. Leading data is prospective — it tells you the trajectory while the game is still being played. Both matter, but only one gives you time to act.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 12 — Pulse Check 3
+       ============================================================ -->
+  <div class="screen" id="screen-12">
+    <div class="screen-label">Pulse Check · 3 of 5</div>
+    <div class="screen-title">Pulse Check</div>
+    <div class="pulse-q">Your VP asks all directors to come to next month's planning session with a "90-day view of their department." What should you bring?</div>
+    <div class="pulse-opts" id="popts-12">
+      <div class="pulse-opt" onclick="selectPulse(12,'A',false)">A) A status update on current projects.</div>
+      <div class="pulse-opt" onclick="selectPulse(12,'B',false)">B) A summary of what your team accomplished last quarter.</div>
+      <div class="pulse-opt" onclick="selectPulse(12,'C',true)">C) Your read on where your department is trending, what risks are forming, and what decisions you need to make in the next 90 days.</div>
+      <div class="pulse-opt" onclick="selectPulse(12,'D',false)">D) A headcount request and budget projection.</div>
+    </div>
+    <div class="feedback-box" id="pfb-12">
+      <strong>C is what a 90-day view actually means.</strong> A status update (A) is 30-day thinking dressed up for a planning session. Accomplishments (B) are looking backward. A headcount request (D) is a resource ask, not a perspective. A 90-day view is forward-looking — trajectory, risk, and the decisions you're navigating toward.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 13 — Pulse Check 4
+       ============================================================ -->
+  <div class="screen" id="screen-13">
+    <div class="screen-label">Pulse Check · 4 of 5</div>
+    <div class="screen-title">Pulse Check</div>
+    <div class="pulse-q">Which habit is most likely to help a director build a consistent strategic horizon?</div>
+    <div class="pulse-opts" id="popts-13">
+      <div class="pulse-opt" onclick="selectPulse(13,'A',false)">A) Reading industry news every morning.</div>
+      <div class="pulse-opt" onclick="selectPulse(13,'B',true)">B) Scheduling a Friday reflection using 3 forward-looking questions.</div>
+      <div class="pulse-opt" onclick="selectPulse(13,'C',false)">C) Adding a monthly strategy review to the team calendar.</div>
+      <div class="pulse-opt" onclick="selectPulse(13,'D',false)">D) Asking your VP what to look out for each week.</div>
+    </div>
+    <div class="feedback-box" id="pfb-13">
+      <strong>B builds the muscle most effectively.</strong> The weekly horizon check is frequent enough to become a discipline and specific enough to produce insight. Industry news (A) is ambient — it rarely translates to your department's specifics. Monthly is too infrequent (C) to build the habit. Asking your VP (D) is passive — and it's your job to see ahead, not theirs.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 14 — Pulse Check 5
+       ============================================================ -->
+  <div class="screen" id="screen-14">
+    <div class="screen-label">Pulse Check · 5 of 5</div>
+    <div class="screen-title">Pulse Check</div>
+    <div class="pulse-q">A director has strong 30-day clarity but rarely thinks beyond the current month. What is the most likely leadership impact of this pattern over time?</div>
+    <div class="pulse-opts" id="popts-14">
+      <div class="pulse-opt" onclick="selectPulse(14,'A',false)">A) Their team will outperform departments with longer-horizon leaders.</div>
+      <div class="pulse-opt" onclick="selectPulse(14,'B',true)">B) They'll be seen as operationally solid but not VP-ready.</div>
+      <div class="pulse-opt" onclick="selectPulse(14,'C',false)">C) Their VP will start giving them more strategic responsibility.</div>
+      <div class="pulse-opt" onclick="selectPulse(14,'D',false)">D) The gap will close naturally as they gain more experience.</div>
+    </div>
+    <div class="feedback-box" id="pfb-14">
+      <strong>B is the honest answer — and the most important one in this course.</strong> Operational excellence is a floor, not a ceiling. A director who can't hold a 90-day view will be trusted to run things well. But they won't be trusted to shape what comes next. Experience alone doesn't close the gap — only deliberate practice of the horizon skill does.
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 15 — Apply It
+       ============================================================ -->
+  <div class="screen" id="screen-15">
+    <div class="screen-label">Apply It</div>
+    <div class="screen-title">Put the Framework to Work</div>
+    <div class="screen-body">
+      These two questions connect directly to what you just learned. Take your time — the quality of what you write here is more valuable than speed.
+    </div>
+
+    <div class="apply-section">
+      <div class="apply-label">Name your Q3 implication</div>
+      <div class="apply-sub">Think about what's happening in your department right now. What trend, pattern, or signal — however faint — has a potential impact 60–90 days from now? Name it specifically.</div>
+      <textarea class="apply-input" id="apply1" placeholder="e.g., Two of my highest performers are showing early signs of disengagement. If I don't address it now, I'll likely be managing a retention conversation in August..." oninput="saveApply('apply1','breeze_sh_apply1')"></textarea>
+      <div class="apply-saved" id="saved1">Saved</div>
+    </div>
+
+    <div class="apply-section">
+      <div class="apply-label">Your horizon check question</div>
+      <div class="apply-sub">From the Three Clocks framework, which clock do you spend the least time on — 30-day, 90-day, or 12-month? What's one thing you'll add to your weekly routine to zoom out?</div>
+      <textarea class="apply-input" id="apply2" placeholder="e.g., I'm almost entirely in the 30-day clock. I'm going to block 20 minutes Friday mornings to run the three horizon questions before my week closes..." oninput="saveApply('apply2','breeze_sh_apply2')"></textarea>
+      <div class="apply-saved" id="saved2">Saved</div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SCREEN 16 — Complete
+       ============================================================ -->
+  <div class="screen" id="screen-16">
+    <div class="complete-hero">
+      <div class="complete-icon">🔭</div>
+      <div class="complete-title">You're thinking further ahead.</div>
+      <div class="complete-sub">The directors who make VP aren't the ones who work the hardest — they're the ones who see the furthest. You've started building that muscle.</div>
+    </div>
+
+    <div class="commitments">
+      <h4>Your commitments from this course</h4>
+      <div class="commit-item">Run the Three Clocks check before your next leader 1:1</div>
+      <div class="commit-item">Name one Q3 signal you're watching — and tell someone about it</div>
+      <div class="commit-item">Identify one decision coming in 60–90 days and start preparing for it now</div>
+    </div>
+
+    <div id="complete-apply-wrap" style="display:none;margin-bottom:24px;">
+      <div style="background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:20px;">
+        <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:14px;">What you wrote in Apply It</div>
+        <div id="complete-apply1" style="margin-bottom:14px;display:none;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">Your Q3 Implication</div>
+          <div id="complete-apply1-text" style="font-size:14px;color:#374151;line-height:1.6;background:#faf8ff;border-radius:8px;padding:12px;"></div>
+        </div>
+        <div id="complete-apply2" style="display:none;">
+          <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">Your Horizon Check Commitment</div>
+          <div id="complete-apply2-text" style="font-size:14px;color:#374151;line-height:1.6;background:#faf8ff;border-radius:8px;padding:12px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align:center;">
+      <button class="complete-btn" onclick="window.location.href='index.html'">Back to Course Library</button>
+    </div>
+  </div>
+
+</div><!-- /course-main -->
+
+<!-- NAVIGATION -->
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btnPrev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="navDots"></div>
+  <button class="nav-btn btn-next" id="btnNext" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+// ============================================================
+// COURSE CONFIGURATION
+// ============================================================
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTION_LABELS = ['Foundation','The Three Clocks','Practice','Pulse Check','Apply It','Complete'];
+
+// Screens that require an answer before Next is enabled
+const SCENARIO_SCREENS = [7,8,9];
+const PULSE_SCREENS = [10,11,12,13,14];
+const GATED_SCREENS = [...SCENARIO_SCREENS,...PULSE_SCREENS];
+
+let current = 0;
+let answered = {}; // tracks which gated screens have been answered
+
+// ============================================================
+// INIT
+// ============================================================
+function init() {
+  buildDots();
+  loadApplySaved();
+  updateView();
+}
+
+function buildDots() {
+  const container = document.getElementById('navDots');
+  container.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    d.id = 'dot-' + i;
+    container.appendChild(d);
+  }
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function navigate(dir) {
+  const next = current + dir;
+  if (next < 0 || next >= TOTAL) return;
+  current = next;
+  updateView();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function updateView() {
+  // Show correct screen
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const activeScreen = document.getElementById('screen-' + current);
+  if (activeScreen) activeScreen.classList.add('active');
+
+  // Progress bar
+  const pct = Math.round((current / (TOTAL - 1)) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = current + ' / ' + (TOTAL - 1);
+
+  // Dots
+  for (let i = 0; i < TOTAL; i++) {
+    const dot = document.getElementById('dot-' + i);
+    dot.className = 'nav-dot';
+    if (i < current) dot.classList.add('done-dot');
+    else if (i === current) dot.classList.add('active-dot');
+  }
+
+  // Section pills
+  const activeSec = SECTION_MAP[current];
+  // Determine max section seen
+  const maxSec = Math.max(...Array.from({length: current + 1}, (_, i) => SECTION_MAP[i]));
+  for (let s = 0; s < SECTION_LABELS.length; s++) {
+    const pill = document.getElementById('pill-' + s);
+    pill.className = 'sec-pill';
+    if (s === activeSec) pill.classList.add('active');
+    else if (s < activeSec || (s <= maxSec && s !== activeSec)) pill.classList.add('done');
+  }
+
+  // Prev button
+  document.getElementById('btnPrev').disabled = (current === 0);
+
+  // Next button — disable if gated and not answered
+  const nextBtn = document.getElementById('btnNext');
+  if (current === TOTAL - 1) {
+    nextBtn.disabled = true;
+    nextBtn.textContent = 'Complete ✓';
+    // Mark complete on entry
+    onCompleteEntry();
+  } else if (GATED_SCREENS.includes(current) && !answered[current]) {
+    nextBtn.disabled = true;
+    nextBtn.textContent = 'Choose an answer';
+  } else {
+    nextBtn.disabled = false;
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+// ============================================================
+// SCENARIO INTERACTIONS (screens 7, 8, 9)
+// ============================================================
+function selectOpt(screenId, letter, isCorrect) {
+  if (answered[screenId]) return;
+  answered[screenId] = true;
+
+  const container = document.getElementById('opts-' + screenId);
+  const opts = container.querySelectorAll('.opt');
+  const fb = document.getElementById('fb-' + screenId);
+
+  opts.forEach(opt => {
+    opt.classList.add('locked');
+    const optLetter = opt.querySelector('.opt-letter').textContent.trim();
+    if (optLetter === letter) {
+      opt.classList.add(isCorrect ? 'correct' : 'wrong');
+      if (!isCorrect) fb.classList.add('wrong-fb');
+    } else if (!isCorrect) {
+      // If wrong, highlight the correct answer too
+      // We need to find which is correct — handled by marking all non-selected dimmed
+      opt.classList.add('dimmed');
+    } else {
+      opt.classList.add('dimmed');
+    }
+  });
+
+  // If wrong, also highlight the correct option
+  if (!isCorrect) {
+    opts.forEach(opt => {
+      const optLetter = opt.querySelector('.opt-letter').textContent.trim();
+      // Find correct option by checking onclick attribute
+      const onclickAttr = opt.getAttribute('onclick');
+      if (onclickAttr && onclickAttr.includes('true')) {
+        opt.classList.remove('dimmed');
+        opt.classList.add('correct');
+      }
+    });
+  }
+
+  fb.classList.add('show');
+  updateView();
+}
+
+// ============================================================
+// PULSE CHECK INTERACTIONS (screens 10–14)
+// ============================================================
+function selectPulse(screenId, letter, isCorrect) {
+  if (answered[screenId]) return;
+  answered[screenId] = true;
+
+  const container = document.getElementById('popts-' + screenId);
+  const opts = container.querySelectorAll('.pulse-opt');
+  const fb = document.getElementById('pfb-' + screenId);
+  const selectedIndex = letter.charCodeAt(0) - 65; // A=0, B=1, C=2, D=3
+
+  opts.forEach((opt, idx) => {
+    opt.classList.add('locked');
+    if (idx === selectedIndex) {
+      opt.classList.add(isCorrect ? 'correct' : 'wrong');
+    } else {
+      opt.classList.add('dimmed');
+    }
+  });
+
+  // If wrong, also highlight the correct option
+  if (!isCorrect) {
+    opts.forEach(opt => {
+      const onclickAttr = opt.getAttribute('onclick');
+      if (onclickAttr && onclickAttr.includes('true')) {
+        opt.classList.remove('dimmed');
+        opt.classList.add('correct');
+      }
+    });
+    fb.classList.add('wrong-fb');
+  }
+
+  fb.classList.add('show');
+  updateView();
+}
+
+// ============================================================
+// APPLY IT — localStorage
+// ============================================================
+function saveApply(fieldId, storageKey) {
+  const val = document.getElementById(fieldId).value;
+  localStorage.setItem(storageKey, val);
+
+  const savedIndicator = document.getElementById(
+    fieldId === 'apply1' ? 'saved1' : 'saved2'
+  );
+  savedIndicator.style.display = 'block';
+  clearTimeout(savedIndicator._timer);
+  savedIndicator._timer = setTimeout(() => {
+    savedIndicator.style.display = 'none';
+  }, 1800);
+}
+
+function loadApplySaved() {
+  const v1 = localStorage.getItem('breeze_sh_apply1');
+  const v2 = localStorage.getItem('breeze_sh_apply2');
+  if (v1) document.getElementById('apply1').value = v1;
+  if (v2) document.getElementById('apply2').value = v2;
+}
+
+// ============================================================
+// COMPLETE SCREEN
+// ============================================================
+let completeMarked = false;
+function onCompleteEntry() {
+  if (completeMarked) return;
+  completeMarked = true;
+
+  // Mark course complete
+  localStorage.setItem('breeze_mod_complete_dr_horizon', '1');
+
+  // Load Apply It responses into complete screen
+  const v1 = localStorage.getItem('breeze_sh_apply1');
+  const v2 = localStorage.getItem('breeze_sh_apply2');
+  const wrap = document.getElementById('complete-apply-wrap');
+
+  let hasContent = false;
+
+  if (v1 && v1.trim()) {
+    document.getElementById('complete-apply1').style.display = 'block';
+    document.getElementById('complete-apply1-text').textContent = v1;
+    hasContent = true;
+  }
+  if (v2 && v2.trim()) {
+    document.getElementById('complete-apply2').style.display = 'block';
+    document.getElementById('complete-apply2-text').textContent = v2;
+    hasContent = true;
+  }
+  if (hasContent) {
+    wrap.style.display = 'block';
+  }
+}
+
+// ============================================================
+// START
+// ============================================================
+init();
+</script>
+</body>
+</html>

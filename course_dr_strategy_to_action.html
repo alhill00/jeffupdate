@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strategy to Action — Director | Breeze Airways L&D</title>
+<style>
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#faf8ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#6D28D9;
+  --accent-light:#ede9fe;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#ede9fe;
+  --good-border:#6D28D9;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#1a0a3d 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:var(--dark);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(109,40,217,.25);color:rgba(255,255,255,.8);border-color:rgba(109,40,217,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:18px 0;}
+.pres-card{background:var(--card);border:1.5px solid var(--border);border-top:4px solid var(--accent);border-radius:10px;padding:16px;}
+.pres-card h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.pres-card ul{padding-left:16px;font-size:12.5px;line-height:1.8;color:#374151;}
+.num-cards{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.num-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;}
+.num-badge{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--white);font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.num-content h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.num-content p{font-size:13.5px;color:#374151;line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;box-sizing:border-box;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#5b21b6;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#5b21b6;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(109,40,217,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .three-col{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="course-header">
+  <div class="course-meta">Director Track &nbsp;·&nbsp; Leadership Development</div>
+  <div class="course-title">Strategy to Action</div>
+  <div class="course-sub">Translating company direction into what your managers and teams actually do differently — so strategy doesn't stall at your level.</div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progressBar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 / 17</div>
+</div>
+
+<!-- SECTION NAV -->
+<div class="section-nav" id="sectionNav">
+  <div class="sec-pill active" data-sec="0">Foundation</div>
+  <div class="sec-pill" data-sec="1">The Translation Model</div>
+  <div class="sec-pill" data-sec="2">Practice</div>
+  <div class="sec-pill" data-sec="3">Pulse Check</div>
+  <div class="sec-pill" data-sec="4">Apply It</div>
+  <div class="sec-pill" data-sec="5">Complete</div>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="course-main">
+
+  <!-- SCREEN 0: Where Strategy Goes to Die -->
+  <div class="screen active" id="screen-0">
+    <div class="screen-label">Foundation &nbsp;·&nbsp; Screen 1 of 17</div>
+    <div class="screen-title">Where Strategy Goes to Die</div>
+    <div class="screen-body">
+      Company strategy doesn't usually fail at the top — it fails in the middle. Specifically, at the director level.
+    </div>
+    <div class="screen-body">
+      The CPO announces a direction. The VP translates it for their team. The Director... forwards the deck. Or says "we'll figure out what this means for us." Or holds a meeting where everyone leaves more confused than when they arrived.
+    </div>
+    <div class="al">
+      This isn't a knowledge gap — directors understand the strategy. It's a <strong>translation gap</strong>. And it costs more than most organizations realize.
+    </div>
+    <div class="screen-body">
+      Your role at the director level isn't simply to receive strategy and pass it along. It's to make it legible — to turn company-level direction into department-level clarity that your managers and teams can actually act on.
+    </div>
+    <div class="hl">
+      <strong>In this course:</strong> You'll learn The Translation Model — a three-step framework for closing the gap between what leadership announces and what your team actually does differently.
+    </div>
+  </div>
+
+  <!-- SCREEN 1: The Translation Gap -->
+  <div class="screen" id="screen-1">
+    <div class="screen-label">Foundation &nbsp;·&nbsp; Screen 2 of 17</div>
+    <div class="screen-title">The Translation Gap</div>
+    <div class="screen-body">
+      When a director can't translate strategy into action, several things happen simultaneously — and most of them are invisible until they compound.
+    </div>
+    <div class="three-col">
+      <div class="pres-card">
+        <h4>Managers Misinterpret</h4>
+        <ul>
+          <li>Each manager makes their own interpretation</li>
+          <li>Usually incomplete or incorrect</li>
+          <li>Inconsistency spreads across the department</li>
+        </ul>
+      </div>
+      <div class="pres-card">
+        <h4>Teams Disconnect</h4>
+        <ul>
+          <li>Team Members feel separate from company direction</li>
+          <li>Same initiative lands differently in every department</li>
+          <li>Effort goes toward wrong priorities</li>
+        </ul>
+      </div>
+      <div class="pres-card">
+        <h4>The Director Stalls</h4>
+        <ul>
+          <li>Becomes a pass-through, not a multiplier</li>
+          <li>Loses strategic credibility with both VP and managers</li>
+          <li>Reactive instead of directional</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hl">
+      <strong>Frame it clearly:</strong> Your job isn't to pass the message down. It's to make it mean something for your context. A director who forwards the deck isn't translating — they're delegating the translation to people who don't have the context to do it well.
+    </div>
+    <div class="screen-body">
+      The translation gap isn't about intent — it's about skill. Most directors who struggle here are working hard and care about alignment. They just haven't been given a framework for how translation actually works.
+    </div>
+  </div>
+
+  <!-- SCREEN 2: What Good Translation Looks Like -->
+  <div class="screen" id="screen-2">
+    <div class="screen-label">Foundation &nbsp;·&nbsp; Screen 3 of 17</div>
+    <div class="screen-title">What Good Translation Looks Like</div>
+    <div class="screen-body">
+      A director who translates well does three things consistently — before any cascade conversation begins.
+    </div>
+    <div class="num-cards">
+      <div class="num-card">
+        <div class="num-badge">1</div>
+        <div class="num-content">
+          <h4>Connect the company's why to your department's what</h4>
+          <p>They bridge the gap between the executive-level rationale and what that rationale means for how their specific department operates day to day.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">2</div>
+        <div class="num-content">
+          <h4>Tell managers what changes and what stays the same</h4>
+          <p>They're specific — not "we need to align" but "here's exactly what shifts and here's what we can stop worrying about." Both parts of that message matter equally.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">3</div>
+        <div class="num-content">
+          <h4>Define success at the team level</h4>
+          <p>Not just what success looks like for the company — what it looks like for their department in 30 days. Concrete, observable, and owned by the director's team.</p>
+        </div>
+      </div>
+    </div>
+    <div class="hl">
+      <strong>Coming up:</strong> This course teaches The Translation Model — a repeatable three-step framework for turning any company initiative into department-level clarity that your managers can actually act on.
+    </div>
+  </div>
+
+  <!-- SCREEN 3: The Translation Model -->
+  <div class="screen" id="screen-3">
+    <div class="screen-label">The Translation Model &nbsp;·&nbsp; Screen 4 of 17</div>
+    <div class="screen-title">The Translation Model</div>
+    <div class="screen-body">
+      Three steps. Run them every time a new company priority lands on your desk. The whole model takes 20–30 minutes of focused thinking — and it's the difference between a cascade that sticks and one that evaporates.
+    </div>
+    <div class="num-cards">
+      <div class="num-card">
+        <div class="num-badge">1</div>
+        <div class="num-content">
+          <h4>Company Priority → Department Implication</h4>
+          <p>What does this initiative mean for how <em>your</em> department operates? Not what it means in general — what it means <em>here</em>. This is the step most directors skip. They repeat the company priority instead of translating it.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">2</div>
+        <div class="num-content">
+          <h4>Department Implication → Behavior Change</h4>
+          <p>What do your managers and teams need to start doing, stop doing, or do differently? Be specific enough that a manager can walk out of a meeting and act — not just agree. "Be more Guest-focused" is not a behavior change. "Include one Guest feedback data point in every weekly standup" is.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">3</div>
+        <div class="num-content">
+          <h4>Behavior Change → Success Signal</h4>
+          <p>How will you and your team know the translation worked? What does it look like in 30 days if the message actually landed? Define this before you cascade — so you can check it after.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: The Three Manager Questions -->
+  <div class="screen" id="screen-4">
+    <div class="screen-label">The Translation Model &nbsp;·&nbsp; Screen 5 of 17</div>
+    <div class="screen-title">The Three Manager Questions</div>
+    <div class="screen-body">
+      Every manager on your team needs three questions answered before they can cascade effectively. If any one of these is missing, they'll fill the gap themselves — inconsistently.
+    </div>
+    <div class="num-cards">
+      <div class="num-card">
+        <div class="num-badge">1</div>
+        <div class="num-content">
+          <h4>What changes?</h4>
+          <p>What are we doing differently because of this? Name it specifically. Vague answers here create vague execution across every team below you.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">2</div>
+        <div class="num-content">
+          <h4>What stays the same?</h4>
+          <p>What can we stop worrying about or deprioritizing? This question is just as important as the first — it gives managers permission to focus, and prevents them from treating every initiative as additive to an already full plate.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">3</div>
+        <div class="num-content">
+          <h4>What does success look like?</h4>
+          <p>How will we know if we're doing it right? Give managers something they can measure or observe — not just a direction to move toward.</p>
+        </div>
+      </div>
+    </div>
+    <div class="hl">
+      <strong>The test:</strong> If you can answer all three clearly before your manager meeting, your cascade will work. If you can't, your managers will fill in the gaps themselves — inconsistently.
+    </div>
+  </div>
+
+  <!-- SCREEN 5: The Translation Test -->
+  <div class="screen" id="screen-5">
+    <div class="screen-label">The Translation Model &nbsp;·&nbsp; Screen 6 of 17</div>
+    <div class="screen-title">The Translation Test</div>
+    <div class="screen-body">
+      Before any cascade meeting, run this three-question test on yourself. It takes two minutes and tells you whether you're ready to translate.
+    </div>
+    <div class="num-cards">
+      <div class="num-card">
+        <div class="num-badge">1</div>
+        <div class="num-content">
+          <h4>Can you describe the company initiative in one sentence?</h4>
+          <p>Not a paragraph. Not "it's complicated." One clear sentence that any manager on your team could understand without having been in the room.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">2</div>
+        <div class="num-content">
+          <h4>Can you describe what it means for your department in one sentence?</h4>
+          <p>Again — one sentence. This is your translation. If you're reaching for multiple caveats and qualifiers, you're not ready yet.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">3</div>
+        <div class="num-content">
+          <h4>Can you name one thing that will be different for your team next Monday?</h4>
+          <p>Specific. Observable. Grounded. Not "we'll have a better culture of alignment" — something concrete that will actually change.</p>
+        </div>
+      </div>
+    </div>
+    <div class="al">
+      <strong>If you can't answer all three in plain language, you're not ready to translate yet.</strong> Go back one level — talk to your VP, re-read the brief, or sit with it longer. A confused director makes a confused department.
+    </div>
+  </div>
+
+  <!-- SCREEN 6: When the Strategy Pivots Mid-Year -->
+  <div class="screen" id="screen-6">
+    <div class="screen-label">The Translation Model &nbsp;·&nbsp; Screen 7 of 17</div>
+    <div class="screen-title">When the Strategy Pivots Mid-Year</div>
+    <div class="screen-body">
+      The hardest translation isn't the new initiative — it's the pivot. When leadership changes direction on something your team has been working toward, the translation challenge is doubled.
+    </div>
+    <div class="al">
+      You have to un-translate the old direction while translating the new one — without making leadership look chaotic or your team feel jerked around.
+    </div>
+    <div class="screen-body">
+      Four principles for pivot translation:
+    </div>
+    <div class="num-cards">
+      <div class="num-card">
+        <div class="num-badge">1</div>
+        <div class="num-content">
+          <h4>Frame the pivot as new information, not a failure</h4>
+          <p>"We learned something that changes the picture" lands differently than "that wasn't working." One moves forward; the other assigns blame.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">2</div>
+        <div class="num-content">
+          <h4>Acknowledge the work that was done</h4>
+          <p>Name it explicitly. "The work we did on X built the foundation for this next direction." Team Members need to know their effort wasn't wasted before they can fully commit to what's next.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">3</div>
+        <div class="num-content">
+          <h4>Be clear about what it unlocks</h4>
+          <p>The new direction should open something up, not just shut something down. Name what becomes possible now that wasn't before.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">4</div>
+        <div class="num-content">
+          <h4>Don't editorialize about why the change happened</h4>
+          <p>Your team is watching how you frame this. Editorializing — even sympathetically — undermines trust in leadership and puts you in an awkward position. Translate; don't narrate.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 7: Scenario 1 — The All-Hands Moment -->
+  <div class="screen" id="screen-7">
+    <div class="screen-label">Practice &nbsp;·&nbsp; Screen 8 of 17</div>
+    <div class="screen-title">Scenario: The All-Hands Moment</div>
+    <div class="screen-body">
+      At a company all-hands, the CPO announces a new Guest Experience initiative — every department is expected to "align their work to the Guest journey." Your managers turn to you in the meeting. After it ends, they're in your office in 10 minutes asking what it means for your team.
+    </div>
+    <div class="hl">
+      <strong>What do you do?</strong>
+    </div>
+    <div class="options" id="opts-7">
+      <div class="opt" onclick="handleOpt(7,'A','C')">
+        <span class="opt-letter">A</span>
+        <span>"I'm still processing it — let me get clarity from my VP first before we do anything."</span>
+      </div>
+      <div class="opt" onclick="handleOpt(7,'B','C')">
+        <span class="opt-letter">B</span>
+        <span>"It applies to customer-facing teams, not really us."</span>
+      </div>
+      <div class="opt" onclick="handleOpt(7,'C','C')">
+        <span class="opt-letter">C</span>
+        <span>"Here's my initial read: for our team, aligning to the Guest journey means [X]. I want to hear your thinking too — let's meet Thursday to work through what changes."</span>
+      </div>
+      <div class="opt" onclick="handleOpt(7,'D','C')">
+        <span class="opt-letter">D</span>
+        <span>"Forward everyone the slides — they'll explain it better than I can."</span>
+      </div>
+    </div>
+    <div class="feedback-box" id="fb-7">
+      <strong>Correct.</strong> You don't have to have all the answers in the first 10 minutes. But you do have to have <em>a</em> read — and a plan to get to clarity together. Option C shows strategic ownership without pretending to have certainty you don't yet have. Option A defers the work upward instead of doing it. Option B makes an unfounded assumption. Option D is the textbook pass-through move.
+    </div>
+    <div class="feedback-box wrong-fb" id="fb-7-wrong">
+      <strong>Not quite.</strong> The right move is C. You don't need all the answers in the first 10 minutes — but you do need a read and a plan. Option A defers the work upward instead of doing it. Option B makes an unfounded assumption that shuts down the conversation. Option D is the textbook pass-through — not a translation.
+    </div>
+  </div>
+
+  <!-- SCREEN 8: Scenario 2 — The Inconsistent Cascade -->
+  <div class="screen" id="screen-8">
+    <div class="screen-label">Practice &nbsp;·&nbsp; Screen 9 of 17</div>
+    <div class="screen-title">Scenario: The Inconsistent Cascade</div>
+    <div class="screen-body">
+      Three weeks after a company initiative launched, you're hearing different things from your managers' teams. One team thinks the initiative is a top priority. Another thinks it's background context. A third has barely heard about it. Numbers are fine. Nobody's complained. But the inconsistency bothers you.
+    </div>
+    <div class="hl">
+      <strong>What do you do?</strong>
+    </div>
+    <div class="options" id="opts-8">
+      <div class="opt" onclick="handleOpt(8,'A','B')">
+        <span class="opt-letter">A</span>
+        <span>It's probably fine — if numbers are good, the translation was good enough.</span>
+      </div>
+      <div class="opt" onclick="handleOpt(8,'B','B')">
+        <span class="opt-letter">B</span>
+        <span>Bring your managers back together and create a shared understanding of what the initiative means for your department — then check how each of them has communicated it.</span>
+      </div>
+      <div class="opt" onclick="handleOpt(8,'C','B')">
+        <span class="opt-letter">C</span>
+        <span>Send a department-wide email clarifying the initiative yourself.</span>
+      </div>
+      <div class="opt" onclick="handleOpt(8,'D','B')">
+        <span class="opt-letter">D</span>
+        <span>Ask HR to run a communication audit.</span>
+      </div>
+    </div>
+    <div class="feedback-box" id="fb-8">
+      <strong>Correct.</strong> Inconsistent cascade is a translation failure — usually the director's, not the managers'. If three managers interpreted it three different ways, the original translation was probably too vague. The fix isn't a corrective memo — it's a shared alignment conversation, then better translation before the next initiative. Going around your managers with a department-wide email (Option C) undercuts them and doesn't address the root cause.
+    </div>
+    <div class="feedback-box wrong-fb" id="fb-8-wrong">
+      <strong>Not quite.</strong> The right answer is B. Inconsistent cascade is usually a director-level translation failure. If three managers heard three different messages, the original framing was too vague. The fix is a shared alignment conversation — not a memo that bypasses your managers, not complacency because the numbers look okay, and definitely not a formal audit.
+    </div>
+  </div>
+
+  <!-- SCREEN 9: Scenario 3 — The One-Sentence Test -->
+  <div class="screen" id="screen-9">
+    <div class="screen-label">Practice &nbsp;·&nbsp; Screen 10 of 17</div>
+    <div class="screen-title">Scenario: The One-Sentence Test</div>
+    <div class="screen-body">
+      Your VP asks you to "represent the team's perspective" on a new company initiative in tomorrow's leadership meeting. You've read the brief. You understand it generally. But you've been so busy you haven't thought through what it means specifically for your department.
+    </div>
+    <div class="hl">
+      <strong>What do you do?</strong>
+    </div>
+    <div class="options" id="opts-9">
+      <div class="opt" onclick="handleOpt(9,'A','C')">
+        <span class="opt-letter">A</span>
+        <span>Wing it — you know enough to speak generally, and you can be honest that you're still working through the implications.</span>
+      </div>
+      <div class="opt" onclick="handleOpt(9,'B','C')">
+        <span class="opt-letter">B</span>
+        <span>Decline to speak until you've had more time to prepare.</span>
+      </div>
+      <div class="opt" onclick="handleOpt(9,'C','C')">
+        <span class="opt-letter">C</span>
+        <span>Block 30 minutes tonight to run the translation model: company priority → department implication → behavior change. Come prepared with one specific, grounded perspective.</span>
+      </div>
+      <div class="opt" onclick="handleOpt(9,'D','C')">
+        <span class="opt-letter">D</span>
+        <span>Email your VP saying your team is "fully aligned" to avoid looking unprepared.</span>
+      </div>
+    </div>
+    <div class="feedback-box" id="fb-9">
+      <strong>Correct.</strong> Thirty minutes of translation prep is the difference between sounding strategic and sounding like you're winging it. The translation model isn't a lengthy exercise — it's three focused questions. Running it the night before means you show up with a point of view, not just presence. Option A risks credibility in the room. Option B is unnecessary — the prep is available to you. Option D is worse than going unprepared.
+    </div>
+    <div class="feedback-box wrong-fb" id="fb-9-wrong">
+      <strong>Not quite.</strong> The right answer is C. The translation model is a 30-minute exercise — not an all-night project. Running it before the meeting means you show up with a grounded point of view rather than general agreement. Winging it (A) risks your strategic credibility. Declining (B) is unnecessary when the prep is within reach. False confidence (D) erodes trust when the truth surfaces.
+    </div>
+  </div>
+
+  <!-- SCREEN 10: Pulse Check 1 -->
+  <div class="screen" id="screen-10">
+    <div class="screen-label">Pulse Check &nbsp;·&nbsp; Screen 11 of 17</div>
+    <div class="screen-title">Pulse Check</div>
+    <div class="pulse-q">A director receives a new company initiative and immediately forwards the memo to their managers with the note "FYI — let me know if you have questions." What's missing?</div>
+    <div class="pulse-opts" id="pulse-10">
+      <div class="pulse-opt" onclick="handlePulse(10,'A','B')">A) A deadline for when managers should respond.</div>
+      <div class="pulse-opt" onclick="handlePulse(10,'B','B')">B) The director's own translation — what it means for their department specifically.</div>
+      <div class="pulse-opt" onclick="handlePulse(10,'C','B')">C) A link to the original announcement.</div>
+      <div class="pulse-opt" onclick="handlePulse(10,'D','B')">D) Approval from HR before distributing.</div>
+    </div>
+    <div class="feedback-box" id="pfb-10">
+      <strong>Correct — B.</strong> The "FYI + let me know if questions" approach is the textbook pass-through. The director's job is to arrive with a translation, not to forward information and wait for managers to surface confusion. Without the director's interpretation, every manager will create their own — inconsistently.
+    </div>
+    <div class="feedback-box wrong-fb" id="pfb-10-wrong">
+      <strong>The answer is B.</strong> The "FYI + let me know if questions" approach is the textbook pass-through. What's missing is the director's translation — what this initiative means specifically for their department. Deadlines, links, and approvals are secondary. The core gap is strategic interpretation.
+    </div>
+  </div>
+
+  <!-- SCREEN 11: Pulse Check 2 -->
+  <div class="screen" id="screen-11">
+    <div class="screen-label">Pulse Check &nbsp;·&nbsp; Screen 12 of 17</div>
+    <div class="screen-title">Pulse Check</div>
+    <div class="pulse-q">One of the three manager questions is "What stays the same?" Why is this question important?</div>
+    <div class="pulse-opts" id="pulse-11">
+      <div class="pulse-opt" onclick="handlePulse(11,'A','B')">A) It helps managers avoid doing extra work.</div>
+      <div class="pulse-opt" onclick="handlePulse(11,'B','B')">B) It gives managers permission to deprioritize things that haven't changed, so they can focus energy on what actually needs to shift.</div>
+      <div class="pulse-opt" onclick="handlePulse(11,'C','B')">C) It's a formality — most things stay the same anyway.</div>
+      <div class="pulse-opt" onclick="handlePulse(11,'D','B')">D) It helps the director identify which managers are resistant to change.</div>
+    </div>
+    <div class="feedback-box" id="pfb-11">
+      <strong>Correct — B.</strong> Without "what stays the same," managers treat every initiative as additive — piling new priorities onto an already-full list. Giving explicit permission to hold certain things steady frees up cognitive and execution bandwidth for what actually needs to change. It's not about avoiding work — it's about focusing effort where it matters.
+    </div>
+    <div class="feedback-box wrong-fb" id="pfb-11-wrong">
+      <strong>The answer is B.</strong> "What stays the same" isn't a formality or a laziness enabler — it's a focus tool. Without it, managers treat every new initiative as an addition to their list instead of a replacement or shift. Giving permission to hold certain things steady is what makes bandwidth for the change that actually matters.
+    </div>
+  </div>
+
+  <!-- SCREEN 12: Pulse Check 3 -->
+  <div class="screen" id="screen-12">
+    <div class="screen-label">Pulse Check &nbsp;·&nbsp; Screen 13 of 17</div>
+    <div class="screen-title">Pulse Check</div>
+    <div class="pulse-q">You're about to translate a new initiative to your team of managers. You can describe the company priority clearly — but when you try to name one thing that will be different for your team next Monday, you draw a blank. What should you do?</div>
+    <div class="pulse-opts" id="pulse-12">
+      <div class="pulse-opt" onclick="handlePulse(12,'A','B')">A) Proceed anyway — the specific actions will become clear over time.</div>
+      <div class="pulse-opt" onclick="handlePulse(12,'B','B')">B) Pause and go back one level — talk to your VP or re-read the brief before cascading.</div>
+      <div class="pulse-opt" onclick="handlePulse(12,'C','B')">C) Ask your managers to figure out the specifics themselves.</div>
+      <div class="pulse-opt" onclick="handlePulse(12,'D','B')">D) Schedule a department-wide brainstorm to crowdsource the answer.</div>
+    </div>
+    <div class="feedback-box" id="pfb-12">
+      <strong>Correct — B.</strong> Drawing a blank on the concrete behavior change is a signal that you haven't finished translating yet. Proceeding without it means cascading vagueness. Asking managers to figure it out is delegating the translation — the one thing that's your responsibility. Going back one level to get clearer isn't weakness; it's what good translation requires.
+    </div>
+    <div class="feedback-box wrong-fb" id="pfb-12-wrong">
+      <strong>The answer is B.</strong> If you can't name one concrete thing that changes next Monday, you haven't finished translating. Cascading anyway means cascading vagueness — and every manager fills that gap differently. Go back one level, get clearer, then cascade. This is the Translation Test working exactly as designed.
+    </div>
+  </div>
+
+  <!-- SCREEN 13: Pulse Check 4 -->
+  <div class="screen" id="screen-13">
+    <div class="screen-label">Pulse Check &nbsp;·&nbsp; Screen 14 of 17</div>
+    <div class="screen-title">Pulse Check</div>
+    <div class="pulse-q">What's the most common reason company strategy stalls at the director level?</div>
+    <div class="pulse-opts" id="pulse-13">
+      <div class="pulse-opt" onclick="handlePulse(13,'A','B')">A) Directors don't have access to strategic information.</div>
+      <div class="pulse-opt" onclick="handlePulse(13,'B','B')">B) Directors understand the strategy but can't translate it into specific team behavior.</div>
+      <div class="pulse-opt" onclick="handlePulse(13,'C','B')">C) Directors disagree with the strategy but don't say so.</div>
+      <div class="pulse-opt" onclick="handlePulse(13,'D','B')">D) The strategy isn't clear enough to translate.</div>
+    </div>
+    <div class="feedback-box" id="pfb-13">
+      <strong>Correct — B.</strong> This is the core insight of the entire course. Strategy stalls not because directors are uninformed, disengaged, or resistant — but because translation is a distinct skill that most directors were never taught. Understanding strategy and translating strategy are two different capabilities. This course builds the second one.
+    </div>
+    <div class="feedback-box wrong-fb" id="pfb-13-wrong">
+      <strong>The answer is B.</strong> Directors typically have access to strategy, generally agree with it, and receive it in reasonably clear terms. The stall happens at translation — turning company-level direction into specific, department-level behavior change. Understanding strategy and being able to translate it are two separate skills. This course builds the second.
+    </div>
+  </div>
+
+  <!-- SCREEN 14: Pulse Check 5 -->
+  <div class="screen" id="screen-14">
+    <div class="screen-label">Pulse Check &nbsp;·&nbsp; Screen 15 of 17</div>
+    <div class="screen-title">Pulse Check</div>
+    <div class="pulse-q">Your organization is pivoting away from a major initiative your team has been working on for two months. How do you translate this to your managers?</div>
+    <div class="pulse-opts" id="pulse-14">
+      <div class="pulse-opt" onclick="handlePulse(14,'A','C')">A) "Leadership changed direction — I'll send you the new brief."</div>
+      <div class="pulse-opt" onclick="handlePulse(14,'B','C')">B) "I know this is frustrating — I agree this wasn't handled well."</div>
+      <div class="pulse-opt" onclick="handlePulse(14,'C','C')">C) "The work we did built a foundation we'll use going forward. Here's what changes, what we keep, and what the new direction unlocks for us."</div>
+      <div class="pulse-opt" onclick="handlePulse(14,'D','C')">D) "Don't worry about the change — just focus on the new priorities."</div>
+    </div>
+    <div class="feedback-box" id="pfb-14">
+      <strong>Correct — C.</strong> A pivot translation has to do three things: honor the work already done, be clear about what actually changes, and reframe the new direction as a move forward — not a retreat. Option A is pure pass-through with no translation. Option B editorializes in a way that undercuts trust in leadership and puts you in an awkward position. Option D dismisses the emotional reality of the pivot entirely.
+    </div>
+    <div class="feedback-box wrong-fb" id="pfb-14-wrong">
+      <strong>The answer is C.</strong> Pivot translation must do three things: honor what was done, clarify what changes, and frame the new direction as something that opens possibility. Option A is a pure pass-through. Option B editorializes against leadership — which erodes trust and positions you poorly. Option D skips past the emotional reality, which means your managers will carry unprocessed frustration into the new work.
+    </div>
+  </div>
+
+  <!-- SCREEN 15: Apply It -->
+  <div class="screen" id="screen-15">
+    <div class="screen-label">Apply It &nbsp;·&nbsp; Screen 16 of 17</div>
+    <div class="screen-title">Apply It</div>
+    <div class="screen-body">
+      The Translation Model only becomes real when you run it on something actual. Use these prompts to work through a current initiative — one you're expected to cascade to your managers.
+    </div>
+
+    <div class="apply-section">
+      <div class="apply-label">Pick an initiative and translate it</div>
+      <div class="apply-sub">Think of a current company priority or initiative — something your team is expected to align to. Run the three-step model: What's the department implication? What behavior changes? What does success look like in 30 days?</div>
+      <textarea class="apply-input" id="applyInput1" placeholder="e.g., Company priority: improve eNPS scores. Department implication: my managers need to be having more intentional stay conversations. Behavior change: each manager schedules one stay conversation per team member this quarter. Success in 30 days: every manager has completed at least one..." oninput="saveApply(1)"></textarea>
+      <div class="apply-saved" id="applySaved1">Saved</div>
+    </div>
+
+    <div class="apply-section">
+      <div class="apply-label">The three manager questions — answered</div>
+      <div class="apply-sub">For that same initiative, answer the three questions your managers need: What changes? What stays the same? What does success look like?</div>
+      <textarea class="apply-input" id="applyInput2" placeholder="e.g., What changes: 1:1 agendas now include a standing 'how are you feeling about your role' question. What stays the same: performance goals and current project priorities. What does success look like: managers can name one specific thing they learned from their team member that they didn't know before..." oninput="saveApply(2)"></textarea>
+      <div class="apply-saved" id="applySaved2">Saved</div>
+    </div>
+
+    <div class="hl">
+      <strong>Tip:</strong> Your answers don't have to be polished. Even rough notes here will make your next manager meeting sharper — because you'll have done the translation work before you walk in the room.
+    </div>
+  </div>
+
+  <!-- SCREEN 16: Complete -->
+  <div class="screen" id="screen-16">
+    <div class="screen-label">Complete &nbsp;·&nbsp; Screen 17 of 17</div>
+    <div class="complete-hero">
+      <div class="complete-icon">🔗</div>
+      <div class="complete-title">Strategy stops stalling at your level.</div>
+      <div class="complete-sub">The best directors aren't the ones who understand strategy the best — they're the ones who can make it land. That's the skill you just built.</div>
+    </div>
+    <div class="commitments">
+      <h4>Your commitments from this course:</h4>
+      <div class="commit-item">Run the Translation Model on one current company initiative before Friday</div>
+      <div class="commit-item">Answer the three manager questions before your next team lead meeting</div>
+      <div class="commit-item">Check your cascade in two weeks — are your managers saying the same thing?</div>
+    </div>
+    <div id="applyReview" style="display:none;background:#f5f3ff;border-radius:12px;padding:20px;margin:16px 0;">
+      <div style="font-size:13px;font-weight:700;color:var(--dark);margin-bottom:12px;">Your notes from Apply It:</div>
+      <div id="applyReview1" style="margin-bottom:14px;display:none;">
+        <div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Initiative Translation</div>
+        <div id="applyReview1Text" style="font-size:13.5px;color:#374151;line-height:1.6;white-space:pre-wrap;background:var(--white);border-radius:8px;padding:12px;border:1px solid var(--border);"></div>
+      </div>
+      <div id="applyReview2" style="display:none;">
+        <div style="font-size:11px;font-weight:700;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;">Three Manager Questions</div>
+        <div id="applyReview2Text" style="font-size:13.5px;color:#374151;line-height:1.6;white-space:pre-wrap;background:var(--white);border-radius:8px;padding:12px;border:1px solid var(--border);"></div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:8px;">
+      <button class="complete-btn" onclick="window.history.back()">Return to Course Library</button>
+    </div>
+  </div>
+
+</div><!-- end course-main -->
+
+<!-- NAV -->
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btnPrev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="navDots"></div>
+  <button class="nav-btn btn-next" id="btnNext" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+// Note: Screen 4 (index 4) maps to section 0 per spec (SECTION_MAP[4]=0 → Foundation)
+// This is intentional per the architecture specification.
+const SECTION_NAMES = ['Foundation','The Translation Model','Practice','Pulse Check','Apply It','Complete'];
+const INTERACT_SCREENS = [7,8,9]; // scenario screens
+const PULSE_SCREENS = [10,11,12,13,14]; // pulse check screens
+const APPLY_SCREEN = 15;
+const COMPLETE_SCREEN = 16;
+
+let current = 0;
+let answered = {}; // tracks which interactive screens have been answered
+let highest = 0;
+
+function buildDots() {
+  const wrap = document.getElementById('navDots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const d = document.createElement('div');
+    d.className = 'nav-dot';
+    if (i < current) d.classList.add('done-dot');
+    if (i === current) d.classList.add('active-dot');
+    wrap.appendChild(d);
+  }
+}
+
+function updateSectionPills() {
+  const pills = document.querySelectorAll('.sec-pill');
+  const activeSec = SECTION_MAP[current];
+  // find highest section reached
+  let maxSec = 0;
+  for (let i = 0; i <= highest; i++) {
+    if (SECTION_MAP[i] > maxSec) maxSec = SECTION_MAP[i];
+  }
+  pills.forEach((p, idx) => {
+    p.classList.remove('active','done');
+    if (idx === activeSec) p.classList.add('active');
+    else if (idx < activeSec) p.classList.add('done');
+    else if (idx <= maxSec && idx < activeSec) p.classList.add('done');
+  });
+}
+
+function updateProgress() {
+  const pct = Math.round((current / (TOTAL - 1)) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = (current + 1) + ' / ' + TOTAL;
+}
+
+function canAdvance() {
+  // Interactive and pulse screens require an answer
+  if (INTERACT_SCREENS.includes(current) || PULSE_SCREENS.includes(current)) {
+    return !!answered[current];
+  }
+  return true;
+}
+
+function updateNav() {
+  document.getElementById('btnPrev').disabled = current === 0;
+  const nextBtn = document.getElementById('btnNext');
+  if (current === COMPLETE_SCREEN) {
+    nextBtn.disabled = true;
+  } else {
+    nextBtn.disabled = !canAdvance();
+  }
+}
+
+function showScreen(idx) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + idx).classList.add('active');
+  if (idx > highest) highest = idx;
+  updateProgress();
+  updateSectionPills();
+  buildDots();
+  updateNav();
+  // scroll to top of page
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function navigate(dir) {
+  const next = current + dir;
+  if (next < 0 || next >= TOTAL) return;
+  if (dir > 0 && !canAdvance()) return;
+  current = next;
+  if (current === COMPLETE_SCREEN) {
+    onComplete();
+  }
+  showScreen(current);
+}
+
+// ---- SCENARIO HANDLERS ----
+function handleOpt(screenIdx, chosen, correct) {
+  if (answered[screenIdx]) return;
+  answered[screenIdx] = true;
+  const opts = document.querySelectorAll('#opts-' + screenIdx + ' .opt');
+  const letters = ['A','B','C','D'];
+  opts.forEach((opt, i) => {
+    opt.classList.add('locked');
+    const letter = letters[i];
+    if (letter === correct) {
+      opt.classList.add('correct');
+    } else if (letter === chosen && chosen !== correct) {
+      opt.classList.add('wrong');
+    } else if (letter !== correct) {
+      opt.classList.add('dimmed');
+    }
+  });
+  // show feedback
+  if (chosen === correct) {
+    document.getElementById('fb-' + screenIdx).classList.add('show');
+  } else {
+    document.getElementById('fb-' + screenIdx + '-wrong').classList.add('show');
+  }
+  updateNav();
+}
+
+// ---- PULSE CHECK HANDLERS ----
+function handlePulse(screenIdx, chosen, correct) {
+  if (answered[screenIdx]) return;
+  answered[screenIdx] = true;
+  const opts = document.querySelectorAll('#pulse-' + screenIdx + ' .pulse-opt');
+  const letters = ['A','B','C','D'];
+  opts.forEach((opt, i) => {
+    opt.classList.add('locked');
+    const letter = letters[i];
+    if (letter === correct) {
+      opt.classList.add('correct');
+    } else if (letter === chosen && chosen !== correct) {
+      opt.classList.add('wrong');
+    } else if (letter !== correct) {
+      opt.classList.add('dimmed');
+    }
+  });
+  if (chosen === correct) {
+    document.getElementById('pfb-' + screenIdx).classList.add('show');
+  } else {
+    document.getElementById('pfb-' + screenIdx + '-wrong').classList.add('show');
+  }
+  updateNav();
+}
+
+// ---- APPLY IT ----
+let saveTimers = {};
+function saveApply(num) {
+  const val = document.getElementById('applyInput' + num).value;
+  localStorage.setItem('breeze_sta_apply' + num, val);
+  // show saved indicator
+  const saved = document.getElementById('applySaved' + num);
+  saved.style.display = 'block';
+  clearTimeout(saveTimers[num]);
+  saveTimers[num] = setTimeout(() => { saved.style.display = 'none'; }, 2000);
+}
+
+function loadApplyInputs() {
+  const v1 = localStorage.getItem('breeze_sta_apply1') || '';
+  const v2 = localStorage.getItem('breeze_sta_apply2') || '';
+  document.getElementById('applyInput1').value = v1;
+  document.getElementById('applyInput2').value = v2;
+}
+
+// ---- COMPLETE ----
+function onComplete() {
+  localStorage.setItem('breeze_mod_complete_dr_strategy_action', '1');
+  // Load apply notes into review section
+  const v1 = localStorage.getItem('breeze_sta_apply1') || '';
+  const v2 = localStorage.getItem('breeze_sta_apply2') || '';
+  const hasAny = v1.trim() || v2.trim();
+  if (hasAny) {
+    document.getElementById('applyReview').style.display = 'block';
+    if (v1.trim()) {
+      document.getElementById('applyReview1').style.display = 'block';
+      document.getElementById('applyReview1Text').textContent = v1;
+    }
+    if (v2.trim()) {
+      document.getElementById('applyReview2').style.display = 'block';
+      document.getElementById('applyReview2Text').textContent = v2;
+    }
+  }
+}
+
+// ---- INIT ----
+(function init() {
+  loadApplyInputs();
+  buildDots();
+  updateProgress();
+  updateSectionPills();
+  updateNav();
+})();
+</script>
+</body>
+</html>

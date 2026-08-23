@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strategic Voice — Director | Breeze Leadership</title>
+<style>
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#faf8ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
+:root{
+  --accent:#6D28D9;
+  --accent-light:#ede9fe;
+  --dark:#000633;
+  --white:#fff;
+  --muted:#6b7280;
+  --border:#e5e7eb;
+  --card:#fff;
+  --warn:#fff3cd;
+  --warn-border:#ffc107;
+  --good:#ede9fe;
+  --good-border:#6D28D9;
+  --bad:#ffe4e6;
+  --bad-border:#f43f5e;
+}
+.course-header{background:linear-gradient(135deg,#1a0a3d 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
+.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
+.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
+.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
+.progress-wrap{background:var(--dark);padding:14px 28px;display:flex;align-items:center;gap:14px;}
+.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
+.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
+.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
+.section-nav{background:var(--dark);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
+.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
+.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
+.sec-pill.done{background:rgba(109,40,217,.25);color:rgba(255,255,255,.8);border-color:rgba(109,40,217,.4);}
+.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
+.screen{display:none;animation:fadeIn .3s ease;}
+.screen.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
+.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
+.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
+.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.hl strong{color:var(--dark);}
+.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
+.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin:18px 0;}
+.pres-card{background:var(--card);border:1.5px solid var(--border);border-top:4px solid var(--accent);border-radius:10px;padding:16px;}
+.pres-card h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.pres-card ul{padding-left:16px;font-size:12.5px;line-height:1.8;color:#374151;}
+.num-cards{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
+.num-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;}
+.num-badge{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--white);font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.num-content h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px;}
+.num-content p{font-size:13.5px;color:#374151;line-height:1.5;}
+.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
+.opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
+.opt.correct{background:var(--good);border-color:var(--good-border);}
+.opt.correct .opt-letter{color:var(--accent);}
+.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.opt.wrong .opt-letter{color:#dc2626;}
+.opt.locked{cursor:default;}
+.opt.dimmed{opacity:.45;}
+.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
+.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
+.feedback-box.show{display:block;}
+.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.pulse-opts{display:flex;flex-direction:column;gap:10px;}
+.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
+.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
+.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
+.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
+.pulse-opt.locked{cursor:default;}
+.pulse-opt.dimmed{opacity:.45;}
+.apply-section{margin-bottom:22px;}
+.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
+.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
+.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;box-sizing:border-box;}
+.apply-input:focus{outline:none;border-color:var(--accent);}
+.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
+.complete-hero{text-align:center;padding:20px 0 28px;}
+.complete-icon{font-size:56px;margin-bottom:12px;}
+.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
+.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
+.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
+.complete-btn:hover{background:#5b21b6;}
+.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
+.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
+.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
+.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
+.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
+.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
+.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
+.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
+.btn-prev:disabled{opacity:.35;cursor:default;}
+.btn-next{background:var(--accent);color:var(--white);}
+.btn-next:hover:not(:disabled){background:#5b21b6;}
+.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
+.nav-dots{display:flex;gap:5px;}
+.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
+.nav-dot.done-dot{background:rgba(109,40,217,.4);}
+.nav-dot.active-dot{background:var(--accent);}
+@media(max-width:600px){
+  .three-col{grid-template-columns:1fr;}
+  .course-main{padding:20px 14px;}
+  .section-nav{padding:10px 14px;}
+  .progress-wrap{padding:12px 14px;}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="course-header">
+  <div class="course-meta">Director Track &nbsp;·&nbsp; Leadership Development</div>
+  <div class="course-title">Strategic Voice</div>
+  <div class="course-sub">Bringing your strategic read on a situation into a senior room with confidence, clarity, and the right level of detail.</div>
+</div>
+
+<!-- PROGRESS BAR -->
+<div class="progress-wrap">
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="progressBar" style="width:0%"></div>
+  </div>
+  <div class="progress-label" id="progressLabel">0 / 17</div>
+</div>
+
+<!-- SECTION NAV -->
+<div class="section-nav" id="sectionNav">
+  <span class="sec-pill" data-sec="0">Foundation</span>
+  <span class="sec-pill" data-sec="1">The OIR Framework</span>
+  <span class="sec-pill" data-sec="2">Practice</span>
+  <span class="sec-pill" data-sec="3">Pulse Check</span>
+  <span class="sec-pill" data-sec="4">Apply It</span>
+  <span class="sec-pill" data-sec="5">Complete</span>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="course-main">
+
+  <!-- SCREEN 0: The Quiet Room Problem -->
+  <div class="screen active" id="screen-0">
+    <div class="screen-label">Foundation · Screen 1 of 3</div>
+    <div class="screen-title">The Quiet Room Problem</div>
+    <div class="screen-body">
+      There's a specific failure mode that holds talented directors back from VP conversations: they have the strategic read — they see the problem, understand the dynamics, know what should happen — but they don't say it.
+    </div>
+    <div class="screen-body">
+      Not because they're afraid. Because they're not sure it's their place. Because they're waiting for the right moment that never quite arrives. Because they've seen people speak up and get dismissed and they don't want that to happen to them.
+    </div>
+    <div class="screen-body">
+      The result: their perspective stays in their head. And the room makes a worse decision without it.
+    </div>
+    <div class="hl">
+      <strong>This course is about ending that pattern.</strong> Strategic voice is a learnable skill — and the OIR Framework gives you the structure to deliver your perspective clearly every time.
+    </div>
+  </div>
+
+  <!-- SCREEN 1: Two Failure Modes -->
+  <div class="screen" id="screen-1">
+    <div class="screen-label">Foundation · Screen 2 of 3</div>
+    <div class="screen-title">Two Failure Modes</div>
+    <div class="screen-body">
+      Directors who struggle with strategic voice usually land in one of two places:
+    </div>
+    <div class="num-cards">
+      <div class="num-card">
+        <div class="num-badge">1</div>
+        <div class="num-content">
+          <h4>Too Quiet</h4>
+          <p>They listen, process, agree internally, and say nothing. Their VP doesn't know what they think. They get passed over for conversations they should be part of because nobody knows they have a view.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">2</div>
+        <div class="num-content">
+          <h4>Too Much</h4>
+          <p>They over-explain, add every caveat, front-load the history, and lose the room before they get to the point. Their content is good but the delivery buries it. Senior leaders tune out.</p>
+        </div>
+      </div>
+    </div>
+    <div class="hl">
+      Both modes come from the same root: <strong>uncertainty about how to structure and deliver a strategic perspective.</strong> The OIR Framework solves both.
+    </div>
+  </div>
+
+  <!-- SCREEN 2: What Your VP Actually Wants From You -->
+  <div class="screen" id="screen-2">
+    <div class="screen-label">Foundation · Screen 3 of 3</div>
+    <div class="screen-title">What Your VP Actually Wants From You</div>
+    <div class="screen-body">
+      Your VP doesn't just want you to execute — they want your <em>read</em> on the situation. They're in rooms where they need director-level perspective to inform VP-level decisions. When you stay quiet, they're operating with less information than they should have. When you speak with clarity, you become someone they rely on.
+    </div>
+    <div class="screen-body">
+      There's a direct line between using your strategic voice well and being pulled into higher-stakes conversations.
+    </div>
+    <div class="hl">
+      <strong>This course gives you the framework to do it consistently.</strong>
+    </div>
+    <div class="al">
+      <strong>Quick self-check:</strong> Think of the last senior meeting you were in. Did you say what you were thinking — or did you hold it back? If you held it back, this course is for you.
+    </div>
+  </div>
+
+  <!-- SCREEN 3: The OIR Framework -->
+  <div class="screen" id="screen-3">
+    <div class="screen-label">The OIR Framework · Introduction</div>
+    <div class="screen-title">The OIR Framework</div>
+    <div class="screen-body">
+      Three-part structure for delivering any strategic perspective. OIR keeps you from being too vague (just observation) or too prescriptive (jumping to recommendation without grounding).
+    </div>
+    <div class="num-cards">
+      <div class="num-card">
+        <div class="num-badge">O</div>
+        <div class="num-content">
+          <h4>Observation</h4>
+          <p>What you're seeing. Specific, grounded in data or direct experience. Not opinion yet — just what's true.<br><em>"I've noticed that across my three teams, onboarding completion rates have dropped 18% since the new process launched."</em></p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">I</div>
+        <div class="num-content">
+          <h4>Implication</h4>
+          <p>What it means. Why it matters. The so-what that connects your observation to something the room cares about.<br><em>"If this continues, we'll see it in 90-day retention numbers by Q3."</em></p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge">R</div>
+        <div class="num-content">
+          <h4>Recommendation</h4>
+          <p>What you think should happen. Clear and direct, with appropriate confidence calibration.<br><em>"I'd recommend we pause the new process for roles with less than 60-day onboarding and review the design before full rollout."</em></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: Confidence Calibration -->
+  <div class="screen" id="screen-4">
+    <div class="screen-label">The OIR Framework · Confidence Calibration</div>
+    <div class="screen-title">Confidence Calibration</div>
+    <div class="screen-body">
+      You don't have to be certain to use your strategic voice. The most credible directors calibrate their confidence explicitly — they don't project certainty they don't have, and they don't hedge everything into mush.
+    </div>
+    <div class="three-col">
+      <div class="pres-card">
+        <h4>High Confidence</h4>
+        <ul>
+          <li>"I'm seeing this consistently across all three teams — I think we need to act now."</li>
+        </ul>
+      </div>
+      <div class="pres-card">
+        <h4>Medium Confidence</h4>
+        <ul>
+          <li>"I'm not certain, but based on what I'm seeing, my read is X. I'd want to validate with Y before we commit."</li>
+        </ul>
+      </div>
+      <div class="pres-card">
+        <h4>Low Confidence</h4>
+        <ul>
+          <li>"I might be missing something — but here's what I'm noticing and I think it's worth naming."</li>
+        </ul>
+      </div>
+    </div>
+    <div class="hl">
+      <strong>Calibrated language builds more credibility than false certainty or excessive hedging.</strong> The goal is honesty about what you know — not performing confidence you don't feel.
+    </div>
+  </div>
+
+  <!-- SCREEN 5: Reading the Room for When to Speak -->
+  <div class="screen" id="screen-5">
+    <div class="screen-label">The OIR Framework · Timing</div>
+    <div class="screen-title">Reading the Room for When to Speak</div>
+    <div class="screen-body">
+      Timing matters as much as content.
+    </div>
+    <div class="num-cards">
+      <div class="num-card">
+        <div class="num-badge" style="background:#16a34a;">✓</div>
+        <div class="num-content">
+          <h4>Signs You Should Speak Up</h4>
+          <p>The room is going in a direction that's missing something important. A decision is about to be made without your perspective in it. Your VP directly asks your view. You're the most informed person on a topic being discussed without enough context.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge" style="background:#dc2626;">✗</div>
+        <div class="num-content">
+          <h4>Signs to Wait</h4>
+          <p>Someone more senior is mid-thought on the same topic. The decision has already been made and the meeting has moved on. You need 5 minutes to formulate your OIR before you're ready to deliver it well.</p>
+        </div>
+      </div>
+    </div>
+    <div class="al">
+      <strong>Note:</strong> "I need more time to formulate this" is a valid reason to hold — but it should lead to you raising it before the meeting ends, not an offline email three days later.
+    </div>
+  </div>
+
+  <!-- SCREEN 6: Handling the Pushback -->
+  <div class="screen" id="screen-6">
+    <div class="screen-label">The OIR Framework · Handling Pushback</div>
+    <div class="screen-title">Handling the Pushback</div>
+    <div class="screen-body">
+      When your perspective gets challenged — or dismissed — how you respond shapes your credibility more than the original statement did.
+    </div>
+    <div class="screen-body"><strong>Three responses to avoid:</strong></div>
+    <div class="num-cards">
+      <div class="num-card">
+        <div class="num-badge" style="background:#dc2626;">1</div>
+        <div class="num-content">
+          <h4>Immediately Backing Down</h4>
+          <p>Signals you didn't believe it yourself. If a single challenge makes you fold, the room learns your views aren't worth engaging with.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge" style="background:#dc2626;">2</div>
+        <div class="num-content">
+          <h4>Over-Defending With Volume</h4>
+          <p>Signals insecurity. Repeating yourself louder or with more intensity doesn't make your point stronger — it makes the room want to move on.</p>
+        </div>
+      </div>
+      <div class="num-card">
+        <div class="num-badge" style="background:#dc2626;">3</div>
+        <div class="num-content">
+          <h4>Going Silent for the Rest of the Meeting</h4>
+          <p>Signals bruised ego. It removes you from the conversation entirely and tells the room your participation is conditional.</p>
+        </div>
+      </div>
+    </div>
+    <div class="hl">
+      <strong>The right move:</strong> Acknowledge the pushback genuinely, hold your observation if you still believe it, and invite more information if you're uncertain. <em>"That's a fair point — I'm still watching [X] because I'm not sure we've fully accounted for it"</em> keeps you in the conversation without being combative.
+    </div>
+  </div>
+
+  <!-- SCREEN 7: Scenario 1 -->
+  <div class="screen" id="screen-7">
+    <div class="screen-label">Practice · Scenario 1 of 3</div>
+    <div class="screen-title">The Blind Spot in the Room</div>
+    <div class="screen-body">
+      You're in a VP/Director leadership meeting. The group is aligned on a go-forward decision that you think has a significant blind spot — specifically, nobody has accounted for how it will land with frontline Team Members in your department. You have direct knowledge they don't. The decision is about to be made.
+    </div>
+    <div class="screen-body"><strong>What do you do?</strong></div>
+    <div class="options" id="opts-7">
+      <div class="opt" onclick="handleScenario(7,'A','C')">
+        <span class="opt-letter">A</span>
+        <span>Stay quiet — you're not sure it's your place to challenge a room that seems aligned.</span>
+      </div>
+      <div class="opt" onclick="handleScenario(7,'B','C')">
+        <span class="opt-letter">B</span>
+        <span>Wait until after the meeting and tell your VP privately.</span>
+      </div>
+      <div class="opt" onclick="handleScenario(7,'C','C')">
+        <span class="opt-letter">C</span>
+        <span>Use OIR: "I want to name something before we close on this. I'm seeing [observation] in my teams, which makes me think [implication]. Can we talk through [recommendation] before we finalize?"</span>
+      </div>
+      <div class="opt" onclick="handleScenario(7,'D','C')">
+        <span class="opt-letter">D</span>
+        <span>Say "I have some concerns" without specifics, to flag that you're not fully on board.</span>
+      </div>
+    </div>
+    <div class="feedback-box" id="fb-7">
+      <strong>The right move is C.</strong> A vague "I have concerns" (D) signals disagreement without contributing anything useful — it's the worst of both worlds. Option B means the decision gets made without your input. Option C uses OIR to make your perspective concrete, grounded, and actionable. That's how you use strategic voice in a live room.
+    </div>
+  </div>
+
+  <!-- SCREEN 8: Scenario 2 -->
+  <div class="screen" id="screen-8">
+    <div class="screen-label">Practice · Scenario 2 of 3</div>
+    <div class="screen-title">"What Do You Think?"</div>
+    <div class="screen-body">
+      Your CPO turns to you mid-meeting and says, "You're closest to this — what's your read?" There are five more senior people in the room. You have a view. You've been sitting on it.
+    </div>
+    <div class="screen-body"><strong>How do you respond?</strong></div>
+    <div class="options" id="opts-8">
+      <div class="opt" onclick="handleScenario(8,'A','C')">
+        <span class="opt-letter">A</span>
+        <span>Deflect: "I think everyone has covered the key points pretty well."</span>
+      </div>
+      <div class="opt" onclick="handleScenario(8,'B','C')">
+        <span class="opt-letter">B</span>
+        <span>Over-qualify: "I'm not sure I have enough data to say definitively, but maybe one consideration could potentially be..."</span>
+      </div>
+      <div class="opt" onclick="handleScenario(8,'C','C')">
+        <span class="opt-letter">C</span>
+        <span>Deliver a clear OIR: "My read is [observation]. I think the implication is [X]. My recommendation would be [Y], though I'd want to pressure-test that with [Z]."</span>
+      </div>
+      <div class="opt" onclick="handleScenario(8,'D','C')">
+        <span class="opt-letter">D</span>
+        <span>Give a summary of what others have already said to avoid sticking your neck out.</span>
+      </div>
+    </div>
+    <div class="feedback-box" id="fb-8">
+      <strong>The right move is C.</strong> When a CPO asks "what do you think," they want your read — not a summary of the room or an elaborate hedge. Option B is the most common failure: over-qualification that buries the actual perspective. OIR lets you be direct and calibrated at the same time. "I'd want to pressure-test with Z" is confidence calibration, not hedging — it shows intellectual honesty.
+    </div>
+  </div>
+
+  <!-- SCREEN 9: Scenario 3 -->
+  <div class="screen" id="screen-9">
+    <div class="screen-label">Practice · Scenario 3 of 3</div>
+    <div class="screen-title">The Dismissed Observation</div>
+    <div class="screen-body">
+      You surface an observation in a leadership meeting using OIR. A senior leader responds quickly: "I don't think that's the issue — we looked at that already." The meeting moves on. You still believe your observation is valid.
+    </div>
+    <div class="screen-body"><strong>What do you do?</strong></div>
+    <div class="options" id="opts-9">
+      <div class="opt" onclick="handleScenario(9,'A','C')">
+        <span class="opt-letter">A</span>
+        <span>Let it go — a senior leader dismissed it, which probably means you were missing context.</span>
+      </div>
+      <div class="opt" onclick="handleScenario(9,'B','C')">
+        <span class="opt-letter">B</span>
+        <span>Repeat yourself more forcefully to make sure you were heard.</span>
+      </div>
+      <div class="opt" onclick="handleScenario(9,'C','C')">
+        <span class="opt-letter">C</span>
+        <span>Acknowledge their response, hold your ground gently, and offer to follow up: "Fair point — I might be missing context on what was reviewed. I'd like to follow up with you on [specific element] because I'm still seeing [X] in my teams."</span>
+      </div>
+      <div class="opt" onclick="handleScenario(9,'D','C')">
+        <span class="opt-letter">D</span>
+        <span>Go quiet for the rest of the meeting — you don't want to push back on someone more senior.</span>
+      </div>
+    </div>
+    <div class="feedback-box" id="fb-9">
+      <strong>The right move is C.</strong> A single dismissal doesn't invalidate an observation — it means the room moved on, which happens for many reasons. Option C keeps you in the conversation without being combative: you acknowledge their point, you don't abandon your view, and you create a path to follow up. That's what strategic persistence looks like at director level.
+    </div>
+  </div>
+
+  <!-- SCREEN 10: Pulse Check 1 -->
+  <div class="screen" id="screen-10">
+    <div class="screen-label">Pulse Check · Question 1 of 5</div>
+    <div class="screen-title">Check Your Understanding</div>
+    <div class="pulse-q">A director has a strong read on a situation but isn't sure how to bring it into the meeting. They wait until after and send their VP a detailed email. What's the most likely impact of this pattern over time?</div>
+    <div class="pulse-opts" id="pulse-10">
+      <div class="pulse-opt" onclick="handlePulse(10,'A','B')">A) Their VP will appreciate the thoroughness and consult them more often.</div>
+      <div class="pulse-opt" onclick="handlePulse(10,'B','B')">B) Their VP will start to see them as someone who processes offline rather than contributes in the room — limiting their influence.</div>
+      <div class="pulse-opt" onclick="handlePulse(10,'C','B')">C) The email will be more persuasive than speaking up would have been.</div>
+      <div class="pulse-opt" onclick="handlePulse(10,'D','B')">D) Nothing — the content matters more than when it's delivered.</div>
+    </div>
+    <div class="feedback-box" id="fb-10"></div>
+  </div>
+
+  <!-- SCREEN 11: Pulse Check 2 -->
+  <div class="screen" id="screen-11">
+    <div class="screen-label">Pulse Check · Question 2 of 5</div>
+    <div class="screen-title">Check Your Understanding</div>
+    <div class="pulse-q">Which part of OIR is most commonly skipped by directors who struggle with strategic voice?</div>
+    <div class="pulse-opts" id="pulse-11">
+      <div class="pulse-opt" onclick="handlePulse(11,'A','B')">A) Observation — they don't have enough data to start.</div>
+      <div class="pulse-opt" onclick="handlePulse(11,'B','B')">B) Implication — they state what they see but don't connect it to why it matters.</div>
+      <div class="pulse-opt" onclick="handlePulse(11,'C','B')">C) Recommendation — they're afraid to be wrong.</div>
+      <div class="pulse-opt" onclick="handlePulse(11,'D','B')">D) All three — they don't say anything at all.</div>
+    </div>
+    <div class="feedback-box" id="fb-11">
+      <strong>Correct.</strong> Observations without implications are just data points. The implication is the strategic layer — it's what makes your observation relevant to the room. Skipping it is why smart directors get dismissed: they share facts without the so-what.
+    </div>
+  </div>
+
+  <!-- SCREEN 12: Pulse Check 3 -->
+  <div class="screen" id="screen-12">
+    <div class="screen-label">Pulse Check · Question 3 of 5</div>
+    <div class="screen-title">Check Your Understanding</div>
+    <div class="pulse-q">Your recommendation gets challenged in a senior meeting. You're not 100% certain you're right. What's the most credible response?</div>
+    <div class="pulse-opts" id="pulse-12">
+      <div class="pulse-opt" onclick="handlePulse(12,'A','C')">A) Immediately withdraw the recommendation to avoid conflict.</div>
+      <div class="pulse-opt" onclick="handlePulse(12,'B','C')">B) Double down and repeat your recommendation more emphatically.</div>
+      <div class="pulse-opt" onclick="handlePulse(12,'C','C')">C) Acknowledge the challenge, hold your observation if you still believe it, and invite more information or offer to follow up.</div>
+      <div class="pulse-opt" onclick="handlePulse(12,'D','C')">D) Wait until after the meeting to respond privately.</div>
+    </div>
+    <div class="feedback-box" id="fb-12"></div>
+  </div>
+
+  <!-- SCREEN 13: Pulse Check 4 -->
+  <div class="screen" id="screen-13">
+    <div class="screen-label">Pulse Check · Question 4 of 5</div>
+    <div class="screen-title">Check Your Understanding</div>
+    <div class="pulse-q">A director says "I'm not certain, but based on what I'm seeing, my read is X — I'd want to validate with Y before we commit." This is an example of:</div>
+    <div class="pulse-opts" id="pulse-13">
+      <div class="pulse-opt" onclick="handlePulse(13,'A','B')">A) Poor confidence — a director should only speak when certain.</div>
+      <div class="pulse-opt" onclick="handlePulse(13,'B','B')">B) Confidence calibration — being honest about certainty level while still contributing a view.</div>
+      <div class="pulse-opt" onclick="handlePulse(13,'C','B')">C) Over-hedging — this language undermines the credibility of the point.</div>
+      <div class="pulse-opt" onclick="handlePulse(13,'D','B')">D) Deflection — they're avoiding commitment.</div>
+    </div>
+    <div class="feedback-box" id="fb-13"></div>
+  </div>
+
+  <!-- SCREEN 14: Pulse Check 5 -->
+  <div class="screen" id="screen-14">
+    <div class="screen-label">Pulse Check · Question 5 of 5</div>
+    <div class="screen-title">Check Your Understanding</div>
+    <div class="pulse-q">You're the most informed person in the room on a topic being discussed with insufficient context. The right move is:</div>
+    <div class="pulse-opts" id="pulse-14">
+      <div class="pulse-opt" onclick="handlePulse(14,'A','B')">A) Wait to be asked before contributing — it's not your place to speak up unprompted.</div>
+      <div class="pulse-opt" onclick="handlePulse(14,'B','B')">B) Speak up using OIR — your knowledge is an asset the room needs.</div>
+      <div class="pulse-opt" onclick="handlePulse(14,'C','B')">C) Send your VP a note after the meeting with the context they missed.</div>
+      <div class="pulse-opt" onclick="handlePulse(14,'D','B')">D) Defer to whoever is most senior, since they have broader context.</div>
+    </div>
+    <div class="feedback-box" id="fb-14">
+      <strong>Correct.</strong> Being the most informed person in the room on a topic creates a responsibility to speak — not just a permission. If the room makes a worse decision because you stayed quiet, that's a leadership failure, not just a missed opportunity.
+    </div>
+  </div>
+
+  <!-- SCREEN 15: Apply It -->
+  <div class="screen" id="screen-15">
+    <div class="screen-label">Apply It</div>
+    <div class="screen-title">Put It Into Practice</div>
+    <div class="screen-body">
+      These prompts are yours. Your responses are saved locally and will appear in your completion summary.
+    </div>
+
+    <div class="apply-section">
+      <div class="apply-label">1. The observation you've been sitting on</div>
+      <div class="apply-sub">Think of something you've noticed — a pattern, a risk, a gap, an opportunity — that you haven't said out loud in a senior room yet. Write it using OIR: Observation, Implication, Recommendation.</div>
+      <textarea class="apply-input" id="apply1" oninput="saveApply('apply1','breeze_sv_apply1')"
+        placeholder="e.g., Observation: three of my top performers have mentioned feeling under-utilized in the last month. Implication: if we don't address this before Q4, I think we're looking at a retention risk heading into review season. Recommendation: I want to bring this to my VP before the talent review and make a case for stretch assignments..."></textarea>
+      <div class="apply-saved" id="saved-apply1">Saved</div>
+    </div>
+
+    <div class="apply-section">
+      <div class="apply-label">2. Your next opportunity to use it</div>
+      <div class="apply-sub">When is your next leadership meeting, 1:1 with your VP, or cross-functional discussion where you could use this OIR? Write the context and what you'll say.</div>
+      <textarea class="apply-input" id="apply2" oninput="saveApply('apply2','breeze_sv_apply2')"
+        placeholder="e.g., I have my monthly VP 1:1 on Thursday. I'm going to bring this up in the first 10 minutes rather than saving it for the end or sending a follow-up email. I'll use the OIR structure and let them respond before I add more context..."></textarea>
+      <div class="apply-saved" id="saved-apply2">Saved</div>
+    </div>
+  </div>
+
+  <!-- SCREEN 16: Complete -->
+  <div class="screen" id="screen-16">
+    <div class="complete-hero">
+      <div class="complete-icon">🎯</div>
+      <div class="complete-title">Your perspective belongs in the room.</div>
+      <div class="complete-sub">Strategic voice isn't about being louder — it's about being clearer. You have the framework now. The next step is using it.</div>
+    </div>
+
+    <div class="commitments">
+      <h4>Your Commitments</h4>
+      <div class="commit-item">Use OIR in your next leadership meeting or VP 1:1</div>
+      <div class="commit-item">Name one observation you've been sitting on — and say it out loud this week</div>
+      <div class="commit-item">When challenged, hold your view for at least one more sentence before deciding to yield</div>
+    </div>
+
+    <div id="apply-summary" style="display:none;background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:20px;margin-bottom:24px;">
+      <h4 style="font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;">Your Practice Responses</h4>
+      <div id="summary-apply1" style="margin-bottom:14px;display:none;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">The Observation You've Been Sitting On</div>
+        <div id="summary-apply1-text" style="font-size:14px;color:#374151;line-height:1.6;white-space:pre-wrap;"></div>
+      </div>
+      <div id="summary-apply2" style="display:none;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">Your Next Opportunity</div>
+        <div id="summary-apply2-text" style="font-size:14px;color:#374151;line-height:1.6;white-space:pre-wrap;"></div>
+      </div>
+    </div>
+
+    <div style="text-align:center;">
+      <button class="complete-btn" onclick="window.history.back()">Back to Course Library</button>
+    </div>
+  </div>
+
+</div><!-- end course-main -->
+
+<!-- BOTTOM NAV -->
+<div class="course-nav">
+  <button class="nav-btn btn-prev" id="btnPrev" onclick="navigate(-1)" disabled>← Back</button>
+  <div class="nav-dots" id="navDots"></div>
+  <button class="nav-btn btn-next" id="btnNext" onclick="navigate(1)">Next →</button>
+</div>
+
+<script>
+const TOTAL = 17;
+const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+// Note: Screen 4 uses section 0 index in SECTION_MAP but belongs to The OIR Framework per content
+// Corrected per spec: SECTION_MAP=[0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5]
+const SECTION_LABELS = ['Foundation','The OIR Framework','Practice','Pulse Check','Apply It','Complete'];
+
+// Screens that require interaction before Next is unlocked
+const SCENARIO_SCREENS = [7,8,9];
+const PULSE_SCREENS = [10,11,12,13,14];
+const INTERACTION_SCREENS = new Set([...SCENARIO_SCREENS, ...PULSE_SCREENS]);
+
+let currentScreen = 0;
+let screenStates = {}; // tracks if interaction is complete per screen
+
+// Build nav dots
+function buildDots() {
+  const container = document.getElementById('navDots');
+  container.innerHTML = '';
+  for (let i = 0; i < TOTAL; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'nav-dot';
+    dot.id = 'dot-' + i;
+    container.appendChild(dot);
+  }
+}
+
+function updateDots() {
+  for (let i = 0; i < TOTAL; i++) {
+    const dot = document.getElementById('dot-' + i);
+    dot.className = 'nav-dot';
+    if (i < currentScreen) dot.classList.add('done-dot');
+    else if (i === currentScreen) dot.classList.add('active-dot');
+  }
+}
+
+function updateProgress() {
+  const pct = Math.round((currentScreen / (TOTAL - 1)) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('progressLabel').textContent = (currentScreen + 1) + ' / ' + TOTAL;
+}
+
+function updateSectionPills() {
+  const pills = document.querySelectorAll('.sec-pill');
+  const activeSec = SECTION_MAP[currentScreen];
+
+  // Find max section reached
+  let maxSec = 0;
+  for (let i = 0; i <= currentScreen; i++) {
+    if (SECTION_MAP[i] > maxSec) maxSec = SECTION_MAP[i];
+  }
+
+  pills.forEach((pill, idx) => {
+    pill.classList.remove('active','done');
+    if (idx === activeSec) pill.classList.add('active');
+    else if (idx < activeSec) pill.classList.add('done');
+  });
+}
+
+function updateNav() {
+  const prevBtn = document.getElementById('btnPrev');
+  const nextBtn = document.getElementById('btnNext');
+
+  prevBtn.disabled = (currentScreen === 0);
+
+  // Check if next should be locked
+  if (INTERACTION_SCREENS.has(currentScreen) && !screenStates[currentScreen]) {
+    nextBtn.disabled = true;
+  } else {
+    nextBtn.disabled = false;
+  }
+
+  if (currentScreen === TOTAL - 1) {
+    nextBtn.disabled = true;
+    nextBtn.textContent = 'Complete';
+  } else {
+    nextBtn.textContent = 'Next →';
+  }
+}
+
+function showScreen(index) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + index).classList.add('active');
+}
+
+function navigate(dir) {
+  const next = currentScreen + dir;
+  if (next < 0 || next >= TOTAL) return;
+  currentScreen = next;
+  showScreen(currentScreen);
+  updateDots();
+  updateProgress();
+  updateSectionPills();
+  updateNav();
+  window.scrollTo(0,0);
+
+  if (currentScreen === 16) {
+    markComplete();
+    loadApplySummary();
+  }
+}
+
+// Scenario handler
+function handleScenario(screenNum, chosen, correct) {
+  if (screenStates[screenNum]) return;
+  screenStates[screenNum] = true;
+
+  const opts = document.querySelectorAll('#opts-' + screenNum + ' .opt');
+  const fb = document.getElementById('fb-' + screenNum);
+  const isCorrect = (chosen === correct);
+
+  opts.forEach(opt => {
+    opt.classList.add('locked');
+    const letter = opt.querySelector('.opt-letter').textContent.trim();
+    if (letter === correct) {
+      opt.classList.add('correct');
+    } else if (letter === chosen && !isCorrect) {
+      opt.classList.add('wrong');
+    } else if (letter !== correct) {
+      opt.classList.add('dimmed');
+    }
+  });
+
+  fb.classList.add('show');
+  if (!isCorrect) {
+    fb.classList.add('wrong-fb');
+  }
+
+  updateNav();
+}
+
+// Pulse check handler
+function handlePulse(screenNum, chosen, correct) {
+  if (screenStates[screenNum]) return;
+  screenStates[screenNum] = true;
+
+  const opts = document.querySelectorAll('#pulse-' + screenNum + ' .pulse-opt');
+  const fb = document.getElementById('fb-' + screenNum);
+  const isCorrect = (chosen === correct);
+  const letters = ['A','B','C','D'];
+
+  opts.forEach((opt, idx) => {
+    opt.classList.add('locked');
+    const letter = letters[idx];
+    if (letter === correct) {
+      opt.classList.add('correct');
+    } else if (letter === chosen && !isCorrect) {
+      opt.classList.add('wrong');
+    } else {
+      opt.classList.add('dimmed');
+    }
+  });
+
+  if (fb) {
+    if (fb.innerHTML.trim() === '') {
+      // Generic feedback for screens without pre-set text
+      if (isCorrect) {
+        fb.innerHTML = '<strong>Correct.</strong> Well done.';
+      } else {
+        fb.innerHTML = '<strong>Not quite.</strong> The correct answer is ' + correct + '. Review the framework section for more context.';
+        fb.classList.add('wrong-fb');
+      }
+    } else {
+      if (!isCorrect) {
+        fb.classList.add('wrong-fb');
+        const orig = fb.innerHTML;
+        fb.innerHTML = '<strong>Not quite — the correct answer is ' + correct + '.</strong> ' + orig;
+      }
+    }
+    fb.classList.add('show');
+  }
+
+  updateNav();
+}
+
+// Apply It save
+let saveTimers = {};
+function saveApply(fieldId, key) {
+  const val = document.getElementById(fieldId).value;
+  localStorage.setItem(key, val);
+  const savedEl = document.getElementById('saved-' + fieldId);
+  savedEl.style.display = 'block';
+  clearTimeout(saveTimers[fieldId]);
+  saveTimers[fieldId] = setTimeout(() => { savedEl.style.display = 'none'; }, 2000);
+}
+
+// Load saved Apply It values on screen 15
+function loadApplyValues() {
+  const a1 = localStorage.getItem('breeze_sv_apply1') || '';
+  const a2 = localStorage.getItem('breeze_sv_apply2') || '';
+  if (a1) document.getElementById('apply1').value = a1;
+  if (a2) document.getElementById('apply2').value = a2;
+}
+
+// Mark course complete
+function markComplete() {
+  localStorage.setItem('breeze_mod_complete_dr_strategic_voice', '1');
+}
+
+// Load apply summary on complete screen
+function loadApplySummary() {
+  const a1 = localStorage.getItem('breeze_sv_apply1') || '';
+  const a2 = localStorage.getItem('breeze_sv_apply2') || '';
+
+  const summaryEl = document.getElementById('apply-summary');
+  const s1 = document.getElementById('summary-apply1');
+  const s2 = document.getElementById('summary-apply2');
+  const s1t = document.getElementById('summary-apply1-text');
+  const s2t = document.getElementById('summary-apply2-text');
+
+  let hasContent = false;
+  if (a1.trim()) {
+    s1t.textContent = a1;
+    s1.style.display = 'block';
+    hasContent = true;
+  }
+  if (a2.trim()) {
+    s2t.textContent = a2;
+    s2.style.display = 'block';
+    hasContent = true;
+  }
+  if (hasContent) summaryEl.style.display = 'block';
+}
+
+// Init
+function init() {
+  buildDots();
+  updateDots();
+  updateProgress();
+  updateSectionPills();
+  updateNav();
+  loadApplyValues();
+}
+
+init();
+</script>
+</body>
+</html>
