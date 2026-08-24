@@ -3,649 +3,690 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Financial Acumen for Directors | Breeze Leadership</title>
+<title>Financial Acumen for Leaders — Breeze Airways</title>
 <style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#faf8ff;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column;}
-:root{
-  --accent:#6D28D9;
-  --accent-light:#ede9fe;
-  --dark:#000633;
-  --white:#fff;
-  --muted:#6b7280;
-  --border:#e5e7eb;
-  --card:#fff;
-  --warn:#fff3cd;
-  --warn-border:#ffc107;
-  --good:#ede9fe;
-  --good-border:#6D28D9;
-  --bad:#ffe4e6;
-  --bad-border:#f43f5e;
-}
-.course-header{background:linear-gradient(135deg,#1a0a3d 0%,#000633 100%);padding:20px 28px 16px;color:var(--white);}
-.course-meta{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
-.course-title{font-size:22px;font-weight:800;margin-bottom:4px;}
-.course-sub{font-size:13px;color:rgba(255,255,255,.65);}
-.progress-wrap{background:rgba(255,255,255,.12);padding:14px 28px;display:flex;align-items:center;gap:14px;}
-.progress-bar-outer{flex:1;height:6px;background:rgba(255,255,255,.2);border-radius:3px;overflow:hidden;}
-.progress-bar-inner{height:100%;background:var(--accent);border-radius:3px;transition:width .4s ease;}
-.progress-label{font-size:12px;color:rgba(255,255,255,.7);white-space:nowrap;min-width:48px;text-align:right;}
-.section-nav{background:rgba(255,255,255,.08);padding:10px 28px;display:flex;gap:8px;flex-wrap:wrap;border-bottom:1px solid rgba(255,255,255,.1);}
-.sec-pill{font-size:11px;font-weight:600;padding:4px 12px;border-radius:20px;color:rgba(255,255,255,.5);background:transparent;border:1px solid rgba(255,255,255,.15);cursor:default;transition:all .2s;}
-.sec-pill.active{background:var(--accent);color:var(--white);border-color:var(--accent);}
-.sec-pill.done{background:rgba(109,40,217,.25);color:rgba(255,255,255,.8);border-color:rgba(109,40,217,.4);}
-.course-main{flex:1;padding:28px 20px;max-width:720px;margin:0 auto;width:100%;}
-.screen{display:none;animation:fadeIn .3s ease;}
-.screen.active{display:block;}
-@keyframes fadeIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
-.screen-label{font-size:10px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:8px;}
-.screen-title{font-size:21px;font-weight:800;color:var(--dark);margin-bottom:14px;line-height:1.3;}
-.screen-body{font-size:15px;line-height:1.7;color:#374151;margin-bottom:18px;}
-.hl{background:var(--accent-light);border-left:4px solid var(--accent);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
-.hl strong{color:var(--dark);}
-.al{background:var(--warn);border-left:4px solid var(--warn-border);border-radius:8px;padding:14px 16px;margin:16px 0;font-size:14px;line-height:1.6;}
-.fin-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0;}
-.fin-card{background:var(--card);border:1.5px solid var(--border);border-left:4px solid var(--accent);border-radius:10px;padding:16px;}
-.fin-card h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:6px;}
-.fin-card p{font-size:13px;color:#374151;line-height:1.5;}
-.fin-card .example{font-size:12px;color:var(--accent);font-style:italic;margin-top:6px;}
-.num-cards{display:flex;flex-direction:column;gap:12px;margin:18px 0;}
-.num-card{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start;}
-.num-badge{width:32px;height:32px;border-radius:50%;background:var(--accent);color:var(--white);font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.num-content h4{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:4px;}
-.num-content p{font-size:13.5px;color:#374151;line-height:1.5;}
-.options{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
-.opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:14px 16px;cursor:pointer;font-size:14px;line-height:1.5;transition:all .2s;display:flex;gap:12px;align-items:flex-start;}
-.opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
-.opt-letter{font-weight:700;color:var(--muted);flex-shrink:0;min-width:18px;}
-.opt.correct{background:var(--good);border-color:var(--good-border);}
-.opt.correct .opt-letter{color:var(--accent);}
-.opt.wrong{background:var(--bad);border-color:var(--bad-border);}
-.opt.wrong .opt-letter{color:#dc2626;}
-.opt.locked{cursor:default;}
-.opt.dimmed{opacity:.45;}
-.feedback-box{display:none;background:var(--good);border:1.5px solid var(--good-border);border-radius:10px;padding:14px 16px;margin-top:6px;font-size:14px;line-height:1.6;}
-.feedback-box.wrong-fb{background:var(--bad);border-color:var(--bad-border);}
-.feedback-box.show{display:block;}
-.pulse-q{font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
-.pulse-opts{display:flex;flex-direction:column;gap:10px;}
-.pulse-opt{background:var(--card);border:2px solid var(--border);border-radius:10px;padding:13px 16px;cursor:pointer;font-size:14px;transition:all .2s;}
-.pulse-opt:hover:not(.locked){border-color:var(--accent);background:#f5f3ff;}
-.pulse-opt.correct{background:var(--good);border-color:var(--good-border);font-weight:600;}
-.pulse-opt.wrong{background:var(--bad);border-color:var(--bad-border);}
-.pulse-opt.locked{cursor:default;}
-.pulse-opt.dimmed{opacity:.45;}
-.apply-section{margin-bottom:22px;}
-.apply-label{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:8px;}
-.apply-sub{font-size:12px;color:var(--muted);margin-bottom:8px;}
-.apply-input{width:100%;border:1.5px solid var(--border);border-radius:8px;padding:12px 14px;font-size:14px;font-family:inherit;resize:vertical;min-height:70px;line-height:1.5;transition:border .2s;}
-.apply-input:focus{outline:none;border-color:var(--accent);}
-.apply-saved{font-size:11px;color:var(--accent);margin-top:4px;display:none;}
-.complete-hero{text-align:center;padding:20px 0 28px;}
-.complete-icon{font-size:56px;margin-bottom:12px;}
-.complete-title{font-size:24px;font-weight:800;color:var(--dark);margin-bottom:8px;}
-.complete-sub{font-size:15px;color:var(--muted);margin-bottom:24px;line-height:1.6;}
-.complete-btn{display:inline-block;background:var(--accent);color:var(--white);font-size:15px;font-weight:700;padding:14px 28px;border-radius:10px;text-decoration:none;cursor:pointer;border:none;font-family:inherit;}
-.complete-btn:hover{background:#5b21b6;}
-.commitments{background:var(--accent-light);border-radius:12px;padding:20px;margin:24px 0;text-align:left;}
-.commitments h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:12px;}
-.commit-item{font-size:14px;color:#374151;margin-bottom:8px;padding-left:16px;position:relative;line-height:1.5;}
-.commit-item::before{content:'✓';position:absolute;left:0;color:var(--accent);font-weight:700;}
-.course-nav{background:var(--white);border-top:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;bottom:0;}
-.nav-btn{padding:10px 24px;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all .2s;}
-.btn-prev{background:transparent;border:1.5px solid var(--border);color:var(--muted);}
-.btn-prev:hover:not(:disabled){border-color:var(--accent);color:var(--accent);}
-.btn-prev:disabled{opacity:.35;cursor:default;}
-.btn-next{background:var(--accent);color:var(--white);}
-.btn-next:hover:not(:disabled){background:#5b21b6;}
-.btn-next:disabled{background:var(--border);color:var(--muted);cursor:default;}
-.nav-dots{display:flex;gap:5px;}
-.nav-dot{width:7px;height:7px;border-radius:50%;background:var(--border);}
-.nav-dot.done-dot{background:rgba(109,40,217,.4);}
-.nav-dot.active-dot{background:var(--accent);}
-@media(max-width:600px){
-  .fin-cards{grid-template-columns:1fr;}
-  .course-main{padding:20px 14px;}
-  .section-nav{padding:10px 14px;}
-  .progress-wrap{padding:12px 14px;}
-}
+  :root {
+    --accent:#6D28D9;
+    --accent-light:#ede9fe;
+    --accent-dark:#4c1d95;
+    --text:#1a1a2e;
+    --muted:#6b7280;
+    --border:#e5e7eb;
+    --bg:#faf8ff;
+    --white:#ffffff;
+    --correct:#059669;
+    --wrong:#dc2626;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+  /* HEADER */
+  .course-header{
+    background:linear-gradient(135deg,#1a0a3d 0%,#000633 100%);
+    color:#fff;padding:20px 24px 16px;
+  }
+  .course-header .back-link{
+    font-size:13px;color:rgba(255,255,255,0.7);text-decoration:none;
+    display:inline-flex;align-items:center;gap:6px;margin-bottom:12px;
+  }
+  .course-header .back-link:hover{color:#fff;}
+  .course-header h1{font-size:22px;font-weight:700;line-height:1.3;}
+  .course-header .meta{font-size:13px;color:rgba(255,255,255,0.65);margin-top:4px;}
+
+  /* PROGRESS BAR */
+  .progress-wrap{background:rgba(255,255,255,0.15);border-radius:4px;height:6px;margin-top:14px;}
+  .progress-bar{height:6px;border-radius:4px;background:var(--accent-light);transition:width .4s ease;}
+
+  /* SECTION PILLS */
+  .section-nav{
+    display:flex;gap:6px;padding:14px 20px;overflow-x:auto;
+    background:#fff;border-bottom:1px solid var(--border);flex-wrap:nowrap;
+  }
+  .section-nav::-webkit-scrollbar{height:3px;}
+  .section-nav::-webkit-scrollbar-thumb{background:var(--border);}
+  .pill{
+    font-size:12px;font-weight:600;padding:5px 12px;border-radius:20px;
+    white-space:nowrap;cursor:pointer;border:none;
+    background:var(--border);color:var(--muted);transition:all .2s;
+  }
+  .pill.active{background:var(--accent);color:#fff;}
+  .pill.done{background:var(--accent-light);color:var(--accent);}
+
+  /* SCREENS */
+  .screen{display:none;max-width:720px;margin:0 auto;padding:24px 20px 80px;}
+  .screen.visible{display:block;}
+
+  /* CARDS */
+  .card{background:#fff;border-radius:12px;padding:24px;margin-bottom:16px;border:1px solid var(--border);}
+  .card.accent-card{border-left:4px solid var(--accent);}
+
+  /* TYPOGRAPHY */
+  h2{font-size:20px;font-weight:700;margin-bottom:8px;color:var(--text);}
+  h3{font-size:16px;font-weight:700;margin-bottom:8px;color:var(--text);}
+  p{font-size:15px;line-height:1.65;color:#374151;margin-bottom:10px;}
+  p:last-child{margin-bottom:0;}
+  ul,ol{padding-left:20px;margin-bottom:10px;}
+  li{font-size:15px;line-height:1.65;color:#374151;margin-bottom:4px;}
+
+  /* HIGHLIGHT BOX */
+  .highlight{background:var(--accent-light);border-radius:10px;padding:16px 18px;margin-bottom:14px;}
+  .highlight strong{color:var(--accent-dark);}
+
+  /* STAT BLOCK */
+  .stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:16px;}
+  .stat-box{background:var(--accent-light);border-radius:10px;padding:14px;text-align:center;}
+  .stat-box .num{font-size:24px;font-weight:800;color:var(--accent);}
+  .stat-box .label{font-size:12px;color:var(--muted);margin-top:2px;}
+
+  /* SCENARIO */
+  .scenario-box{background:#f9f9f9;border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:14px;}
+  .scenario-box .scenario-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;}
+
+  /* QUIZ */
+  .quiz-q{font-size:15px;font-weight:600;margin-bottom:14px;line-height:1.5;}
+  .quiz-options{display:flex;flex-direction:column;gap:8px;margin-bottom:14px;}
+  .quiz-opt{
+    padding:12px 16px;border-radius:8px;border:2px solid var(--border);
+    cursor:pointer;font-size:14px;text-align:left;background:#fff;
+    transition:all .15s;
+  }
+  .quiz-opt:hover{border-color:var(--accent);background:var(--accent-light);}
+  .quiz-opt.correct{border-color:var(--correct);background:#d1fae5;color:var(--correct);font-weight:600;}
+  .quiz-opt.wrong{border-color:var(--wrong);background:#fee2e2;color:var(--wrong);}
+  .quiz-feedback{font-size:14px;padding:10px 14px;border-radius:8px;display:none;margin-bottom:10px;}
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback.correct{background:#d1fae5;color:#065f46;}
+  .quiz-feedback.wrong{background:#fee2e2;color:#991b1b;}
+
+  /* REFLECTION */
+  .reflection-prompt{font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px;}
+  textarea{
+    width:100%;border:1.5px solid var(--border);border-radius:8px;
+    padding:12px;font-size:14px;line-height:1.6;resize:vertical;
+    min-height:100px;font-family:inherit;color:var(--text);
+    background:#fff;transition:border-color .2s;
+  }
+  textarea:focus{outline:none;border-color:var(--accent);}
+  .save-note{font-size:12px;color:var(--muted);margin-top:4px;}
+
+  /* APPLY IT */
+  .commit-item{
+    display:flex;align-items:flex-start;gap:12px;padding:14px;
+    border:1.5px solid var(--border);border-radius:10px;margin-bottom:10px;
+    cursor:pointer;transition:all .2s;
+  }
+  .commit-item.selected{border-color:var(--accent);background:var(--accent-light);}
+  .commit-check{
+    width:22px;height:22px;border-radius:50%;border:2px solid var(--border);
+    flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;
+    font-size:13px;transition:all .2s;
+  }
+  .commit-item.selected .commit-check{border-color:var(--accent);background:var(--accent);color:#fff;}
+  .commit-label{font-size:14px;line-height:1.5;color:var(--text);}
+
+  /* NAV BUTTONS */
+  .nav-row{
+    position:fixed;bottom:0;left:0;right:0;background:#fff;
+    border-top:1px solid var(--border);padding:12px 20px;
+    display:flex;gap:10px;justify-content:space-between;
+    max-width:720px;margin:0 auto;
+  }
+  .btn{
+    padding:11px 22px;border-radius:8px;font-size:15px;font-weight:600;
+    cursor:pointer;border:none;transition:all .2s;
+  }
+  .btn-primary{background:var(--accent);color:#fff;}
+  .btn-primary:hover{background:var(--accent-dark);}
+  .btn-secondary{background:var(--border);color:var(--muted);}
+  .btn-secondary:hover{background:#d1d5db;color:var(--text);}
+  .btn:disabled{opacity:.4;cursor:not-allowed;}
+
+  /* COMPLETE */
+  .complete-hero{text-align:center;padding:32px 0 20px;}
+  .complete-icon{font-size:64px;margin-bottom:12px;}
+  .complete-title{font-size:24px;font-weight:800;color:var(--text);}
+  .complete-sub{font-size:15px;color:var(--muted);margin-top:6px;}
+  .takeaway-list{list-style:none;padding:0;}
+  .takeaway-list li{
+    display:flex;align-items:flex-start;gap:10px;padding:10px 0;
+    border-bottom:1px solid var(--border);font-size:14px;line-height:1.5;
+  }
+  .takeaway-list li:last-child{border-bottom:none;}
+  .takeaway-list li::before{content:"✓";color:var(--correct);font-weight:700;flex-shrink:0;margin-top:1px;}
+
+  @media(max-width:500px){
+    .stat-row{grid-template-columns:1fr 1fr;}
+    h2{font-size:18px;}
+  }
 </style>
 </head>
 <body>
 
 <div class="course-header">
-  <div class="course-meta">Director Level &nbsp;·&nbsp; My Skills Series</div>
-  <div class="course-title">Financial Acumen for Directors</div>
-  <div class="course-sub">Understanding the numbers well enough to lead better and advocate more effectively.</div>
+  <a class="back-link" href="breeze-leader-guide.html">← Back to Leader Guide</a>
+  <h1>Financial Acumen for Leaders</h1>
+  <div class="meta">Director Level &nbsp;·&nbsp; 17 Screens &nbsp;·&nbsp; ~25 min</div>
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar" style="width:0%"></div></div>
 </div>
 
-<div class="progress-wrap" style="background:var(--dark);">
-  <div class="progress-bar-outer">
-    <div class="progress-bar-inner" id="progress-bar" style="width:0%"></div>
+<div class="section-nav" id="sectionNav">
+  <button class="pill active" data-section="0">Foundation</button>
+  <button class="pill" data-section="1">Own Your Numbers</button>
+  <button class="pill" data-section="2">Practice</button>
+  <button class="pill" data-section="3">Pulse Check</button>
+  <button class="pill" data-section="4">Apply It</button>
+  <button class="pill" data-section="5">Complete</button>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 0 — FOUNDATION (screens 0–2)
+═══════════════════════════════════════════ -->
+
+<!-- Screen 0: Why this matters -->
+<div class="screen visible" id="screen-0">
+  <div class="card">
+    <h2>Finance is strategy</h2>
+    <p>At Breeze, financial acumen isn't an accounting skill — it's a leadership skill. Every decision you make as a Director has a dollar impact: staffing, scheduling, vendor selection, overtime, training spend, equipment, process changes.</p>
+    <p>The leaders who move fastest toward VP don't wait for finance to tell them how they're performing. They already know — because they own their numbers.</p>
   </div>
-  <div class="progress-label" id="progress-label" style="color:rgba(255,255,255,.7);">0 of 17</div>
+  <div class="highlight">
+    <strong>Breeze's core financial philosophy:</strong><br>
+    "Spend smartly — not don't spend." Every dollar should drive a return. The goal is not to minimize spend; it's to maximize the value of every dollar deployed.
+  </div>
+  <div class="card">
+    <h3>What you'll walk away with</h3>
+    <ul>
+      <li>How Breeze makes money and where your department fits</li>
+      <li>The key metrics every Director needs to track</li>
+      <li>How to read and use your monthly P&L</li>
+      <li>How to partner with FP&A — not fear them</li>
+      <li>A habit you can start this week</li>
+    </ul>
+  </div>
 </div>
 
-<div class="section-nav" style="background:var(--dark);">
-  <div class="sec-pill active" id="pill-0">Foundation</div>
-  <div class="sec-pill" id="pill-1">The Financial Framework</div>
-  <div class="sec-pill" id="pill-2">Practice</div>
-  <div class="sec-pill" id="pill-3">Pulse Check</div>
-  <div class="sec-pill" id="pill-4">Apply It</div>
-  <div class="sec-pill" id="pill-5">Complete</div>
-</div>
-
-<div class="course-main">
-
-<!-- SCREEN 0 -->
-<div class="screen active" id="screen-0">
-  <div class="screen-label">Foundation</div>
-  <div class="screen-title">Why Financial Fluency Matters at This Level</div>
-  <div class="screen-body">Directors who are credible in financial conversations have more influence in rooms where resource decisions are made. Not because they became accountants — because they learned enough to ask the right questions and connect their team's work to the financial health of the organization.</div>
-  <div class="screen-body">Financial fluency at director level isn't about building models or presenting a P&L. It's about being able to speak the language of business when you're advocating for resources, evaluating trade-offs, or presenting a recommendation to a financially-oriented executive. It's about not going quiet when the CFO asks a question.</div>
-  <div class="screen-body">The directors who get resources are the ones who can articulate the financial case — clearly, in financial terms, with honest uncertainty where it exists. The directors who lose that conversation are the ones who retreat to "it's the right thing to do" without connecting it to a business outcome.</div>
-  <div class="hl"><strong>You don't need to be a financial expert.</strong> You need to be financially literate — capable of reading the numbers, asking the right questions, and making the business case for what you need.</div>
-</div>
-
-<!-- SCREEN 1 -->
+<!-- Screen 1: The Breeze Business Model -->
 <div class="screen" id="screen-1">
-  <div class="screen-label">Foundation</div>
-  <div class="screen-title">What Directors Need — and What They Don't</div>
-  <div class="screen-body">Clarity on scope matters here. This is not about becoming a finance professional. It's about closing the specific gaps that limit your effectiveness as a director.</div>
-  <div class="fin-cards">
-    <div class="fin-card" style="border-left-color:#f43f5e;">
-      <h4>You Don't Need To:</h4>
-      <ul style="padding-left:16px;font-size:13px;line-height:1.8;color:#374151;">
-        <li>Build a P&amp;L from scratch</li>
-        <li>Run financial modeling</li>
-        <li>Know GAAP accounting standards</li>
-        <li>Understand complex tax treatment</li>
-      </ul>
-    </div>
-    <div class="fin-card">
-      <h4>You Do Need To:</h4>
-      <ul style="padding-left:16px;font-size:13px;line-height:1.8;color:#374151;">
-        <li>Read and interpret a P&amp;L</li>
-        <li>Know your department's cost structure</li>
-        <li>Make the financial case for a resource request</li>
-        <li>Connect team performance to financial outcomes</li>
-        <li>Understand what drives your key financial levers</li>
-      </ul>
-    </div>
+  <div class="card">
+    <h2>How Breeze Makes Money</h2>
+    <p>Before you can understand your department's finances, you need to understand Breeze's core business model. We're an ultra-low-cost carrier with a specific competitive advantage built around one aircraft.</p>
   </div>
-  <div class="screen-body" style="font-size:14px;color:var(--muted);">The gap between these two lists is where director-level financial acumen lives. It's learnable, and it changes how you're perceived in leadership conversations.</div>
+  <div class="card accent-card">
+    <h3>The A220-300 Advantage</h3>
+    <p>Our entire financial model is built on the A220-300. Here's why it matters:</p>
+    <ul>
+      <li><strong>137 passengers</strong> — a unique gauge that fits underserved routes larger planes can't profitably fly</li>
+      <li><strong>Lowest cost per trip</strong> of any aircraft in its class — gives us a structural cost advantage</li>
+      <li><strong>Opens markets</strong> that are unprofitable for mainline carriers flying larger jets</li>
+    </ul>
+    <p style="margin-top:12px;">This isn't just trivia — when your decisions affect utilization, staffing levels, or turn times, they directly affect how efficiently we're using this advantage.</p>
+  </div>
+  <div class="stat-row">
+    <div class="stat-box"><div class="num">137</div><div class="label">Seats per A220-300</div></div>
+    <div class="stat-box"><div class="num">#1</div><div class="label">Lowest cost per trip in class</div></div>
+    <div class="stat-box"><div class="num">ULCC</div><div class="label">Our cost model</div></div>
+  </div>
 </div>
 
-<!-- SCREEN 2 -->
+<!-- Screen 2: The Vocabulary -->
 <div class="screen" id="screen-2">
-  <div class="screen-label">Foundation</div>
-  <div class="screen-title">Four Most Common Financial Knowledge Gaps</div>
-  <div class="screen-body">These are the four gaps that show up most often when directors are in financial conversations — and that limit their effectiveness when they do.</div>
-  <div class="num-cards">
-    <div class="num-card">
-      <div class="num-badge">1</div>
-      <div class="num-content">
-        <h4>Revenue vs. Margin vs. EBITDA vs. Cash Flow</h4>
-        <p>Not knowing which metric matters in which context, or when leadership is focused on one versus another. These are different signals about financial health and require different responses.</p>
-      </div>
-    </div>
-    <div class="num-card">
-      <div class="num-badge">2</div>
-      <div class="num-content">
-        <h4>Not Knowing Their Department's Cost Structure</h4>
-        <p>Not knowing the breakdown of what you spend — what's fixed, what's variable, what's discretionary. A director who doesn't know their cost structure can't have a credible conversation about trade-offs.</p>
-      </div>
-    </div>
-    <div class="num-card">
-      <div class="num-badge">3</div>
-      <div class="num-content">
-        <h4>Not Knowing How to Make the Financial Case</h4>
-        <p>Asking for resources by describing the need instead of the return. "We need this" without "here's the cost, the expected return, the timeline to ROI, and the risk of not investing."</p>
-      </div>
-    </div>
-    <div class="num-card">
-      <div class="num-badge">4</div>
-      <div class="num-content">
-        <h4>Not Connecting Team Performance to Financial Outcomes</h4>
-        <p>Reporting on activity metrics without connecting them to financial impact. "We trained 300 people" vs. "training reduced error rate by X%, which saved approximately $Y in rework cost."</p>
-      </div>
-    </div>
+  <div class="card">
+    <h2>The Language of Airline Finance</h2>
+    <p>You'll hear these terms in every financial conversation at Breeze. Knowing them makes you a more credible voice in the room.</p>
+  </div>
+  <div class="card accent-card">
+    <h3>ASMs — Available Seat Miles</h3>
+    <p>The total capacity we've put into the market. One seat flying one mile = one ASM. This is the denominator for most of our per-unit cost calculations.</p>
+  </div>
+  <div class="card accent-card">
+    <h3>RPMs — Revenue Passenger Miles</h3>
+    <p>How many of those ASMs we actually sold. One paying passenger flying one mile = one RPM.</p>
+  </div>
+  <div class="card accent-card">
+    <h3>Load Factor</h3>
+    <p>RPMs ÷ ASMs. The percentage of available seats we filled. Higher load factor = more revenue from the same cost base. A full plane is a profitable plane.</p>
+  </div>
+  <div class="card accent-card">
+    <h3>CASM — Cost per Available Seat Mile (in cents)</h3>
+    <p>Our total operating cost divided by ASMs. This is the headline efficiency metric. Your job as a Director: don't let your department inflate CASM without a good reason.</p>
+  </div>
+  <div class="card accent-card">
+    <h3>TRASM — Total Revenue per Available Seat Mile (in cents)</h3>
+    <p>Total revenue divided by ASMs. Includes ticket revenue, ancillary, bag fees, etc. The goal: TRASM > CASM. That's profit.</p>
   </div>
 </div>
 
-<!-- SCREEN 3: Framework -->
+<!-- ═══════════════════════════════════════════
+     SECTION 1 — OWN YOUR NUMBERS (screens 3–6)
+═══════════════════════════════════════════ -->
+
+<!-- Screen 3: Budgeting -->
 <div class="screen" id="screen-3">
-  <div class="screen-label">The Financial Framework</div>
-  <div class="screen-title">Four Concepts Every Director Needs</div>
-  <div class="screen-body">Master these four concepts and you'll be able to handle the vast majority of financial conversations at director level.</div>
-  <div class="fin-cards">
-    <div class="fin-card">
-      <h4>Revenue vs. Cost vs. Margin</h4>
-      <p>Revenue is what comes in. Cost is what goes out. Margin is what's left. Gross margin vs. operating margin vs. net margin reflects different levels of cost subtracted. Know which one leadership is focused on.</p>
-      <div class="example">"We're margin-focused this quarter — revenue is fine, costs are the lever."</div>
-    </div>
-    <div class="fin-card">
-      <h4>Budget vs. Forecast</h4>
-      <p>Budget is the approved plan set at the beginning of the year. Forecast is your current best estimate of where you'll actually land. Knowing the delta between them — and why — is the financial conversation.</p>
-      <div class="example">"We're $180K favorable to budget on labor — three unfilled roles is driving it."</div>
-    </div>
-    <div class="fin-card">
-      <h4>The Business Case</h4>
-      <p>Four elements: Cost of the investment. Expected return (and how you're measuring it). Timeline to ROI. Risk if you don't invest. These four answer the financial questions before they're asked.</p>
-      <div class="example">"$120K investment, $340K expected return by Q3, ROI in 18 months, risk of attrition if we don't."</div>
-    </div>
-    <div class="fin-card">
-      <h4>Leading vs. Lagging Indicators</h4>
-      <p>Lagging (revenue, profit, turnover) tells you what happened. Leading (pipeline, engagement scores, time-to-fill) tells you what's coming. Directors who only track lagging are always reacting.</p>
-      <div class="example">"Engagement dropped 8 points — that's a leading indicator for attrition risk in Q4."</div>
-    </div>
+  <div class="card">
+    <h2>Budgeting: Zero-Based, Every Year</h2>
+    <p>Breeze uses a zero-based / activity-based budgeting approach. This is the company's philosophy — not a suggestion.</p>
+  </div>
+  <div class="highlight">
+    <strong>The Breeze standard:</strong> "This is the Way."<br><br>
+    Every dollar in your budget must be justified from zero each cycle. Last year's budget is not a starting point — it's a reference at best.
+  </div>
+  <div class="card">
+    <h3>What this means for you</h3>
+    <ul>
+      <li>You can't assume you'll get what you got last year</li>
+      <li>Every line item needs to connect to an activity or outcome</li>
+      <li>Requests without justification don't survive budget season</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>The Annual Cycle</h3>
+    <ul>
+      <li><strong>October–November:</strong> Budget planning season — this is when you build and defend your request</li>
+      <li><strong>January:</strong> Approved budgets take effect</li>
+      <li><strong>Quarterly:</strong> Budget updates and reforecasting — you'll review actuals vs. plan and explain variances</li>
+    </ul>
   </div>
 </div>
 
-<!-- SCREEN 4 -->
+<!-- Screen 4: Department P&L -->
 <div class="screen" id="screen-4">
-  <div class="screen-label">Foundation</div>
-  <div class="screen-title">How to Read Financial Results</div>
-  <div class="screen-body">When you're in a financial review — or being asked about your department's financial performance — there's a three-part structure that produces a credible, complete answer.</div>
-  <div class="num-cards">
-    <div class="num-card">
-      <div class="num-badge">1</div>
-      <div class="num-content">
-        <h4>Understand the Delta</h4>
-        <p>What's different from plan — and by how much? Not just the direction (over/under) but the magnitude. "We're 8% under plan on labor" is more useful than "we're under on labor."</p>
-      </div>
-    </div>
-    <div class="num-card">
-      <div class="num-badge">2</div>
-      <div class="num-content">
-        <h4>Identify the Driver</h4>
-        <p>Is this a one-time factor or a trend? A one-time favorable variance is not cause for celebration if the underlying driver is a problem. A trend is something you manage proactively. Know which you're looking at.</p>
-      </div>
-    </div>
-    <div class="num-card">
-      <div class="num-badge">3</div>
-      <div class="num-content">
-        <h4>Give the Business Answer</h4>
-        <p>Number + context + implication. "We're 8% under on Team Member labor because we had 3 unfilled roles — $180K favorable to budget, but creates delivery risk in Q4 if we don't fill by September." That's a complete financial answer.</p>
-      </div>
-    </div>
+  <div class="card">
+    <h2>Your Department P&L</h2>
+    <p>As a Director, you own a P&L — a profit and loss statement for your area. This is your financial scoreboard. You're responsible for knowing it, explaining it, and improving it.</p>
   </div>
-  <div class="hl"><strong>The test of a good financial answer:</strong> Does it tell the listener what happened, why, and what it means for the future? If any of those three are missing, the answer is incomplete.</div>
+  <div class="card accent-card">
+    <h3>Focus on controllable expenses</h3>
+    <p>Not everything on your P&L is in your control — but a significant portion is. Controllable expenses are where your decisions show up: staffing costs, overtime, vendor spend, training budgets, supplies, and discretionary purchases.</p>
+    <p style="margin-top:10px;">The uncontrollable items (fuel allocation, aircraft depreciation, corporate overhead) matter for context — but your job is to own the controllable line.</p>
+  </div>
+  <div class="card">
+    <h3>Invoice-level accountability</h3>
+    <p>At Breeze, financial review goes deep. Be ready to explain individual invoices, not just totals. "I'm not sure" is not an acceptable answer in a P&L review.</p>
+    <p style="margin-top:8px;">Know who approved what, why, and whether it was in the plan.</p>
+  </div>
+  <div class="card">
+    <h3>Monthly reviews</h3>
+    <p>You should be reviewing your P&L monthly at minimum — before anyone else asks about it. The goal: no surprises. If something is trending wrong, you flag it before your leader does.</p>
+  </div>
 </div>
 
-<!-- SCREEN 5: Scenario -->
+<!-- Screen 5: FP&A as Partner -->
 <div class="screen" id="screen-5">
-  <div class="screen-label">The Financial Framework</div>
-  <div class="screen-title">Making a Resource Request in Financial Terms</div>
-  <div class="screen-body">You need to add a headcount to your team. In a budget planning meeting, your CFO asks: "What's the business case for this role?" What's the strongest response?</div>
-  <div class="options" id="opts-5">
-    <div class="opt" onclick="pickOpt(5,'A')"><span class="opt-letter">A</span><span>"My team is stretched — we're at capacity and this role would relieve the pressure on everyone."</span></div>
-    <div class="opt" onclick="pickOpt(5,'B')"><span class="opt-letter">B</span><span>"The role costs $95K fully-loaded. We're currently outsourcing this work for $140K annually. Net savings is $45K, plus we gain 30% more capacity for the work we can't currently take on. ROI in year one."</span></div>
-    <div class="opt" onclick="pickOpt(5,'C')"><span class="opt-letter">C</span><span>"We've grown significantly and haven't added headcount in two years — this brings our ratio back to industry standard."</span></div>
-    <div class="opt" onclick="pickOpt(5,'D')"><span class="opt-letter">D</span><span>"I can send you a detailed proposal — this deserves more than a quick answer in a meeting."</span></div>
+  <div class="card">
+    <h2>FP&A: Your Partner, Not Your Auditor</h2>
+    <p>Many leaders treat FP&A like an oversight function — a group that checks your work and asks hard questions. At Breeze, that's the wrong frame.</p>
   </div>
-  <div class="feedback-box" id="fb-5"></div>
+  <div class="highlight">
+    <strong>The right frame:</strong> FP&A is a collaborative partner. They have data and context you don't. Use them.
+  </div>
+  <div class="card">
+    <h3>What FP&A can do for you</h3>
+    <ul>
+      <li>Help you model out the financial impact of a decision before you make it</li>
+      <li>Show you trends in your department's spend before they become problems</li>
+      <li>Help you build a compelling budget case with the right numbers</li>
+      <li>Flag risks in your forecast that you might not see</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3>How to work with them well</h3>
+    <ul>
+      <li>Schedule regular touchpoints — don't only call when something's wrong</li>
+      <li>Come to meetings with your own read of the numbers, then compare</li>
+      <li>Ask: "What am I not seeing in this data?"</li>
+      <li>Loop them in early on new initiatives with spend implications</li>
+    </ul>
+  </div>
 </div>
 
-<!-- SCREEN 6: Scenario -->
+<!-- Screen 6: Cost-Benefit Thinking -->
 <div class="screen" id="screen-6">
-  <div class="screen-label">The Financial Framework</div>
-  <div class="screen-title">Responding to a Budget Cut</div>
-  <div class="screen-body">Your CPO informs you that your department's discretionary budget has been reduced by 20% due to a company-wide cost measure. You have to present your prioritization plan at next week's leadership meeting. What approach is most effective?</div>
-  <div class="options" id="opts-6">
-    <div class="opt" onclick="pickOpt(6,'A')"><span class="opt-letter">A</span><span>Distribute the cuts evenly across all programs — fair distribution and no single area takes a large hit.</span></div>
-    <div class="opt" onclick="pickOpt(6,'B')"><span class="opt-letter">B</span><span>Present a prioritized trade-off: what you're protecting (highest ROI or strategic priority), what you're reducing (lower impact items), what the implications are if the cut is deeper or sustained — with financial language throughout.</span></div>
-    <div class="opt" onclick="pickOpt(6,'C')"><span class="opt-letter">C</span><span>Push back on the cut — your department's programs are essential and the 20% reduction will cause significant harm. Request an exception.</span></div>
-    <div class="opt" onclick="pickOpt(6,'D')"><span class="opt-letter">D</span><span>Accept the cut and present a revised plan without commentary — it's a company-wide decision and it's not your place to question it.</span></div>
+  <div class="card">
+    <h2>Cost-Benefit Thinking</h2>
+    <p>Every Director-level decision has a financial dimension. Even if money isn't the primary driver, cost-benefit thinking makes your proposals more credible and helps you prioritize.</p>
   </div>
-  <div class="feedback-box" id="fb-6"></div>
+  <div class="card accent-card">
+    <h3>Three questions before you spend</h3>
+    <ol>
+      <li style="margin-bottom:8px;"><strong>What does this cost — fully loaded?</strong> Include labor time, vendor cost, and any downstream maintenance or operational costs.</li>
+      <li style="margin-bottom:8px;"><strong>What does this return?</strong> Be specific. Efficiency gain, error reduction, revenue impact, retention improvement — tie it to something measurable.</li>
+      <li><strong>What's the cost of not doing it?</strong> Sometimes inaction is expensive too. Make the case for both sides.</li>
+    </ol>
+  </div>
+  <div class="highlight">
+    <strong>The Breeze standard:</strong> "Spend smartly — not don't spend."<br><br>
+    A $50K investment that saves $200K is a great decision. A $5K purchase with no clear return is a bad one. Think in returns, not just costs.
+  </div>
 </div>
 
-<!-- SCREEN 7: Scenario -->
+<!-- ═══════════════════════════════════════════
+     SECTION 2 — PRACTICE (screens 7–9)
+═══════════════════════════════════════════ -->
+
+<!-- Screen 7 -->
 <div class="screen" id="screen-7">
-  <div class="screen-label">Practice</div>
-  <div class="screen-title">A Better-Than-Expected Result With a Concerning Explanation</div>
-  <div class="screen-body">Your department is significantly favorable to budget on labor costs — good news for the P&L. The reason: three open roles haven't been filled, and the team has been absorbing the work. When asked about the favorable result in a leadership review, what do you say?</div>
-  <div class="options" id="opts-7">
-    <div class="opt" onclick="pickOpt(7,'A')"><span class="opt-letter">A</span><span>"We're $220K favorable to budget on labor — great news for the quarter."</span></div>
-    <div class="opt" onclick="pickOpt(7,'B')"><span class="opt-letter">B</span><span>"We're $220K favorable to budget because we have three open roles — that's a short-term financial benefit but it's creating delivery risk and burnout risk if we don't fill them by Q3. I'd like to accelerate the hiring plan."</span></div>
-    <div class="opt" onclick="pickOpt(7,'C')"><span class="opt-letter">C</span><span>"We're managing well within budget — we found some efficiencies that reduced our labor spend."</span></div>
-    <div class="opt" onclick="pickOpt(7,'D')"><span class="opt-letter">D</span><span>"The favorable variance is temporary — we'll return to plan once roles are filled. Nothing to celebrate here."</span></div>
+  <div class="card"><h2>Scenario Practice</h2><p>Work through these real-world situations. There's no single right answer — the goal is to practice thinking financially about leadership decisions.</p></div>
+  <div class="scenario-box">
+    <div class="scenario-label">Scenario 1 of 5</div>
+    <p><strong>It's October. Your VP asks you to submit your department budget for next year. You pull last year's approved budget as a starting point and add 8% for expected growth.</strong></p>
+    <p style="margin-top:10px;">What's wrong with this approach, and what should you do instead?</p>
   </div>
-  <div class="feedback-box" id="fb-7"></div>
+  <div class="card">
+    <p><strong>The problem:</strong> Breeze uses zero-based budgeting — last year's number is not a valid starting point. Adding a percentage to last year's budget won't survive review because it doesn't justify any individual line item from zero.</p>
+    <p style="margin-top:10px;"><strong>What to do instead:</strong> Start from the activities your department will perform next year. What does each activity cost? What staffing, tools, and resources does each require? Build up from zero, line by line. Then connect each request to a business outcome.</p>
+  </div>
 </div>
 
-<!-- SCREEN 8: Scenario -->
+<!-- Screen 8 -->
 <div class="screen" id="screen-8">
-  <div class="screen-label">Practice</div>
-  <div class="screen-title">Defending ROI on a People Investment</div>
-  <div class="screen-body">A peer director challenges your learning and development budget in a resource discussion: "We don't have great evidence that training actually improves performance. How do you justify this spend?" What's your response?</div>
-  <div class="options" id="opts-8">
-    <div class="opt" onclick="pickOpt(8,'A')"><span class="opt-letter">A</span><span>"Developing our Team Members is a core part of our culture — it's an investment in our people, not just a cost."</span></div>
-    <div class="opt" onclick="pickOpt(8,'B')"><span class="opt-letter">B</span><span>"Fair challenge. Here's how we're measuring it: performance scores pre/post, time-to-proficiency for promoted Team Members, and retention differential for Team Members who complete development programs vs. those who don't. We have directional data. I'll share the specifics."</span></div>
-    <div class="opt" onclick="pickOpt(8,'C')"><span class="opt-letter">C</span><span>"Industry benchmarks show that organizations at our growth stage invest X% of payroll in development — we're actually below that benchmark."</span></div>
-    <div class="opt" onclick="pickOpt(8,'D')"><span class="opt-letter">D</span><span>"The ROI question is hard to answer definitively in this space — the benefits are real but difficult to quantify."</span></div>
+  <div class="scenario-box">
+    <div class="scenario-label">Scenario 2 of 5</div>
+    <p><strong>Your monthly P&L shows that your department ran $42K over plan in September. Your CFO asks for an explanation in the Friday exec review. You didn't review your P&L this month.</strong></p>
+    <p style="margin-top:10px;">What went wrong, and what's the standard going forward?</p>
   </div>
-  <div class="feedback-box" id="fb-8"></div>
+  <div class="card">
+    <p><strong>What went wrong:</strong> You were caught flat-footed. At Director level, "I didn't know" is a credibility problem — not just a knowledge gap. The CFO now owns the narrative about your department's spend.</p>
+    <p style="margin-top:10px;"><strong>The standard:</strong> Review your P&L every month before your leader does. When you're over plan, you should already know why — at the invoice level — and have a plan for correction or a rationale for variance. No surprises.</p>
+  </div>
 </div>
 
-<!-- SCREEN 9: Scenario -->
+<!-- Screen 9 -->
 <div class="screen" id="screen-9">
-  <div class="screen-label">Practice</div>
-  <div class="screen-title">Talking About Department Cost Structure</div>
-  <div class="screen-body">Your CPO asks in a 1:1: "Walk me through how your department's cost is structured." You haven't had this conversation before. What do you need to know to answer it well?</div>
-  <div class="options" id="opts-9">
-    <div class="opt" onclick="pickOpt(9,'A')"><span class="opt-letter">A</span><span>Your total budget number and how it compares to last year.</span></div>
-    <div class="opt" onclick="pickOpt(9,'B')"><span class="opt-letter">B</span><span>The breakdown by fixed vs. variable costs, what your largest spend categories are, what's discretionary vs. committed, and which levers you could pull if asked to reduce spend — with the trade-off for each.</span></div>
-    <div class="opt" onclick="pickOpt(9,'C')"><span class="opt-letter">C</span><span>Your headcount and average fully-loaded cost per Team Member.</span></div>
-    <div class="opt" onclick="pickOpt(9,'D')"><span class="opt-letter">D</span><span>How your budget was built and what assumptions were made when it was approved.</span></div>
+  <div class="scenario-box">
+    <div class="scenario-label">Scenario 3 of 5</div>
+    <p><strong>You want to add a new software tool for your team — $28K annually. Your VP asks: "What's the return?" You say it will "improve efficiency and team morale."</strong></p>
+    <p style="margin-top:10px;">How do you strengthen this case?</p>
   </div>
-  <div class="feedback-box" id="fb-9"></div>
+  <div class="card">
+    <p><strong>The problem:</strong> "Efficiency and morale" aren't financial returns. At Breeze, spending decisions need to connect to something measurable.</p>
+    <p style="margin-top:10px;"><strong>Stronger case:</strong> Estimate hours saved per week × average hourly cost × number of team members = hard dollar value. Then compare to $28K. If the tool saves 3 hours/week per 10 team members at $35/hr, that's ~$54K/year in recovered time — a clear positive return. Lead with that number.</p>
+  </div>
+  <div class="scenario-box" style="margin-top:16px;">
+    <div class="scenario-label">Scenario 4 of 5</div>
+    <p><strong>FP&A sends you a data pull showing your department's overtime spend is trending 22% above plan through Q3. You haven't talked to FP&A since the budget was approved in January.</strong></p>
+    <p style="margin-top:10px;">What's the ideal FP&A relationship, and what would you do differently?</p>
+  </div>
+  <div class="card">
+    <p><strong>The pattern to avoid:</strong> Treating FP&A as a check-in-at-crisis function. If the first time you hear about a trend is when they reach out, you've already lost a quarter to a problem you could have caught earlier.</p>
+    <p style="margin-top:10px;"><strong>The ideal relationship:</strong> Schedule monthly touchpoints. Ask FP&A to flag anything trending unusual in your department before it becomes material. Come to those meetings having already reviewed your P&L — so you're comparing reads, not hearing news.</p>
+  </div>
 </div>
 
-<!-- SCREEN 10: Pulse -->
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — PULSE CHECK (screens 10–12)
+═══════════════════════════════════════════ -->
+
+<!-- Screen 10 -->
 <div class="screen" id="screen-10">
-  <div class="screen-label">Pulse Check</div>
-  <div class="screen-title">Check Your Understanding</div>
-  <div class="pulse-q">1 of 5 — The difference between budget and forecast is:</div>
-  <div class="pulse-opts" id="pulse-10">
-    <div class="pulse-opt" onclick="pickPulse(10,'A')">A — Budget is actual spend; forecast is planned spend</div>
-    <div class="pulse-opt" onclick="pickPulse(10,'B')">B — Budget is the approved annual plan; forecast is current best estimate of where you'll actually land</div>
-    <div class="pulse-opt" onclick="pickPulse(10,'C')">C — Budget is for the current year; forecast is for future years</div>
-    <div class="pulse-opt" onclick="pickPulse(10,'D')">D — They are interchangeable terms for the same financial document</div>
+  <div class="card"><h2>Pulse Check</h2><p>Test your understanding. Select the best answer for each question.</p></div>
+
+  <div class="card">
+    <div class="quiz-q">1. Breeze uses what type of budgeting approach?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q1')">Incremental budgeting — start from last year and adjust</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'correct','q1')">Zero-based / activity-based budgeting — justify every dollar from zero</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q1')">Rolling forecast — update monthly with no fixed annual budget</button>
+    </div>
+    <div class="quiz-feedback" id="q1-fb"></div>
   </div>
-  <div class="feedback-box" id="pfb-10"></div>
+
+  <div class="card">
+    <div class="quiz-q">2. What does CASM stand for, and why does it matter for Directors?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q2')">Cost and Staffing Management — tracks headcount efficiency</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q2')">Capacity and Schedule Management — flight planning metric</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'correct','q2')">Cost per Available Seat Mile — headline efficiency metric; your department's spend affects it</button>
+    </div>
+    <div class="quiz-feedback" id="q2-fb"></div>
+  </div>
 </div>
 
-<!-- SCREEN 11: Pulse -->
+<!-- Screen 11 -->
 <div class="screen" id="screen-11">
-  <div class="screen-label">Pulse Check</div>
-  <div class="screen-title">Check Your Understanding</div>
-  <div class="pulse-q">2 of 5 — Revenue is the best measure of a company's financial health because it shows how much money the business is generating.</div>
-  <div class="pulse-opts" id="pulse-11">
-    <div class="pulse-opt" onclick="pickPulse(11,'A')">True</div>
-    <div class="pulse-opt" onclick="pickPulse(11,'B')">False</div>
+  <div class="card">
+    <div class="quiz-q">3. Your department ran over plan last month. When should you find out — and how?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q3')">When your VP mentions it in the next staff meeting</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q3')">When FP&A sends you the monthly variance report</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'correct','q3')">Before anyone else knows — through your own monthly P&L review</button>
+    </div>
+    <div class="quiz-feedback" id="q3-fb"></div>
   </div>
-  <div class="feedback-box" id="pfb-11"></div>
+
+  <div class="card">
+    <div class="quiz-q">4. Load Factor is best described as:</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q4')">The weight of cargo divided by aircraft capacity</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'correct','q4')">Revenue Passenger Miles divided by Available Seat Miles — percentage of seats filled</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q4')">The ratio of total revenue to total operating cost</button>
+    </div>
+    <div class="quiz-feedback" id="q4-fb"></div>
+  </div>
 </div>
 
-<!-- SCREEN 12: Pulse -->
+<!-- Screen 12 -->
 <div class="screen" id="screen-12">
-  <div class="screen-label">Pulse Check</div>
-  <div class="screen-title">Check Your Understanding</div>
-  <div class="pulse-q">3 of 5 — A complete business case for a resource request includes:</div>
-  <div class="pulse-opts" id="pulse-12">
-    <div class="pulse-opt" onclick="pickPulse(12,'A')">A — Cost of the investment only — that's the primary financial question</div>
-    <div class="pulse-opt" onclick="pickPulse(12,'B')">B — Cost, expected return, timeline to ROI, and risk if you don't invest</div>
-    <div class="pulse-opt" onclick="pickPulse(12,'C')">C — Headcount need, role description, and team org chart</div>
-    <div class="pulse-opt" onclick="pickPulse(12,'D')">D — Comparative benchmarks from peer organizations</div>
+  <div class="card">
+    <div class="quiz-q">5. What is the right way to think about FP&A at Breeze?</div>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q5')">An oversight function that reviews and challenges your spending decisions</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'wrong','q5')">A reporting function that produces financial statements for leadership</button>
+      <button class="quiz-opt" onclick="checkQuiz(this,'correct','q5')">A collaborative partner — loop them in early, use them to model decisions, meet regularly</button>
+    </div>
+    <div class="quiz-feedback" id="q5-fb"></div>
   </div>
-  <div class="feedback-box" id="pfb-12"></div>
+
+  <div class="scenario-box" style="margin-top:8px;">
+    <div class="scenario-label">Scenario 5 of 5</div>
+    <p><strong>A peer asks you: "What's the difference between TRASM and CASM, and why should I care as a department leader?"</strong></p>
+    <p style="margin-top:10px;">How would you explain it?</p>
+  </div>
+  <div class="card">
+    <p><strong>CASM</strong> is cost per available seat mile — what it costs us to operate. <strong>TRASM</strong> is total revenue per available seat mile — what we earn. When TRASM exceeds CASM, Breeze is profitable on that capacity.</p>
+    <p style="margin-top:10px;">As a department leader: your decisions affect CASM directly. Inefficiency, unnecessary spend, and poor workforce planning inflate CASM. Your job is to deliver outcomes without inflating it unnecessarily.</p>
+  </div>
 </div>
 
-<!-- SCREEN 13: Pulse -->
+<!-- ═══════════════════════════════════════════
+     SECTION 4 — APPLY IT (screens 13–15)
+═══════════════════════════════════════════ -->
+
+<!-- Screen 13 -->
 <div class="screen" id="screen-13">
-  <div class="screen-label">Pulse Check</div>
-  <div class="screen-title">Check Your Understanding</div>
-  <div class="pulse-q">4 of 5 — Team Member engagement scores are an example of a leading indicator because:</div>
-  <div class="pulse-opts" id="pulse-13">
-    <div class="pulse-opt" onclick="pickPulse(13,'A')">A — They tell you what's currently happening with employee sentiment</div>
-    <div class="pulse-opt" onclick="pickPulse(13,'B')">B — They signal what's likely to happen in the future — retention, productivity, and performance outcomes</div>
-    <div class="pulse-opt" onclick="pickPulse(13,'C')">C — They are easy to measure and widely accepted as reliable</div>
-    <div class="pulse-opt" onclick="pickPulse(13,'D')">D — They are required by most compliance frameworks</div>
+  <div class="card">
+    <h2>Reflection: Your P&L</h2>
+    <div class="reflection-prompt">Think about your department's current financial situation. Where are you relative to plan this quarter?</div>
+    <textarea id="refl-1" placeholder="Write your honest read of where your department stands financially right now. What do you know? What are you less sure about?" oninput="saveRefl('refl-1')"></textarea>
+    <div class="save-note">Saved automatically to this device.</div>
   </div>
-  <div class="feedback-box" id="pfb-13"></div>
+  <div class="card">
+    <div class="reflection-prompt">What are the 2–3 controllable expenses in your P&L that you should be watching most closely?</div>
+    <textarea id="refl-2" placeholder="List them here — and note whether you currently review them monthly..." oninput="saveRefl('refl-2')"></textarea>
+  </div>
 </div>
 
-<!-- SCREEN 14: Pulse -->
+<!-- Screen 14 -->
 <div class="screen" id="screen-14">
-  <div class="screen-label">Pulse Check</div>
-  <div class="screen-title">Check Your Understanding</div>
-  <div class="pulse-q">5 of 5 — A complete financial answer to "how did we perform against plan?" includes:</div>
-  <div class="pulse-opts" id="pulse-14">
-    <div class="pulse-opt" onclick="pickPulse(14,'A')">A — The variance amount (over or under) and the percentage</div>
-    <div class="pulse-opt" onclick="pickPulse(14,'B')">B — The delta, the driver (what caused it), and the implication (what it means going forward)</div>
-    <div class="pulse-opt" onclick="pickPulse(14,'C')">C — Comparison to industry benchmarks and prior year performance</div>
-    <div class="pulse-opt" onclick="pickPulse(14,'D')">D — The team's activity metrics that drove the financial result</div>
+  <div class="card">
+    <h2>Reflection: A Decision with Financial Implications</h2>
+    <div class="reflection-prompt">Identify one decision you're currently facing (or recently made) that has a financial dimension you haven't fully thought through.</div>
+    <textarea id="refl-3" placeholder="Describe the decision, what it costs fully loaded, and what the financial return is..." oninput="saveRefl('refl-3')"></textarea>
   </div>
-  <div class="feedback-box" id="pfb-14"></div>
+  <div class="card">
+    <div class="reflection-prompt">Using the three questions from this course: what does it cost (fully loaded), what does it return, and what's the cost of not doing it?</div>
+    <textarea id="refl-4" placeholder="Work through the three questions here..." oninput="saveRefl('refl-4')"></textarea>
+    <div class="save-note">Saved automatically to this device.</div>
+  </div>
 </div>
 
-<!-- SCREEN 15: Apply It -->
+<!-- Screen 15 -->
 <div class="screen" id="screen-15">
-  <div class="screen-label">Apply It</div>
-  <div class="screen-title">Make It Real</div>
-  <div class="screen-body">Use these prompts to build your financial fluency for your current role — starting with what you actually need to know.</div>
-
-  <div class="apply-section">
-    <div class="apply-label">1. What is your department's total budget — and what are your three largest cost categories?</div>
-    <textarea class="apply-input" id="apply-0" placeholder="Total budget: $… Largest costs: (1) … (2) … (3) …" oninput="saveApply(0)"></textarea>
-    <div class="apply-saved" id="saved-0">Saved</div>
+  <div class="card">
+    <h2>Your Commitment This Week</h2>
+    <p>Pick the habit you'll start this week. Select one or more:</p>
   </div>
-  <div class="apply-section">
-    <div class="apply-label">2. What's the difference between your current budget and your latest forecast — and what's driving it?</div>
-    <textarea class="apply-input" id="apply-1" placeholder="Budget vs. forecast delta: … Driver: …" oninput="saveApply(1)"></textarea>
-    <div class="apply-saved" id="saved-1">Saved</div>
+  <div class="commit-item" onclick="toggleCommit(this)" id="c1">
+    <div class="commit-check">✓</div>
+    <div class="commit-label"><strong>Schedule a monthly P&L review</strong> — Block 30 minutes the first week of every month to review your actuals vs. plan before anyone else asks.</div>
   </div>
-  <div class="apply-section">
-    <div class="apply-label">3. What financial question could you ask in your next leadership meeting that would demonstrate financial fluency?</div>
-    <textarea class="apply-input" id="apply-2" placeholder="The question I could ask is…" oninput="saveApply(2)"></textarea>
-    <div class="apply-saved" id="saved-2">Saved</div>
+  <div class="commit-item" onclick="toggleCommit(this)" id="c2">
+    <div class="commit-check">✓</div>
+    <div class="commit-label"><strong>Set up a regular FP&A touchpoint</strong> — Email your FP&A contact this week and schedule a standing monthly check-in.</div>
   </div>
-  <div class="apply-section">
-    <div class="apply-label">4. Build a simple business case for one resource you need: cost, expected return, timeline to ROI, and risk of not investing.</div>
-    <textarea class="apply-input" id="apply-3" placeholder="Cost: … Expected return: … Timeline to ROI: … Risk of not investing: …" oninput="saveApply(3)"></textarea>
-    <div class="apply-saved" id="saved-3">Saved</div>
+  <div class="commit-item" onclick="toggleCommit(this)" id="c3">
+    <div class="commit-check">✓</div>
+    <div class="commit-label"><strong>Run a cost-benefit analysis</strong> — Identify one pending decision and work through the three questions (fully loaded cost, financial return, cost of inaction).</div>
   </div>
-  <div class="apply-section">
-    <div class="apply-label">5. Name one leading indicator your team tracks that connects to a financial outcome — and what that connection is.</div>
-    <textarea class="apply-input" id="apply-4" placeholder="We track… which connects to… by…" oninput="saveApply(4)" style="min-height:50px;"></textarea>
-    <div class="apply-saved" id="saved-4">Saved</div>
+  <div class="commit-item" onclick="toggleCommit(this)" id="c4">
+    <div class="commit-check">✓</div>
+    <div class="commit-label"><strong>Know your controllable expenses</strong> — Pull your current P&L and identify the top 3 controllable line items. Confirm you understand the story behind each one.</div>
+  </div>
+  <div class="commit-item" onclick="toggleCommit(this)" id="c5">
+    <div class="commit-check">✓</div>
+    <div class="commit-label"><strong>Get fluent in the vocabulary</strong> — Use ASMs, RPMs, CASM, TRASM, and Load Factor in your next financial conversation. If you're unsure of your current numbers, ask FP&A.</div>
   </div>
 </div>
 
-<!-- SCREEN 16: Complete -->
+<!-- ═══════════════════════════════════════════
+     SECTION 5 — COMPLETE (screen 16)
+═══════════════════════════════════════════ -->
+
 <div class="screen" id="screen-16">
   <div class="complete-hero">
-    <div class="complete-icon">💼</div>
-    <div class="complete-title">Course Complete</div>
-    <div class="complete-sub">You've finished Financial Acumen for Directors. The goal was never to make you an accountant — it was to make you credible in the rooms where resource decisions are made. Know your numbers. Speak the language. Make the case.</div>
+    <div class="complete-icon">📊</div>
+    <div class="complete-title">Financial Acumen: Complete</div>
+    <div class="complete-sub">You're now equipped to own your numbers.</div>
   </div>
-  <div class="commitments">
-    <h4>Four financial commitments for director level:</h4>
-    <div class="commit-item">Know your forecast, not just your budget — understand the delta and be able to explain it</div>
-    <div class="commit-item">Connect your team's work to at least one financial metric — activity without financial connection is invisible</div>
-    <div class="commit-item">Lead with the business case when requesting resources: cost, return, ROI timeline, and risk of not investing</div>
-    <div class="commit-item">Learn to read the delta — what's different from plan, why, and what it means for the future</div>
+  <div class="card">
+    <h3>Key Takeaways</h3>
+    <ul class="takeaway-list">
+      <li>Finance is a leadership skill at Breeze — every Director decision has a dollar dimension</li>
+      <li>The A220-300 is Breeze's financial foundation — understand why it drives our cost model</li>
+      <li>Know the vocabulary: ASMs, RPMs, Load Factor, CASM, TRASM</li>
+      <li>Zero-based budgeting means every dollar is justified from zero — every year, every cycle</li>
+      <li>Own your P&L: review it monthly, know your controllable expenses at invoice level</li>
+      <li>FP&A is a partner — loop them in early, meet regularly, use them to model decisions</li>
+      <li>"Spend smartly — not don't spend." Think in returns, not just costs.</li>
+    </ul>
   </div>
-  <div style="text-align:center;">
-    <button class="complete-btn" onclick="window.open('https://forms.microsoft.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+  <div class="card" style="text-align:center;">
+    <a href="breeze-leader-guide.html" style="display:inline-block;padding:12px 28px;background:var(--accent);color:#fff;border-radius:8px;font-weight:700;font-size:15px;text-decoration:none;">Return to Leader Guide</a>
   </div>
 </div>
 
-</div>
-
-<div class="course-nav">
-  <button class="nav-btn btn-prev" id="btn-prev" onclick="navigate(-1)" disabled>← Back</button>
-  <div class="nav-dots" id="nav-dots"></div>
-  <button class="nav-btn btn-next" id="btn-next" onclick="navigate(1)">Next →</button>
+<!-- Fixed nav -->
+<div class="nav-row" id="navRow">
+  <button class="btn btn-secondary" id="btnBack" onclick="navigate(-1)" disabled>← Back</button>
+  <button class="btn btn-primary" id="btnNext" onclick="navigate(1)">Next →</button>
 </div>
 
 <script>
+// ── Course architecture ──────────────────────────────
 const TOTAL = 17;
-const SECTIONS = [
-  {label:'Foundation',            end:5},
-  {label:'The Financial Framework',end:7},
-  {label:'Practice',              end:10},
-  {label:'Pulse Check',           end:15},
-  {label:'Apply It',              end:16},
-  {label:'Complete',              end:17}
-];
-const SECTION_MAP = [0,0,0,1,0,1,1,2,2,2,3,3,3,3,3,4,5];
+const SECTION_MAP = [0,0,0,1,1,1,1,2,2,2,3,3,3,4,4,4,5];
+const SECTION_LABELS = ['Foundation','Own Your Numbers','Practice','Pulse Check','Apply It','Complete'];
+const STORE_KEY = 'breeze_fa_';
+const COMPLETE_KEY = 'breeze_mod_complete_dr_finance';
 
-const SCENARIO_ANSWERS = {
-  5: { correct:'B', feedback:'<strong>B is right.</strong> This is a complete business case delivered in two sentences: cost ($95K fully-loaded), return ($140K current outsourcing cost), net financial benefit ($45K savings), and additional upside (30% more capacity). It answers the CFO\'s actual question before it\'s asked. Option A describes a need. Option C is a benchmark, not a case. Option D defers when you should be ready.' },
-  6: { correct:'B', feedback:'<strong>B is right.</strong> A prioritized trade-off plan demonstrates financial judgment — you\'ve assessed the impact of each item, protected what matters most, reduced what matters less, and named the implications honestly. Distributing cuts evenly (A) shows you haven\'t made judgments about relative impact. Pushing back (C) without a financial rationale isn\'t credible in a company-wide cost measure context.' },
-  7: { correct:'B', feedback:'<strong>B is right.</strong> This is the complete financial answer: the number ($220K favorable), the driver (three open roles), and the implication (short-term financial benefit, delivery and burnout risk in Q3). Simply reporting the favorable variance (A) buries the bad news. "Found some efficiencies" (C) is misleading — unfilled roles aren\'t efficiencies. "Nothing to celebrate" (D) names the concern but loses the opportunity to connect it to an action.' },
-  8: { correct:'B', feedback:'<strong>B is right.</strong> Meeting a financial challenge with financial language is the move. You\'re acknowledging the validity of the question, naming how you\'re measuring ROI, and offering to share specifics. Option A is values language — true, but not financially credible in a resource discussion. Option D concedes the point, which weakens every future resource request you make for your function.' },
-  9: { correct:'B', feedback:'<strong>B is right.</strong> A complete cost structure answer includes: fixed vs. variable breakdown, your largest spend categories, what\'s discretionary vs. committed, and the trade-offs if you were asked to reduce. Total budget (A) and headcount cost (C) are starting points, not a structure. The building assumptions (D) are useful context but don\'t answer the question "how is your cost structured?"' }
-};
+let current = 0;
 
-const PULSE_ANSWERS = {
-  10: { correct:'B', feedback:'<strong>B is right.</strong> Budget is the approved annual plan — what you said you\'d spend when the year started. Forecast is your current best estimate of where you\'ll actually land, updated as the year progresses. The delta between them — and the reason for it — is the financial conversation that matters. Knowing your forecast but not your budget is as limiting as the reverse.' },
-  11: { correct:'B', feedback:'<strong>False.</strong> Revenue alone is not a complete picture of financial health. A company can have high revenue and still be unprofitable if costs are higher. Margin — what\'s left after costs — is a more complete picture of financial health. EBITDA and cash flow add additional dimensions. At director level, you need to know which metric leadership is focused on and why.' },
-  12: { correct:'B', feedback:'<strong>B is right.</strong> A complete business case answers four questions: What does this cost? What\'s the expected return? When do we break even (ROI timeline)? What\'s the risk of not investing? These four answer the CFO\'s implicit questions before they\'re asked and transform a request from "we need this" to "here\'s why this is a good financial decision."' },
-  13: { correct:'B', feedback:'<strong>B is right.</strong> Engagement scores are a leading indicator because they predict future financial outcomes — specifically retention (replacement cost), productivity (output per Team Member), and performance (quality of work). Turnover rate is a lagging indicator — it tells you what already happened. Engagement tells you what\'s coming if you don\'t act.' },
-  14: { correct:'B', feedback:'<strong>B is right.</strong> A complete financial answer has three parts: the delta (what changed from plan and by how much), the driver (one-time factor or trend — and what caused it), and the implication (what it means going forward and what you\'re doing about it). Variance alone (A) is incomplete. Benchmarks (C) and activity metrics (D) are supporting context, not the core financial answer.' }
-};
-
-const KEY = 'course_dr_financial_v1';
-let state = { cur:0, max:0, answered:{}, choices:{}, apply:{} };
-
-function load() {
-  try { const s = JSON.parse(localStorage.getItem(KEY)); if(s) state = s; } catch(e){}
-  showScreen(state.cur);
-  buildDots();
-}
-
-function save() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch(e){} }
-
-function showScreen(n) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + n).classList.add('active');
-  state.cur = n;
-  if (n > state.max) state.max = n;
-  updateProgress();
-  updatePills();
-  updateNav();
-  restoreScreen(n);
-  save();
-  window.scrollTo(0,0);
-}
-
-function updateProgress() {
-  const pct = Math.round((state.max / (TOTAL - 1)) * 100);
-  document.getElementById('progress-bar').style.width = pct + '%';
-  document.getElementById('progress-label').textContent = state.max + ' of ' + (TOTAL - 1);
-}
-
-function updatePills() {
-  const sec = SECTION_MAP[state.cur];
-  SECTIONS.forEach((s, i) => {
-    const pill = document.getElementById('pill-' + i);
-    if (!pill) return;
-    pill.className = 'sec-pill';
-    if (i === sec) pill.classList.add('active');
-    else if (state.max >= s.end) pill.classList.add('done');
+// ── Init ─────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  loadReflections();
+  loadCommits();
+  render(0);
+  document.querySelectorAll('#sectionNav .pill').forEach(p => {
+    p.addEventListener('click', () => {
+      const sec = parseInt(p.dataset.section);
+      const target = SECTION_MAP.indexOf(sec);
+      if (target >= 0) render(target);
+    });
   });
-}
+});
 
-function updateNav() {
-  document.getElementById('btn-prev').disabled = state.cur === 0;
-  const nextBtn = document.getElementById('btn-next');
-  const needsAnswer = (state.cur in SCENARIO_ANSWERS || state.cur in PULSE_ANSWERS);
-  const answered = state.answered[state.cur];
-  nextBtn.disabled = (state.cur === TOTAL - 1) || (needsAnswer && !answered);
-  nextBtn.textContent = state.cur === TOTAL - 2 ? 'Finish →' : 'Next →';
-}
-
-function buildDots() {
-  const wrap = document.getElementById('nav-dots');
-  wrap.innerHTML = '';
-  for (let i = 0; i < TOTAL; i++) {
-    const d = document.createElement('div');
-    d.className = 'nav-dot';
-    if (i === state.cur) d.classList.add('active-dot');
-    else if (i <= state.max) d.classList.add('done-dot');
-    wrap.appendChild(d);
-  }
-}
-
+// ── Navigation ───────────────────────────────────────
 function navigate(dir) {
-  const next = state.cur + dir;
-  if (next < 0 || next >= TOTAL) return;
-  showScreen(next);
-  buildDots();
+  const next = current + dir;
+  if (next >= 0 && next < TOTAL) render(next);
 }
 
-function restoreScreen(n) {
-  if (n in SCENARIO_ANSWERS && state.choices[n]) restoreScenario(n, state.choices[n]);
-  if (n in PULSE_ANSWERS && state.choices[n]) restorePulse(n, state.choices[n]);
-  if (n === 15) restoreApply();
-}
+function render(idx) {
+  document.querySelector('#screen-' + current)?.classList.remove('visible');
+  current = idx;
+  document.querySelector('#screen-' + current)?.classList.add('visible');
 
-function pickOpt(screenIdx, chosen) {
-  if (state.answered[screenIdx]) return;
-  state.answered[screenIdx] = true;
-  state.choices[screenIdx] = chosen;
-  save();
-  restoreScenario(screenIdx, chosen);
-  updateNav();
-}
+  // progress
+  const pct = Math.round((idx / (TOTAL - 1)) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
 
-function restoreScenario(screenIdx, chosen) {
-  const answer = SCENARIO_ANSWERS[screenIdx];
-  const container = document.getElementById('opts-' + screenIdx);
-  if (!container) return;
-  container.querySelectorAll('.opt').forEach(opt => {
-    const letter = opt.querySelector('.opt-letter').textContent;
-    opt.classList.add('locked');
-    if (letter === answer.correct) opt.classList.add('correct');
-    else if (letter === chosen) opt.classList.add('wrong');
-    else opt.classList.add('dimmed');
+  // nav buttons
+  document.getElementById('btnBack').disabled = idx === 0;
+  const isLast = idx === TOTAL - 1;
+  const btnNext = document.getElementById('btnNext');
+  btnNext.disabled = false;
+  if (isLast) {
+    btnNext.textContent = 'Back to Guide';
+    btnNext.onclick = () => { window.location.href = 'breeze-leader-guide.html'; };
+    localStorage.setItem(COMPLETE_KEY, '1');
+  } else {
+    btnNext.textContent = 'Next →';
+    btnNext.onclick = () => navigate(1);
+  }
+
+  // pills
+  const sec = SECTION_MAP[idx];
+  document.querySelectorAll('#sectionNav .pill').forEach(p => {
+    const ps = parseInt(p.dataset.section);
+    p.className = 'pill' + (ps === sec ? ' active' : (ps < sec ? ' done' : ''));
   });
-  const fb = document.getElementById('fb-' + screenIdx);
-  if (fb) {
-    fb.innerHTML = answer.feedback;
-    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
-  }
+
+  window.scrollTo({top: 0, behavior:'smooth'});
 }
 
-function pickPulse(screenIdx, chosen) {
-  if (state.answered[screenIdx]) return;
-  state.answered[screenIdx] = true;
-  state.choices[screenIdx] = chosen;
-  save();
-  restorePulse(screenIdx, chosen);
-  updateNav();
+// ── Quiz ─────────────────────────────────────────────
+function checkQuiz(btn, result, qid) {
+  const card = btn.closest('.card');
+  if (card.querySelector('.correct, .wrong')) return;
+  btn.classList.add(result);
+  const fb = document.getElementById(qid + '-fb');
+  if (!fb) return;
+  const msgs = {
+    q1: { correct:'Correct! Zero-based / activity-based budgeting — "This is the Way" at Breeze.', wrong:'Not quite. Breeze uses zero-based budgeting: every dollar is justified from scratch each cycle.' },
+    q2: { correct:'Correct! CASM = Cost per Available Seat Mile. Your spending decisions directly affect this number.', wrong:'Not quite. CASM = Cost per Available Seat Mile — the headline efficiency metric for the airline.' },
+    q3: { correct:'Exactly. No surprises. You should know your P&L before your VP does.', wrong:'At Director level, waiting for others to surface a variance is a credibility problem. Own your P&L proactively.' },
+    q4: { correct:'Correct! RPMs ÷ ASMs — the percentage of available capacity that was filled with paying passengers.', wrong:'Load Factor = RPMs ÷ ASMs. It measures how much of our available seat capacity was actually sold.' },
+    q5: { correct:'Correct. FP&A is a collaborative partner — use them to model decisions, catch trends early, and build stronger budget cases.', wrong:"That's not the Breeze frame. FP&A is a collaborative partner, not an auditor. Meet regularly, loop them in early." }
+  };
+  fb.textContent = msgs[qid]?.[result] || '';
+  fb.className = 'quiz-feedback show ' + result;
 }
 
-function restorePulse(screenIdx, chosen) {
-  const answer = PULSE_ANSWERS[screenIdx];
-  const container = document.getElementById('pulse-' + screenIdx);
-  if (!container) return;
-  const opts = container.querySelectorAll('.pulse-opt');
-  opts.forEach((opt, i) => {
-    const letter = String.fromCharCode(65 + i);
-    opt.classList.add('locked');
-    if (letter === answer.correct) opt.classList.add('correct');
-    else if (letter === chosen) opt.classList.add('wrong');
-    else opt.classList.add('dimmed');
+// ── Reflections ──────────────────────────────────────
+function saveRefl(id) {
+  localStorage.setItem(STORE_KEY + id, document.getElementById(id).value);
+}
+function loadReflections() {
+  ['refl-1','refl-2','refl-3','refl-4'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = localStorage.getItem(STORE_KEY + id) || '';
   });
-  const fb = document.getElementById('pfb-' + screenIdx);
-  if (fb) {
-    fb.innerHTML = answer.feedback;
-    fb.className = 'feedback-box show' + (chosen !== answer.correct ? ' wrong-fb' : '');
-  }
 }
 
-function saveApply(idx) {
-  const el = document.getElementById('apply-' + idx);
-  if (!el) return;
-  state.apply[idx] = el.value;
-  save();
-  const saved = document.getElementById('saved-' + idx);
-  if (saved) { saved.style.display = 'block'; setTimeout(() => saved.style.display = 'none', 1500); }
+// ── Commits ──────────────────────────────────────────
+function toggleCommit(el) {
+  el.classList.toggle('selected');
+  const states = {};
+  ['c1','c2','c3','c4','c5'].forEach(id => {
+    states[id] = document.getElementById(id)?.classList.contains('selected') ? '1' : '0';
+  });
+  localStorage.setItem(STORE_KEY + 'commits', JSON.stringify(states));
 }
-
-function restoreApply() {
-  for (let i = 0; i <= 4; i++) {
-    const el = document.getElementById('apply-' + i);
-    if (el && state.apply[i]) el.value = state.apply[i];
-  }
+function loadCommits() {
+  const stored = JSON.parse(localStorage.getItem(STORE_KEY + 'commits') || '{}');
+  Object.entries(stored).forEach(([id, val]) => {
+    if (val === '1') document.getElementById(id)?.classList.add('selected');
+  });
 }
-
-load();
 </script>
 </body>
 </html>
