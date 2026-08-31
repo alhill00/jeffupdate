@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Breeze Pulse — Full Dashboard</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --db:  #000633; --bl: #174DFF; --lb: #C1DDFF;
+  --wh:  #FFFFFF; --rd: #FF527B; --tn: #FED4A4;
+  --gl: #f5f7fa; --gm: #e4e9f0; --gy: #8892a0;
+  --g-bg:#d5f5e3; --g-fg:#1e8449; --g-bar:#27ae60;
+  --y-bg:#fef9e7; --y-fg:#9a6a00; --y-bar:#f39c12;
+  --r-bg:#fdedec; --r-fg:#c0392b; --r-bar:#e74c3c;
+}
+body { font-family:'Segoe UI',system-ui,sans-serif; background:#111827;
+       color:var(--db); min-height:100vh; }
+.page { max-width:1280px; margin:0 auto; }
+
+/* header */
+.dh { background:var(--db); padding:16px 32px;
+      display:flex; justify-content:space-between; align-items:center; }
+.dh-l { display:flex; align-items:center; gap:20px; }
+.dh-wm { font-size:13px; font-weight:800; color:var(--bl);
+          text-transform:uppercase; letter-spacing:2px; }
+.dh-ti { font-size:16px; font-weight:700; color:white; }
+.dh-r  { display:flex; align-items:center; gap:12px; }
+.pill  { font-size:9px; font-weight:700; text-transform:uppercase;
+         letter-spacing:1px; padding:4px 12px; border-radius:20px; }
+.pill-q   { background:rgba(23,77,255,.25); color:var(--lb);
+            border:1px solid rgba(23,77,255,.4); }
+.pill-c   { background:rgba(254,212,164,.15); color:var(--tn);
+            border:1px solid rgba(254,212,164,.3); }
+
+/* metrics bar */
+.mb { background:var(--db); border-top:1px solid rgba(255,255,255,.06);
+      padding:14px 32px; display:flex; gap:0; }
+.mi { flex:1; display:flex; flex-direction:column; align-items:center;
+      border-right:1px solid rgba(255,255,255,.08); padding:0 20px; }
+.mi:first-child { padding-left:0; align-items:flex-start; }
+.mi:last-child  { border-right:none; }
+.mv { font-size:28px; font-weight:800; line-height:1; }
+.mt { font-size:11px; font-weight:600; margin-top:3px; }
+.ml { font-size:9px; font-weight:700; text-transform:uppercase;
+      letter-spacing:.8px; color:rgba(255,255,255,.4); margin-top:4px; }
+.cv-g { color:var(--g-bar); } .cv-y { color:var(--y-bar); }
+.cv-r { color:var(--r-bar); } .cv-w { color:white; }
+.tup  { color:var(--g-bar); } .tdn { color:var(--r-bar); }
+.tfl  { color:var(--gy); }
+
+/* tab nav */
+.tn { background:white; border-bottom:2px solid var(--gm);
+      display:flex; padding:0 32px; }
+.tb { background:none; border:none; cursor:pointer; padding:13px 18px;
+      font-size:12px; font-weight:600; color:var(--gy);
+      border-bottom:3px solid transparent; margin-bottom:-2px; }
+.tb:hover { color:var(--db); }
+.tb.active { color:var(--bl); border-bottom-color:var(--bl); }
+.fdot { display:inline-block; width:7px; height:7px;
+        background:var(--r-bar); border-radius:50%; margin-left:5px; }
+
+/* tab content */
+.tc { display:none; background:var(--gl); padding:24px 32px 40px; }
+.tc.active { display:block; }
+
+/* section label */
+.sl { font-size:9.5px; font-weight:700; text-transform:uppercase;
+      letter-spacing:1.3px; color:var(--gy); margin-bottom:12px;
+      margin-top:22px; display:flex; align-items:center; gap:10px; }
+.sl:first-child { margin-top:0; }
+.sl::after { content:''; flex:1; height:1px; background:var(--gm); }
+
+/* card */
+.card { background:white; border-radius:7px;
+        box-shadow:0 1px 4px rgba(0,0,0,.07); }
+.ch { padding:13px 18px 0; font-size:11px; font-weight:700; color:var(--db); }
+.cb { padding:14px 18px; }
+
+/* heat map */
+.hmw { overflow-x:auto; }
+table.hm { width:100%; border-collapse:separate; border-spacing:3px; }
+table.hm th { background:var(--db); color:rgba(255,255,255,.9);
+              font-size:9.5px; font-weight:700; padding:6px 4px;
+              border-radius:3px; text-align:center; white-space:nowrap; }
+table.hm th.tl { text-align:left; padding-left:10px; min-width:160px; }
+table.hm td { font-size:11px; font-weight:700; padding:7px 4px;
+              border-radius:3px; text-align:center; white-space:nowrap; }
+table.hm td.dd { background:#e0e7f3; color:var(--db);
+                 font-size:11px; font-weight:700;
+                 text-align:left; padding-left:10px; }
+table.hm tr.org td.dd { background:var(--db); color:white; }
+table.hm tr.org td { font-weight:800; }
+.g { background:var(--g-bg); color:var(--g-fg); }
+.y { background:var(--y-bg); color:var(--y-fg); }
+.r { background:var(--r-bg); color:var(--r-fg); }
+.hm-leg { display:flex; gap:16px; padding:10px 4px 2px; flex-wrap:wrap; }
+.hl { display:flex; align-items:center; gap:5px; font-size:9.5px; color:#666; }
+.hld { width:9px; height:9px; border-radius:2px; }
+
+/* mini heat map (overview) */
+table.hm-mini { width:100%; border-collapse:separate; border-spacing:3px; }
+table.hm-mini th { background:var(--db); color:rgba(255,255,255,.85);
+                   font-size:8.5px; font-weight:700; padding:5px 3px;
+                   border-radius:2px; text-align:center; }
+table.hm-mini th.tl { text-align:left; padding-left:8px; }
+table.hm-mini td { font-size:10px; font-weight:700; padding:5px 3px;
+                   border-radius:2px; text-align:center; }
+table.hm-mini td.dd { background:#e0e7f3; color:var(--db);
+                      font-size:9.5px; font-weight:700;
+                      text-align:left; padding-left:8px; }
+table.hm-mini tr.org td.dd { background:var(--db); color:white; }
+table.hm-mini tr.org td { font-weight:800; }
+
+/* overview grids */
+.ov-top { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.ov-bot { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:14px; }
+
+/* priority cards */
+.pg { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.pc { border-radius:7px; padding:14px 16px; border-left:4px solid; }
+.pc-r { background:var(--r-bg); border-left-color:var(--r-bar); }
+.pc-y { background:var(--y-bg); border-left-color:var(--y-bar); }
+.pc-g { background:var(--g-bg); border-left-color:var(--g-bar); }
+.pct { font-size:8px; font-weight:800; text-transform:uppercase;
+       letter-spacing:.8px; margin-bottom:5px; }
+.pc-r .pct { color:var(--r-fg); } .pc-y .pct { color:var(--y-fg); }
+.pc-g .pct { color:var(--g-fg); }
+.pcn { font-size:13px; font-weight:700; color:var(--db); margin-bottom:6px; }
+.pcd { font-size:10.5px; color:#555; line-height:1.55; }
+
+/* gap table */
+.gi { font-size:11.5px; color:#555; line-height:1.55;
+      background:var(--lb); border-left:3px solid var(--bl);
+      border-radius:0 6px 6px 0; padding:10px 14px; margin-bottom:16px; }
+table.gt { width:100%; border-collapse:separate; border-spacing:3px; }
+table.gt th { background:var(--db); color:white;
+              font-size:9.5px; font-weight:700; padding:7px 8px;
+              border-radius:3px; text-align:center; }
+table.gt th.tl { text-align:left; }
+table.gt td { font-size:11px; padding:7px 8px; border-radius:3px;
+              background:white; text-align:center; }
+table.gt td.dd { background:#e0e7f3; color:var(--db); font-weight:700; text-align:left; }
+.gap-aligned { background:var(--g-bg)!important; color:var(--g-fg); font-weight:700; }
+.gap-watch   { background:var(--y-bg)!important; color:var(--y-fg); font-weight:700; }
+.gap-blind   { background:var(--r-bg)!important; color:var(--r-fg); font-weight:700; }
+.gap-leg { display:flex; gap:18px; margin-top:10px; flex-wrap:wrap; }
+.gleg { font-size:9.5px; color:#666; display:flex; align-items:center; gap:5px; }
+.glegg { width:9px; height:9px; border-radius:2px; }
+
+/* dev bars */
+.dg { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+.dbi { margin-bottom:10px; }
+.dbl { display:flex; justify-content:space-between;
+       font-size:11.5px; font-weight:600; color:var(--db); margin-bottom:4px; }
+.dbc { color:var(--bl); font-weight:700; }
+.dbt { height:10px; background:var(--gm); border-radius:5px; overflow:hidden; }
+.dbf { height:100%; background:var(--bl); border-radius:5px; }
+.ddg { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+       gap:10px; margin-top:4px; }
+.ddc .ddh { font-size:9px; font-weight:700; text-transform:uppercase;
+            letter-spacing:.5px; color:white; background:var(--db);
+            border-radius:4px 4px 0 0; padding:5px 8px; text-align:center; }
+.ddc .ddb { background:white; border-radius:0 0 4px 4px; padding:7px 8px; }
+.ddi { font-size:9.5px; color:#444; padding:2px 0;
+       border-bottom:1px solid var(--gm); }
+.ddi:last-child { border-bottom:none; }
+
+/* flags */
+.fg { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.fc { background:white; border-radius:7px; overflow:hidden;
+      box-shadow:0 1px 4px rgba(0,0,0,.06); }
+.fch { padding:10px 16px; font-size:9.5px; font-weight:800;
+       text-transform:uppercase; letter-spacing:1px;
+       display:flex; align-items:center; gap:8px; }
+.fh-r { background:var(--r-bg);  color:var(--r-fg); }
+.fh-y { background:var(--y-bg);  color:var(--y-fg); }
+.fh-g { background:var(--g-bg);  color:var(--g-fg); }
+.fh-b { background:var(--db);    color:var(--tn); }
+.fcb { padding:12px 16px; }
+.fi { display:flex; align-items:flex-start; gap:10px;
+      padding:9px 0; border-bottom:1px solid var(--gm); }
+.fi:last-child { border-bottom:none; }
+.fib { font-size:8.5px; font-weight:800; padding:3px 8px; border-radius:3px;
+       flex-shrink:0; margin-top:1px; text-transform:uppercase; }
+.fib-r { background:var(--r-bar); color:white; }
+.fib-y { background:var(--y-bar); color:white; }
+.fib-g { background:var(--g-bar); color:white; }
+.fib-b { background:var(--bl);    color:white; }
+.fit strong { font-size:11.5px; color:var(--db); display:block; margin-bottom:2px; }
+.fit span   { font-size:10.5px; color:#666; line-height:1.45; }
+
+/* response rate bars */
+.rri { margin-bottom:9px; }
+.rrl { display:flex; justify-content:space-between; font-size:11px;
+       font-weight:600; color:var(--db); margin-bottom:3px; }
+.rrp { font-weight:700; }
+.rrt { height:8px; background:var(--gm); border-radius:4px; overflow:hidden; }
+.rrf { height:100%; border-radius:4px; }
+
+/* placeholder */
+.placeholder { text-align:center; padding:48px 24px; color:var(--gy); }
+.placeholder h3 { font-size:16px; margin-bottom:8px; color:var(--db); }
+.placeholder p  { font-size:12px; line-height:1.6; }
+
+/* leader guide tab */
+.gu-upload{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.gu-upload-box{background:white;border-radius:7px;padding:14px 18px;box-shadow:0 1px 4px rgba(0,0,0,.07);}
+.gu-upload-label{font-size:11px;font-weight:700;color:var(--db);margin-bottom:6px;}
+.gu-upload-sub{font-size:10px;color:var(--gy);margin-bottom:10px;}
+.gu-file-btn{display:inline-block;padding:7px 14px;background:var(--db);color:white;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;}
+.gu-status{font-size:10px;margin-top:6px;color:var(--gy);}
+.gu-status.ok{color:var(--g-fg);font-weight:700;}
+.gu-kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px;}
+.gu-kpi{background:white;border-radius:7px;padding:12px 16px;box-shadow:0 1px 4px rgba(0,0,0,.07);text-align:center;}
+.gu-kpi-val{font-size:26px;font-weight:800;color:var(--bl);line-height:1;}
+.gu-kpi-lbl{font-size:10px;font-weight:600;color:var(--gy);margin-top:4px;text-transform:uppercase;letter-spacing:.5px;}
+.gu-filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
+.gu-filter-label{font-size:10px;font-weight:700;color:var(--gy);text-transform:uppercase;letter-spacing:.8px;}
+.gu-filter-btn{padding:5px 12px;border-radius:20px;border:1.5px solid var(--gm);background:white;font-size:10px;font-weight:600;color:var(--db);cursor:pointer;}
+.gu-filter-btn.active{background:var(--db);color:white;border-color:var(--db);}
+.gu-divider{width:1px;height:20px;background:var(--gm);margin:0 4px;}
+table.gu-tbl{width:100%;border-collapse:separate;border-spacing:0 3px;}
+table.gu-tbl th{background:var(--db);color:rgba(255,255,255,.9);font-size:9.5px;font-weight:700;padding:7px 10px;text-align:left;}
+table.gu-tbl th:first-child{border-radius:4px 0 0 4px;}
+table.gu-tbl th:last-child{border-radius:0 4px 4px 0;}
+table.gu-tbl td{background:white;font-size:11px;padding:8px 10px;color:var(--db);}
+table.gu-tbl tr:hover td{background:#f0f4ff;}
+.gu-pct-bar{height:6px;background:var(--gm);border-radius:3px;overflow:hidden;margin-top:4px;min-width:60px;}
+.gu-pct-fill{height:100%;border-radius:3px;background:var(--g-bar);}
+.gu-pct-fill.mid{background:var(--y-bar);}
+.gu-pct-fill.low{background:var(--r-bar);}
+.gu-badge{display:inline-block;padding:2px 8px;border-radius:3px;font-size:9px;font-weight:700;text-transform:uppercase;}
+.gu-badge-sv{background:#e8f4ff;color:#1a56a0;}
+.gu-badge-mg{background:#f0fdf4;color:#166534;}
+.gu-badge-dr{background:#fdf4ff;color:#6b21a8;}
+.gu-badge-vp{background:#fff7ed;color:#9a3412;}
+.gu-badge-ic{background:var(--gl);color:var(--gy);}
+.gu-comments{margin-top:16px;}
+.gu-comment{background:white;border-radius:7px;padding:12px 16px;margin-bottom:8px;box-shadow:0 1px 3px rgba(0,0,0,.06);border-left:3px solid var(--rd);}
+.gu-comment-meta{font-size:10px;color:var(--gy);margin-bottom:5px;}
+.gu-comment-meta strong{color:var(--db);}
+.gu-comment-text{font-size:12px;color:#333;line-height:1.55;}
+.gu-empty{text-align:center;padding:40px;color:var(--gy);font-size:12px;}
+
+@media print {
+  body { background:white; }
+  .tc { display:block!important; page-break-before:always; }
+  .tn { display:none; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="dh">
+  <div class="dh-l">
+    <div class="dh-wm">Breeze Pulse</div>
+    <div class="dh-ti">Full Dashboard</div>
+  </div>
+  <div class="dh-r">
+    <span class="pill pill-q">Q1 2026 — Leadership Effectiveness</span>
+  </div>
+</div>
+
+<div class="mb">
+  <div class="mi">
+    <div class="mv cv-y">3.6</div>
+    <div class="mt">First quarter — no prior</div>
+    <div class="ml">Org LE Score</div>
+  </div>
+  <div class="mi">
+    <div class="mv cv-y">3.8</div>
+    <div class="mt">First quarter — no prior</div>
+    <div class="ml">Org TMX Score</div>
+  </div>
+  <div class="mi">
+    <div class="mv cv-w">26</div>
+    <div class="mt">IC respondents · Q1 2026</div>
+    <div class="ml">Total Responses</div>
+  </div>
+  <div class="mi">
+    <div class="mv cv-r">1</div>
+    <div class="mt">Department(s) with red LE Overall</div>
+    <div class="ml">Red Depts</div>
+  </div>
+  <div class="mi">
+    <div class="mv cv-w">2</div>
+    <div class="mt">Q1 2026 · Q4 2026</div>
+    <div class="ml">Quarters on Record</div>
+  </div>
+  <div class="mi">
+    <div class="mv cv-y">0</div>
+    <div class="mt">None yet</div>
+    <div class="ml">Bright Spot Dept(s)</div>
+  </div>
+</div>
+
+<div class="tn">
+  <button class="tb active" data-tab="overview">Overview</button>
+  <button class="tb" data-tab="le">Leadership Effectiveness</button>
+  <button class="tb" data-tab="tmx">Team Member Experience</button>
+  <button class="tb" data-tab="gap">Leader Perception Gap</button>
+  <button class="tb" data-tab="dev">Development Trends</button>
+  <button class="tb" data-tab="flags">Flags &amp; Alerts<span class="fdot"></span></button>
+  <button class="tb" data-tab="rr">Response Rates</button>
+  <button class="tb" data-tab="guide">Leader Guide</button>
+</div>
+
+<!-- OVERVIEW -->
+<div id="tab-overview" class="tc active">
+  <div class="sl">Priority Actions This Quarter</div>
+  <div class="pg">
+  <div class="pc pc-r">
+    <div class="pct">30-Day Response — Intervene</div>
+    <div class="pcn">Guest Empowerment — Needs Attention</div>
+    <div class="pcd">LE Overall 2.4. Focus dimensions: Communication · Trust & Respect · Accountability. Schedule a VP conversation and targeted support plan.</div>
+  </div>
+  <div class="pc pc-r">
+    <div class="pct">Action Required — Intervene</div>
+    <div class="pcn">Development — Org-Wide Concern</div>
+    <div class="pcd">Weakest dimension across all departments at 2.9. This is a systemic signal, not isolated to one team. Consider an org-wide L&D intervention.</div>
+  </div>
+  <div class="pc pc-g">
+    <div class="pct">Bright Spot — Replicate</div>
+    <div class="pcn">Airport Operations — Performing Well</div>
+    <div class="pcd">LE Overall 4.6. Strong performance here. What are these leaders doing differently? Surface it in a peer learning conversation.</div>
+  </div>
+</div>
+  <div class="sl">Heat Map Summaries</div>
+  <div class="ov-top">
+    <div class="card">
+      <div class="ch">Leadership Effectiveness — Q1 2026</div>
+      <div class="cb"><div class="hmw"><table class="hm-mini">
+<thead><tr><th class="tl">Department</th>
+<th>Comm</th><th>Trust</th><th>Acct</th><th>Clarity</th><th>Dev</th><th>Overall</th></tr></thead>
+<tbody><tr><td class="dd">Airport Operations</td><td class="g">4.6</td><td class="g">4.8</td><td class="g">4.4</td><td class="g">4.6</td><td class="y">3.8</td><td class="g">4.6</td></tr><tr><td class="dd">Maintenance / Tech Ops</td><td class="g">4.2</td><td class="g">4.4</td><td class="g">4.0</td><td class="g">4.2</td><td class="y">3.4</td><td class="g">4.0</td></tr><tr><td class="dd">Flight Operations</td><td class="g">4.2</td><td class="g">4.5</td><td class="y">3.5</td><td class="g">4.2</td><td class="r">2.5</td><td class="y">3.5</td></tr><tr><td class="dd">Crew / Flight Attendan</td><td class="y">3.6</td><td class="y">3.8</td><td class="y">3.4</td><td class="y">3.6</td><td class="r">2.6</td><td class="y">3.4</td></tr><tr><td class="dd">Guest Empowerment</td><td class="r">2.4</td><td class="r">2.6</td><td class="r">2.4</td><td class="r">2.8</td><td class="r">2.2</td><td class="r">2.4</td></tr><tr class="org"><td class="dd">Org Overall</td><td class="y">3.8</td><td class="g">4.0</td><td class="y">3.5</td><td class="y">3.9</td><td class="r">2.9</td><td class="y">3.6</td></tr></tbody></table></div></div>
+    </div>
+    <div class="card">
+      <div class="ch">Team Member Experience — Q4 2026</div>
+      <div class="cb"><div class="hmw"><table class="hm-mini">
+<thead><tr><th class="tl">Department</th>
+<th>Enjoy</th><th>Wellbeing</th><th>Belong</th><th>Growth</th><th>Comm</th><th>Overall</th></tr></thead>
+<tbody><tr><td class="dd">Airport Operations</td><td class="g">4.6</td><td class="g">4.4</td><td class="g">4.6</td><td class="y">3.8</td><td class="g">4.2</td><td class="g">4.6</td></tr><tr><td class="dd">Maintenance / Tech Ops</td><td class="g">4.2</td><td class="g">4.2</td><td class="g">4.2</td><td class="y">3.8</td><td class="g">4.2</td><td class="g">4.2</td></tr><tr><td class="dd">Flight Operations</td><td class="g">4.3</td><td class="y">3.7</td><td class="g">4.2</td><td class="y">3.3</td><td class="g">4.2</td><td class="g">4.2</td></tr><tr><td class="dd">Crew / Flight Attendan</td><td class="y">3.4</td><td class="y">3.2</td><td class="y">3.6</td><td class="r">2.8</td><td class="y">3.4</td><td class="y">3.4</td></tr><tr><td class="dd">Guest Empowerment</td><td class="r">2.4</td><td class="r">2.4</td><td class="r">2.8</td><td class="r">2.2</td><td class="r">2.4</td><td class="r">2.4</td></tr><tr class="org"><td class="dd">Org Overall</td><td class="y">3.8</td><td class="y">3.6</td><td class="y">3.9</td><td class="r">3.2</td><td class="y">3.7</td><td class="y">3.8</td></tr></tbody></table></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- LE HEAT MAP -->
+<div id="tab-le" class="tc">
+  <div class="sl">Leadership Effectiveness Heat Map — Q1 2026</div>
+  <div class="card"><div class="cb"><div class="hmw"><table class="hm">
+<thead><tr><th class="tl">Department</th>
+<th>Comm</th><th>Trust</th><th>Acct</th><th>Clarity</th><th>Dev</th><th>Overall</th>
+<th>Confidence</th></tr></thead>
+<tbody><tr><td class="dd">Airport Operations</td><td class="g">4.6</td><td class="g">4.8</td><td class="g">4.4</td><td class="g">4.6</td><td class="y">3.8</td><td class="g">4.6</td><td class="g">4.2</td></tr><tr><td class="dd">Maintenance / Tech Ops</td><td class="g">4.2</td><td class="g">4.4</td><td class="g">4.0</td><td class="g">4.2</td><td class="y">3.4</td><td class="g">4.0</td><td class="g">4.2</td></tr><tr><td class="dd">Flight Operations</td><td class="g">4.2</td><td class="g">4.5</td><td class="y">3.5</td><td class="g">4.2</td><td class="r">2.5</td><td class="y">3.5</td><td class="y">3.5</td></tr><tr><td class="dd">Crew / Flight Attendants</td><td class="y">3.6</td><td class="y">3.8</td><td class="y">3.4</td><td class="y">3.6</td><td class="r">2.6</td><td class="y">3.4</td><td class="y">3.2</td></tr><tr><td class="dd">Guest Empowerment</td><td class="r">2.4</td><td class="r">2.6</td><td class="r">2.4</td><td class="r">2.8</td><td class="r">2.2</td><td class="r">2.4</td><td class="r">2.0</td></tr><tr class="org"><td class="dd">Org Overall</td><td class="y">3.8</td><td class="g">4.0</td><td class="y">3.5</td><td class="y">3.9</td><td class="r">2.9</td><td class="y">3.6</td><td class="y">3.5</td></tr></tbody></table></div>
+<div class="hm-leg">
+  <div class="hl"><div class="hld" style="background:var(--g-bg);border:1px solid var(--g-bar);"></div>Strong (&ge;3.9)</div>
+  <div class="hl"><div class="hld" style="background:var(--y-bg);border:1px solid var(--y-bar);"></div>Developing (3.2–3.8)</div>
+  <div class="hl"><div class="hld" style="background:var(--r-bg);border:1px solid var(--r-bar);"></div>Needs Attention (&lt;3.2)</div>
+  <div class="hl" style="margin-left:auto;font-size:9px;color:#aaa;">Scale: 1–5 &nbsp;|&nbsp; Confidence = Leader Section B avg</div>
+</div></div></div>
+</div>
+
+<!-- TMX HEAT MAP -->
+<div id="tab-tmx" class="tc">
+  <div class="sl">Team Member Experience Heat Map — Q4 2026</div>
+  <div class="card"><div class="cb"><div class="hmw"><table class="hm">
+<thead><tr><th class="tl">Department</th>
+<th>Enjoy</th><th>Wellbeing</th><th>Belong</th><th>Growth</th><th>Comm</th><th>Overall</th>
+<th>Confidence</th></tr></thead>
+<tbody><tr><td class="dd">Airport Operations</td><td class="g">4.6</td><td class="g">4.4</td><td class="g">4.6</td><td class="y">3.8</td><td class="g">4.2</td><td class="g">4.6</td><td class="g">4.5</td></tr><tr><td class="dd">Maintenance / Tech Ops</td><td class="g">4.2</td><td class="g">4.2</td><td class="g">4.2</td><td class="y">3.8</td><td class="g">4.2</td><td class="g">4.2</td><td class="g">4.2</td></tr><tr><td class="dd">Flight Operations</td><td class="g">4.3</td><td class="y">3.7</td><td class="g">4.2</td><td class="y">3.3</td><td class="g">4.2</td><td class="g">4.2</td><td class="y">3.7</td></tr><tr><td class="dd">Crew / Flight Attendants</td><td class="y">3.4</td><td class="y">3.2</td><td class="y">3.6</td><td class="r">2.8</td><td class="y">3.4</td><td class="y">3.4</td><td class="y">3.2</td></tr><tr><td class="dd">Guest Empowerment</td><td class="r">2.4</td><td class="r">2.4</td><td class="r">2.8</td><td class="r">2.2</td><td class="r">2.4</td><td class="r">2.4</td><td class="r">2.0</td></tr><tr class="org"><td class="dd">Org Overall</td><td class="y">3.8</td><td class="y">3.6</td><td class="y">3.9</td><td class="r">3.2</td><td class="y">3.7</td><td class="y">3.8</td><td class="">—</td></tr></tbody></table></div>
+<div class="hm-leg">
+  <div class="hl"><div class="hld" style="background:var(--g-bg);border:1px solid var(--g-bar);"></div>Strong (&ge;3.9)</div>
+  <div class="hl"><div class="hld" style="background:var(--y-bg);border:1px solid var(--y-bar);"></div>Developing (3.2–3.8)</div>
+  <div class="hl"><div class="hld" style="background:var(--r-bg);border:1px solid var(--r-bar);"></div>Needs Attention (&lt;3.2)</div>
+</div></div></div>
+</div>
+
+<!-- PERCEPTION GAP -->
+<div id="tab-gap" class="tc">
+  <div class="sl">Leader Perception Gap — Q1 2026</div>
+  <div class="gi">The Leader Perception Gap shows where leaders rate their own effectiveness vs. how their teams actually experience it. Negative gaps mean the leader overestimates. Large negative gaps (below –0.8) are blind spots requiring a coaching conversation.</div>
+<div class="card"><div class="cb">
+<table class="gt"><thead><tr>
+  <th class="tl">Department</th><th class="tl">Dimension</th>
+  <th>IC Score</th><th>Leader Self</th><th>Gap</th><th class="tl">Interpretation</th>
+</tr></thead><tbody><tr><td class="dd" rowspan="5">Airport Operations</td><td>Communication</td><td class="g">4.6</td><td class="g">4.5</td><td class="gap-aligned">0.1</td><td style="font-size:10px;color:#555;">Strong alignment on Communication. Leader has accurate read on team perception.</td></tr><tr><td>Trust & Respect</td><td class="g">4.8</td><td class="g">5.0</td><td class="gap-aligned">-0.2</td><td style="font-size:10px;color:#555;">Strong alignment on Trust & Respect. Leader has accurate read on team perception.</td></tr><tr><td>Accountability</td><td class="g">4.4</td><td class="g">4.5</td><td class="gap-aligned">-0.1</td><td style="font-size:10px;color:#555;">Strong alignment on Accountability. Leader has accurate read on team perception.</td></tr><tr><td>Team Clarity</td><td class="g">4.6</td><td class="g">5.0</td><td class="gap-watch">-0.4</td><td style="font-size:10px;color:#555;">Slight overestimate on Team Clarity. Monitor — not concerning yet.</td></tr><tr><td>Development</td><td class="y">3.8</td><td class="g">4.0</td><td class="gap-aligned">-0.2</td><td style="font-size:10px;color:#555;">Strong alignment on Development. Leader has accurate read on team perception.</td></tr><tr><td class="dd" rowspan="5">Maintenance / Tech Ops</td><td>Communication</td><td class="g">4.2</td><td class="g">4.5</td><td class="gap-aligned">-0.3</td><td style="font-size:10px;color:#555;">Strong alignment on Communication. Leader has accurate read on team perception.</td></tr><tr><td>Trust & Respect</td><td class="g">4.4</td><td class="g">4.5</td><td class="gap-aligned">-0.1</td><td style="font-size:10px;color:#555;">Strong alignment on Trust & Respect. Leader has accurate read on team perception.</td></tr><tr><td>Accountability</td><td class="g">4.0</td><td class="g">4.0</td><td class="gap-aligned">0.0</td><td style="font-size:10px;color:#555;">Strong alignment on Accountability. Leader has accurate read on team perception.</td></tr><tr><td>Team Clarity</td><td class="g">4.2</td><td class="g">4.5</td><td class="gap-aligned">-0.3</td><td style="font-size:10px;color:#555;">Strong alignment on Team Clarity. Leader has accurate read on team perception.</td></tr><tr><td>Development</td><td class="y">3.4</td><td class="g">4.0</td><td class="gap-watch">-0.6</td><td style="font-size:10px;color:#555;">Moderate gap on Development. Leader sees more effort than team feels. Address in next 1-on-1.</td></tr><tr><td class="dd" rowspan="5">Flight Operations</td><td>Communication</td><td class="g">4.2</td><td class="g">4.3</td><td class="gap-aligned">-0.2</td><td style="font-size:10px;color:#555;">Strong alignment on Communication. Leader has accurate read on team perception.</td></tr><tr><td>Trust & Respect</td><td class="g">4.5</td><td class="g">4.7</td><td class="gap-aligned">-0.2</td><td style="font-size:10px;color:#555;">Strong alignment on Trust & Respect. Leader has accurate read on team perception.</td></tr><tr><td>Accountability</td><td class="y">3.5</td><td class="y">3.7</td><td class="gap-aligned">-0.2</td><td style="font-size:10px;color:#555;">Strong alignment on Accountability. Leader has accurate read on team perception.</td></tr><tr><td>Team Clarity</td><td class="g">4.2</td><td class="g">4.3</td><td class="gap-aligned">-0.2</td><td style="font-size:10px;color:#555;">Strong alignment on Team Clarity. Leader has accurate read on team perception.</td></tr><tr><td>Development</td><td class="r">2.5</td><td class="y">3.3</td><td class="gap-blind">-0.8</td><td style="font-size:10px;color:#555;">Significant blind spot on Development. Leader substantially overestimates. Priority coaching conversation.</td></tr><tr><td class="dd" rowspan="5">Crew / Flight Attendants</td><td>Communication</td><td class="y">3.6</td><td class="g">4.0</td><td class="gap-watch">-0.4</td><td style="font-size:10px;color:#555;">Slight overestimate on Communication. Monitor — not concerning yet.</td></tr><tr><td>Trust & Respect</td><td class="y">3.8</td><td class="g">4.0</td><td class="gap-aligned">-0.2</td><td style="font-size:10px;color:#555;">Strong alignment on Trust & Respect. Leader has accurate read on team perception.</td></tr><tr><td>Accountability</td><td class="y">3.4</td><td class="y">3.5</td><td class="gap-aligned">-0.1</td><td style="font-size:10px;color:#555;">Strong alignment on Accountability. Leader has accurate read on team perception.</td></tr><tr><td>Team Clarity</td><td class="y">3.6</td><td class="g">4.0</td><td class="gap-watch">-0.4</td><td style="font-size:10px;color:#555;">Slight overestimate on Team Clarity. Monitor — not concerning yet.</td></tr><tr><td>Development</td><td class="r">2.6</td><td class="r">3.0</td><td class="gap-watch">-0.4</td><td style="font-size:10px;color:#555;">Slight overestimate on Development. Monitor — not concerning yet.</td></tr><tr><td class="dd" rowspan="5">Guest Empowerment</td><td>Communication</td><td class="r">2.4</td><td class="r">3.0</td><td class="gap-watch">-0.6</td><td style="font-size:10px;color:#555;">Moderate gap on Communication. Leader sees more effort than team feels. Address in next 1-on-1.</td></tr><tr><td>Trust & Respect</td><td class="r">2.6</td><td class="y">3.5</td><td class="gap-blind">-0.9</td><td style="font-size:10px;color:#555;">Significant blind spot on Trust & Respect. Leader substantially overestimates. Priority coaching conversation.</td></tr><tr><td>Accountability</td><td class="r">2.4</td><td class="r">3.0</td><td class="gap-watch">-0.6</td><td style="font-size:10px;color:#555;">Moderate gap on Accountability. Leader sees more effort than team feels. Address in next 1-on-1.</td></tr><tr><td>Team Clarity</td><td class="r">2.8</td><td class="r">3.0</td><td class="gap-aligned">-0.2</td><td style="font-size:10px;color:#555;">Strong alignment on Team Clarity. Leader has accurate read on team perception.</td></tr><tr><td>Development</td><td class="r">2.2</td><td class="r">2.5</td><td class="gap-aligned">-0.3</td><td style="font-size:10px;color:#555;">Strong alignment on Development. Leader has accurate read on team perception.</td></tr></tbody></table>
+</div></div>
+<div class="gap-leg">
+  <div class="gleg"><div class="glegg" style="background:var(--r-bg);border:1px solid var(--r-bar);"></div>Blind Spot — gap &gt; 0.8 (leader significantly overestimates)</div>
+  <div class="gleg"><div class="glegg" style="background:var(--y-bg);border:1px solid var(--y-bar);"></div>Watch — gap 0.3–0.8 (moderate overestimate)</div>
+  <div class="gleg"><div class="glegg" style="background:var(--g-bg);border:1px solid var(--g-bar);"></div>Aligned — gap within ±0.3 (accurate self-awareness)</div>
+</div>
+</div>
+
+<!-- DEVELOPMENT TRENDS -->
+<div id="tab-dev" class="tc">
+  <div class="sl">Top Development Needs — Org-Wide (Leader Survey Section C, Q1 2026)</div>
+<div class="card" style="margin-bottom:16px;"><div class="ch">What leaders say they need most right now</div>
+<div class="cb"><div class="dg"><div><div class="dbi">
+  <div class="dbl"><span>Coaching skills</span><span class="dbc">3 leaders</span></div>
+  <div class="dbt"><div class="dbf" style="width:100%;"></div></div>
+</div><div class="dbi">
+  <div class="dbl"><span>Difficult conversations</span><span class="dbc">3 leaders</span></div>
+  <div class="dbt"><div class="dbf" style="width:100%;"></div></div>
+</div><div class="dbi">
+  <div class="dbl"><span>Developing others</span><span class="dbc">3 leaders</span></div>
+  <div class="dbt"><div class="dbf" style="width:100%;"></div></div>
+</div><div class="dbi">
+  <div class="dbl"><span>Delegation</span><span class="dbc">2 leaders</span></div>
+  <div class="dbt"><div class="dbf" style="width:66%;"></div></div>
+</div></div><div><div class="dbi">
+  <div class="dbl"><span>Succession planning</span><span class="dbc">2 leaders</span></div>
+  <div class="dbt"><div class="dbf" style="width:66%;"></div></div>
+</div><div class="dbi">
+  <div class="dbl"><span>Time management</span><span class="dbc">1 leaders</span></div>
+  <div class="dbt"><div class="dbf" style="width:33%;"></div></div>
+</div><div class="dbi">
+  <div class="dbl"><span>Accountability</span><span class="dbc">1 leaders</span></div>
+  <div class="dbt"><div class="dbf" style="width:33%;"></div></div>
+</div><div class="dbi">
+  <div class="dbl"><span>Team motivation</span><span class="dbc">1 leaders</span></div>
+  <div class="dbt"><div class="dbf" style="width:33%;"></div></div>
+</div></div></div>
+<div style="margin-top:12px;padding:10px 14px;background:#fffbeb;border-left:3px solid #c49a00;border-radius:0 5px 5px 0;font-size:11px;color:#555;line-height:1.55;">
+<strong>L&amp;D implication:</strong> The top-requested topic involves 3 leaders. Cross-reference with the Development dimension score on the LE heat map — alignment between what leaders request and where IC scores are lowest is your highest-priority content area.
+</div></div></div>
+<div class="sl">Development Needs by Department</div>
+<div class="card"><div class="cb"><div class="ddg"><div class="ddc"><div class="ddh">Airport Operatio</div><div class="ddb"><div class="ddi">Advanced leadership</div><div class="ddi">Succession planning</div><div class="ddi">Developing others</div></div></div><div class="ddc"><div class="ddh">Crew / Flight At</div><div class="ddb"><div class="ddi">Coaching skills</div><div class="ddi">Change management</div><div class="ddi">Difficult conversations</div></div></div><div class="ddc"><div class="ddh">Flight Operation</div><div class="ddb"><div class="ddi">Coaching skills</div><div class="ddi">Difficult conversations</div><div class="ddi">Delegation</div><div class="ddi">Time management</div></div></div><div class="ddc"><div class="ddh">Guest Empowermen</div><div class="ddb"><div class="ddi">Difficult conversations</div><div class="ddi">Accountability</div><div class="ddi">Coaching skills</div><div class="ddi">Team motivation</div></div></div><div class="ddc"><div class="ddh">Maintenance / Te</div><div class="ddb"><div class="ddi">Succession planning</div><div class="ddi">Developing others</div><div class="ddi">Delegation</div></div></div></div></div></div>
+</div>
+
+<!-- FLAGS -->
+<div id="tab-flags" class="tc">
+  <div class="sl">Active Flags — Q1 2026</div>
+  <div class="card"><div class="fcb"><div class="fi"><span class="fib fib-r">Intervene</span><div class="fit"><strong>Guest Empowerment</strong><span>LE Overall 2.4 — below threshold. Immediate VP conversation and support plan needed.</span></div></div><div class="fi"><span class="fib fib-r">Blind Spot</span><div class="fit"><strong>Flight Operations — Development</strong><span>IC score 2.5 vs leader self-rate 3.3 (gap -0.8). Leader is significantly out of touch on Development.</span></div></div><div class="fi"><span class="fib fib-r">Blind Spot</span><div class="fit"><strong>Guest Empowerment — Trust & Respect</strong><span>IC score 2.6 vs leader self-rate 3.5 (gap -0.9). Leader is significantly out of touch on Trust & Respect.</span></div></div><div class="fi"><span class="fib fib-y">Low Confidence</span><div class="fit"><strong>Guest Empowerment</strong><span>Leader confidence score 2.0 — below threshold. Leaders don't feel equipped. Check resource/support gaps.</span></div></div></div></div>
+</div>
+
+<!-- RESPONSE RATES -->
+<div id="tab-rr" class="tc">
+  <div class="sl">Response Rates — Q1 2026</div>
+  <div class="card"><div class="ch">IC Survey Responses by Department — Q1 2026</div><div class="cb"><p style="font-size:11px;color:#666;margin-bottom:14px;">Total responses: <strong>26</strong></p><div class="rri"><div class="rrl"><span>Flight Operations</span><span class="rrp">6 responses</span></div><div class="rrt"><div class="rrf" style="width:69%;background:#e74c3c;"></div></div></div><div class="rri"><div class="rrl"><span>Guest Empowerment</span><span class="rrp">5 responses</span></div><div class="rrt"><div class="rrf" style="width:57%;background:#e74c3c;"></div></div></div><div class="rri"><div class="rrl"><span>Airport Operations</span><span class="rrp">5 responses</span></div><div class="rrt"><div class="rrf" style="width:57%;background:#e74c3c;"></div></div></div><div class="rri"><div class="rrl"><span>Crew / Flight Attendants</span><span class="rrp">5 responses</span></div><div class="rrt"><div class="rrf" style="width:57%;background:#e74c3c;"></div></div></div><div class="rri"><div class="rrl"><span>Maintenance / Tech Ops</span><span class="rrp">5 responses</span></div><div class="rrt"><div class="rrf" style="width:57%;background:#e74c3c;"></div></div></div></div></div>
+</div>
+
+<!-- LEADER GUIDE -->
+<div id="tab-guide" class="tc">
+
+  <div class="gu-upload">
+    <div class="gu-upload-box">
+      <div class="gu-upload-label">Leader Guide Feedback</div>
+      <div class="gu-upload-sub">Export your Power Automate Excel file as CSV (File → Save As → CSV)</div>
+      <label class="gu-file-btn">Choose File<input type="file" accept=".csv" style="display:none" onchange="loadGuideCSV(this,'feedback')"></label>
+      <div class="gu-status" id="gu-feedback-status">No file loaded</div>
+    </div>
+    <div class="gu-upload-box">
+      <div class="gu-upload-label">Team Member Roster</div>
+      <div class="gu-upload-sub">Save the Breeze Active Roster XLSX as CSV (File → Save As → CSV)</div>
+      <label class="gu-file-btn">Choose File<input type="file" accept=".csv" style="display:none" onchange="loadGuideCSV(this,'roster')"></label>
+      <div class="gu-status" id="gu-roster-status">No file loaded</div>
+    </div>
+  </div>
+
+  <div class="gu-kpis" id="gu-kpis">
+    <div class="gu-kpi"><div class="gu-kpi-val" id="gu-k-total">—</div><div class="gu-kpi-lbl">Total Responses</div></div>
+    <div class="gu-kpi"><div class="gu-kpi-val" id="gu-k-helpful">—</div><div class="gu-kpi-lbl">Found It Helpful</div></div>
+    <div class="gu-kpi"><div class="gu-kpi-val" id="gu-k-leaders">—</div><div class="gu-kpi-lbl">Unique Leaders</div></div>
+    <div class="gu-kpi"><div class="gu-kpi-val" id="gu-k-modules">—</div><div class="gu-kpi-lbl">Modules Completed</div></div>
+    <div class="gu-kpi"><div class="gu-kpi-val" id="gu-k-comments" style="font-size:16px;padding-top:4px;">—</div><div class="gu-kpi-lbl">Top Module</div></div>
+  </div>
+
+  <div class="gu-filters" id="gu-filters" style="display:none;">
+    <span class="gu-filter-label">Level</span>
+    <button class="gu-filter-btn active" onclick="setGuideFilter('level','All',this)">All</button>
+    <button class="gu-filter-btn" onclick="setGuideFilter('level','Supervisor',this)">Supervisor</button>
+    <button class="gu-filter-btn" onclick="setGuideFilter('level','Manager',this)">Manager</button>
+    <button class="gu-filter-btn" onclick="setGuideFilter('level','Director',this)">Director</button>
+    <button class="gu-filter-btn" onclick="setGuideFilter('level','Vice President',this)">VP</button>
+    <div class="gu-divider"></div>
+    <span class="gu-filter-label">Helpful</span>
+    <button class="gu-filter-btn active" onclick="setGuideFilter('helpful','All',this)">All</button>
+    <button class="gu-filter-btn" onclick="setGuideFilter('helpful','Yes',this)">Yes Only</button>
+    <button class="gu-filter-btn" onclick="setGuideFilter('helpful','No',this)">No Only</button>
+  </div>
+
+  <div class="sl">Module Breakdown</div>
+  <div class="card" style="margin-bottom:16px;">
+    <div class="cb">
+      <div id="gu-table-wrap"><div class="gu-empty">Load both files above to see results.</div></div>
+    </div>
+  </div>
+
+  <div class="sl">Improvement Comments</div>
+  <div id="gu-comments"><div class="gu-empty">No comments to display yet.</div></div>
+
+</div>
+
+</div><!-- /page -->
+<script>
+document.querySelectorAll('.tb').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tb').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tc').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ── LEADER GUIDE TAB ── */
+var guideRaw = [], guideRoster = {}, guideFilters = {level:'All', helpful:'All'};
+
+function parseCSV(text) {
+  var lines = text.trim().split(/\r?\n/);
+  var headers = parseCSVRow(lines[0]);
+  return lines.slice(1).filter(function(l){return l.trim();}).map(function(line){
+    var vals = parseCSVRow(line);
+    var obj = {};
+    headers.forEach(function(h,i){ obj[h.trim()] = (vals[i]||'').trim(); });
+    return obj;
+  });
+}
+function parseCSVRow(line) {
+  var result=[], cur='', inQ=false;
+  for(var i=0;i<line.length;i++){
+    if(line[i]==='"'){inQ=!inQ;}
+    else if(line[i]===','&&!inQ){result.push(cur);cur='';}
+    else{cur+=line[i];}
+  }
+  result.push(cur);
+  return result;
+}
+
+function loadGuideCSV(input, type) {
+  var file = input.files[0];
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    var rows = parseCSV(e.target.result);
+    if(type==='feedback'){
+      guideRaw = rows;
+      document.getElementById('gu-feedback-status').textContent = rows.length + ' responses loaded';
+      document.getElementById('gu-feedback-status').className = 'gu-status ok';
+    } else {
+      guideRoster = {};
+      rows.forEach(function(r){
+        var email = (r['Work Email']||'').toLowerCase().trim();
+        if(email) guideRoster[email] = r;
+      });
+      document.getElementById('gu-roster-status').textContent = Object.keys(guideRoster).length + ' Team Members loaded';
+      document.getElementById('gu-roster-status').className = 'gu-status ok';
+    }
+    if(guideRaw.length) renderGuide();
+  };
+  reader.readAsText(file);
+}
+
+function enrichRow(row) {
+  var email = (row['Email']||'').toLowerCase().trim();
+  var tm = guideRoster[email] || {};
+  return {
+    timestamp: row['Timestamp'] || '',
+    email: email,
+    name: tm['Legal Name'] || email,
+    level: tm['Management Level'] || 'Unknown',
+    dept: tm['Cost Center'] || 'Unknown',
+    location: tm['Location'] || '',
+    module: row['Module'] || '(unknown)',
+    helpful: (row['Helpful']||'').trim(),
+    suggestions: (row['Suggestions']||'').trim()
+  };
+}
+
+function levelBadge(level) {
+  if(!level) return '';
+  var l = level.toLowerCase();
+  if(l.includes('supervisor')) return '<span class="gu-badge gu-badge-sv">Supervisor</span>';
+  if(l.includes('manager'))    return '<span class="gu-badge gu-badge-mg">Manager</span>';
+  if(l.includes('director'))   return '<span class="gu-badge gu-badge-dr">Director</span>';
+  if(l.includes('vice') || l.includes('vp')) return '<span class="gu-badge gu-badge-vp">VP</span>';
+  return '<span class="gu-badge gu-badge-ic">' + level + '</span>';
+}
+
+function setGuideFilter(key, val, btn) {
+  guideFilters[key] = val;
+  btn.closest('.gu-filters').querySelectorAll('[onclick*="setGuideFilter(\'' + key + '\'"]').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  renderGuide();
+}
+
+function renderGuide() {
+  var enriched = guideRaw.map(enrichRow);
+
+  // apply filters
+  var filtered = enriched.filter(function(r){
+    if(guideFilters.level !== 'All' && !r.level.toLowerCase().includes(guideFilters.level.toLowerCase())) return false;
+    if(guideFilters.helpful !== 'All' && r.helpful.toLowerCase() !== guideFilters.helpful.toLowerCase()) return false;
+    return true;
+  });
+
+  // show filters
+  document.getElementById('gu-filters').style.display = 'flex';
+
+  // KPIs
+  var total = filtered.length;
+  var helpfulCount = filtered.filter(function(r){return r.helpful.toLowerCase()==='yes';}).length;
+  var pct = total ? Math.round(helpfulCount/total*100) : 0;
+  var uniqueLeaders = new Set(filtered.map(function(r){return r.email;})).size;
+  var uniqueModules = new Set(filtered.map(function(r){return r.module;})).size;
+
+  // top module
+  var modCounts = {};
+  filtered.forEach(function(r){ modCounts[r.module] = (modCounts[r.module]||0)+1; });
+  var topMod = Object.entries(modCounts).sort(function(a,b){return b[1]-a[1];})[0];
+
+  document.getElementById('gu-k-total').textContent = total;
+  document.getElementById('gu-k-helpful').textContent = pct + '%';
+  document.getElementById('gu-k-leaders').textContent = uniqueLeaders;
+  document.getElementById('gu-k-modules').textContent = uniqueModules;
+  document.getElementById('gu-k-comments').textContent = topMod ? topMod[0] : '—';
+
+  // module table
+  var modStats = {};
+  filtered.forEach(function(r){
+    if(!modStats[r.module]) modStats[r.module] = {count:0, yes:0, levels:new Set(), comments:[]};
+    modStats[r.module].count++;
+    if(r.helpful.toLowerCase()==='yes') modStats[r.module].yes++;
+    if(r.level) modStats[r.module].levels.add(r.level);
+    if(r.suggestions) modStats[r.module].comments.push(r.suggestions);
+  });
+
+  var rows = Object.entries(modStats).sort(function(a,b){return b[1].count - a[1].count;});
+  var tableHTML = '<table class="gu-tbl"><thead><tr><th>Module</th><th>Responses</th><th>% Helpful</th><th>Comments</th><th>Levels</th></tr></thead><tbody>';
+  rows.forEach(function(entry){
+    var mod = entry[0], s = entry[1];
+    var p = Math.round(s.yes/s.count*100);
+    var fillClass = p >= 75 ? '' : (p >= 50 ? 'mid' : 'low');
+    var levelsHTML = Array.from(s.levels).map(levelBadge).join(' ');
+    tableHTML += '<tr><td><strong>' + mod + '</strong></td>' +
+      '<td style="text-align:center;font-weight:700;">' + s.count + '</td>' +
+      '<td><span style="font-weight:700;">' + p + '%</span><div class="gu-pct-bar"><div class="gu-pct-fill ' + fillClass + '" style="width:' + p + '%"></div></div></td>' +
+      '<td style="text-align:center;">' + s.comments.length + '</td>' +
+      '<td>' + levelsHTML + '</td></tr>';
+  });
+  tableHTML += '</tbody></table>';
+  document.getElementById('gu-table-wrap').innerHTML = rows.length ? tableHTML : '<div class="gu-empty">No data matches the current filters.</div>';
+
+  // comments
+  var comments = filtered.filter(function(r){return r.suggestions;});
+  var commHTML = '';
+  comments.forEach(function(r){
+    var d = r.timestamp ? new Date(r.timestamp).toLocaleDateString() : '';
+    commHTML += '<div class="gu-comment">' +
+      '<div class="gu-comment-meta"><strong>' + r.name + '</strong> &nbsp;·&nbsp; ' + r.module + (d ? ' &nbsp;·&nbsp; ' + d : '') + ' &nbsp;' + levelBadge(r.level) + '</div>' +
+      '<div class="gu-comment-text">' + r.suggestions + '</div></div>';
+  });
+  document.getElementById('gu-comments').innerHTML = commHTML || '<div class="gu-empty">No improvement comments in the current filtered view.</div>';
+}
+</script>
+</body></html>
