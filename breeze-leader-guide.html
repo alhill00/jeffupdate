@@ -362,6 +362,9 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .module-complete-commitment-text{font-size:14px;color:var(--dark);line-height:1.65;font-style:italic;}
 .mod-feedback-btn{display:inline-block;margin-top:20px;padding:12px 28px;border-radius:10px;background:var(--blue);color:var(--white);font-size:14px;font-weight:700;font-family:inherit;text-decoration:none;transition:opacity .2s;}
 .mod-feedback-btn:hover{opacity:.85;}
+.mod-copy-btn{display:inline-block;margin-top:12px;padding:12px 28px;border-radius:10px;background:transparent;color:var(--blue);border:2px solid var(--blue);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .2s;}
+.mod-copy-btn:hover{background:var(--blue);color:var(--white);}
+.mod-copy-help{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6;max-width:360px;margin-left:auto;margin-right:auto;}
 .skill-start-btn{display:block;margin-top:12px;width:100%;padding:9px;border-radius:9px;font-size:13px;font-weight:700;border:2px solid var(--blue);background:#f0f4ff;color:var(--blue);cursor:pointer;font-family:inherit;transition:all .2s;text-align:center;}
 .skill-start-btn:hover{background:var(--blue);color:var(--white);}
 .skill-start-btn.completed{border-color:var(--right);background:#f0fff8;color:var(--right);}
@@ -5632,13 +5635,16 @@ function selectModChoice(idx) {
 }
 
 function renderModPractice(body, step) {
-  var h = '<h3 class="mod-step-title">' + step.title + '</h3>';
+  var h = '<h3 class="mod-step-title">' + (step.title || 'Practice') + '</h3>';
   if (step.prompt) h += '<p class="mod-step-intro">' + step.prompt + '</p>';
   h += '<div class="practice-fields">';
-  step.fields.forEach(function(f) {
-    var saved = localStorage.getItem('breeze_mod_' + _mod.id + '_pf_' + f.id) || '';
-    h += '<div class="practice-field"><label>' + f.label + '</label>' +
-      '<textarea rows="3" placeholder="' + f.placeholder + '" onchange="savePF(\'' + _mod.id + '\',\'' + f.id + '\',this.value)">' + escHtml(saved) + '</textarea></div>';
+  step.fields.forEach(function(f, i) {
+    var label = typeof f === 'string' ? f : f.label;
+    var placeholder = typeof f === 'string' ? 'Your response\u2026' : (f.placeholder || 'Your response\u2026');
+    var fid = typeof f === 'string' ? ('f' + i) : f.id;
+    var saved = localStorage.getItem('breeze_mod_' + _mod.id + '_pf_' + fid) || '';
+    h += '<div class="practice-field"><label>' + label + '</label>' +
+      '<textarea rows="3" placeholder="' + placeholder + '" onchange="savePF(\'' + _mod.id + '\',\'' + fid + '\',this.value)">' + escHtml(saved) + '</textarea></div>';
   });
   h += '</div>';
   body.innerHTML = h;
@@ -5648,9 +5654,9 @@ function savePF(sid, fid, val) { localStorage.setItem('breeze_mod_' + sid + '_pf
 
 function renderModReflect(body, step) {
   var saved = localStorage.getItem('breeze_mod_' + _mod.id + '_ref_' + _mod.step) || '';
-  body.innerHTML = '<h3 class="mod-step-title">' + step.title + '</h3>' +
-    '<p class="mod-step-intro">' + step.prompt + '</p>' +
-    '<textarea class="mod-textarea" rows="6" placeholder="' + (step.placeholder || 'Your thoughts…') + '" ' +
+  body.innerHTML = '<h3 class="mod-step-title">' + (step.title || 'Reflect') + '</h3>' +
+    (step.prompt ? '<p class="mod-step-intro">' + step.prompt + '</p>' : '') +
+    '<textarea class="mod-textarea" rows="6" placeholder="' + (step.placeholder || 'Your thoughts\u2026') + '" ' +
     'onchange="saveRef(\'' + _mod.id + '\',' + _mod.step + ',this.value)">' + escHtml(saved) + '</textarea>';
 }
 
@@ -5658,13 +5664,40 @@ function saveRef(sid, si, val) { localStorage.setItem('breeze_mod_' + sid + '_re
 
 function renderModCommit(body, step) {
   var saved = localStorage.getItem('breeze_mod_commit_' + _mod.id) || '';
-  body.innerHTML = '<h3 class="mod-step-title">' + step.title + '</h3>' +
+  body.innerHTML = '<h3 class="mod-step-title">' + (step.title || 'My Commitment') + '</h3>' +
     '<p class="mod-step-intro">' + step.prompt + '</p>' +
     '<textarea class="mod-textarea" rows="5" style="border-color:var(--blue);" placeholder="' + (step.placeholder || 'My commitment…') + '" ' +
     'onchange="saveCommit(\'' + _mod.id + '\',this.value)">' + escHtml(saved) + '</textarea>';
 }
 
 function saveCommit(sid, val) { localStorage.setItem('breeze_mod_commit_' + sid, val); }
+
+function copyModNotes() {
+  var mod = MODULES_CONFIG[_mod.id];
+  var moduleTitle = getSkillTitle(_mod.id);
+  var lines = ['My Notes — ' + moduleTitle, ''];
+  mod.steps.forEach(function(step, i) {
+    if (step.type === 'reflect') {
+      var val = localStorage.getItem('breeze_mod_' + _mod.id + '_ref_' + i) || '';
+      if (val.trim()) { lines.push(step.title); lines.push(val.trim()); lines.push(''); }
+    } else if (step.type === 'practice') {
+      step.fields.forEach(function(f, fi) {
+        var label = typeof f === 'string' ? f : f.label;
+        var fid = typeof f === 'string' ? ('f' + fi) : f.id;
+        var val = localStorage.getItem('breeze_mod_' + _mod.id + '_pf_' + fid) || '';
+        if (val.trim()) { lines.push(label); lines.push(val.trim()); lines.push(''); }
+      });
+    } else if (step.type === 'commit') {
+      var val = localStorage.getItem('breeze_mod_commit_' + _mod.id) || '';
+      if (val.trim()) { lines.push('My Commitment'); lines.push(val.trim()); lines.push(''); }
+    }
+  });
+  navigator.clipboard.writeText(lines.join('\n')).then(function() {
+    var btn = document.getElementById('copy-notes-btn');
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy My Notes'; }, 2000);
+  });
+}
 
 function showModComplete() {
   var commitment = localStorage.getItem('breeze_mod_commit_' + _mod.id) || '';
@@ -5678,6 +5711,8 @@ function showModComplete() {
     (commitment ? '<div class="module-complete-commitment"><div class="module-complete-commitment-label">My Commitment</div>' +
     '<div class="module-complete-commitment-text">' + escHtml(commitment) + '</div></div>' : '') +
     '<a href="' + formUrl + '" target="_blank" rel="noopener" class="mod-feedback-btn">Was this helpful?</a>' +
+    '<br><button id="copy-notes-btn" onclick="copyModNotes()" class="mod-copy-btn">Copy My Notes</button>' +
+    '<p class="mod-copy-help">Copy your responses now to keep a record — paste them into OneNote, an email, or wherever you prefer. Once you leave this screen your responses can only be accessed by retaking the module.</p>' +
     '</div>';
   document.getElementById('mod-back-btn').style.visibility = 'hidden';
   document.getElementById('mod-next-btn').style.display = 'none';
