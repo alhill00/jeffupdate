@@ -128,6 +128,10 @@ textarea.apply-ta:focus{outline:none;border-color:var(--accent);}
   .two-col{grid-template-columns:1fr;}
   .screen-h{font-size:1.2rem;}
 }
+
+.copy-notes-btn{display:inline-block;margin-top:12px;padding:12px 28px;border-radius:10px;background:transparent;color:var(--accent);border:2px solid var(--accent);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .2s;}
+.copy-notes-btn:hover{background:var(--accent);color:var(--white);}
+.copy-notes-help{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6;max-width:360px;margin-left:auto;margin-right:auto;text-align:center;}
 </style>
 </head>
 <body>
@@ -548,6 +552,30 @@ function restart(){
 }
 
 render();
+
+function copyNotes() {
+  var title = (document.querySelector('.course-title') || {}).textContent || document.title.split('|')[0].trim();
+  var lines = ['My Notes \u2014 ' + title, ''];
+  document.querySelectorAll('.apply-section').forEach(function(sec) {
+    var label = sec.querySelector('.apply-label');
+    var input = sec.querySelector('.apply-input');
+    if (label && input && input.value.trim()) {
+      lines.push(label.textContent.trim());
+      lines.push(input.value.trim());
+      lines.push('');
+    }
+  });
+  var btn = document.getElementById('copy-notes-btn');
+  if (lines.length <= 2) {
+    btn.textContent = 'No notes yet';
+    setTimeout(function() { btn.textContent = 'Copy My Notes'; }, 2000);
+    return;
+  }
+  navigator.clipboard.writeText(lines.join('\n')).then(function() {
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy My Notes'; }, 2000);
+  });
+}
 </script>
 </body>
 </html>

@@ -118,6 +118,10 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f4fbfd;color:#1a1a2
   .section-nav{padding:10px 14px;}
   .progress-wrap{padding:12px 14px;}
 }
+
+.copy-notes-btn{display:inline-block;margin-top:12px;padding:12px 28px;border-radius:10px;background:transparent;color:var(--accent);border:2px solid var(--accent);font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .2s;}
+.copy-notes-btn:hover{background:var(--accent);color:var(--white);}
+.copy-notes-help{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.6;max-width:360px;margin-left:auto;margin-right:auto;text-align:center;}
 </style>
 </head>
 <body>
@@ -399,7 +403,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f4fbfd;color:#1a1a2
     <div class="commit-item">Stay connected and warm without losing the authority the team needs from you</div>
   </div>
   <div style="text-align:center;">
-    <button class="complete-btn" onclick="window.open('https://forms.office.com/REPLACE_WITH_YOUR_FORM_ID','_blank')">Mark as Complete →</button>
+    <button class="complete-btn" onclick="window.open('https://forms.cloud.microsoft/r/P4RREYdch6?r0=Managing%20Former%20Peers','_blank')">Was this helpful?</button><br><button id="copy-notes-btn" class="copy-notes-btn" onclick="copyNotes()">Copy My Notes</button>
+    <p class="copy-notes-help">Copy your responses now to keep a record — paste them into OneNote, an email, or wherever you prefer. Once you leave this screen your responses can only be accessed by retaking the course.</p>
   </div>
 </div>
 
@@ -586,6 +591,30 @@ function restoreApply() {
 }
 
 load();
+
+function copyNotes() {
+  var title = (document.querySelector('.course-title') || {}).textContent || document.title.split('|')[0].trim();
+  var lines = ['My Notes \u2014 ' + title, ''];
+  document.querySelectorAll('.apply-section').forEach(function(sec) {
+    var label = sec.querySelector('.apply-label');
+    var input = sec.querySelector('.apply-input');
+    if (label && input && input.value.trim()) {
+      lines.push(label.textContent.trim());
+      lines.push(input.value.trim());
+      lines.push('');
+    }
+  });
+  var btn = document.getElementById('copy-notes-btn');
+  if (lines.length <= 2) {
+    btn.textContent = 'No notes yet';
+    setTimeout(function() { btn.textContent = 'Copy My Notes'; }, 2000);
+    return;
+  }
+  navigator.clipboard.writeText(lines.join('\n')).then(function() {
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy My Notes'; }, 2000);
+  });
+}
 </script>
 </body>
 </html>
