@@ -360,6 +360,8 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
 .module-complete-commitment{background:#f0f4ff;border-radius:12px;padding:16px 20px;text-align:left;margin-bottom:20px;}
 .module-complete-commitment-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;color:var(--blue);margin-bottom:8px;}
 .module-complete-commitment-text{font-size:14px;color:var(--dark);line-height:1.65;font-style:italic;}
+.mod-feedback-btn{display:inline-block;margin-top:20px;padding:12px 28px;border-radius:10px;background:var(--blue);color:var(--white);font-size:14px;font-weight:700;font-family:inherit;text-decoration:none;transition:opacity .2s;}
+.mod-feedback-btn:hover{opacity:.85;}
 .skill-start-btn{display:block;margin-top:12px;width:100%;padding:9px;border-radius:9px;font-size:13px;font-weight:700;border:2px solid var(--blue);background:#f0f4ff;color:var(--blue);cursor:pointer;font-family:inherit;transition:all .2s;text-align:center;}
 .skill-start-btn:hover{background:var(--blue);color:var(--white);}
 .skill-start-btn.completed{border-color:var(--right);background:#f0fff8;color:var(--right);}
@@ -5666,6 +5668,8 @@ function saveCommit(sid, val) { localStorage.setItem('breeze_mod_commit_' + sid,
 
 function showModComplete() {
   var commitment = localStorage.getItem('breeze_mod_commit_' + _mod.id) || '';
+  var moduleTitle = getSkillTitle(_mod.id);
+  var formUrl = 'https://forms.cloud.microsoft/r/P4RREYdch6?r0=' + encodeURIComponent(moduleTitle);
   var body = document.getElementById('module-body');
   body.innerHTML = '<div class="module-complete-screen">' +
     '<div class="module-complete-icon">✓</div>' +
@@ -5673,6 +5677,7 @@ function showModComplete() {
     '<div class="module-complete-sub">Your commitment is saved. Come back to this skill card anytime to revisit it or retake the module.</div>' +
     (commitment ? '<div class="module-complete-commitment"><div class="module-complete-commitment-label">My Commitment</div>' +
     '<div class="module-complete-commitment-text">' + escHtml(commitment) + '</div></div>' : '') +
+    '<a href="' + formUrl + '" target="_blank" rel="noopener" class="mod-feedback-btn">Was this helpful?</a>' +
     '</div>';
   document.getElementById('mod-back-btn').style.visibility = 'hidden';
   document.getElementById('mod-next-btn').style.display = 'none';
