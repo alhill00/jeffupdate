@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadership in 5 — Pressure Reveals, It Doesn't Create</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    background: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .infographic {
+    width: 680px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 6, 51, 0.12);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #000633;
+    padding: 32px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FF527B, #FFD4AA, #FF527B);
+  }
+  .series-tag {
+    display: inline-block;
+    background: rgba(255,82,123,0.2);
+    color: #FFD4AA;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .header h1 {
+    color: #FFFFFF;
+    font-size: 30px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .header h1 span { color: #FF527B; }
+  .header .subtitle {
+    color: rgba(193,221,255,0.75);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* ── PRINCIPLE BAR ── */
+  .principle-bar {
+    background: #FF527B;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .principle-bar span { opacity: 0.65; margin: 0 8px; }
+
+  /* ── VIDEO SECTION ── */
+  .video-section {
+    margin: 28px 40px 0;
+  }
+  .video-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #FF527B;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .video-embed-wrapper {
+    background: #000633;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 16/9;
+  }
+  /* ── TO EMBED THE VIDEO:
+     Option 1 — YouTube (unlisted or public):
+       Replace the entire .video-embed-wrapper block with:
+       <div class="video-embed-wrapper">
+         <iframe width="100%" height="100%" src="https://www.youtube.com/embed/VIDEO_ID"
+           frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+           allowfullscreen style="position:absolute;top:0;left:0;"></iframe>
+       </div>
+
+     Option 2 — SharePoint/Microsoft Stream:
+       Use the embed code from "Share → Embed" in Stream.
+
+     Suggested clip: Angela Duckworth, "Grit: The Power of Passion and Perseverance"
+     (TED, ~6 min) — search ted.com to confirm the current embed URL.
+  ── -->
+  .video-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: #C1DDFF;
+    text-align: center;
+    padding: 36px 32px;
+    height: 100%;
+    justify-content: center;
+  }
+  .video-play-circle {
+    width: 64px; height: 64px;
+    background: rgba(255,82,123,0.15);
+    border: 2px solid rgba(255,82,123,0.35);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+  }
+  .video-placeholder h3 { font-size: 16px; font-weight: 700; color: #FFFFFF; }
+  .video-placeholder .suggested {
+    font-size: 12px;
+    color: rgba(193,221,255,0.55);
+    line-height: 1.5;
+    max-width: 300px;
+  }
+  .video-badge {
+    display: inline-block;
+    background: rgba(255,82,123,0.3);
+    color: #FFD4AA;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 4px 14px;
+    border-radius: 20px;
+  }
+
+  /* ── INTRO ── */
+  .intro {
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid #E8EDF2;
+    margin-top: 28px;
+  }
+  .intro p { color: #4A5568; font-size: 15px; line-height: 1.65; }
+  .intro strong { color: #000633; }
+
+  /* ── THE REVEAL SECTION ── */
+  .reveal-section { padding: 28px 40px 8px; }
+  .section-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FF527B;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 16px;
+  }
+  .quote-pull {
+    background: #000633;
+    border-radius: 14px;
+    padding: 28px 32px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .quote-pull .q-mark { font-size: 52px; font-weight: 800; color: rgba(255,82,123,0.2); line-height: 0.8; margin-bottom: 12px; display: block; }
+  .quote-pull p {
+    font-size: 20px;
+    font-weight: 700;
+    color: #FFFFFF;
+    line-height: 1.45;
+    font-style: italic;
+  }
+  .quote-pull p span { color: #FF527B; }
+
+  /* ── 3 REVEAL CARDS ── */
+  .reveals-section { padding: 8px 40px 20px; }
+  .reveal-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 12px;
+    padding: 20px 22px;
+    border-radius: 12px;
+    border: 1px solid #E8EDF2;
+  }
+  .reveal-card:nth-child(2) { background: #FFF5F8; border-color: #FFD4E0; }
+  .reveal-card:nth-child(3) { background: #F0F4FF; border-color: #C1DDFF; }
+  .reveal-card:nth-child(4) { background: #FFF5ED; border-color: #FFD4AA; }
+  .reveal-num {
+    width: 38px; height: 38px;
+    background: #000633;
+    color: #FFD4AA;
+    font-size: 16px;
+    font-weight: 800;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .reveal-content h3 { font-size: 15px; font-weight: 700; color: #000633; margin-bottom: 5px; }
+  .reveal-content p { font-size: 14px; color: #4A5568; line-height: 1.6; }
+  .reveal-content .example {
+    display: inline-block;
+    background: rgba(0,6,51,0.05);
+    color: #000633;
+    font-size: 13px;
+    font-style: italic;
+    padding: 5px 12px;
+    border-radius: 6px;
+    margin-top: 6px;
+    border-left: 3px solid #FF527B;
+  }
+
+  /* ── SELF-CHECK ── */
+  .self-check-section {
+    margin: 0 40px 20px;
+    background: #0a1e3d;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .self-check-header {
+    background: rgba(255,82,123,0.12);
+    padding: 12px 22px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #FFD4AA;
+    border-bottom: 1px solid rgba(255,82,123,0.12);
+  }
+  .self-check-body { padding: 20px 22px; }
+  .self-check-body h4 { color: #FFFFFF; font-size: 15px; font-weight: 700; margin-bottom: 14px; line-height: 1.4; }
+  .sc-scenario {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-style: italic;
+    color: #FFFFFF;
+    line-height: 1.7;
+    margin-bottom: 14px;
+  }
+  .sc-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .sc-option {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 11px 14px;
+    cursor: pointer; transition: all 0.2s;
+    text-align: left; width: 100%;
+    color: #FFFFFF;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    font-size: 13.5px; line-height: 1.5;
+  }
+  .sc-option:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+  .sc-opt-letter {
+    width: 22px; height: 22px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .sc-reveal {
+    background: #FF527B;
+    color: white; border: none;
+    border-radius: 8px; padding: 10px 22px;
+    font-size: 13px; font-weight: 700;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    cursor: pointer; letter-spacing: 0.5px; transition: background 0.2s;
+  }
+  .sc-reveal:hover { background: #e0415e; }
+  .sc-answer-box {
+    display: none;
+    margin-top: 14px; padding: 16px 20px;
+    background: rgba(255,82,123,0.08);
+    border: 1px solid rgba(255,82,123,0.2);
+    border-radius: 10px;
+  }
+  .sc-answer-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #FFD4AA; margin-bottom: 8px; }
+  .sc-answer-box h5 { font-size: 15px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px; }
+  .sc-answer-box p { font-size: 13.5px; color: rgba(193,221,255,0.9); line-height: 1.65; }
+
+  /* ── CHALLENGE ── */
+  .challenge {
+    margin: 4px 40px 24px;
+    padding: 22px 28px;
+    background: linear-gradient(135deg, #000633 0%, #1a0012 100%);
+    border-radius: 14px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .challenge::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #FF527B, #FFD4AA);
+  }
+  .challenge-label {
+    display: inline-block;
+    background: rgba(255,82,123,0.2);
+    color: #FFD4AA;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 4px 14px; border-radius: 20px; margin-bottom: 10px;
+  }
+  .challenge p { color: #FFFFFF; font-size: 16px; font-weight: 600; line-height: 1.6; }
+  .challenge p span { color: #FFD4AA; font-weight: 800; }
+
+  /* ── SURVEY ── */
+  .survey-section {
+    margin: 0 40px 24px;
+    padding: 18px 22px;
+    background: #FFF5F8;
+    border-radius: 12px;
+    border: 1px solid #FFD4E0;
+    text-align: center;
+  }
+  .survey-label { font-size: 11px; font-weight: 700; color: #FF527B; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+  .survey-section p { font-size: 13px; color: #4A5568; margin-bottom: 14px; line-height: 1.5; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #000633;
+    padding: 16px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer .brand { color: #C1DDFF; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; }
+  .footer .week { color: rgba(193, 221, 255, 0.5); font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="infographic">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="series-tag">Leadership in 5</div>
+    <h1>Pressure Reveals,<br><span>It Doesn't Create</span></h1>
+    <div class="subtitle">What does a high-pressure moment show about who you really are as a leader?</div>
+  </div>
+
+  <!-- PRINCIPLE BAR -->
+  <div class="principle-bar">
+    Do What's Right <span>|</span> Character
+  </div>
+
+  <!-- VIDEO SECTION -->
+  <div class="video-section">
+    <div class="video-label">This Week's Clip</div>
+    <div class="video-embed-wrapper">
+      <!-- PASTE YOUR VIDEO EMBED CODE HERE once confirmed.
+           Recommended: Angela Duckworth — "Grit: The Power of Passion and Perseverance" (~6 min, TED)
+           OR: Kelly McGonigal — "How to Make Stress Your Friend" (~14 min, TED — first 5 min is the core)
+           Find the embed at ted.com → Share → Embed, or use a YouTube unlisted upload. -->
+      <div class="video-placeholder">
+        <div class="video-play-circle">&#9654;</div>
+        <h3>This Week's TED Clip</h3>
+        <p class="suggested">Suggested: Angela Duckworth — "Grit: The Power of Passion &amp; Perseverance" (~6 min, TED) — or swap in your preferred clip on character under pressure</p>
+        <div class="video-badge">~4 minutes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <p>The video above gives you the core idea. Here's the leadership application: <strong>pressure is a mirror, not a forge.</strong> It shows you who you've already built yourself to be — not who you're about to become. That's both the challenge and the opportunity.</p>
+  </div>
+
+  <!-- QUOTE PULL -->
+  <div class="reveal-section">
+    <div class="section-label">The Core Truth</div>
+    <div class="quote-pull">
+      <span class="q-mark">"</span>
+      <p>"Pressure doesn't <span>build</span> character.<br>Pressure <span>reveals</span> it."</p>
+    </div>
+  </div>
+
+  <!-- 3 REVEAL CARDS -->
+  <div class="reveals-section">
+    <div class="section-label">What Pressure Reveals in Leaders</div>
+
+    <div class="reveal-card">
+      <div class="reveal-num">1</div>
+      <div class="reveal-content">
+        <h3>Your default communication style</h3>
+        <p>When things are fine, most leaders communicate pretty well. Under pressure, you revert. Some go quiet. Some go loud. Some get precise, some get vague. Your team is watching to see which version shows up.</p>
+        <div class="example">Ask yourself: "Do I communicate MORE or LESS when the stakes go up?"</div>
+      </div>
+    </div>
+
+    <div class="reveal-card">
+      <div class="reveal-num">2</div>
+      <div class="reveal-content">
+        <h3>Whether you protect people or protect yourself</h3>
+        <p>Under pressure, leaders either absorb it and shield their team, or they transmit it downward. Your people know which one you do. They've been watching longer than you realize.</p>
+        <div class="example">Ask yourself: "When I'm stressed, does my team feel it? Should they?"</div>
+      </div>
+    </div>
+
+    <div class="reveal-card">
+      <div class="reveal-num">3</div>
+      <div class="reveal-content">
+        <h3>Whether your values are real or decorative</h3>
+        <p>It's easy to champion your values when there's no cost. The high-pressure moment is when they either hold or they don't. Your team knows the difference between the value you talk about and the one you actually live.</p>
+        <div class="example">Ask yourself: "What value did I compromise the last time I was under real pressure?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SELF-CHECK -->
+  <div class="self-check-section">
+    <div class="self-check-header">&#10003; Self-Check — How Would You Handle This?</div>
+    <div class="self-check-body">
+      <h4>What's your move?</h4>
+      <div class="sc-scenario">
+        You're in the middle of a high-pressure week. A mistake happens on your team — not a disaster, but visible and embarrassing. Your director asks for a quick explanation. What do you do?
+      </div>
+      <div class="sc-options">
+        <button class="sc-option"><span class="sc-opt-letter">A</span><span>Give a quick explanation that subtly points to the team member who made the error</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">B</span><span>Own it directly: "It happened on my watch, here's what we're doing about it"</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">C</span><span>Focus only on the fix — avoid discussing what went wrong</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">D</span><span>Ask for more time to investigate before saying anything</span></button>
+      </div>
+      <button class="sc-reveal" onclick="revealAnswer()">See the Answer &#8595;</button>
+      <div class="sc-answer-box" id="sc-answer">
+        <div class="sc-answer-label">The Answer</div>
+        <h5>B — Own it, then fix it</h5>
+        <p>Option A might feel like honesty but it's deflection — and your team will know. It reveals a leader who protects their own reputation over their people. Option C avoids accountability. Option D can be appropriate in complex situations but here it's avoidance dressed as caution. Option B is the character move: take ownership, be clear about what's being done, and move forward. It's uncomfortable for about 30 seconds. It builds trust that lasts for months. Pressure just revealed which kind of leader you are — make sure you like what it shows.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHALLENGE -->
+  <div class="challenge">
+    <div class="challenge-label">This Week's Reflection</div>
+    <p>Think of a <span>high-pressure moment</span> this week.<br>What did it reveal about you as a leader?<br><span>Name it honestly — then decide if you like the answer.</span></p>
+  </div>
+
+  <!-- SURVEY -->
+  <div class="survey-section">
+    <div class="survey-label">1-Question Pulse Check</div>
+    <p>It's just one question — tap your answer below. No sign-in required.</p>
+    <!-- Replace WEEK13FORMID with the Tally form ID for this week -->
+    <iframe data-tally-src="https://tally.so/embed/WEEK13FORMID?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0" title="Leadership in 5 - Week 13 Pulse"></iframe>
+    <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="brand">BREEZE AVIATION GROUP — Leadership Development</div>
+    <div class="week">Week 13 &nbsp;·&nbsp; Jun 23, 2026</div>
+  </div>
+
+</div>
+
+<script>
+  function revealAnswer() {
+    const el = document.getElementById('sc-answer');
+    el.style.display = 'block';
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+</script>
+
+</body>
+</html>

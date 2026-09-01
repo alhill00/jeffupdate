@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multipliers — Leadership in 5 Book Breakdown</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    background: #001633;
+    color: #FFFFFF;
+    overflow-x: hidden;
+  }
+
+  /* ── Progress bar ── */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #174DFF, #C1DDFF, #FFD4AA, #FF527B);
+    z-index: 1000;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* ── Fade-in ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+  .fade-in.delay-1 { transition-delay: 0.15s; }
+  .fade-in.delay-2 { transition-delay: 0.3s; }
+  .fade-in.delay-3 { transition-delay: 0.45s; }
+  .fade-in.delay-4 { transition-delay: 0.6s; }
+
+  /* ── Section base ── */
+  .section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    position: relative;
+  }
+  .section-inner { max-width: 680px; width: 100%; position: relative; z-index: 2; }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #000633 0%, #0a1a4d 50%, #000633 100%);
+    text-align: center;
+    min-height: 100vh;
+  }
+  .hero-eyebrow {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #174DFF;
+    margin-bottom: 8px;
+  }
+  .hero-series {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #C1DDFF;
+    opacity: 0.6;
+    margin-bottom: 48px;
+  }
+  .hero h1 {
+    font-size: 52px;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 10px;
+  }
+  .hero h1 .accent { color: #174DFF; }
+  .hero .author {
+    font-size: 17px;
+    color: #C1DDFF;
+    font-weight: 400;
+    margin-bottom: 28px;
+    opacity: 0.8;
+  }
+  .hero .hook {
+    font-size: 18px;
+    color: #C1DDFF;
+    line-height: 1.75;
+    max-width: 540px;
+    margin: 0 auto 40px;
+  }
+  .hero .hook strong { color: #FFFFFF; }
+  .time-badge {
+    display: inline-block;
+    padding: 10px 26px;
+    border: 1px solid rgba(23,77,255,0.4);
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #C1DDFF;
+    letter-spacing: 1px;
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 32px; left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    animation: bounce 2s infinite;
+  }
+  .scroll-hint span { font-size: 11px; color: rgba(193,221,255,0.35); letter-spacing: 2px; text-transform: uppercase; }
+  .scroll-arrow { display: block; margin: 8px auto 0; font-size: 20px; color: rgba(23,77,255,0.5); }
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+
+  /* ── INTRO SECTION ── */
+  .intro-section { background: #001633; }
+  .intro-section h2 { font-size: 30px; font-weight: 800; margin-bottom: 20px; }
+  .intro-section p { font-size: 16px; color: #C1DDFF; line-height: 1.8; margin-bottom: 16px; }
+  .intro-callout {
+    margin-top: 32px;
+    padding: 24px 28px;
+    background: rgba(23,77,255,0.1);
+    border-left: 4px solid #174DFF;
+    border-radius: 0 12px 12px 0;
+    font-size: 17px;
+    color: #FFFFFF;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+
+  /* ── MULTIPLIER vs DIMINISHER ── */
+  .compare-section { background: linear-gradient(180deg, #001633 0%, #060e2a 100%); }
+  .compare-section h2 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+  .compare-section .sub { font-size: 15px; color: #C1DDFF; opacity: 0.75; margin-bottom: 40px; line-height: 1.6; }
+  .compare-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .compare-col {
+    padding: 24px 22px;
+    border-radius: 14px;
+  }
+  .compare-col.multiplier {
+    background: rgba(23,77,255,0.12);
+    border: 1px solid rgba(23,77,255,0.3);
+  }
+  .compare-col.diminisher {
+    background: rgba(255,82,123,0.08);
+    border: 1px solid rgba(255,82,123,0.25);
+  }
+  .compare-col-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .compare-col.multiplier .compare-col-label { color: #174DFF; }
+  .compare-col.diminisher .compare-col-label { color: #FF527B; }
+  .compare-item {
+    font-size: 14px;
+    color: #FFFFFF;
+    line-height: 1.55;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .compare-item:last-child { border-bottom: none; }
+  .compare-item::before { content: '→ '; color: rgba(255,255,255,0.3); }
+
+  .key-stat {
+    background: rgba(193,221,255,0.05);
+    border: 1px solid rgba(193,221,255,0.12);
+    border-radius: 14px;
+    padding: 28px 32px;
+    text-align: center;
+  }
+  .key-stat .stat-num { font-size: 64px; font-weight: 800; color: #174DFF; line-height: 1; }
+  .key-stat .stat-label { font-size: 14px; color: #C1DDFF; margin-top: 8px; line-height: 1.6; }
+
+  /* ── ACCIDENTAL DIMINISHER ── */
+  .accident-section { background: linear-gradient(180deg, #060e2a 0%, #0a0f2e 100%); }
+  .accident-section h2 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+  .accident-section h2 .red { color: #FF527B; }
+  .accident-section .sub { font-size: 15px; color: #C1DDFF; opacity: 0.75; margin-bottom: 36px; line-height: 1.6; }
+  .accident-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    padding: 20px 22px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    margin-bottom: 12px;
+  }
+  .accident-icon {
+    font-size: 22px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .accident-content h3 { font-size: 16px; font-weight: 700; color: #FFFFFF; margin-bottom: 4px; }
+  .accident-content .intend { font-size: 12px; color: #FF527B; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .accident-content p { font-size: 14px; color: rgba(193,221,255,0.8); line-height: 1.6; }
+
+  /* ── 5 DISCIPLINES ── */
+  .principle-section { padding: 80px 20px; min-height: auto; }
+  .discipline-header {
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+  .discipline-title {
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .discipline-tagline {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    opacity: 0.65;
+  }
+  .block-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .what-block { margin-bottom: 24px; }
+  .what-block p { font-size: 16px; line-height: 1.8; color: #FFFFFF; }
+  .quote-block {
+    margin: 24px 0;
+    padding: 28px 32px;
+    border-radius: 12px;
+    position: relative;
+  }
+  .quote-mark {
+    font-size: 60px;
+    font-weight: 800;
+    line-height: 1;
+    position: absolute;
+    top: 10px; left: 16px;
+    opacity: 0.12;
+  }
+  .quote-text {
+    font-size: 18px;
+    font-weight: 600;
+    font-style: italic;
+    line-height: 1.65;
+    position: relative;
+    z-index: 1;
+    color: #FFFFFF;
+  }
+  .quote-source { margin-top: 10px; font-size: 12px; font-style: normal; font-weight: 400; color: rgba(255,255,255,0.45); }
+  .sowhat-block { margin: 24px 0; }
+  .sowhat-block p { font-size: 16px; line-height: 1.8; color: #C1DDFF; }
+  .nowwhat-block {
+    margin-top: 24px;
+    padding: 22px 26px;
+    border-radius: 12px;
+    border-width: 1px;
+    border-style: solid;
+  }
+  .nowwhat-block h4 { font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+  .nowwhat-block p { font-size: 15px; color: #FFFFFF; line-height: 1.7; }
+  .action-step { display: flex; align-items: flex-start; margin-top: 10px; }
+  .action-bullet { width: 6px; height: 6px; border-radius: 50%; margin-right: 12px; margin-top: 8px; flex-shrink: 0; }
+  .divider { height: 1px; background: rgba(255,255,255,0.06); margin: 48px 0; }
+
+  /* Color themes */
+  .theme-blue .discipline-header { color: #174DFF; }
+  .theme-blue .discipline-tagline { color: #174DFF; }
+  .theme-blue .block-label { color: #174DFF; }
+  .theme-blue .quote-block { background: rgba(23,77,255,0.1); }
+  .theme-blue .quote-mark { color: #174DFF; }
+  .theme-blue .nowwhat-block { background: rgba(23,77,255,0.08); border-color: rgba(23,77,255,0.25); }
+  .theme-blue .nowwhat-block h4 { color: #174DFF; }
+  .theme-blue .action-bullet { background: #174DFF; }
+
+  .theme-tan .discipline-header { color: #FFD4AA; }
+  .theme-tan .discipline-tagline { color: #FFD4AA; }
+  .theme-tan .block-label { color: #FFD4AA; }
+  .theme-tan .quote-block { background: rgba(255,212,170,0.1); }
+  .theme-tan .quote-mark { color: #FFD4AA; }
+  .theme-tan .nowwhat-block { background: rgba(255,212,170,0.06); border-color: rgba(255,212,170,0.2); }
+  .theme-tan .nowwhat-block h4 { color: #FFD4AA; }
+  .theme-tan .action-bullet { background: #FFD4AA; }
+
+  .theme-lightblue .discipline-header { color: #C1DDFF; }
+  .theme-lightblue .discipline-tagline { color: #C1DDFF; }
+  .theme-lightblue .block-label { color: #C1DDFF; }
+  .theme-lightblue .quote-block { background: rgba(193,221,255,0.08); }
+  .theme-lightblue .quote-mark { color: #C1DDFF; }
+  .theme-lightblue .nowwhat-block { background: rgba(193,221,255,0.06); border-color: rgba(193,221,255,0.15); }
+  .theme-lightblue .nowwhat-block h4 { color: #C1DDFF; }
+  .theme-lightblue .action-bullet { background: #C1DDFF; }
+
+  .theme-red .discipline-header { color: #FF527B; }
+  .theme-red .discipline-tagline { color: #FF527B; }
+  .theme-red .block-label { color: #FF527B; }
+  .theme-red .quote-block { background: rgba(255,82,123,0.08); }
+  .theme-red .quote-mark { color: #FF527B; }
+  .theme-red .nowwhat-block { background: rgba(255,82,123,0.06); border-color: rgba(255,82,123,0.2); }
+  .theme-red .nowwhat-block h4 { color: #FF527B; }
+  .theme-red .action-bullet { background: #FF527B; }
+
+  .theme-green .discipline-header { color: #48C78E; }
+  .theme-green .discipline-tagline { color: #48C78E; }
+  .theme-green .block-label { color: #48C78E; }
+  .theme-green .quote-block { background: rgba(72,199,142,0.08); }
+  .theme-green .quote-mark { color: #48C78E; }
+  .theme-green .nowwhat-block { background: rgba(72,199,142,0.06); border-color: rgba(72,199,142,0.2); }
+  .theme-green .nowwhat-block h4 { color: #48C78E; }
+  .theme-green .action-bullet { background: #48C78E; }
+
+  /* ── SELF-CHECK ── */
+  .self-check { background: linear-gradient(180deg, #060e2a 0%, #001633 100%); }
+  .self-check h2 { font-size: 26px; font-weight: 800; color: #C1DDFF; margin-bottom: 10px; }
+  .self-check .sub { font-size: 15px; color: rgba(193,221,255,0.7); margin-bottom: 32px; line-height: 1.6; }
+  .sc-scenario {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 10px;
+    padding: 20px 24px;
+    font-size: 15px;
+    font-style: italic;
+    color: #FFFFFF;
+    line-height: 1.75;
+    margin-bottom: 20px;
+  }
+  .sc-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+  .sc-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 10px;
+    padding: 14px 18px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    width: 100%;
+    color: #FFFFFF;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .sc-option:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.18); }
+  .sc-opt-letter {
+    width: 26px;
+    height: 26px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .sc-reveal {
+    background: #174DFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+  .sc-reveal:hover { background: #0f3acc; }
+  .sc-answer-box {
+    display: none;
+    margin-top: 20px;
+    padding: 22px 26px;
+    background: rgba(23,77,255,0.08);
+    border: 1px solid rgba(23,77,255,0.25);
+    border-radius: 12px;
+  }
+  .sc-answer-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #174DFF; margin-bottom: 8px; }
+  .sc-answer-box h5 { font-size: 16px; font-weight: 800; color: #FFFFFF; margin-bottom: 10px; }
+  .sc-answer-box p { font-size: 14px; color: rgba(193,221,255,0.9); line-height: 1.7; }
+
+  /* ── REFLECTION ── */
+  .reflection-section { background: linear-gradient(135deg, #000633 0%, #0a1a4d 100%); text-align: center; }
+  .reflection-section h2 { font-size: 28px; font-weight: 800; margin-bottom: 20px; }
+  .reflection-section h2 .accent { color: #174DFF; }
+  .reflection-card {
+    background: rgba(23,77,255,0.1);
+    border: 1px solid rgba(23,77,255,0.25);
+    border-radius: 16px;
+    padding: 36px 32px;
+    margin-bottom: 28px;
+  }
+  .reflection-q {
+    font-size: 20px;
+    font-weight: 600;
+    color: #FFFFFF;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-style: italic;
+  }
+  .reflection-note { font-size: 14px; color: rgba(193,221,255,0.7); line-height: 1.6; }
+  .challenge-box {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 24px 28px;
+  }
+  .challenge-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #C1DDFF; margin-bottom: 12px; opacity: 0.65; }
+  .challenge-box p { font-size: 16px; color: #FFFFFF; line-height: 1.6; font-weight: 500; }
+  .challenge-box p span { color: #174DFF; font-weight: 700; }
+
+  /* ── SURVEY ── */
+  .survey-section {
+    background: #060e2a;
+    padding: 60px 20px;
+    text-align: center;
+  }
+  .survey-inner { max-width: 580px; margin: 0 auto; }
+  .survey-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; color: #174DFF; margin-bottom: 10px; }
+  .survey-section h3 { font-size: 22px; font-weight: 700; color: #FFFFFF; margin-bottom: 10px; }
+  .survey-section p { font-size: 14px; color: rgba(193,221,255,0.7); margin-bottom: 24px; line-height: 1.6; }
+
+  /* ── NAV DOTS ── */
+  .nav-dots {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 100;
+  }
+  .nav-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(193,221,255,0.2);
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+  .nav-dot.active { background: #174DFF; transform: scale(1.4); }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #000633;
+    padding: 20px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer .brand { color: rgba(193,221,255,0.6); font-size: 12px; font-weight: 600; letter-spacing: 0.5px; }
+  .footer .week { color: rgba(193,221,255,0.35); font-size: 11px; }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 36px; }
+    .compare-grid { grid-template-columns: 1fr; }
+    .nav-dots { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress"></div>
+
+<!-- NAV DOTS -->
+<div class="nav-dots" id="navDots">
+  <div class="nav-dot active" onclick="scrollToSection(0)" title="Start"></div>
+  <div class="nav-dot" onclick="scrollToSection(1)" title="The Core Idea"></div>
+  <div class="nav-dot" onclick="scrollToSection(2)" title="Accidental Diminisher"></div>
+  <div class="nav-dot" onclick="scrollToSection(3)" title="The 5 Disciplines"></div>
+  <div class="nav-dot" onclick="scrollToSection(4)" title="Self-Check"></div>
+  <div class="nav-dot" onclick="scrollToSection(5)" title="Reflection"></div>
+</div>
+
+<!-- ── HERO ── -->
+<div class="section hero" id="section-0">
+  <div class="section-inner">
+    <div class="fade-in">
+      <div class="hero-eyebrow">Book Breakdown</div>
+      <div class="hero-series">Leadership in 5 &nbsp;·&nbsp; June 16, 2026</div>
+    </div>
+    <div class="fade-in delay-1">
+      <h1><span class="accent">Multipliers</span><br>How the Best Leaders<br>Make Everyone Smarter</h1>
+      <div class="author">Liz Wiseman</div>
+    </div>
+    <div class="fade-in delay-2">
+      <p class="hook">Most leaders think they're helping their team. <strong>Most leaders are accidentally making them smaller.</strong> This book changes how you see your own impact — permanently.</p>
+    </div>
+    <div class="fade-in delay-3">
+      <div class="time-badge">5-minute read &nbsp;·&nbsp; Champion Others</div>
+    </div>
+    <div class="scroll-hint">
+      <span>scroll to explore</span>
+      <span class="scroll-arrow">&#8595;</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── THE CORE IDEA ── -->
+<div class="section intro-section" id="section-1">
+  <div class="section-inner">
+    <div class="fade-in">
+      <h2>The Question That Changes Everything</h2>
+    </div>
+    <div class="fade-in delay-1">
+      <p>Liz Wiseman spent years studying two types of leaders. Both were smart. Both were experienced. Both cared about their teams. But they produced radically different results.</p>
+      <p><strong>Multipliers</strong> created environments where people's intelligence expanded. Their teams did their best thinking, solved hard problems, and grew in capability. <strong>Diminishers</strong> — often without realizing it — created environments where people held back, waited to be told what to do, and played it safe.</p>
+      <p>The question Wiseman asks: <em>Which one are you?</em></p>
+    </div>
+    <div class="fade-in delay-2">
+      <div class="intro-callout">
+        "Multipliers get at least 2× the capability from their people — not by working them harder, but by using them more fully."<br><br>
+        <small style="font-weight:400; font-size:14px;">— Liz Wiseman, Multipliers</small>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MULTIPLIER vs DIMINISHER ── -->
+<div class="section compare-section" id="section-1b">
+  <div class="section-inner">
+    <div class="fade-in">
+      <h2>Multipliers vs. Diminishers</h2>
+      <p class="sub">Same situation. Completely different outcomes. The difference isn't IQ — it's how they use the intelligence around them.</p>
+    </div>
+    <div class="fade-in delay-1">
+      <div class="compare-grid">
+        <div class="compare-col multiplier">
+          <div class="compare-col-label">Multiplier</div>
+          <div class="compare-item">Assumes everyone has something to offer</div>
+          <div class="compare-item">Asks questions instead of giving answers</div>
+          <div class="compare-item">Creates space for people to think</div>
+          <div class="compare-item">Challenges people at the edge of their ability</div>
+          <div class="compare-item">Gives ownership and accountability</div>
+        </div>
+        <div class="compare-col diminisher">
+          <div class="compare-col-label">Diminisher</div>
+          <div class="compare-item">Believes they're the smartest in the room</div>
+          <div class="compare-item">Has the answer before the conversation starts</div>
+          <div class="compare-item">Dominates the room with their thinking</div>
+          <div class="compare-item">Micromanages because they know best</div>
+          <div class="compare-item">Keeps control, creates dependency</div>
+        </div>
+      </div>
+    </div>
+    <div class="fade-in delay-2">
+      <div class="key-stat">
+        <div class="stat-num">2×</div>
+        <div class="stat-label">Multipliers consistently extract twice the capability from the same people.<br>Not by adding resources — by changing how they lead.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── ACCIDENTAL DIMINISHER ── -->
+<div class="section accident-section" id="section-2">
+  <div class="section-inner">
+    <div class="fade-in">
+      <h2>The <span class="red">Accidental Diminisher</span></h2>
+      <p class="sub">Here's the uncomfortable truth Wiseman surfaces: <strong>most diminishers have no idea they're diminishing.</strong> They think they're helping. They think they're being a great leader. The behavior that feels supportive from the inside actually shuts down thinking on the outside.</p>
+    </div>
+    <div class="fade-in delay-1">
+      <div class="accident-card">
+        <div class="accident-icon">&#128161;</div>
+        <div class="accident-content">
+          <div class="intend">They intend to inspire</div>
+          <h3>The Idea Guy</h3>
+          <p>Always has a new idea. Always excited. Comes in with a new direction every week. The team nods along and quietly stops generating their own ideas — because why bother?</p>
+        </div>
+      </div>
+      <div class="accident-card">
+        <div class="accident-icon">&#128736;&#65039;</div>
+        <div class="accident-content">
+          <div class="intend">They intend to be helpful</div>
+          <h3>The Always-On Leader</h3>
+          <p>Available 24/7. Jumps in fast. Fixes problems before the team gets to struggle with them. The team learns: don't worry, the boss will handle it.</p>
+        </div>
+      </div>
+      <div class="accident-card">
+        <div class="accident-icon">&#127919;</div>
+        <div class="accident-content">
+          <div class="intend">They intend to drive results</div>
+          <h3>The Pacesetter</h3>
+          <p>Sets a high bar and demonstrates excellence. The problem: when they consistently show how it's done, the team stops trying to figure it out themselves and waits to be shown.</p>
+        </div>
+      </div>
+    </div>
+    <div class="fade-in delay-2">
+      <div style="background: rgba(255,82,123,0.07); border: 1px solid rgba(255,82,123,0.2); border-radius: 12px; padding: 22px 26px; margin-top: 24px;">
+        <p style="font-size: 15px; color: #FFFFFF; line-height: 1.7;"><strong style="color: #FF527B;">The hard question:</strong> Think about the last time you jumped in to solve a problem your team was working on, shared an idea before they'd finished theirs, or answered a question you could have turned back to them. You were being helpful. But what did you take away?</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── 5 DISCIPLINES ── -->
+<div class="principle-section section" id="section-3">
+  <div class="section-inner">
+    <div class="fade-in">
+      <h2 style="font-size: 22px; font-weight: 800; margin-bottom: 8px; color: #C1DDFF; letter-spacing: 1px; text-transform: uppercase; font-size: 14px;">The 5 Disciplines of Multipliers</h2>
+      <p style="font-size: 15px; color: rgba(193,221,255,0.65); margin-bottom: 40px; line-height: 1.6;">You don't have to master all five at once. Start with one.</p>
+    </div>
+
+    <!-- D1 -->
+    <div class="fade-in delay-1 theme-blue">
+      <div class="discipline-header">Discipline 1</div>
+      <div class="discipline-title">The Talent Magnet</div>
+      <div class="discipline-tagline">They find and use everyone's genius</div>
+      <div class="what-block">
+        <div class="block-label">What it looks like</div>
+        <p>Multipliers see capability in people that even those people can't see in themselves. They ask: "What are you uniquely brilliant at?" — and then they put people in positions that use that brilliance. They grow the talent pool by making people feel capable.</p>
+      </div>
+      <div class="quote-block">
+        <div class="quote-mark">"</div>
+        <div class="quote-text">People don't just work for Multipliers. They grow under them.</div>
+      </div>
+      <div class="nowwhat-block">
+        <h4>Try This Week</h4>
+        <p>Name one person on your team whose best skill isn't in their job description. Find one way to use it this week.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- D2 -->
+    <div class="fade-in theme-tan">
+      <div class="discipline-header">Discipline 2</div>
+      <div class="discipline-title">The Liberator</div>
+      <div class="discipline-tagline">They create space that requires your best</div>
+      <div class="what-block">
+        <div class="block-label">What it looks like</div>
+        <p>Liberators create an intense environment — not a relaxed one. But the intensity comes from the standard, not from fear. They give people room to think, make mistakes, and recover. When they speak, they ask: they don't tell. The implicit message: your thinking matters here.</p>
+      </div>
+      <div class="quote-block">
+        <div class="quote-mark">"</div>
+        <div class="quote-text">They create both safety and demand — a combination that brings out extraordinary thinking.</div>
+      </div>
+      <div class="nowwhat-block">
+        <h4>Try This Week</h4>
+        <p>In your next team meeting, ask a question and let silence sit for 10 full seconds before adding your own thinking. See what emerges.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- D3 -->
+    <div class="fade-in theme-lightblue">
+      <div class="discipline-header">Discipline 3</div>
+      <div class="discipline-title">The Challenger</div>
+      <div class="discipline-tagline">They stretch people past what they think is possible</div>
+      <div class="what-block">
+        <div class="block-label">What it looks like</div>
+        <p>Challengers don't hand solutions to their team — they hand them problems. Hard ones. Ones that require real thinking. They seed ideas and create space for the team to find the path. The result: people rise to the challenge because someone believed they could.</p>
+      </div>
+      <div class="quote-block">
+        <div class="quote-mark">"</div>
+        <div class="quote-text">They don't give people the answer. They give them the question — and then believe they'll find it.</div>
+      </div>
+      <div class="nowwhat-block">
+        <h4>Try This Week</h4>
+        <p>When someone brings you a problem, answer with: "What do you think?" and mean it. Don't follow it with your own answer.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- D4 -->
+    <div class="fade-in theme-red">
+      <div class="discipline-header">Discipline 4</div>
+      <div class="discipline-title">The Debate Maker</div>
+      <div class="discipline-tagline">They drive decisions through real debate</div>
+      <div class="what-block">
+        <div class="block-label">What it looks like</div>
+        <p>Diminishers make decisions in their heads and announce them. Multipliers create a rigorous debate process where the best thinking wins — not the loudest voice or the highest title. The team may not always agree with the outcome, but they own it, because they were in it.</p>
+      </div>
+      <div class="quote-block">
+        <div class="quote-mark">"</div>
+        <div class="quote-text">The best decisions don't come from the smartest person in the room. They come from the best conversation in the room.</div>
+      </div>
+      <div class="nowwhat-block">
+        <h4>Try This Week</h4>
+        <p>Before your next significant decision, ask the team: "What am I missing?" and let the answers change your thinking.</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- D5 -->
+    <div class="fade-in theme-green">
+      <div class="discipline-header">Discipline 5</div>
+      <div class="discipline-title">The Investor</div>
+      <div class="discipline-tagline">They invest in others to get results — not do the work for them</div>
+      <div class="what-block">
+        <div class="block-label">What it looks like</div>
+        <p>Multipliers give ownership, not tasks. They define what success looks like and then step back — providing resources and coaching, not oversight. They create leaders under them, not followers. When they leave a project, it runs better than when they were in it.</p>
+      </div>
+      <div class="quote-block">
+        <div class="quote-mark">"</div>
+        <div class="quote-text">The goal isn't to be needed. It's to build a team that doesn't need you.</div>
+      </div>
+      <div class="nowwhat-block">
+        <h4>Try This Week</h4>
+        <p>Pick one thing you're currently doing that someone on your team could own. Hand it off this week — fully, with the context and the authority to make decisions.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SELF-CHECK ── -->
+<div class="section self-check" id="section-4">
+  <div class="section-inner">
+    <div class="fade-in">
+      <h2>Self-Check</h2>
+      <p class="sub">Which type of leader showed up in your last team meeting?</p>
+    </div>
+    <div class="fade-in delay-1">
+      <div class="sc-scenario">
+        Your team is working through a difficult problem. Halfway through the discussion, you have a clear idea of the answer. You can tell the conversation is going to take another 20 minutes if left to run. What do you do?
+      </div>
+      <div class="sc-options">
+        <button class="sc-option"><span class="sc-opt-letter">A</span><span>Share your solution clearly — it'll save everyone time and move things forward</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">B</span><span>Ask a question that points the team in the direction of the answer without giving it away</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">C</span><span>Wait until the team reaches a dead end, then step in with your answer</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">D</span><span>Stay quiet, let the conversation continue, and see where the team lands — even if it takes longer</span></button>
+      </div>
+      <button class="sc-reveal" onclick="revealAnswer()">See the Answer &#8595;</button>
+      <div class="sc-answer-box" id="sc-answer">
+        <div class="sc-answer-label">The Answer</div>
+        <h5>B — Ask a question that guides without replacing</h5>
+        <p>Option A is the Diminisher move — it's efficient in the short term but signals "your thinking process isn't worth the time." Over time, your team stops engaging deeply because they know you'll land the plane anyway. Option C is worse — it creates a rescue dynamic. Option D is admirable but sometimes impractical. Option B is the Multiplier move: you use your knowledge to accelerate the team's thinking, not replace it. They arrive at the answer. They own it. That's worth the extra 5 minutes every time.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── REFLECTION ── -->
+<div class="section reflection-section" id="section-5">
+  <div class="section-inner">
+    <div class="fade-in">
+      <h2>Your <span class="accent">Reflection</span> This Week</h2>
+    </div>
+    <div class="fade-in delay-1">
+      <div class="reflection-card">
+        <div class="reflection-q">"Where might you be accidentally diminishing your team — and what would a Multiplier do instead?"</div>
+        <div class="reflection-note">Be honest with yourself. The accidental diminishers in Wiseman's research weren't bad leaders — they were good leaders with one blind spot. You may have one too. Name it.</div>
+      </div>
+    </div>
+    <div class="fade-in delay-2">
+      <div class="challenge-box">
+        <div class="challenge-label">This Week's Challenge</div>
+        <p>Pick <span>one Multiplier discipline</span> and practice it for five days.<br>Tell someone on your team you're working on it — <span>accountability changes the game.</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SURVEY ── -->
+<div class="survey-section">
+  <div class="survey-inner">
+    <div class="survey-eyebrow">1-Question Pulse Check</div>
+    <h3>What did this book unlock for you?</h3>
+    <p>One question. No sign-in. Your answer shapes what we cover next.</p>
+    <!-- Replace WEEK12FORMID with the Tally form ID for this week -->
+    <iframe data-tally-src="https://tally.so/embed/WEEK12FORMID?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0" title="Leadership in 5 - Week 12 Pulse"></iframe>
+    <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div class="brand">BREEZE AVIATION GROUP — Leadership Development</div>
+  <div class="week">Week 12 &nbsp;·&nbsp; Jun 16, 2026</div>
+</div>
+
+<script>
+  // Progress bar
+  window.addEventListener('scroll', () => {
+    const docH = document.documentElement.scrollHeight - window.innerHeight;
+    const prog = (window.scrollY / docH) * 100;
+    document.getElementById('progress').style.width = prog + '%';
+
+    // Update nav dots
+    const sections = document.querySelectorAll('[id^="section-"]');
+    const dots = document.querySelectorAll('.nav-dot');
+    let current = 0;
+    sections.forEach((s, i) => {
+      if (window.scrollY >= s.offsetTop - 200) current = i;
+    });
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+  });
+
+  // Fade-in observer
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Scroll to section
+  const sections = document.querySelectorAll('[id^="section-"]');
+  function scrollToSection(i) {
+    if (sections[i]) sections[i].scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Self-check
+  function revealAnswer() {
+    const el = document.getElementById('sc-answer');
+    el.style.display = 'block';
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+</script>
+</body>
+</html>

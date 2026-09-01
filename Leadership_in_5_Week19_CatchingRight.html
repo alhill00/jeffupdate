@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadership in 5 — Catching People Doing It Right</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    background: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .infographic {
+    width: 680px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 22, 51, 0.12);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #001633;
+    padding: 32px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FF527B, #FFD4AA, #FF527B);
+  }
+  .series-tag {
+    display: inline-block;
+    background: rgba(255, 82, 123, 0.25);
+    color: #FFD4AA;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .header h1 {
+    color: #FFFFFF;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .header h1 span { color: #FF527B; }
+  .header .subtitle {
+    color: #C1DDFF;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* ── PRINCIPLE BAR ── */
+  .principle-bar {
+    background: #FF527B;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .principle-bar span { opacity: 0.7; margin: 0 8px; }
+
+  /* ── INTRO ── */
+  .intro {
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid #E8EDF2;
+  }
+  .intro p { color: #4A5568; font-size: 15px; line-height: 1.65; }
+  .intro strong { color: #001633; }
+
+  /* ── RATIO VISUAL ── */
+  .ratio-section {
+    padding: 28px 40px 8px;
+  }
+  .ratio-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FF527B;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 16px;
+  }
+  .ratio-visual {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 20px;
+    background: #FFF5F8;
+    border-radius: 12px;
+    border: 1px solid #FFD4E0;
+  }
+  .ratio-dots {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  .dot.positive { background: #48C78E; }
+  .dot.negative { background: #FF527B; }
+  .ratio-text {
+    margin-left: 12px;
+    flex: 1;
+  }
+  .ratio-text h3 { font-size: 20px; font-weight: 800; color: #001633; margin-bottom: 4px; }
+  .ratio-text p { font-size: 13px; color: #718096; line-height: 1.5; }
+
+  /* ── WSW SECTION ── */
+  .wsw-section { padding: 8px 40px 8px; }
+  .wsw-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FF527B;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 16px;
+  }
+  .wsw-block {
+    margin-bottom: 14px;
+    padding: 18px 22px;
+    border-radius: 12px;
+  }
+  .wsw-block.what { background: #F0F4FF; border-left: 4px solid #1F7ADF; }
+  .wsw-block.sowhat { background: #FFF5F8; border-left: 4px solid #FF527B; }
+  .wsw-block.nowwhat { background: #001633; border-left: 4px solid #48C78E; }
+  .wsw-block-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .wsw-block.what .wsw-block-label { color: #1F7ADF; }
+  .wsw-block.sowhat .wsw-block-label { color: #FF527B; }
+  .wsw-block.nowwhat .wsw-block-label { color: #48C78E; }
+  .wsw-block h3 { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: #001633; }
+  .wsw-block.nowwhat h3 { color: #FFFFFF; }
+  .wsw-block p { font-size: 14px; line-height: 1.65; color: #4A5568; }
+  .wsw-block.nowwhat p { color: #C1DDFF; }
+
+  /* ── HOW TO DO IT ── */
+  .howto-section { padding: 8px 40px 20px; }
+  .howto-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FF527B;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 16px;
+  }
+  .formula-box {
+    background: #001633;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 14px;
+  }
+  .formula-box h3 {
+    color: #FFD4AA;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+  .formula-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+  .formula-row:last-child { margin-bottom: 0; }
+  .formula-tag {
+    background: rgba(255,212,170,0.15);
+    color: #FFD4AA;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .formula-row p { font-size: 14px; color: #FFFFFF; line-height: 1.55; }
+  .formula-row p em { color: #C1DDFF; }
+  .donts {
+    padding: 16px 20px;
+    background: #FFF5F8;
+    border-radius: 10px;
+    border-left: 4px solid #FF527B;
+  }
+  .donts h4 {
+    color: #FF527B;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+  .donts ul { list-style: none; padding: 0; }
+  .donts li {
+    color: #4A5568;
+    font-size: 13.5px;
+    line-height: 1.5;
+    padding-left: 20px;
+    position: relative;
+    margin-bottom: 3px;
+  }
+  .donts li::before {
+    content: '✕';
+    position: absolute;
+    left: 0;
+    color: #FF527B;
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  /* ── SELF-CHECK ── */
+  .self-check-section {
+    margin: 0 40px 20px;
+    background: #0a1e3d;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .self-check-header {
+    background: rgba(255,212,170,0.15);
+    padding: 12px 22px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #FFD4AA;
+    border-bottom: 1px solid rgba(255,212,170,0.15);
+  }
+  .self-check-body { padding: 20px 22px; }
+  .self-check-body h4 { color: #FFFFFF; font-size: 15px; font-weight: 700; margin-bottom: 14px; line-height: 1.4; }
+  .sc-scenario {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-style: italic;
+    color: #FFFFFF;
+    line-height: 1.7;
+    margin-bottom: 14px;
+  }
+  .sc-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .sc-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 11px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    width: 100%;
+    color: #FFFFFF;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .sc-option:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+  .sc-opt-letter {
+    width: 22px;
+    height: 22px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .sc-reveal {
+    background: #FF527B;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+  .sc-reveal:hover { background: #e0415e; }
+  .sc-answer-box {
+    display: none;
+    margin-top: 14px;
+    padding: 16px 20px;
+    background: rgba(255,212,170,0.08);
+    border: 1px solid rgba(255,212,170,0.25);
+    border-radius: 10px;
+  }
+  .sc-answer-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #FFD4AA; margin-bottom: 8px; }
+  .sc-answer-box h5 { font-size: 15px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px; }
+  .sc-answer-box p { font-size: 13.5px; color: #C1DDFF; line-height: 1.65; }
+
+  /* ── CHALLENGE ── */
+  .challenge {
+    margin: 4px 40px 24px;
+    padding: 22px 28px;
+    background: linear-gradient(135deg, #001633 0%, #0a2d5c 100%);
+    border-radius: 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .challenge::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #FF527B, #FFD4AA);
+  }
+  .challenge-label {
+    display: inline-block;
+    background: rgba(255, 82, 123, 0.25);
+    color: #FFD4AA;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .challenge p { color: #FFFFFF; font-size: 16px; font-weight: 600; line-height: 1.5; }
+  .challenge p span { color: #FFD4AA; font-weight: 800; }
+
+  /* ── SURVEY ── */
+  .survey-section {
+    margin: 0 40px 24px;
+    padding: 18px 22px;
+    background: #FFF5F8;
+    border-radius: 12px;
+    border: 1px solid #FFD4E0;
+    text-align: center;
+  }
+  .survey-label { font-size: 11px; font-weight: 700; color: #FF527B; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+  .survey-section p { font-size: 13px; color: #4A5568; margin-bottom: 14px; line-height: 1.5; }
+  .survey-link {
+    display: inline-block;
+    background: #FF527B;
+    color: white;
+    padding: 10px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+  .survey-link:hover { background: #e0415e; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #001633;
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer .brand { color: #C1DDFF; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; }
+  .footer .week { color: rgba(193, 221, 255, 0.5); font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="infographic">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="series-tag">Leadership in 5</div>
+    <h1>Catching People<br><span>Doing It Right</span></h1>
+    <div class="subtitle">The ratio matters more than you think.</div>
+  </div>
+
+  <!-- PRINCIPLE -->
+  <div class="principle-bar">
+    Be Seriously Nice <span>|</span> Inspiring &amp; Motivating
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <p>Most leaders are trained problem-solvers. We notice what's <strong>off, behind, or broken</strong> — because fixing things is the job. But that same instinct, left unchecked, means your team mostly hears from you when something's wrong. Here's how to fix the ratio.</p>
+  </div>
+
+  <!-- RATIO VISUAL -->
+  <div class="ratio-section">
+    <div class="ratio-label">The Ratio That Changes Everything</div>
+    <div class="ratio-visual">
+      <div class="ratio-dots">
+        <div class="dot positive">✓</div>
+        <div class="dot positive">✓</div>
+        <div class="dot positive">✓</div>
+        <div class="dot positive">✓</div>
+        <div class="dot positive">✓</div>
+        <div class="dot negative">✕</div>
+      </div>
+      <div class="ratio-text">
+        <h3>5 : 1</h3>
+        <p>Research shows high-performing teams experience <strong>5 positive interactions for every 1 corrective one</strong>. Most leaders are closer to 1:1 — or worse.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT / SO WHAT / NOW WHAT -->
+  <div class="wsw-section">
+    <div class="wsw-label">What · So What · Now What</div>
+
+    <div class="wsw-block what">
+      <div class="wsw-block-label">What</div>
+      <h3>Active recognition</h3>
+      <p>Catching people doing it right isn't passive — it's a deliberate habit. It means training your attention to notice what's going well, and then saying it out loud with enough specificity that it actually lands.</p>
+    </div>
+
+    <div class="wsw-block sowhat">
+      <div class="wsw-block-label">So What</div>
+      <h3>Generic praise is invisible</h3>
+      <p>"Great job today" is background noise. <strong>Specific recognition is unforgettable.</strong> When people know exactly what they did well, they do it again — and they remember who noticed.</p>
+    </div>
+
+    <div class="wsw-block nowwhat">
+      <div class="wsw-block-label">Now What</div>
+      <h3 style="color:#FFFFFF;">Use the formula below</h3>
+      <p>Three parts: what you saw, why it mattered, what it says about them. Takes 20 seconds. Lands for days.</p>
+    </div>
+  </div>
+
+  <!-- HOW TO DO IT -->
+  <div class="howto-section">
+    <div class="howto-label">The Recognition Formula</div>
+
+    <div class="formula-box">
+      <h3>I noticed + the specific behavior + the impact</h3>
+      <div class="formula-row">
+        <div class="formula-tag">I noticed</div>
+        <p><em>"I noticed how you handled that gate change under pressure —"</em></p>
+      </div>
+      <div class="formula-row">
+        <div class="formula-tag">Specific</div>
+        <p><em>"you kept the team calm, communicated clearly, and didn't miss a beat —"</em></p>
+      </div>
+      <div class="formula-row">
+        <div class="formula-tag">Impact</div>
+        <p><em>"that's exactly the kind of leadership that makes this team better."</em></p>
+      </div>
+    </div>
+
+    <div class="donts">
+      <h4>Skip these</h4>
+      <ul>
+        <li>"Good job today" — too vague to mean anything</li>
+        <li>Saving it for the next review — recognition has a short shelf life</li>
+        <li>Group praise when individual recognition is what's earned</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SELF-CHECK -->
+  <div class="self-check-section">
+    <div class="self-check-header">✓ Self-Check — How Would You Handle This?</div>
+    <div class="self-check-body">
+      <h4>What's your move?</h4>
+      <div class="sc-scenario">
+        A team member just handled a difficult passenger situation really well — stayed calm, found a solution, and kept everyone moving. You saw the whole thing. What do you do?
+      </div>
+      <div class="sc-options">
+        <button class="sc-option"><span class="sc-opt-letter">A</span><span>Nothing — they were just doing their job</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">B</span><span>Make a mental note to bring it up in their next review</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">C</span><span>Say something specific right now: "I noticed how you handled that — the way you stayed calm and found a solution on the spot was exactly what this team needs."</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">D</span><span>Send a group email praising the team for a great day</span></button>
+      </div>
+      <button class="sc-reveal" onclick="revealAnswer()">See the Answer &darr;</button>
+      <div class="sc-answer-box" id="sc-answer">
+        <div class="sc-answer-label">The Answer</div>
+        <h5>C — Specific, immediate, direct</h5>
+        <p>Option A misses the moment entirely — "just doing their job" is how great people start to feel invisible. Option B puts it in a drawer where it loses all its power. Option D is well-meaning but dilutes the individual recognition they earned. Option C is the move: specific behavior, real impact, delivered now. Twenty seconds of that is worth more than a quarterly review full of "keeps performing well."</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHALLENGE -->
+  <div class="challenge">
+    <div class="challenge-label">This Week's Challenge</div>
+    <p>Catch <span>3 people doing something right</span> this week.<br>Use the formula: I noticed + specific behavior + impact.<br><span>Say it out loud. Right when it happens.</span></p>
+  </div>
+
+  <!-- SURVEY -->
+  <div class="survey-section">
+    <div class="survey-label">1-Question Pulse Check</div>
+    <p>It's just one question — tap your answer below. No sign-in required.</p>
+    <iframe data-tally-src="https://tally.so/embed/xX9rdo?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0" title="Leadership in 5 - Week 19 Pulse"></iframe>
+    <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="brand">BREEZE AVIATION GROUP — Leadership Development</div>
+    <div class="week">Week 19 · May 12, 2026</div>
+  </div>
+
+</div>
+
+<script>
+  function revealAnswer() {
+    const el = document.getElementById('sc-answer');
+    el.style.display = 'block';
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+</script>
+
+</body>
+</html>

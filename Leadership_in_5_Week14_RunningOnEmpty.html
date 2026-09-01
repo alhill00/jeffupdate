@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadership in 5 — Leading When Everyone Is Running on Empty</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    background: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .infographic {
+    width: 680px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 6, 51, 0.12);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #000633;
+    padding: 32px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FFD4AA, #FF527B, #FFD4AA);
+  }
+  .series-tag {
+    display: inline-block;
+    background: rgba(255,212,170,0.2);
+    color: #FFD4AA;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .header h1 {
+    color: #FFFFFF;
+    font-size: 29px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .header h1 span { color: #FFD4AA; }
+  .header .subtitle {
+    color: rgba(193,221,255,0.75);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* ── MOMENT BANNER ── */
+  .moment-banner {
+    background: linear-gradient(90deg, #FFD4AA, #FF527B 50%, #FFD4AA);
+    color: #000633;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── INTRO ── */
+  .intro {
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid #E8EDF2;
+  }
+  .intro p { color: #4A5568; font-size: 15px; line-height: 1.65; }
+  .intro strong { color: #000633; }
+
+  /* ── STRATEGIES ── */
+  .strategies-section { padding: 28px 40px 8px; }
+  .section-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FFD4AA;
+    background: #000633;
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+  }
+
+  .strategy-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 14px;
+    padding: 20px 22px;
+    border-radius: 12px;
+    border: 1px solid #E8EDF2;
+  }
+  .strategy-card:nth-child(2) { background: #FFF5ED; border-color: #FFD4AA; }
+  .strategy-card:nth-child(3) { background: #FFF5F8; border-color: #FFD4E0; }
+  .strategy-card:nth-child(4) { background: #F0F4FF; border-color: #C1DDFF; }
+  .strategy-card:nth-child(5) { background: #F0FFF4; border-color: #9AE6B4; }
+
+  .strategy-num {
+    width: 42px; height: 42px;
+    background: #000633;
+    color: #FFD4AA;
+    font-size: 18px;
+    font-weight: 800;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .strategy-content h3 { font-size: 16px; font-weight: 700; color: #000633; margin-bottom: 5px; }
+  .strategy-content p { font-size: 14px; color: #4A5568; line-height: 1.6; }
+  .strategy-content .try-this {
+    display: inline-block;
+    background: rgba(0,6,51,0.06);
+    color: #000633;
+    font-size: 13px;
+    font-style: italic;
+    padding: 5px 12px;
+    border-radius: 6px;
+    margin-top: 8px;
+    border-left: 3px solid #FFD4AA;
+  }
+
+  /* ── REMINDER BOX ── */
+  .reminder {
+    margin: 4px 40px 24px;
+    padding: 20px 24px;
+    background: #000633;
+    border-radius: 12px;
+    display: flex; align-items: flex-start; gap: 16px;
+  }
+  .reminder-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+  .reminder-text h4 { color: #FFD4AA; font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .reminder-text p { color: #C1DDFF; font-size: 14px; line-height: 1.6; }
+
+  /* ── SELF-CHECK ── */
+  .self-check-section {
+    margin: 0 40px 20px;
+    background: #0a1e3d;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .self-check-header {
+    background: rgba(255,212,170,0.15);
+    padding: 12px 22px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #FFD4AA;
+    border-bottom: 1px solid rgba(255,212,170,0.15);
+  }
+  .self-check-body { padding: 20px 22px; }
+  .self-check-body h4 { color: #FFFFFF; font-size: 15px; font-weight: 700; margin-bottom: 14px; line-height: 1.4; }
+  .sc-scenario {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-style: italic;
+    color: #FFFFFF;
+    line-height: 1.7;
+    margin-bottom: 14px;
+  }
+  .sc-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .sc-option {
+    display: flex; align-items: flex-start; gap: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px; padding: 11px 14px;
+    cursor: pointer; transition: all 0.2s;
+    text-align: left; width: 100%;
+    color: #FFFFFF;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    font-size: 13.5px; line-height: 1.5;
+  }
+  .sc-option:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+  .sc-opt-letter {
+    width: 22px; height: 22px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    flex-shrink: 0; margin-top: 1px;
+  }
+  .sc-reveal {
+    background: #FFD4AA;
+    color: #000633;
+    border: none; border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 13px; font-weight: 700;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    cursor: pointer; letter-spacing: 0.5px; transition: background 0.2s;
+  }
+  .sc-reveal:hover { background: #f0c090; }
+  .sc-answer-box {
+    display: none;
+    margin-top: 14px; padding: 16px 20px;
+    background: rgba(255,212,170,0.08);
+    border: 1px solid rgba(255,212,170,0.25);
+    border-radius: 10px;
+  }
+  .sc-answer-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #FFD4AA; margin-bottom: 8px; }
+  .sc-answer-box h5 { font-size: 15px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px; }
+  .sc-answer-box p { font-size: 13.5px; color: rgba(193,221,255,0.9); line-height: 1.65; }
+
+  /* ── CHALLENGE ── */
+  .challenge {
+    margin: 4px 40px 24px;
+    padding: 22px 28px;
+    background: linear-gradient(135deg, #000633 0%, #0a2d5c 100%);
+    border-radius: 14px;
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .challenge::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #FFD4AA, #FF527B);
+  }
+  .challenge-label {
+    display: inline-block;
+    background: rgba(255,212,170,0.2);
+    color: #FFD4AA;
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 4px 14px; border-radius: 20px; margin-bottom: 10px;
+  }
+  .challenge p { color: #FFFFFF; font-size: 16px; font-weight: 600; line-height: 1.6; }
+  .challenge p span { color: #FFD4AA; font-weight: 800; }
+
+  /* ── SURVEY ── */
+  .survey-section {
+    margin: 0 40px 24px;
+    padding: 18px 22px;
+    background: #FFF5ED;
+    border-radius: 12px;
+    border: 1px solid #FFD4AA;
+    text-align: center;
+  }
+  .survey-label { font-size: 11px; font-weight: 700; color: #C07000; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+  .survey-section p { font-size: 13px; color: #4A5568; margin-bottom: 14px; line-height: 1.5; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #000633;
+    padding: 16px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer .brand { color: #C1DDFF; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; }
+  .footer .week { color: rgba(193, 221, 255, 0.5); font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="infographic">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="series-tag">Leadership in 5 · End of Quarter</div>
+    <h1>Leading When Everyone<br>Is <span>Running on Empty</span></h1>
+    <div class="subtitle">Summer ops is relentless. Your team feels it. Here's how to keep them going.</div>
+  </div>
+
+  <!-- MOMENT BANNER -->
+  <div class="moment-banner">
+    End of June &nbsp;·&nbsp; Q2 Stretch Run
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <p>By the end of June, most airline teams are tired. The summer surge is real — and so is the grind. <strong>Your team doesn't need a pep talk.</strong> They need a leader who sees the weight they're carrying and gives them something concrete. Here are four ways to do that this week.</p>
+  </div>
+
+  <!-- 4 STRATEGIES -->
+  <div class="strategies-section">
+    <div class="section-label">4 Energy Strategies for Right Now</div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">1</div>
+      <div class="strategy-content">
+        <h3>Name the weight out loud</h3>
+        <p>The most underrated leadership move: acknowledge what's real. "I know this has been a hard stretch. I see how hard you're working." You don't need to fix anything to say that. Invisible weight gets heavier when no one acknowledges it.</p>
+        <div class="try-this">"This has been a grind. I want you to know I notice it."</div>
+      </div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">2</div>
+      <div class="strategy-content">
+        <h3>Take one thing off</h3>
+        <p>Energy goes up when something comes off the list. Look at your team's week and find one thing — a meeting, a report, a low-priority task — that can wait or disappear entirely. A small act of removal signals: I'm managing up so you don't have to carry it.</p>
+        <div class="try-this">"We're skipping the Thursday status update. Use that hour for whatever you need."</div>
+      </div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">3</div>
+      <div class="strategy-content">
+        <h3>Catch wins in real time — specifically</h3>
+        <p>During high-pressure stretches, specific recognition hits 10× harder than usual because people are running low and feeling invisible. Don't save it for an email or a review. The moment you see it, say it. Use the formula: I noticed + what they did + why it mattered.</p>
+        <div class="try-this">"I noticed how you handled that delay — you kept the whole gate calm. That's the job."</div>
+      </div>
+    </div>
+
+    <div class="strategy-card">
+      <div class="strategy-num">4</div>
+      <div class="strategy-content">
+        <h3>Protect your own tank</h3>
+        <p>You can't keep refueling others from an empty tank. Your team mirrors your energy — when you're fraying, they feel it before you say anything. What does your reset look like? Name it, schedule it, and actually do it. This is not optional; it's operational.</p>
+        <div class="try-this">"What's the one thing that actually restores you? Build it into this week — non-negotiably."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REMINDER BOX -->
+  <div class="reminder">
+    <div class="reminder-icon">&#9889;</div>
+    <div class="reminder-text">
+      <h4>The myth of "push through"</h4>
+      <p>The best leaders in high-pressure environments aren't the ones who grind hardest — they're the ones who know how to protect energy: their own and their team's. Stamina is a leadership skill. Model it.</p>
+    </div>
+  </div>
+
+  <!-- SELF-CHECK -->
+  <div class="self-check-section">
+    <div class="self-check-header">&#10003; Self-Check — How Would You Handle This?</div>
+    <div class="self-check-body">
+      <h4>What's your move?</h4>
+      <div class="sc-scenario">
+        It's the last week of June. Your team has been pushing hard all month. One of your stronger team members tells you they're exhausted and asks if there's any flexibility on a non-critical deadline. What do you do?
+      </div>
+      <div class="sc-options">
+        <button class="sc-option"><span class="sc-opt-letter">A</span><span>Hold the deadline — others are tired too and it's not fair to adjust for one person</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">B</span><span>Extend it immediately, no questions — they deserve the break</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">C</span><span>Ask what they need, evaluate the actual cost of flexibility, and then decide — prioritizing both the person and the work</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">D</span><span>Acknowledge the exhaustion but remind them that everyone is in the same position</span></button>
+      </div>
+      <button class="sc-reveal" onclick="revealAnswer()">See the Answer &#8595;</button>
+      <div class="sc-answer-box" id="sc-answer">
+        <div class="sc-answer-label">The Answer</div>
+        <h5>C — Ask, evaluate, then decide thoughtfully</h5>
+        <p>Option A treats fairness as sameness, which isn't leadership — it's rule-following. Option B is instinct but skips the judgment call. Option D is the "suck it up" message dressed in empathy, and your team member will know the difference. Option C is the move: take their signal seriously, evaluate the actual impact (is this deadline truly immovable?), and make a real decision with them rather than at them. Strong leaders invest in the people who tell them the truth about where they are — because those people are trustworthy, and protecting them is smart management.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHALLENGE -->
+  <div class="challenge">
+    <div class="challenge-label">This Week's Challenge</div>
+    <p>Pick <span>one of the 4 strategies</span> you're not currently using.<br>Do it once this week. <span>See what it unlocks.</span></p>
+  </div>
+
+  <!-- SURVEY -->
+  <div class="survey-section">
+    <div class="survey-label">1-Question Pulse Check</div>
+    <p>It's just one question — tap your answer below. No sign-in required.</p>
+    <!-- Replace WEEK14FORMID with the Tally form ID for this week -->
+    <iframe data-tally-src="https://tally.so/embed/WEEK14FORMID?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0" title="Leadership in 5 - Week 14 Pulse"></iframe>
+    <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="brand">BREEZE AVIATION GROUP — Leadership Development</div>
+    <div class="week">Week 14 &nbsp;·&nbsp; Jun 30, 2026</div>
+  </div>
+
+</div>
+
+<script>
+  function revealAnswer() {
+    const el = document.getElementById('sc-answer');
+    el.style.display = 'block';
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+</script>
+
+</body>
+</html>

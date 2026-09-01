@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadership in 5 — Week 10</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Arial, sans-serif;
+  }
+  .card {
+    width: 640px;
+    background: #ffffff;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 40px rgba(0,6,51,0.15);
+  }
+
+  /* HEADER */
+  .header {
+    background: #000633;
+    padding: 28px 36px 24px;
+    position: relative;
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .brand {
+    color: #C1DDFF;
+    font-size: 11px;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .week-badge {
+    background: #174DFF;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 20px;
+  }
+  .title {
+    color: #ffffff;
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .subtitle {
+    color: #C1DDFF;
+    font-size: 13px;
+    font-weight: 400;
+  }
+  .tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+  }
+  .tag {
+    background: rgba(196,221,255,0.15);
+    border: 1px solid rgba(196,221,255,0.3);
+    color: #C1DDFF;
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  /* INTRO */
+  .intro {
+    background: #174DFF;
+    padding: 18px 36px;
+    color: #fff;
+    font-size: 14px;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+  .intro strong {
+    font-weight: 700;
+  }
+
+  /* CHECKLIST */
+  .checklist-section {
+    padding: 28px 36px 20px;
+  }
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #174DFF;
+    margin-bottom: 18px;
+  }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid #eef2f8;
+  }
+  .check-item:last-child {
+    border-bottom: none;
+  }
+  .check-num {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    background: #000633;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 14px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+  .check-content {}
+  .check-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #000633;
+    margin-bottom: 4px;
+    line-height: 1.2;
+  }
+  .check-desc {
+    font-size: 13px;
+    color: #4a5568;
+    line-height: 1.55;
+  }
+  .check-desc em {
+    font-style: italic;
+    color: #174DFF;
+    font-weight: 500;
+  }
+
+  /* CTA */
+  .cta {
+    background: #C1DDFF;
+    margin: 0 36px 24px;
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .cta-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .cta-text {
+    font-size: 13px;
+    color: #000633;
+    line-height: 1.55;
+  }
+  .cta-text strong {
+    font-weight: 700;
+    display: block;
+    margin-bottom: 2px;
+    font-size: 13.5px;
+  }
+
+  /* REFLECTION */
+  .reflection {
+    background: #FFF5BD;
+    margin: 0 36px 28px;
+    border-radius: 10px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .reflection-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .reflection-text {
+    font-size: 13px;
+    color: #000633;
+    line-height: 1.55;
+  }
+  .reflection-text strong {
+    font-weight: 700;
+    display: block;
+    margin-bottom: 3px;
+    color: #000633;
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  /* FOOTER */
+  .footer {
+    background: #000633;
+    padding: 14px 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-left {
+    color: #C1DDFF;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .footer-right {
+    color: rgba(196,221,255,0.55);
+    font-size: 10.5px;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-top">
+      <div class="brand">Leadership in 5</div>
+      <div class="week-badge">Week 10 &nbsp;·&nbsp; Jun 2</div>
+    </div>
+    <div class="title">The Pre-Summer<br>Ops Huddle</div>
+    <div class="subtitle">Whether your summer gets busier or your team thins out — prep now.</div>
+    <div class="tags">
+      <span class="tag">Promote Ownership</span>
+      <span class="tag">Collaboration &amp; Teamwork</span>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    Summer at Breeze means two things: <strong>the ops tempo goes up,</strong> and <strong>vacation requests pile up.</strong>
+    Whether you're running harder or running leaner — your team's capacity is about to be tested.
+    Take 5 minutes and close the gaps before they find you first.
+  </div>
+
+  <!-- CHECKLIST -->
+  <div class="checklist-section">
+    <div class="section-label">Your 5-Point Pre-Summer Checklist</div>
+
+    <div class="check-item">
+      <div class="check-num">1</div>
+      <div class="check-content">
+        <div class="check-title">Coverage gaps are identified and owned.</div>
+        <div class="check-desc">Do you know who's off, when, and who covers? <em>Surprises on your busiest days start here.</em></div>
+      </div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-num">2</div>
+      <div class="check-content">
+        <div class="check-title">Your team knows the top 2–3 priorities for summer.</div>
+        <div class="check-desc">When pace picks up, people default to what they think matters. <em>Make sure they're right.</em></div>
+      </div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-num">3</div>
+      <div class="check-content">
+        <div class="check-title">Your communication rhythm is set.</div>
+        <div class="check-desc">Brief daily or weekly syncs prevent 10 separate "quick questions." <em>Schedule them now.</em></div>
+      </div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-num">4</div>
+      <div class="check-content">
+        <div class="check-title">Decision authority is clear when you're unreachable.</div>
+        <div class="check-desc">Who calls the audible if you're in the air, on a call, or unavailable? <em>Your team shouldn't have to guess.</em></div>
+      </div>
+    </div>
+
+    <div class="check-item">
+      <div class="check-num">5</div>
+      <div class="check-content">
+        <div class="check-title">You have a plan to protect your team's energy.</div>
+        <div class="check-desc">Summer burns people out. <em>What's one thing you'll do to keep your team running strong?</em></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <div class="cta-icon">&#9654;</div>
+    <div class="cta-text">
+      <strong>This week's challenge</strong>
+      Run this checklist before Tuesday. Pick the one gap that needs your attention most — and close it before summer hits.
+    </div>
+  </div>
+
+  <!-- REFLECTION -->
+  <div class="reflection">
+    <div class="reflection-icon">&#128161;</div>
+    <div class="reflection-text">
+      <strong>Weekly Reflection</strong>
+      After running the checklist, what is the one thing your team most needs from you heading into summer?
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">Breeze Airways &nbsp;·&nbsp; Leadership Development</div>
+    <div class="footer-right">5 minutes. Every Tuesday.</div>
+  </div>
+
+</div>
+</body>
+</html>

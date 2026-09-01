@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadership in 5 — The 4D Framework</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a1a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    overflow: hidden;
+  }
+
+  .container {
+    width: 600px;
+    height: 600px;
+    background: #001633;
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+
+  /* ── Slide system ── */
+  .slide {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 40px;
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+    pointer-events: none;
+  }
+  .slide.active {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+
+  /* ── Slide 1: Title ── */
+  .slide-title {
+    background: linear-gradient(135deg, #001633 0%, #0a2a5c 100%);
+    text-align: center;
+  }
+  .slide-title .series-tag {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #1F7ADF;
+    margin-bottom: 8px;
+  }
+  .slide-title .principle-tag {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #FFD4AA;
+    margin-bottom: 32px;
+  }
+  .slide-title h1 {
+    font-size: 52px;
+    font-weight: 800;
+    color: #FFFFFF;
+    line-height: 1.1;
+    margin-bottom: 16px;
+  }
+  .slide-title h1 span {
+    color: #1F7ADF;
+  }
+  .slide-title .subtitle {
+    font-size: 18px;
+    color: #C1DDFF;
+    font-weight: 400;
+    max-width: 400px;
+    line-height: 1.5;
+  }
+
+  /* ── Decorative elements ── */
+  .corner-accent {
+    position: absolute;
+    width: 80px;
+    height: 80px;
+    border: 2px solid rgba(31, 122, 223, 0.2);
+  }
+  .corner-accent.tl { top: 20px; left: 20px; border-right: none; border-bottom: none; }
+  .corner-accent.br { bottom: 20px; right: 20px; border-left: none; border-top: none; }
+
+  /* ── Slide 2-5: Individual D cards ── */
+  .slide-d {
+    background: #001633;
+    padding: 50px;
+  }
+  .slide-d .d-number {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #FFD4AA;
+    margin-bottom: 12px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.2s forwards;
+  }
+  .slide-d .d-letter {
+    font-size: 120px;
+    font-weight: 800;
+    color: #1F7ADF;
+    line-height: 1;
+    margin-bottom: 4px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.3s forwards;
+  }
+  .slide-d .d-word {
+    font-size: 42px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.4s forwards;
+  }
+  .slide-d .d-desc {
+    font-size: 16px;
+    color: #C1DDFF;
+    line-height: 1.7;
+    max-width: 440px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.5s forwards;
+  }
+  .slide-d .d-desc strong {
+    color: #FFD4AA;
+    font-weight: 700;
+  }
+  .slide-d .d-example {
+    margin-top: 20px;
+    padding: 16px 20px;
+    background: rgba(31, 122, 223, 0.1);
+    border-left: 3px solid #1F7ADF;
+    border-radius: 0 8px 8px 0;
+    font-size: 14px;
+    color: #C1DDFF;
+    font-style: italic;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.6s forwards;
+  }
+
+  /* color accents per D */
+  .slide-do .d-letter { color: #1F7ADF; }
+  .slide-delegate .d-letter { color: #FFD4AA; }
+  .slide-defer .d-letter { color: #C1DDFF; }
+  .slide-drop .d-letter { color: #FF527B; }
+
+  .slide-do .d-example { border-left-color: #1F7ADF; background: rgba(31,122,223,0.1); }
+  .slide-delegate .d-example { border-left-color: #FFD4AA; background: rgba(255,212,170,0.08); }
+  .slide-defer .d-example { border-left-color: #C1DDFF; background: rgba(193,221,255,0.08); }
+  .slide-drop .d-example { border-left-color: #FF527B; background: rgba(255,82,123,0.08); }
+
+  /* ── Slide 6: The Grid Overview ── */
+  .slide-grid {
+    background: #001633;
+    padding: 40px;
+  }
+  .slide-grid h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #FFFFFF;
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  .grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    width: 100%;
+  }
+  .grid-card {
+    padding: 24px;
+    border-radius: 12px;
+    opacity: 0;
+  }
+  .grid-card:nth-child(1) { background: rgba(31,122,223,0.15); border: 1px solid rgba(31,122,223,0.3); animation: popIn 0.4s ease 0.2s forwards; }
+  .grid-card:nth-child(2) { background: rgba(255,212,170,0.1); border: 1px solid rgba(255,212,170,0.25); animation: popIn 0.4s ease 0.4s forwards; }
+  .grid-card:nth-child(3) { background: rgba(193,221,255,0.1); border: 1px solid rgba(193,221,255,0.2); animation: popIn 0.4s ease 0.6s forwards; }
+  .grid-card:nth-child(4) { background: rgba(255,82,123,0.1); border: 1px solid rgba(255,82,123,0.25); animation: popIn 0.4s ease 0.8s forwards; }
+
+  .grid-card .gc-letter {
+    font-size: 32px;
+    font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .grid-card:nth-child(1) .gc-letter { color: #1F7ADF; }
+  .grid-card:nth-child(2) .gc-letter { color: #FFD4AA; }
+  .grid-card:nth-child(3) .gc-letter { color: #C1DDFF; }
+  .grid-card:nth-child(4) .gc-letter { color: #FF527B; }
+
+  .grid-card .gc-word {
+    font-size: 16px;
+    font-weight: 700;
+    color: #FFFFFF;
+    margin-bottom: 8px;
+  }
+  .grid-card .gc-desc {
+    font-size: 12px;
+    color: rgba(193,221,255,0.8);
+    line-height: 1.5;
+  }
+
+  /* ── Slide 7: Self-Audit ── */
+  .slide-audit {
+    background: linear-gradient(135deg, #001633 0%, #0a1e3d 100%);
+    padding: 40px;
+  }
+  .slide-audit .audit-header {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .slide-audit .audit-header h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 6px;
+  }
+  .slide-audit .audit-header h2 .highlight-dump {
+    color: #FF527B;
+  }
+  .slide-audit .audit-header h2 .highlight-del {
+    color: #1F7ADF;
+  }
+  .slide-audit .audit-header p {
+    font-size: 13px;
+    color: #C1DDFF;
+  }
+  .audit-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .audit-table thead th {
+    padding: 14px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    text-align: left;
+  }
+  .audit-table thead th:first-child {
+    background: rgba(255,82,123,0.2);
+    color: #FF527B;
+  }
+  .audit-table thead th:last-child {
+    background: rgba(31,122,223,0.2);
+    color: #1F7ADF;
+  }
+  .audit-table tbody td {
+    padding: 12px 20px;
+    font-size: 13px;
+    color: #C1DDFF;
+    line-height: 1.5;
+    border-bottom: 1px solid rgba(193,221,255,0.08);
+    vertical-align: top;
+  }
+  .audit-table tbody tr {
+    opacity: 0;
+    animation: fadeUp 0.4s ease forwards;
+  }
+  .audit-table tbody tr:nth-child(1) { animation-delay: 0.3s; }
+  .audit-table tbody tr:nth-child(2) { animation-delay: 0.5s; }
+  .audit-table tbody tr:nth-child(3) { animation-delay: 0.7s; }
+  .audit-table tbody tr:nth-child(4) { animation-delay: 0.9s; }
+  .audit-table tbody tr:nth-child(5) { animation-delay: 1.1s; }
+
+  .audit-table tbody td:first-child {
+    color: rgba(255,82,123,0.85);
+  }
+  .audit-table tbody td:last-child {
+    color: rgba(193,221,255,0.95);
+  }
+  .audit-icon {
+    display: inline-block;
+    width: 18px;
+    text-align: center;
+    margin-right: 6px;
+  }
+
+  /* ── Slide 8: CTA ── */
+  .slide-cta {
+    background: linear-gradient(135deg, #001633 0%, #0a2a5c 100%);
+    text-align: center;
+  }
+  .slide-cta .cta-challenge {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #FFD4AA;
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.2s forwards;
+  }
+  .slide-cta h2 {
+    font-size: 30px;
+    font-weight: 800;
+    color: #FFFFFF;
+    line-height: 1.3;
+    margin-bottom: 28px;
+    max-width: 460px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.4s forwards;
+  }
+  .slide-cta .cta-steps {
+    text-align: left;
+    max-width: 400px;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.6s forwards;
+  }
+  .slide-cta .cta-step {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+  .slide-cta .cta-step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #1F7ADF;
+    color: #FFFFFF;
+    font-size: 13px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .slide-cta .cta-step-text {
+    font-size: 15px;
+    color: #C1DDFF;
+    line-height: 1.5;
+  }
+  .slide-cta .cta-step-text strong {
+    color: #FFFFFF;
+  }
+  .slide-cta .cta-footer {
+    margin-top: 28px;
+    font-size: 12px;
+    color: rgba(193,221,255,0.5);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    opacity: 0;
+    animation: fadeUp 0.5s ease 0.8s forwards;
+  }
+
+  /* ── Progress dots ── */
+  .progress-bar {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+  }
+  .progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(193,221,255,0.2);
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  .progress-dot.active {
+    background: #1F7ADF;
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  /* ── Navigation arrows ── */
+  .nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(31,122,223,0.15);
+    border: 1px solid rgba(31,122,223,0.3);
+    color: #C1DDFF;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+  .nav-arrow:hover {
+    background: rgba(31,122,223,0.3);
+    color: #FFFFFF;
+  }
+  .nav-prev { left: 12px; }
+  .nav-next { right: 12px; }
+
+  /* ── Auto-play indicator ── */
+  .autoplay-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #1F7ADF, #FFD4AA);
+    z-index: 100;
+    width: 0%;
+    transition: width linear;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes popIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="slideshow">
+  <div class="autoplay-bar" id="autoplayBar"></div>
+
+  <!-- Slide 1: Title -->
+  <div class="slide slide-title active" data-index="0">
+    <div class="corner-accent tl"></div>
+    <div class="corner-accent br"></div>
+    <div class="series-tag">Leadership in 5</div>
+    <div class="principle-tag">Promote Ownership</div>
+    <h1>The <span>4D</span><br>Framework</h1>
+    <p class="subtitle">A smarter way to manage your time and grow your team in under 5 minutes.</p>
+  </div>
+
+  <!-- Slide 2: DO -->
+  <div class="slide slide-d slide-do" data-index="1">
+    <div class="d-number">01 of 04</div>
+    <div class="d-letter">D</div>
+    <div class="d-word">Do</div>
+    <div class="d-desc">
+      Tasks that require <strong>your expertise</strong> and <strong>your authority</strong>. These are the things only you can do — or that you do significantly better than anyone else.
+    </div>
+    <div class="d-example">"This performance conversation needs to come from me directly."</div>
+  </div>
+
+  <!-- Slide 3: DELEGATE -->
+  <div class="slide slide-d slide-delegate" data-index="2">
+    <div class="d-number">02 of 04</div>
+    <div class="d-letter">D</div>
+    <div class="d-word">Delegate</div>
+    <div class="d-desc">
+      Tasks someone else <strong>can do</strong> — and that will <strong>stretch them</strong>. Delegation isn't offloading. It's developing. Give them the <strong>what</strong> and the <strong>why</strong>, not just the task.
+    </div>
+    <div class="d-example">"Can you own the schedule build this month? Here's why it matters and what good looks like."</div>
+  </div>
+
+  <!-- Slide 4: DEFER -->
+  <div class="slide slide-d slide-defer" data-index="3">
+    <div class="d-number">03 of 04</div>
+    <div class="d-letter">D</div>
+    <div class="d-word">Defer</div>
+    <div class="d-desc">
+      Important but <strong>not urgent</strong>. These tasks need a home on your calendar — not your "I'll get to it" list. Block time or they'll never happen.
+    </div>
+    <div class="d-example">"Updating the SOP matters, but it's not this week. Blocking Thursday the 16th."</div>
+  </div>
+
+  <!-- Slide 5: DROP -->
+  <div class="slide slide-d slide-drop" data-index="4">
+    <div class="d-number">04 of 04</div>
+    <div class="d-letter">D</div>
+    <div class="d-word">Drop</div>
+    <div class="d-desc">
+      The hardest D. These are tasks that <strong>feel</strong> productive but <strong>don't move the needle</strong>. If it's not aligned with your goals or your team's priorities — let it go.
+    </div>
+    <div class="d-example">"That recurring meeting with no agenda? Cancel it. Free up 30 minutes for real work."</div>
+  </div>
+
+  <!-- Slide 6: Grid Overview -->
+  <div class="slide slide-grid" data-index="5">
+    <h2>Your 4D Decision Filter</h2>
+    <div class="grid-container">
+      <div class="grid-card">
+        <div class="gc-letter">Do</div>
+        <div class="gc-word">Only You</div>
+        <div class="gc-desc">Requires your authority, expertise, or personal touch</div>
+      </div>
+      <div class="grid-card">
+        <div class="gc-letter">Delegate</div>
+        <div class="gc-word">Grow Someone</div>
+        <div class="gc-desc">Others can do it — and it develops them in the process</div>
+      </div>
+      <div class="grid-card">
+        <div class="gc-letter">Defer</div>
+        <div class="gc-word">Schedule It</div>
+        <div class="gc-desc">Important but not now — block real time on the calendar</div>
+      </div>
+      <div class="grid-card">
+        <div class="gc-letter">Drop</div>
+        <div class="gc-word">Let It Go</div>
+        <div class="gc-desc">Feels busy but doesn't move the needle — stop doing it</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slide 7: Self-Audit -->
+  <div class="slide slide-audit" data-index="6">
+    <div class="audit-header">
+      <h2>Are you <span class="highlight-dump">Dumping</span> or <span class="highlight-del">Delegating</span>?</h2>
+      <p>Quick self-audit — be honest with yourself.</p>
+    </div>
+    <table class="audit-table">
+      <thead>
+        <tr>
+          <th>Dumping ✕</th>
+          <th>Delegating ✓</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="audit-icon">✕</span> "Just handle this"</td>
+          <td><span class="audit-icon">✓</span> "Here's the goal and why it matters"</td>
+        </tr>
+        <tr>
+          <td><span class="audit-icon">✕</span> No context given</td>
+          <td><span class="audit-icon">✓</span> Shares background and expectations</td>
+        </tr>
+        <tr>
+          <td><span class="audit-icon">✕</span> Disappears after handoff</td>
+          <td><span class="audit-icon">✓</span> Checks in without micromanaging</td>
+        </tr>
+        <tr>
+          <td><span class="audit-icon">✕</span> Only passes the unpleasant tasks</td>
+          <td><span class="audit-icon">✓</span> Passes growth opportunities</td>
+        </tr>
+        <tr>
+          <td><span class="audit-icon">✕</span> Takes credit for the result</td>
+          <td><span class="audit-icon">✓</span> Gives credit and celebrates</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Slide 8: CTA -->
+  <div class="slide slide-cta" data-index="7">
+    <div class="corner-accent tl"></div>
+    <div class="corner-accent br"></div>
+    <div class="cta-challenge">This Week's Challenge</div>
+    <h2>Pick 3 things on your plate right now and run them through the 4Ds.</h2>
+    <div class="cta-steps">
+      <div class="cta-step">
+        <div class="cta-step-num">1</div>
+        <div class="cta-step-text"><strong>List</strong> your top tasks for this week</div>
+      </div>
+      <div class="cta-step">
+        <div class="cta-step-num">2</div>
+        <div class="cta-step-text"><strong>Sort</strong> each one: Do, Delegate, Defer, or Drop</div>
+      </div>
+      <div class="cta-step">
+        <div class="cta-step-num">3</div>
+        <div class="cta-step-text"><strong>Act</strong> on at least one Delegate and one Drop by Friday</div>
+      </div>
+    </div>
+    <div class="cta-footer">Leadership in 5 · Breeze Aviation</div>
+  </div>
+
+  <!-- Progress dots -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- Nav arrows -->
+  <div class="nav-arrow nav-prev" id="prevBtn">‹</div>
+  <div class="nav-arrow nav-next" id="nextBtn">›</div>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const progressBar = document.getElementById('progressBar');
+  const autoplayBar = document.getElementById('autoplayBar');
+  const totalSlides = slides.length;
+  let current = 0;
+  let autoplayTimer = null;
+  let barTimer = null;
+  const SLIDE_DURATION = 5000; // 5 seconds per slide
+
+  // Build progress dots
+  for (let i = 0; i < totalSlides; i++) {
+    const dot = document.createElement('div');
+    dot.classList.add('progress-dot');
+    if (i === 0) dot.classList.add('active');
+    dot.addEventListener('click', () => goToSlide(i));
+    progressBar.appendChild(dot);
+  }
+
+  function goToSlide(index) {
+    slides[current].classList.remove('active');
+    progressBar.children[current].classList.remove('active');
+
+    // Re-trigger animations by cloning inner content
+    const animatedEls = slides[index].querySelectorAll('[style*="animation"], .grid-card, .audit-table tbody tr, .d-number, .d-letter, .d-word, .d-desc, .d-example, .cta-challenge, .slide-cta h2, .cta-steps, .cta-footer');
+    animatedEls.forEach(el => {
+      el.style.animation = 'none';
+      el.offsetHeight; // trigger reflow
+      el.style.animation = '';
+    });
+
+    current = index;
+    slides[current].classList.add('active');
+    progressBar.children[current].classList.add('active');
+
+    resetAutoplay();
+  }
+
+  function nextSlide() {
+    goToSlide((current + 1) % totalSlides);
+  }
+
+  function prevSlide() {
+    goToSlide((current - 1 + totalSlides) % totalSlides);
+  }
+
+  function resetAutoplay() {
+    clearInterval(autoplayTimer);
+    autoplayBar.style.transition = 'none';
+    autoplayBar.style.width = '0%';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        autoplayBar.style.transition = `width ${SLIDE_DURATION}ms linear`;
+        autoplayBar.style.width = '100%';
+      });
+    });
+    autoplayTimer = setInterval(nextSlide, SLIDE_DURATION);
+  }
+
+  document.getElementById('nextBtn').addEventListener('click', nextSlide);
+  document.getElementById('prevBtn').addEventListener('click', prevSlide);
+
+  // Keyboard nav
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+  });
+
+  // Start autoplay
+  resetAutoplay();
+</script>
+
+</body>
+</html>

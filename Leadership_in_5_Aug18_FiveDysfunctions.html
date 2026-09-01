@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Five Dysfunctions of a Team — Leadership in 5 Book Breakdown</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    background: #001633;
+    color: #FFFFFF;
+    overflow-x: hidden;
+  }
+
+  /* ── Progress bar ── */
+  .progress-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1F7ADF, #FF527B, #FFD4AA, #C1DDFF, #48C78E);
+    z-index: 1000;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* ── Section base ── */
+  .section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .section-inner {
+    max-width: 680px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ── Fade-in ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+  .fade-in.delay-1 { transition-delay: 0.15s; }
+  .fade-in.delay-2 { transition-delay: 0.3s; }
+  .fade-in.delay-3 { transition-delay: 0.45s; }
+  .fade-in.delay-4 { transition-delay: 0.6s; }
+  .fade-in.delay-5 { transition-delay: 0.75s; }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, #001633 0%, #0a2a5c 50%, #001633 100%);
+    text-align: center;
+    min-height: 100vh;
+  }
+  .hero-tag {
+    font-size: 12px; font-weight: 700; letter-spacing: 4px;
+    text-transform: uppercase; color: #1F7ADF; margin-bottom: 8px;
+  }
+  .hero-series {
+    font-size: 11px; font-weight: 600; letter-spacing: 3px;
+    text-transform: uppercase; color: #FFD4AA; margin-bottom: 40px;
+  }
+  .hero h1 {
+    font-size: 44px; font-weight: 800; line-height: 1.15; margin-bottom: 12px;
+  }
+  .hero h1 .accent { color: #1F7ADF; }
+  .hero .author {
+    font-size: 17px; color: #C1DDFF; font-weight: 400; margin-bottom: 32px;
+  }
+  .hero .hook {
+    font-size: 17px; color: #C1DDFF; line-height: 1.7;
+    max-width: 520px; margin: 0 auto 40px;
+  }
+  .hero .time-badge {
+    display: inline-block; padding: 10px 24px;
+    border: 1px solid rgba(31,122,223,0.4); border-radius: 30px;
+    font-size: 13px; font-weight: 600; color: #C1DDFF; letter-spacing: 1px;
+  }
+  .scroll-hint {
+    position: absolute; bottom: 30px; left: 50%;
+    transform: translateX(-50%); text-align: center;
+    animation: bounce 2s infinite;
+  }
+  .scroll-hint span {
+    font-size: 11px; color: rgba(193,221,255,0.4);
+    letter-spacing: 2px; text-transform: uppercase;
+  }
+  .scroll-arrow { display: block; margin: 8px auto 0; font-size: 20px; color: rgba(31,122,223,0.5); }
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+
+  /* ── Intro ── */
+  .intro-section { background: #001633; }
+  .intro-section h2 { font-size: 28px; font-weight: 800; color: #FFFFFF; margin-bottom: 20px; }
+  .intro-section p { font-size: 16px; color: #C1DDFF; line-height: 1.8; margin-bottom: 16px; }
+  .intro-callout {
+    margin-top: 30px; padding: 24px 28px;
+    background: rgba(31,122,223,0.1); border-left: 4px solid #1F7ADF;
+    border-radius: 0 12px 12px 0;
+    font-size: 16px; color: #FFFFFF; font-weight: 600; line-height: 1.6;
+  }
+
+  /* ── Pyramid section ── */
+  .pyramid-section { background: linear-gradient(180deg, #001633 0%, #060e24 100%); }
+  .pyramid-section h2 { font-size: 26px; font-weight: 800; color: #FFFFFF; margin-bottom: 12px; }
+  .pyramid-section .sub { font-size: 15px; color: #C1DDFF; line-height: 1.6; margin-bottom: 36px; }
+  .pyramid-level {
+    display: flex; align-items: center; margin-bottom: 8px; border-radius: 8px;
+    padding: 14px 20px; position: relative; overflow: hidden; cursor: default;
+  }
+  .pyramid-num {
+    font-size: 22px; font-weight: 800; margin-right: 16px; min-width: 32px;
+  }
+  .pyramid-label { font-size: 15px; font-weight: 700; flex: 1; }
+  .pyramid-desc { font-size: 13px; color: rgba(255,255,255,0.65); margin-top: 2px; }
+  .pyramid-level:nth-child(1) { background: rgba(72,199,142,0.12); border: 1px solid rgba(72,199,142,0.25); }
+  .pyramid-level:nth-child(1) .pyramid-num { color: #48C78E; }
+  .pyramid-level:nth-child(1) .pyramid-label { color: #48C78E; }
+  .pyramid-level:nth-child(2) { background: rgba(193,221,255,0.08); border: 1px solid rgba(193,221,255,0.2); }
+  .pyramid-level:nth-child(2) .pyramid-num { color: #C1DDFF; }
+  .pyramid-level:nth-child(2) .pyramid-label { color: #C1DDFF; }
+  .pyramid-level:nth-child(3) { background: rgba(255,212,170,0.08); border: 1px solid rgba(255,212,170,0.2); }
+  .pyramid-level:nth-child(3) .pyramid-num { color: #FFD4AA; }
+  .pyramid-level:nth-child(3) .pyramid-label { color: #FFD4AA; }
+  .pyramid-level:nth-child(4) { background: rgba(255,82,123,0.08); border: 1px solid rgba(255,82,123,0.2); }
+  .pyramid-level:nth-child(4) .pyramid-num { color: #FF527B; }
+  .pyramid-level:nth-child(4) .pyramid-label { color: #FF527B; }
+  .pyramid-level:nth-child(5) { background: rgba(31,122,223,0.12); border: 1px solid rgba(31,122,223,0.3); }
+  .pyramid-level:nth-child(5) .pyramid-num { color: #1F7ADF; }
+  .pyramid-level:nth-child(5) .pyramid-label { color: #1F7ADF; }
+  .pyramid-note {
+    margin-top: 24px; padding: 18px 22px;
+    background: rgba(255,255,255,0.04); border-radius: 10px;
+    font-size: 14px; color: #C1DDFF; line-height: 1.7; text-align: center;
+  }
+
+  /* ── Dysfunction sections ── */
+  .dysfunction-section { padding: 80px 20px; min-height: 100vh; }
+  .dysfunction-number { font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
+  .dysfunction-title { font-size: 36px; font-weight: 800; line-height: 1.2; margin-bottom: 8px; }
+  .dysfunction-subtitle { font-size: 14px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 32px; }
+  .block-label { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
+  .what-block { margin-bottom: 28px; }
+  .what-block p { font-size: 16px; line-height: 1.8; color: #FFFFFF; }
+  .quote-block { margin: 28px 0; padding: 28px 32px; border-radius: 12px; position: relative; }
+  .quote-mark { font-size: 60px; font-weight: 800; line-height: 1; position: absolute; top: 10px; left: 16px; opacity: 0.15; }
+  .quote-text { font-size: 18px; font-weight: 600; font-style: italic; line-height: 1.6; position: relative; z-index: 1; color: #FFFFFF; }
+  .quote-source { margin-top: 12px; font-size: 12px; font-style: normal; font-weight: 400; color: rgba(255,255,255,0.5); }
+  .sowhat-block { margin: 28px 0; }
+  .sowhat-block p { font-size: 16px; line-height: 1.8; color: #C1DDFF; }
+  .scenario-box { margin-top: 16px; padding: 20px 24px; border-radius: 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); }
+  .scenario-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .scenario-box p { font-size: 14px; color: #FFFFFF; line-height: 1.7; }
+  .nowwhat-block { margin-top: 28px; padding: 24px 28px; border-radius: 12px; border-width: 1px; border-style: solid; }
+  .nowwhat-block h4 { font-size: 14px; font-weight: 700; margin-bottom: 12px; }
+  .nowwhat-block p { font-size: 15px; color: #FFFFFF; line-height: 1.7; }
+  .action-step { display: flex; align-items: flex-start; margin-top: 10px; }
+  .action-bullet { width: 6px; height: 6px; border-radius: 50%; margin-right: 12px; margin-top: 8px; flex-shrink: 0; }
+
+  /* Color themes */
+  .theme-blue .dysfunction-number { color: #1F7ADF; }
+  .theme-blue .dysfunction-subtitle { color: #1F7ADF; }
+  .theme-blue .block-label { color: #1F7ADF; }
+  .theme-blue .quote-block { background: rgba(31,122,223,0.12); }
+  .theme-blue .quote-mark { color: #1F7ADF; }
+  .theme-blue .scenario-label { color: #1F7ADF; }
+  .theme-blue .nowwhat-block { background: rgba(31,122,223,0.08); border-color: rgba(31,122,223,0.25); }
+  .theme-blue .nowwhat-block h4 { color: #1F7ADF; }
+  .theme-blue .action-bullet { background: #1F7ADF; }
+
+  .theme-red .dysfunction-number { color: #FF527B; }
+  .theme-red .dysfunction-subtitle { color: #FF527B; }
+  .theme-red .block-label { color: #FF527B; }
+  .theme-red .quote-block { background: rgba(255,82,123,0.1); }
+  .theme-red .quote-mark { color: #FF527B; }
+  .theme-red .scenario-label { color: #FF527B; }
+  .theme-red .nowwhat-block { background: rgba(255,82,123,0.06); border-color: rgba(255,82,123,0.2); }
+  .theme-red .nowwhat-block h4 { color: #FF527B; }
+  .theme-red .action-bullet { background: #FF527B; }
+
+  .theme-tan .dysfunction-number { color: #FFD4AA; }
+  .theme-tan .dysfunction-subtitle { color: #FFD4AA; }
+  .theme-tan .block-label { color: #FFD4AA; }
+  .theme-tan .quote-block { background: rgba(255,212,170,0.1); }
+  .theme-tan .quote-mark { color: #FFD4AA; }
+  .theme-tan .scenario-label { color: #FFD4AA; }
+  .theme-tan .nowwhat-block { background: rgba(255,212,170,0.06); border-color: rgba(255,212,170,0.2); }
+  .theme-tan .nowwhat-block h4 { color: #FFD4AA; }
+  .theme-tan .action-bullet { background: #FFD4AA; }
+
+  .theme-lightblue .dysfunction-number { color: #C1DDFF; }
+  .theme-lightblue .dysfunction-subtitle { color: #C1DDFF; }
+  .theme-lightblue .block-label { color: #C1DDFF; }
+  .theme-lightblue .quote-block { background: rgba(193,221,255,0.1); }
+  .theme-lightblue .quote-mark { color: #C1DDFF; }
+  .theme-lightblue .scenario-label { color: #C1DDFF; }
+  .theme-lightblue .nowwhat-block { background: rgba(193,221,255,0.06); border-color: rgba(193,221,255,0.2); }
+  .theme-lightblue .nowwhat-block h4 { color: #C1DDFF; }
+  .theme-lightblue .action-bullet { background: #C1DDFF; }
+
+  .theme-green .dysfunction-number { color: #48C78E; }
+  .theme-green .dysfunction-subtitle { color: #48C78E; }
+  .theme-green .block-label { color: #48C78E; }
+  .theme-green .quote-block { background: rgba(72,199,142,0.1); }
+  .theme-green .quote-mark { color: #48C78E; }
+  .theme-green .scenario-label { color: #48C78E; }
+  .theme-green .nowwhat-block { background: rgba(72,199,142,0.06); border-color: rgba(72,199,142,0.2); }
+  .theme-green .nowwhat-block h4 { color: #48C78E; }
+  .theme-green .action-bullet { background: #48C78E; }
+
+  /* ── Divider ── */
+  .principle-divider { text-align: center; padding: 40px 20px; background: #001633; }
+  .divider-line { width: 60px; height: 3px; margin: 0 auto; border-radius: 2px; }
+
+  /* ── Self-check ── */
+  .self-check { background: linear-gradient(180deg, #001633 0%, #0a1e3d 100%); }
+  .self-check h2 { font-size: 26px; font-weight: 800; color: #FFD4AA; margin-bottom: 12px; }
+  .self-check .sub { font-size: 15px; color: #C1DDFF; margin-bottom: 30px; line-height: 1.6; }
+  .check-scenario {
+    background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px; padding: 22px 24px; margin-bottom: 20px;
+  }
+  .check-question { font-size: 15px; font-weight: 600; color: #FFFFFF; margin-bottom: 16px; line-height: 1.5; }
+  .check-options { display: flex; flex-direction: column; gap: 10px; }
+  .check-option {
+    padding: 12px 16px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.03); cursor: pointer; font-size: 14px; color: #C1DDFF;
+    transition: all 0.2s; text-align: left; line-height: 1.5;
+  }
+  .check-option:hover { border-color: rgba(255,212,170,0.4); background: rgba(255,212,170,0.06); color: #FFFFFF; }
+  .check-option.selected { border-color: #FFD4AA; background: rgba(255,212,170,0.12); color: #FFFFFF; }
+  .check-reveal {
+    display: none; margin-top: 16px; padding: 18px 20px;
+    background: rgba(255,212,170,0.08); border-left: 3px solid #FFD4AA;
+    border-radius: 0 10px 10px 0; font-size: 14px; color: #FFFFFF; line-height: 1.7;
+  }
+  .check-reveal.visible { display: block; }
+
+  /* ── Closing ── */
+  .closing {
+    background: linear-gradient(135deg, #001633 0%, #0a2a5c 100%);
+    text-align: center;
+  }
+  .closing h2 { font-size: 32px; font-weight: 800; color: #FFFFFF; margin-bottom: 24px; line-height: 1.3; }
+  .closing p { font-size: 16px; color: #C1DDFF; line-height: 1.7; max-width: 500px; margin: 0 auto 28px; }
+  .five-levels {
+    display: flex; flex-direction: column; gap: 10px;
+    max-width: 440px; margin: 0 auto 36px; text-align: left;
+  }
+  .level-row {
+    display: flex; align-items: center; padding: 12px 18px;
+    border-radius: 10px; font-size: 14px; font-weight: 600; color: #FFFFFF;
+  }
+  .level-dot {
+    width: 10px; height: 10px; border-radius: 50%; margin-right: 14px; flex-shrink: 0;
+  }
+  .cta-btn {
+    display: inline-block; padding: 16px 36px; border-radius: 6px;
+    font-size: 15px; font-weight: 700; text-decoration: none;
+    letter-spacing: 0.5px; cursor: pointer;
+  }
+  .footer-bar {
+    background: #001633; padding: 24px 20px; text-align: center;
+    font-size: 11px; color: rgba(193,221,255,0.5); letter-spacing: 1px; border-top: 1px solid rgba(255,255,255,0.06);
+  }
+
+  @media (max-width: 600px) {
+    .hero h1 { font-size: 32px; }
+    .dysfunction-title { font-size: 28px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ═══════════════════════════════════════════
+     HERO
+═══════════════════════════════════════════ -->
+<div class="section hero">
+  <div class="section-inner">
+    <div class="fade-in">
+      <p class="hero-tag">Book Breakdown</p>
+      <p class="hero-series">Breeze Airways &nbsp;·&nbsp; Leadership in 5</p>
+    </div>
+    <div class="fade-in delay-1">
+      <h1>The Five<br><span class="accent">Dysfunctions</span><br>of a Team</h1>
+      <p class="author">Patrick Lencioni</p>
+    </div>
+    <div class="fade-in delay-2">
+      <p class="hook">Most teams fail — not because of talent, strategy, or resources. They fail because of five predictable, human behaviors that quietly undermine everything else. This book is a diagnostic. The question isn't <em>if</em> any of these are present on your team. It's <em>which one</em> to address first.</p>
+    </div>
+    <div class="fade-in delay-3">
+      <span class="time-badge">5 min read &nbsp;·&nbsp; 5 dysfunctions &nbsp;·&nbsp; 1 self-check</span>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <span class="scroll-arrow">↓</span>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     INTRO
+═══════════════════════════════════════════ -->
+<div class="section intro-section">
+  <div class="section-inner">
+    <div class="fade-in">
+      <h2>Why Every Leader Needs This Book</h2>
+    </div>
+    <div class="fade-in delay-1">
+      <p>Lencioni doesn't talk about dysfunction the way most leadership books do. He's not describing a toxic culture or a broken organization. He's describing <strong>normal teams</strong> — teams full of smart, well-meaning people who still manage to underperform, avoid hard conversations, and let individuals win at the expense of the group.</p>
+    </div>
+    <div class="fade-in delay-2">
+      <p>The model is a pyramid. Each dysfunction builds on the one below it. You can't fix accountability if there's no commitment. You can't build commitment if there's no real conflict. And nothing gets off the ground without trust.</p>
+    </div>
+    <div class="fade-in delay-3">
+      <p>This isn't theory. If you've ever led a team, you'll recognize all five within the first 20 pages.</p>
+    </div>
+    <div class="fade-in delay-4">
+      <div class="intro-callout">
+        &ldquo;Not finance. Not strategy. Not technology. It is teamwork that remains the ultimate competitive advantage, both because it is so powerful and so rare.&rdquo;<br>
+        <span style="font-size:13px; font-weight:400; color:rgba(255,255,255,0.6);">— Patrick Lencioni</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     PYRAMID OVERVIEW
+═══════════════════════════════════════════ -->
+<div class="section pyramid-section">
+  <div class="section-inner">
+    <div class="fade-in">
+      <h2>The Five Dysfunctions — From Bottom to Top</h2>
+      <p class="sub">The pyramid starts with the most foundational dysfunction. You can't fix the levels above until you address what's beneath them.</p>
+    </div>
+    <div class="fade-in delay-1">
+      <div class="pyramid-level">
+        <span class="pyramid-num">5</span>
+        <div>
+          <div class="pyramid-label">Inattention to Results</div>
+          <div class="pyramid-desc">Individuals or departments prioritize their own status over team outcomes</div>
+        </div>
+      </div>
+    </div>
+    <div class="fade-in delay-2">
+      <div class="pyramid-level">
+        <span class="pyramid-num">4</span>
+        <div>
+          <div class="pyramid-label">Avoidance of Accountability</div>
+          <div class="pyramid-desc">Team members don't call each other on poor performance or behavior</div>
+        </div>
+      </div>
+    </div>
+    <div class="fade-in delay-3">
+      <div class="pyramid-level">
+        <span class="pyramid-num">3</span>
+        <div>
+          <div class="pyramid-label">Lack of Commitment</div>
+          <div class="pyramid-desc">Decisions are made without real buy-in — people nod, then do their own thing</div>
+        </div>
+      </div>
+    </div>
+    <div class="fade-in delay-4">
+      <div class="pyramid-level">
+        <span class="pyramid-num">2</span>
+        <div>
+          <div class="pyramid-label">Fear of Conflict</div>
+          <div class="pyramid-desc">The team creates artificial harmony — avoiding the real debates that need to happen</div>
+        </div>
+      </div>
+    </div>
+    <div class="fade-in delay-5">
+      <div class="pyramid-level">
+        <span class="pyramid-num">1</span>
+        <div>
+          <div class="pyramid-label">Absence of Trust</div>
+          <div class="pyramid-desc">The foundation — team members aren't open about mistakes, weaknesses, or concerns</div>
+        </div>
+      </div>
+    </div>
+    <div class="fade-in delay-5">
+      <div class="pyramid-note">
+        Start here. The dysfunction at the base shapes everything above it. Fix trust first.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     DYSFUNCTION 1 — ABSENCE OF TRUST
+═══════════════════════════════════════════ -->
+<div class="section dysfunction-section theme-blue" style="background: #001633;">
+  <div class="section-inner">
+    <div class="fade-in">
+      <p class="dysfunction-number">Dysfunction 1</p>
+      <h2 class="dysfunction-title">Absence of Trust</h2>
+      <p class="dysfunction-subtitle">The foundation of everything</p>
+    </div>
+    <div class="fade-in delay-1 what-block">
+      <p class="block-label">What It Is</p>
+      <p>This isn't trust in the "I trust you to do your job" sense. Lencioni means something more vulnerable: the willingness to be open about weaknesses, mistakes, and fears — without the constant calculation of how it looks. On a team without this kind of trust, every conversation carries a hidden performance. People manage perception instead of solving problems.</p>
+    </div>
+    <div class="fade-in delay-2">
+      <div class="quote-block">
+        <span class="quote-mark">&ldquo;</span>
+        <p class="quote-text">The kind of trust that is necessary to build a great team is what I call vulnerability-based trust. This requires team members to make themselves vulnerable to one another — and be confident that their respective vulnerabilities will not be used against them.</p>
+        <p class="quote-source">— Patrick Lencioni</p>
+      </div>
+    </div>
+    <div class="fade-in delay-3 sowhat-block">
+      <p class="block-label">Why It Matters for You</p>
+      <p>When trust is absent, your team's energy goes into self-protection. People work <em>around</em> each other instead of <em>with</em> each other. They don't ask for help. They don't admit when they're in over their heads. They don't flag problems until it's too late.</p>
+      <div class="scenario-box">
+        <p class="scenario-label">You'll see this as...</p>
+        <p>A team that looks functional in meetings — but real issues surface through back channels, not in the room. People agree in public and complain privately. The leader is the last to know what's actually going wrong.</p>
+      </div>
+    </div>
+    <div class="fade-in delay-4">
+      <div class="nowwhat-block">
+        <h4>What to Do About It</h4>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>Model it first.</strong> Go first with your own vulnerability — a mistake, a limitation, something you're working on. You can't ask for openness if you're not modeling it.</p>
+        </div>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>Create low-stakes practice.</strong> Start team meetings with one thing you got wrong this week. The norm shifts fast when the leader makes it normal.</p>
+        </div>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>Reward honesty over performance.strong> When someone admits a mistake before it becomes a problem, make that visible. Show that transparency here is safe.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="principle-divider"><div class="divider-line" style="background:#1F7ADF;"></div></div>
+
+<!-- ═══════════════════════════════════════════
+     DYSFUNCTION 2 — FEAR OF CONFLICT
+═══════════════════════════════════════════ -->
+<div class="section dysfunction-section theme-red" style="background: #060e24;">
+  <div class="section-inner">
+    <div class="fade-in">
+      <p class="dysfunction-number">Dysfunction 2</p>
+      <h2 class="dysfunction-title">Fear of Conflict</h2>
+      <p class="dysfunction-subtitle">Artificial harmony is not the same as alignment</p>
+    </div>
+    <div class="fade-in delay-1 what-block">
+      <p class="block-label">What It Is</p>
+      <p>Teams that lack trust can't have real conflict — because real conflict requires vulnerability. So they create <em>artificial harmony</em>: everyone agrees in meetings, debates don't happen, ideas go unchallenged. It looks like a functional team from the outside. Inside, it's a team that's avoiding every conversation that actually needs to happen.</p>
+    </div>
+    <div class="fade-in delay-2">
+      <div class="quote-block">
+        <span class="quote-mark">&ldquo;</span>
+        <p class="quote-text">Teams that engage in productive conflict know that the only purpose is to produce the best possible solution in the shortest period of time. They discuss and resolve issues more quickly and completely than groups that try to avoid conflict.</p>
+        <p class="quote-source">— Patrick Lencioni</p>
+      </div>
+    </div>
+    <div class="fade-in delay-3 sowhat-block">
+      <p class="block-label">Why It Matters for You</p>
+      <p>Good conflict — debate about ideas, challenges to bad plans, honest pushback — is what gets teams to the right answer. When it's avoided, decisions get made based on hierarchy or whoever is most persistent, not what's actually best. And the resentment from ideas that were never heard? That comes out somewhere else.</p>
+      <div class="scenario-box">
+        <p class="scenario-label">You'll see this as...</p>
+        <p>Meetings where everyone agrees — then people grumble afterward in the break room. Important topics that keep getting tabled. A team that defers to the leader on every decision instead of working through it together.</p>
+      </div>
+    </div>
+    <div class="fade-in delay-4">
+      <div class="nowwhat-block">
+        <h4>What to Do About It</h4>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>Separate conflict from disrespect.</strong> Model what productive disagreement looks like: &ldquo;I see it differently — here's why.&rdquo; Make the debate about the idea, not the person.</p>
+        </div>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>Mine for conflict.</strong> In meetings, ask: &ldquo;Who sees this differently?&rdquo; or &ldquo;What's the strongest case against this?&rdquo; Don't let artificial consensus end the conversation too early.</p>
+        </div>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>Tolerate discomfort.</strong> When a debate gets uncomfortable, resist the urge to end it. Sit in it a little longer. That tension is where the best answers live.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="principle-divider"><div class="divider-line" style="background:#FF527B;"></div></div>
+
+<!-- ═══════════════════════════════════════════
+     DYSFUNCTION 3 — LACK OF COMMITMENT
+═══════════════════════════════════════════ -->
+<div class="section dysfunction-section theme-tan" style="background: #001633;">
+  <div class="section-inner">
+    <div class="fade-in">
+      <p class="dysfunction-number">Dysfunction 3</p>
+      <h2 class="dysfunction-title">Lack of Commitment</h2>
+      <p class="dysfunction-subtitle">Buy-in without debate is just compliance</p>
+    </div>
+    <div class="fade-in delay-1 what-block">
+      <p class="block-label">What It Is</p>
+      <p>When teams won't have real conflict, they can't achieve genuine buy-in. People leave meetings having never fully engaged — so they never truly committed. They nod. They say &ldquo;sounds good.&rdquo; Then they go execute in whatever direction they personally believe in. Commitment without conflict is compliance. And compliance doesn't hold when things get hard.</p>
+    </div>
+    <div class="fade-in delay-2">
+      <div class="quote-block">
+        <span class="quote-mark">&ldquo;</span>
+        <p class="quote-text">A team that commits to a decision even when there is little natural agreement trusts that it is better to make a clear decision and be wrong than to make no decision at all. Good teams disagree, debate, and then commit — fully.</p>
+        <p class="quote-source">— Patrick Lencioni</p>
+      </div>
+    </div>
+    <div class="fade-in delay-3 sowhat-block">
+      <p class="block-label">Why It Matters for You</p>
+      <p>Lencioni makes a distinction most leaders miss: you don't need consensus to get commitment. You need clarity and the belief that your voice was heard. A team that debates fully and then aligns on a decision — even one they partially disagreed with — will execute better than one that never pushed back at all.</p>
+      <div class="scenario-box">
+        <p class="scenario-label">You'll see this as...</p>
+        <p>Decisions that have to be relitigated over and over. Team members executing in slightly different directions. A sense that &ldquo;we keep circling back to this.&rdquo; Plans that look good in meetings and quietly fall apart in execution.</p>
+      </div>
+    </div>
+    <div class="fade-in delay-4">
+      <div class="nowwhat-block">
+        <h4>What to Do About It</h4>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>End every meeting with a clear decision.</strong> Not &ldquo;we'll keep talking about this.&rdquo; A specific commitment: what's decided, what happens next, who owns it.</p>
+        </div>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>Name the uncommitted decision.</strong> When something is circling back, say it: &ldquo;We've talked about this three times. We need to decide and commit today.&rdquo;</p>
+        </div>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>Ask for genuine commitment, not just agreement.</strong> &ldquo;I need everyone to be able to walk out of this room and execute on this — even if it wasn't your first choice. Can you do that?&rdquo;</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="principle-divider"><div class="divider-line" style="background:#FFD4AA;"></div></div>
+
+<!-- ═══════════════════════════════════════════
+     DYSFUNCTION 4 — AVOIDANCE OF ACCOUNTABILITY
+═══════════════════════════════════════════ -->
+<div class="section dysfunction-section theme-lightblue" style="background: #060e24;">
+  <div class="section-inner">
+    <div class="fade-in">
+      <p class="dysfunction-number">Dysfunction 4</p>
+      <h2 class="dysfunction-title">Avoidance of Accountability</h2>
+      <p class="dysfunction-subtitle">Peer-to-peer accountability is more powerful than top-down</p>
+    </div>
+    <div class="fade-in delay-1 what-block">
+      <p class="block-label">What It Is</p>
+      <p>Without clear commitments, there's nothing to hold people to. But this dysfunction runs deeper than follow-through: it's about whether teammates will call each other on poor performance, missed standards, or behavior that's hurting the team. Most won't — not because they don't see it, but because they're uncomfortable. So the standard slowly drifts.</p>
+    </div>
+    <div class="fade-in delay-2">
+      <div class="quote-block">
+        <span class="quote-mark">&ldquo;</span>
+        <p class="quote-text">The most effective and efficient means of maintaining high standards of performance on a team is peer pressure. If people know their peers are watching and will call them out, they are far less likely to let standards slip.</p>
+        <p class="quote-source">— Patrick Lencioni</p>
+      </div>
+    </div>
+    <div class="fade-in delay-3 sowhat-block">
+      <p class="block-label">Why It Matters for You</p>
+      <p>As a leader, you can't be the only one holding the standard. A team where accountability only flows from the top is fragile — it breaks every time you're not watching. The goal is a culture where the team holds itself, and the leader only has to step in for the big stuff.</p>
+      <div class="scenario-box">
+        <p class="scenario-label">You'll see this as...</p>
+        <p>Team members who see a problem and stay quiet because &ldquo;it's not my place.&rdquo; Performance that drifts until you catch it. A low hum of frustration from high performers watching others not be held to the same standard.</p>
+      </div>
+    </div>
+    <div class="fade-in delay-4">
+      <div class="nowwhat-block">
+        <h4>What to Do About It</h4>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>Make standards explicit.</strong> You can't hold people accountable for standards they've never clearly heard. Say them out loud. Write them down. Name the behavior, not just the outcome.</p>
+        </div>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>Give the team permission to hold each other.</strong> Explicitly: &ldquo;If you see someone not following through, I need you to address it — not come to me first.&rdquo;</p>
+        </div>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>Model it as a team act, not a punitive one.</strong> Accountability is for the team. Frame it that way: &ldquo;When we let this slide, we let the whole team down.&rdquo;</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="principle-divider"><div class="divider-line" style="background:#C1DDFF;"></div></div>
+
+<!-- ═══════════════════════════════════════════
+     DYSFUNCTION 5 — INATTENTION TO RESULTS
+═══════════════════════════════════════════ -->
+<div class="section dysfunction-section theme-green" style="background: #001633;">
+  <div class="section-inner">
+    <div class="fade-in">
+      <p class="dysfunction-number">Dysfunction 5</p>
+      <h2 class="dysfunction-title">Inattention to Results</h2>
+      <p class="dysfunction-subtitle">When individual wins beat team wins, everyone loses</p>
+    </div>
+    <div class="fade-in delay-1 what-block">
+      <p class="block-label">What It Is</p>
+      <p>The final dysfunction: when team members care more about their department's success, their personal recognition, or their career advancement than about what the team actually achieves together. It looks like politics. It feels like silos. It sounds like &ldquo;that's not my area&rdquo; or &ldquo;we crushed our numbers&rdquo; when the broader team didn't. </p>
+    </div>
+    <div class="fade-in delay-2">
+      <div class="quote-block">
+        <span class="quote-mark">&ldquo;</span>
+        <p class="quote-text">Team members who focus on collective results make the success of their colleagues more important than their own. They celebrate when the team wins — and feel genuine disappointment when it loses. Even when they personally performed well.</p>
+        <p class="quote-source">— Patrick Lencioni</p>
+      </div>
+    </div>
+    <div class="fade-in delay-3 sowhat-block">
+      <p class="block-label">Why It Matters for You</p>
+      <p>At Breeze, the team that wins is rarely one person's individual contribution — it's the handoff that worked, the assist that didn't get credit, the teammate who stepped in when it wasn't their job. Lencioni's argument: if you celebrate team results, you get team behavior. If you only celebrate individual wins, you get silos.</p>
+      <div class="scenario-box">
+        <p class="scenario-label">You'll see this as...</p>
+        <p>Departments that &ldquo;win&rdquo; individually while the broader operation struggles. Leaders who protect their own numbers while the overall team misses the goal. Recognition that consistently goes to the loudest individual instead of the most valuable collaborator.</p>
+      </div>
+    </div>
+    <div class="fade-in delay-4">
+      <div class="nowwhat-block">
+        <h4>What to Do About It</h4>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>Declare the collective result clearly.</strong> Make sure your team knows what winning looks like as a unit — not just for their individual role. Say it often.</p>
+        </div>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>Celebrate assists, not just scores.</strong> Who made someone else better this week? Who stepped in outside their lane? Recognition shapes behavior.</p>
+        </div>
+        <div class="action-step">
+          <div class="action-bullet"></div>
+          <p><strong>Call out sub-optimization publicly.</strong> When a department &ldquo;wins&rdquo; in a way that hurts the broader team, name it — without blame. &ldquo;We got our number, but the full team didn't land where we needed. That's a team loss.&rdquo;</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="principle-divider"><div class="divider-line" style="background:#48C78E;"></div></div>
+
+<!-- ═══════════════════════════════════════════
+     SELF-CHECK
+═══════════════════════════════════════════ -->
+<div class="section self-check">
+  <div class="section-inner">
+    <div class="fade-in">
+      <h2>Your Team Diagnostic</h2>
+      <p class="sub">Read each situation. Click the one that feels most true about your team right now. This isn't a test — it's a mirror.</p>
+    </div>
+
+    <!-- Scenario 1 -->
+    <div class="fade-in delay-1 check-scenario">
+      <p class="check-question">Which of these sounds most like your team?</p>
+      <div class="check-options">
+        <button class="check-option" onclick="reveal(this, 'r1a')">People rarely admit mistakes or ask for help in front of the group.</button>
+        <button class="check-option" onclick="reveal(this, 'r1b')">Meetings are civil, but the real conversations happen in the hallway afterward.</button>
+        <button class="check-option" onclick="reveal(this, 'r1c')">We decided something two months ago and we're still relitigating it.</button>
+        <button class="check-option" onclick="reveal(this, 'r1d')">Standards are slipping and no one is saying anything.</button>
+        <button class="check-option" onclick="reveal(this, 'r1e')">People are scoring well individually but the team isn't where it needs to be.</button>
+      </div>
+      <div class="check-reveal" id="r1a">
+        <strong style="color:#1F7ADF;">Dysfunction 1: Absence of Trust.</strong> Start here. Trust is the foundation — nothing else can be fixed until people are willing to be real with each other. Your move: model vulnerability first. Go first. Show the team it's safe.
+      </div>
+      <div class="check-reveal" id="r1b">
+        <strong style="color:#FF527B;">Dysfunction 2: Fear of Conflict.</strong> Artificial harmony is costing you the real conversations. The ideas your team won't say in the room are the ones you need most. Create permission for productive pushback — and mine for it deliberately.
+      </div>
+      <div class="check-reveal" id="r1c">
+        <strong style="color:#FFD4AA;">Dysfunction 3: Lack of Commitment.</strong> If you're re-deciding what was already decided, the original decision didn't have genuine buy-in. End your next meeting with a named, committed decision — even if it's imperfect. Then execute.
+      </div>
+      <div class="check-reveal" id="r1d">
+        <strong style="color:#C1DDFF;">Dysfunction 4: Avoidance of Accountability.</strong> Someone is watching the standard slip and staying quiet. Until the team is willing to hold each other — not just wait for you — performance will keep drifting. Name it. Give them permission to address it directly.
+      </div>
+      <div class="check-reveal" id="r1e">
+        <strong style="color:#48C78E;">Dysfunction 5: Inattention to Results.</strong> The scoreboard is wrong — it's tracking the wrong wins. Make sure your team knows what the collective result is, and then celebrate the behavior that actually produces it: assists, handoffs, stepping in.
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     CLOSING
+═══════════════════════════════════════════ -->
+<div class="section closing">
+  <div class="section-inner">
+    <div class="fade-in">
+      <h2>The Five Levels — Your One-Glance Summary</h2>
+    </div>
+    <div class="fade-in delay-1">
+      <div class="five-levels">
+        <div class="level-row" style="background:rgba(72,199,142,0.1); border:1px solid rgba(72,199,142,0.25);">
+          <div class="level-dot" style="background:#48C78E;"></div>
+          <div><strong style="color:#48C78E;">5.</strong> Inattention to Results — team wins matter more than individual wins</div>
+        </div>
+        <div class="level-row" style="background:rgba(193,221,255,0.08); border:1px solid rgba(193,221,255,0.2);">
+          <div class="level-dot" style="background:#C1DDFF;"></div>
+          <div><strong style="color:#C1DDFF;">4.</strong> Avoidance of Accountability — the team holds the standard, not just the leader</div>
+        </div>
+        <div class="level-row" style="background:rgba(255,212,170,0.08); border:1px solid rgba(255,212,170,0.2);">
+          <div class="level-dot" style="background:#FFD4AA;"></div>
+          <div><strong style="color:#FFD4AA;">3.</strong> Lack of Commitment — debate fully, then commit completely</div>
+        </div>
+        <div class="level-row" style="background:rgba(255,82,123,0.08); border:1px solid rgba(255,82,123,0.2);">
+          <div class="level-dot" style="background:#FF527B;"></div>
+          <div><strong style="color:#FF527B;">2.</strong> Fear of Conflict — productive debate produces better outcomes</div>
+        </div>
+        <div class="level-row" style="background:rgba(31,122,223,0.1); border:1px solid rgba(31,122,223,0.25);">
+          <div class="level-dot" style="background:#1F7ADF;"></div>
+          <div><strong style="color:#1F7ADF;">1.</strong> Absence of Trust — vulnerability is the foundation of everything</div>
+        </div>
+      </div>
+    </div>
+    <div class="fade-in delay-2">
+      <p>Every team has at least one of these. The question isn't whether — it's which one to work on first. You already know. You've known for a while.</p>
+    </div>
+
+    <!-- Pulse Survey -->
+    <div class="fade-in delay-3" style="margin-top:40px; padding:28px; background:rgba(255,255,255,0.04); border-radius:12px; border:1px solid rgba(255,255,255,0.1); text-align:left;">
+      <p style="font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#FFD4AA; margin-bottom:10px;">Quick Pulse — 1 Question</p>
+      <p style="font-size:16px; color:#FFFFFF; font-weight:600; line-height:1.5; margin-bottom:20px;">Which of the five dysfunctions is most present on your team right now?</p>
+      <a href="[PASTE TALLY LINK HERE]" class="cta-btn" style="background:#FFD4AA; color:#001633;">Answer in 10 Seconds &rarr;</a>
+    </div>
+
+    <!-- Challenge -->
+    <div class="fade-in delay-4" style="margin-top:28px; padding:28px; background:rgba(31,122,223,0.1); border-radius:12px; border:1px solid rgba(31,122,223,0.25); text-align:left;">
+      <p style="font-size:11px; font-weight:700; letter-spacing:3px; text-transform:uppercase; color:#1F7ADF; margin-bottom:10px;">Your Challenge This Week</p>
+      <p style="font-size:16px; color:#FFFFFF; font-weight:600; line-height:1.6;">Pick the one dysfunction that showed up most in the self-check. This week, name it to your team — not as a problem, but as an opportunity. <span style="color:#C1DDFF;">Lencioni's insight: the teams that get better are the ones willing to say out loud what everyone already knows.</span></p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     FOOTER
+═══════════════════════════════════════════ -->
+<div class="footer-bar">
+  BREEZE UNIVERSITY &nbsp;·&nbsp; LEADERSHIP IN 5 &nbsp;·&nbsp; Questions? Reply directly to the email.
+</div>
+
+<script>
+  // ── Progress bar ──
+  window.addEventListener('scroll', () => {
+    const scrollTop = document.documentElement.scrollTop;
+    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const progress = (scrollTop / scrollHeight) * 100;
+    document.getElementById('progressBar').style.width = progress + '%';
+  });
+
+  // ── Fade-in on scroll ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // ── Self-check reveal ──
+  function reveal(btn, revealId) {
+    // Clear all selections in this scenario
+    const scenario = btn.closest('.check-scenario');
+    scenario.querySelectorAll('.check-option').forEach(b => b.classList.remove('selected'));
+    scenario.querySelectorAll('.check-reveal').forEach(r => r.classList.remove('visible'));
+
+    // Select this option and show reveal
+    btn.classList.add('selected');
+    const revealEl = document.getElementById(revealId);
+    if (revealEl) revealEl.classList.add('visible');
+  }
+</script>
+
+</body>
+</html>

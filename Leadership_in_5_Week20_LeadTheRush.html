@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadership in 5 — Lead Through the Rush</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    background: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .infographic {
+    width: 680px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 22, 51, 0.12);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #001633;
+    padding: 32px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #FFD4AA, #FF527B, #FFD4AA);
+  }
+  .series-tag {
+    display: inline-block;
+    background: rgba(255, 212, 170, 0.2);
+    color: #FFD4AA;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .header h1 {
+    color: #FFFFFF;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .header h1 span { color: #FFD4AA; }
+  .header .subtitle {
+    color: #C1DDFF;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* ── MOMENT BANNER ── */
+  .moment-banner {
+    background: linear-gradient(90deg, #FF527B, #FFD4AA 50%, #FF527B);
+    color: #001633;
+    text-align: center;
+    padding: 11px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── INTRO ── */
+  .intro {
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid #E8EDF2;
+  }
+  .intro p { color: #4A5568; font-size: 15px; line-height: 1.65; }
+  .intro strong { color: #001633; }
+
+  /* ── 3 THINGS ── */
+  .three-things { padding: 28px 40px 8px; }
+  .section-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #FFD4AA;
+    background: #001633;
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 20px;
+  }
+  .thing-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 14px;
+    padding: 20px 22px;
+    border-radius: 12px;
+    border: 1px solid #E8EDF2;
+  }
+  .thing-card:nth-child(2) { background: #F0F4FF; border-color: #C1DDFF; }
+  .thing-card:nth-child(3) { background: #FFF5ED; border-color: #FFD4AA; }
+  .thing-card:nth-child(4) { background: #FFF5F8; border-color: #FFD4E0; }
+  .thing-number {
+    width: 40px;
+    height: 40px;
+    background: #001633;
+    color: #FFD4AA;
+    font-size: 18px;
+    font-weight: 800;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .thing-content h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: #001633;
+    margin-bottom: 5px;
+  }
+  .thing-content p { font-size: 14px; color: #4A5568; line-height: 1.6; }
+  .thing-content .example {
+    display: inline-block;
+    background: rgba(0,22,51,0.06);
+    color: #001633;
+    font-size: 13px;
+    font-style: italic;
+    padding: 5px 12px;
+    border-radius: 6px;
+    margin-top: 6px;
+    border-left: 3px solid #FFD4AA;
+  }
+
+  /* ── REMINDER BOX ── */
+  .reminder {
+    margin: 4px 40px 24px;
+    padding: 20px 24px;
+    background: #001633;
+    border-radius: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  .reminder-icon {
+    font-size: 24px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .reminder-text h4 { color: #FFD4AA; font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .reminder-text p { color: #C1DDFF; font-size: 14px; line-height: 1.6; }
+
+  /* ── SELF-CHECK ── */
+  .self-check-section {
+    margin: 0 40px 20px;
+    background: #0a1e3d;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .self-check-header {
+    background: rgba(255,212,170,0.15);
+    padding: 12px 22px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #FFD4AA;
+    border-bottom: 1px solid rgba(255,212,170,0.15);
+  }
+  .self-check-body { padding: 20px 22px; }
+  .self-check-body h4 { color: #FFFFFF; font-size: 15px; font-weight: 700; margin-bottom: 14px; line-height: 1.4; }
+  .sc-scenario {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-style: italic;
+    color: #FFFFFF;
+    line-height: 1.7;
+    margin-bottom: 14px;
+  }
+  .sc-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .sc-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 11px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    width: 100%;
+    color: #FFFFFF;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .sc-option:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+  .sc-opt-letter {
+    width: 22px;
+    height: 22px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .sc-reveal {
+    background: #FFD4AA;
+    color: #001633;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+  .sc-reveal:hover { background: #f0c090; }
+  .sc-answer-box {
+    display: none;
+    margin-top: 14px;
+    padding: 16px 20px;
+    background: rgba(255,212,170,0.08);
+    border: 1px solid rgba(255,212,170,0.25);
+    border-radius: 10px;
+  }
+  .sc-answer-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #FFD4AA; margin-bottom: 8px; }
+  .sc-answer-box h5 { font-size: 15px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px; }
+  .sc-answer-box p { font-size: 13.5px; color: #C1DDFF; line-height: 1.65; }
+
+  /* ── CHALLENGE ── */
+  .challenge {
+    margin: 4px 40px 24px;
+    padding: 22px 28px;
+    background: linear-gradient(135deg, #001633 0%, #0a2d5c 100%);
+    border-radius: 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .challenge::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #FFD4AA, #FF527B);
+  }
+  .challenge-label {
+    display: inline-block;
+    background: rgba(255,212,170,0.2);
+    color: #FFD4AA;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .challenge p { color: #FFFFFF; font-size: 16px; font-weight: 600; line-height: 1.6; }
+  .challenge p span { color: #FFD4AA; font-weight: 800; }
+
+  /* ── SURVEY ── */
+  .survey-section {
+    margin: 0 40px 24px;
+    padding: 18px 22px;
+    background: #FFF5ED;
+    border-radius: 12px;
+    border: 1px solid #FFD4AA;
+    text-align: center;
+  }
+  .survey-label { font-size: 11px; font-weight: 700; color: #C07000; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+  .survey-section p { font-size: 13px; color: #4A5568; margin-bottom: 14px; line-height: 1.5; }
+  .survey-link {
+    display: inline-block;
+    background: #FF527B;
+    color: white;
+    padding: 10px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+  .survey-link:hover { background: #e0415e; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #001633;
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer .brand { color: #C1DDFF; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; }
+  .footer .week { color: rgba(193, 221, 255, 0.5); font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="infographic">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="series-tag">Leadership in 5 · Peak Ops Edition</div>
+    <h1>Lead Through<br><span>the Rush</span></h1>
+    <div class="subtitle">This is the week that tests what kind of leader you are. Here's how to show up.</div>
+  </div>
+
+  <!-- MOMENT BANNER -->
+  <div class="moment-banner">
+    Memorial Day Week · Summer Ops Starts Now
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <p>This week Breeze will carry more guests than almost any other week of the year. Your team knows it's coming. They're already bracing. <strong>What they need from you isn't a pep talk — it's your presence, your steadiness, and your ability to notice them in the middle of the chaos.</strong> Here's how to do it.</p>
+  </div>
+
+  <!-- 3 THINGS -->
+  <div class="three-things">
+    <div class="section-label">3 Things Great Leaders Do This Week</div>
+
+    <div class="thing-card">
+      <div class="thing-number">1</div>
+      <div class="thing-content">
+        <h3>Be visible — not just available</h3>
+        <p>There's a difference between being reachable and being present. This week, get out of your office or off your screen and actually show up where your team is working. You don't have to say anything profound. Just being there signals: I see you, I'm in this with you.</p>
+        <div class="example">"I'm going to walk the floor for 10 minutes before the morning bank."</div>
+      </div>
+    </div>
+
+    <div class="thing-card">
+      <div class="thing-number">2</div>
+      <div class="thing-content">
+        <h3>Check in on people, not just performance</h3>
+        <p>During a rush week, leaders naturally track metrics — on-time, turn times, headcount. Don't stop doing that. But also ask a different question: <em>How are you holding up?</em> Four words that cost nothing and mean everything when someone is running on fumes.</p>
+        <div class="example">"Hey — genuinely, how are you doing this week?"</div>
+      </div>
+    </div>
+
+    <div class="thing-card">
+      <div class="thing-number">3</div>
+      <div class="thing-content">
+        <h3>Catch wins in real time</h3>
+        <p>A busy week creates dozens of moments where your team does something right under pressure. Don't let them pass. A quick, specific callout in the moment — "I noticed how you handled that" — is the highest-value thing you can do this week. It costs 20 seconds and lasts for days.</p>
+        <div class="example">"That recovery on the delayed flight was exactly what great looks like."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REMINDER -->
+  <div class="reminder">
+    <div class="reminder-icon">✈️</div>
+    <div class="reminder-text">
+      <h4>Remember: your team mirrors your energy</h4>
+      <p>When it's chaotic and you're calm, they find a way to be calm. When you're visibly stressed, they amplify it. You don't have to pretend everything is perfect — just be the steady, grounded presence they can orient around.</p>
+    </div>
+  </div>
+
+  <!-- SELF-CHECK -->
+  <div class="self-check-section">
+    <div class="self-check-header">✓ Self-Check — How Would You Handle This?</div>
+    <div class="self-check-body">
+      <h4>What's your move?</h4>
+      <div class="sc-scenario">
+        It's the middle of a chaotic shift. A gate agent is visibly stressed and clearly falling behind. You walk by and notice. What do you do first?
+      </div>
+      <div class="sc-options">
+        <button class="sc-option"><span class="sc-opt-letter">A</span><span>Jump in and start helping them work faster</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">B</span><span>Ask "What do you need right now?"</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">C</span><span>Remind them of the standard and what needs to happen</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">D</span><span>Handle the task yourself so it gets done right</span></button>
+      </div>
+      <button class="sc-reveal" onclick="revealAnswer()">See the Answer &darr;</button>
+      <div class="sc-answer-box" id="sc-answer">
+        <div class="sc-answer-label">The Answer</div>
+        <h5>B — "What do you need right now?"</h5>
+        <p>Option A is helpful but assumes you know what kind of help they need. Option C is the wrong moment for a standards reminder — they know. Option D takes ownership away from them and sets a bad precedent. Option B takes five seconds and tells you everything: do they need another set of hands, a word of encouragement, a resource, or just someone to acknowledge that it's hard? Meeting the right need beats solving the wrong problem every time.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHALLENGE -->
+  <div class="challenge">
+    <div class="challenge-label">This Week's Challenge</div>
+    <p>Every day this week: <span>be visible, check in on one person,</span><br>and <span>catch at least one win out loud.</span><br>That's the whole job this week.</p>
+  </div>
+
+  <!-- SURVEY -->
+  <div class="survey-section">
+    <div class="survey-label">1-Question Pulse Check</div>
+    <p>It's just one question — tap your answer below. No sign-in required.</p>
+    <iframe data-tally-src="https://tally.so/embed/7R4XgA?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0" title="Leadership in 5 - Week 20 Pulse"></iframe>
+    <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="brand">BREEZE AVIATION GROUP — Leadership Development</div>
+    <div class="week">Week 20 · May 26, 2026</div>
+  </div>
+
+</div>
+
+<script>
+  function revealAnswer() {
+    const el = document.getElementById('sc-answer');
+    el.style.display = 'block';
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+</script>
+
+</body>
+</html>

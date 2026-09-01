@@ -377,6 +377,38 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
   .n90-section{padding:18px 20px;}
   .tab-btn{font-size:12px;padding:13px 14px;}
 }
+
+/* ── LI5 TAB ── */
+.li5-layout{display:flex;gap:0;height:780px;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.08);}
+.li5-sidebar{width:260px;flex-shrink:0;background:#ffffff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;}
+.li5-filter-pills{display:flex;gap:6px;flex-wrap:wrap;padding:14px 14px 10px;border-bottom:1px solid #f1f5f9;}
+.li5-pill{background:none;border:1.5px solid #e2e8f0;border-radius:100px;font-size:11px;font-weight:700;padding:5px 12px;cursor:pointer;transition:all .18s;color:#64748b;font-family:inherit;white-space:nowrap;}
+.li5-pill:hover{border-color:#174DFF;color:#174DFF;}
+.li5-pill.active{color:#fff;border-color:transparent;}
+.li5-episode-list{flex:1;overflow-y:auto;padding:8px 0;}
+.li5-ep{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;cursor:pointer;border-left:3px solid transparent;transition:all .15s;}
+.li5-ep:hover{background:#f8fafc;}
+.li5-ep.active{background:#f0f4ff;border-left-color:#174DFF;}
+.li5-ep.hidden{display:none;}
+.li5-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.li5-ep-text{flex:1;min-width:0;}
+.li5-ep-date{font-size:10px;color:#94a3b8;font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px;}
+.li5-ep-title{font-size:13px;color:#1a2340;font-weight:600;line-height:1.3;}
+.li5-ep-tag{font-size:10px;font-weight:700;margin-top:3px;opacity:.8;}
+.li5-main{flex:1;background:#f8fafc;display:flex;flex-direction:column;}
+.li5-toolbar{padding:12px 16px;background:#ffffff;border-bottom:1px solid #e2e8f0;display:flex;align-items:center;gap:10px;min-height:48px;}
+.li5-toolbar-title{font-size:13px;font-weight:700;color:#1a2340;flex:1;}
+.li5-toolbar-principle{font-size:11px;font-weight:700;padding:3px 10px;border-radius:100px;color:#fff;}
+.li5-frame-wrap{flex:1;overflow:hidden;}
+.li5-frame-wrap iframe{width:100%;height:100%;border:none;display:block;}
+.li5-placeholder{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:#94a3b8;}
+.li5-placeholder-icon{font-size:40px;opacity:.4;}
+.li5-placeholder-text{font-size:14px;font-weight:600;}
+.li5-placeholder-sub{font-size:13px;opacity:.7;}
+.li5-count{font-size:11px;color:#94a3b8;padding:8px 14px;border-top:1px solid #f1f5f9;}
+.li5-above-pills{display:flex;gap:6px;flex-wrap:wrap;padding:0 0 18px;}
+.li5-above-pills .li5-pill{font-size:12px;padding:6px 14px;}
+@media(max-width:640px){.li5-layout{flex-direction:column;height:auto;}.li5-sidebar{width:100%;height:240px;}.li5-frame-wrap iframe{height:420px;}}
 </style>
 </head>
 <body>
@@ -406,6 +438,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
     <button class="tab-btn" onclick="switchTab('skills',this)">My Skills</button>
     <button class="tab-btn" onclick="switchTab('onboard',this)">Onboard My Team</button>
     <button class="tab-btn" onclick="switchTab('resources',this)">Resources</button>
+    <button class="tab-btn" onclick="switchTab('li5',this);if(!window.li5Ready){initLi5();window.li5Ready=true;}">Leadership in 5</button>
   </div>
   <div class="values-row">
     <div class="values-row-inner">
@@ -1195,6 +1228,59 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
     <div class="ccard"><div class="cname">Communications</div><div class="crole">Internal/external messaging</div><a href="mailto:communications@flybreeze.com">communications@flybreeze.com</a></div>
     <div class="ccard"><div class="cname">AbsenceResources (FMLA)</div><div class="crole">Leave management — ComPsych</div><a href="tel:8444852840">844-485-2840</a></div>
   </div>
+
+</div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     TAB: LEADERSHIP IN 5
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tab-li5">
+<div class="tab-inner">
+
+  <div class="sec-label">BREEZE UNIVERSITY</div>
+  <div class="sec-title">Leadership in 5 &mdash; Archive</div>
+  <div class="sec-sub">Every edition, organized by principle. Click any topic to read it &mdash; or filter by principle to find what's most relevant to your team right now.</div>
+
+  <!-- Principle filter pills (above layout) -->
+  <div class="li5-above-pills" role="group" aria-label="Filter by principle">
+    <button class="li5-pill active" data-principle="All">All</button>
+    <button class="li5-pill" data-principle="Be Seriously Nice">Be Seriously Nice</button>
+    <button class="li5-pill" data-principle="Do What's Right">Do What's Right</button>
+    <button class="li5-pill" data-principle="Communicate Openly">Communicate Openly</button>
+    <button class="li5-pill" data-principle="Promote Ownership">Promote Ownership</button>
+    <button class="li5-pill" data-principle="Champion Others">Champion Others</button>
+  </div>
+
+  <!-- Main layout -->
+  <div class="li5-layout">
+
+    <!-- Sidebar -->
+    <aside class="li5-sidebar" aria-label="Episode list">
+      <div class="li5-episode-list" id="li5-list" role="list" aria-label="Leadership in 5 episodes"></div>
+      <div class="li5-count" id="li5-count" aria-live="polite">32 editions &middot; January &ndash; September 2026</div>
+    </aside>
+
+    <!-- Main viewer -->
+    <main class="li5-main" aria-label="Episode viewer">
+      <div class="li5-toolbar" id="li5-toolbar" style="display:none;" role="banner">
+        <div class="li5-toolbar-title" id="li5-toolbar-title"></div>
+        <span class="li5-toolbar-principle" id="li5-toolbar-principle"></span>
+      </div>
+      <div class="li5-placeholder" id="li5-placeholder" role="status" aria-label="No episode selected">
+        <div class="li5-placeholder-icon" aria-hidden="true">&#9889;</div>
+        <div class="li5-placeholder-text">Select a topic to read it</div>
+        <div class="li5-placeholder-sub">32 editions &middot; January through September 2026</div>
+      </div>
+      <div class="li5-frame-wrap" id="li5-frame-wrap" style="display:none;">
+        <iframe id="li5-iframe" title="Leadership in 5 episode" src="" sandbox="allow-scripts allow-same-origin allow-popups"></iframe>
+      </div>
+    </main>
+
+  </div>
+
+  <p style="font-size:12px;color:#94a3b8;margin-top:14px;">32 editions &middot; January &ndash; September 2026 &middot; New topics added every Tuesday</p>
 
 </div>
 </div>
@@ -5950,6 +6036,130 @@ renderN90();
 initLevelPills();
 renderSkills();
 renderFirst90();
+
+/* ══════════════════════════════════════════════════════════════════
+   LEADERSHIP IN 5 — EPISODE DATA & INIT
+══════════════════════════════════════════════════════════════════ */
+const li5Episodes = [
+  { date:"Jan 13", title:"First Impressions", principle:"Be Seriously Nice", color:"#FF527B", file:"Li5_Jan13_FirstImpressions.html" },
+  { date:"Jan 20", title:"Assume Positive Intent", principle:"Be Seriously Nice", color:"#FF527B", file:"Li5_Jan20_AssumePositiveIntent.html" },
+  { date:"Jan 26", title:"Speed of Trust: 4 Cores of Credibility", principle:"Do What's Right", color:"#00B5A0", file:"Li5_Jan26_SpeedOfTrust.html" },
+  { date:"Jan 30", title:"What, So What, Now What", principle:"Communicate Openly", color:"#FF9040", file:"Li5_Jan30_WhatSoWhatNowWhat.html" },
+  { date:"Jan 30", title:"Effective Feedback Model (SBI)", principle:"Communicate Openly", color:"#FF9040", file:"Li5_Jan30_EffectiveFeedbackModel.html" },
+  { date:"Feb 12", title:"Radical Candor", principle:"Communicate Openly", color:"#FF9040", file:"Li5_Feb12_RadicalCandor.html" },
+  { date:"Feb 23", title:"Radical Candor: Quadrant Self-Audit", principle:"Communicate Openly", color:"#FF9040", file:"Li5_Feb23_RadicalCandorQuadrants.html" },
+  { date:"Mar 3",  title:"Team Member Recognition", principle:"Champion Others", color:"#FFCA40", file:"Li5_Mar3_TeamMemberRecognition.html" },
+  { date:"Mar 9",  title:"Coaching vs. Telling", principle:"Champion Others", color:"#FFCA40", file:"Li5_Mar9_CoachingVsTelling.html" },
+  { date:"Mar 17", title:"The GROW Coaching Model", principle:"Champion Others", color:"#FFCA40", file:"Li5_Mar17_GROWModel.html" },
+  { date:"Mar 23", title:"The RACI Model", principle:"Promote Ownership", color:"#8B6FD8", file:"Li5_Mar23_RACIModel.html" },
+  { date:"Mar 30", title:"The 2-Minute Connection", principle:"Be Seriously Nice", color:"#FF527B", file:"Leadership_in_5_Week13_2MinConnection.html" },
+  { date:"Apr 1",  title:"Delegating or Dumping?", principle:"Promote Ownership", color:"#8B6FD8", file:"Leadership_in_5_Week14_4D_Delegation.html" },
+  { date:"Apr 14", title:"How to Disagree Productively", principle:"Communicate Openly", color:"#FF9040", file:"Leadership_in_5_Week15_Disagree_Without_Damaging.html" },
+  { date:"Apr 21", title:"The Coaching Habit", principle:"Champion Others", color:"#FFCA40", file:"Leadership_in_5_CoachingHabit_Sway.html" },
+  { date:"Apr 27", title:"What You Bring", principle:"Promote Ownership", color:"#8B6FD8", file:"Leadership_in_5_Week17_WhatYouBring.html" },
+  { date:"May 5",  title:"The 5-Minute Career Conversation", principle:"Champion Others", color:"#FFCA40", file:"Leadership_in_5_Week18_CareerConvo.html" },
+  { date:"May 11", title:"Catching People Doing It Right", principle:"Be Seriously Nice", color:"#FF527B", file:"Leadership_in_5_Week19_CatchingRight.html" },
+  { date:"Jun 2",  title:"Pre-Summer Ops Huddle", principle:"Promote Ownership", color:"#8B6FD8", file:"Leadership_in_5_Week10_PreSummerHuddle.html" },
+  { date:"Jun 9",  title:"The 30-Second Check-In", principle:"Communicate Openly", color:"#FF9040", file:"Leadership_in_5_Week11_30SecondCheckIn.html" },
+  { date:"Jun 16", title:"Multipliers", principle:"Promote Ownership", color:"#8B6FD8", file:"Leadership_in_5_Week12_Multipliers.html" },
+  { date:"Jun 22", title:"Pressure Reveals", principle:"Do What's Right", color:"#00B5A0", file:"Leadership_in_5_Week13_PressureReveals.html" },
+  { date:"Jun 30", title:"Leading When Running on Empty", principle:"Champion Others", color:"#FFCA40", file:"Leadership_in_5_Week14_RunningOnEmpty.html" },
+  { date:"Jul 7",  title:"Staying Calm in the Storm", principle:"Be Seriously Nice", color:"#FF527B", file:"Leadership_in_5_Jul8_StayingCalm.html" },
+  { date:"Jul 15", title:"Getting All the Juice from the Lemon", principle:"Communicate Openly", color:"#FF9040", file:"Leadership_in_5_Jul15_TheDebrief.html" },
+  { date:"Jul 21", title:"Making Hard Calls Fast", principle:"Do What's Right", color:"#00B5A0", file:"Leadership_in_5_Jul22_HardCallsFast.html" },
+  { date:"Jul 28", title:"Protecting Your Team from Burnout", principle:"Champion Others", color:"#FFCA40", file:"Leadership_in_5_Jul29_BurnoutProtect.html" },
+  { date:"Aug 4",  title:"How to Tell a Hard Truth", principle:"Communicate Openly", color:"#FF9040", file:"Leadership_in_5_Aug5_HardTruth.html" },
+  { date:"Aug 11", title:"Spot Potential, Not Just Performance", principle:"Champion Others", color:"#FFCA40", file:"Leadership_in_5_Aug11_SpotPotential.html" },
+  { date:"Aug 18", title:"Five Dysfunctions of a Team", principle:"Be Seriously Nice", color:"#FF527B", file:"Leadership_in_5_Aug18_FiveDysfunctions.html" },
+  { date:"Aug 25", title:"Own Your Mistakes", principle:"Do What's Right", color:"#00B5A0", file:"Leadership_in_5_Aug25_OwnItFirst.html" },
+  { date:"Sep 1",  title:"Repairing After Conflict", principle:"Be Seriously Nice", color:"#FF527B", file:"Leadership_in_5_Sep1_RepairAfterConflict.html" },
+];
+
+function initLi5() {
+  const list        = document.getElementById('li5-list');
+  const toolbar     = document.getElementById('li5-toolbar');
+  const frameWrap   = document.getElementById('li5-frame-wrap');
+  const placeholder = document.getElementById('li5-placeholder');
+  const pills       = document.querySelectorAll('.li5-above-pills .li5-pill');
+  let activePrinciple = 'All';
+
+  // Render episode list
+  li5Episodes.forEach((ep, i) => {
+    const div = document.createElement('div');
+    div.className = 'li5-ep';
+    div.setAttribute('role', 'listitem');
+    div.setAttribute('tabindex', '0');
+    div.setAttribute('aria-label', ep.date + ' \u2014 ' + ep.title + ' (' + ep.principle + ')');
+    div.dataset.principle = ep.principle;
+    div.dataset.idx = i;
+    div.innerHTML =
+      '<div class="li5-dot" style="background:' + ep.color + '" aria-hidden="true"></div>' +
+      '<div class="li5-ep-text">' +
+        '<div class="li5-ep-date">' + ep.date + '</div>' +
+        '<div class="li5-ep-title">' + ep.title + '</div>' +
+        '<div class="li5-ep-tag" style="color:' + ep.color + '">' + ep.principle + '</div>' +
+      '</div>';
+    div.addEventListener('click', function() { loadEpisode(ep, div); });
+    div.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); loadEpisode(ep, div); } });
+    list.appendChild(div);
+  });
+
+  // Filter pills
+  pills.forEach(function(pill) {
+    pill.addEventListener('click', function() {
+      activePrinciple = pill.dataset.principle;
+      // Reset all pills
+      pills.forEach(function(p) {
+        p.classList.remove('active');
+        p.style.background = '';
+        p.style.color = '';
+        p.style.borderColor = '';
+      });
+      pill.classList.add('active');
+      if (activePrinciple === 'All') {
+        pill.style.background = '#174DFF';
+        pill.style.color = '#fff';
+        pill.style.borderColor = 'transparent';
+      } else {
+        var color = li5Episodes.find(function(e) { return e.principle === activePrinciple; });
+        var c = color ? color.color : '#174DFF';
+        pill.style.background = c;
+        pill.style.color = '#fff';
+        pill.style.borderColor = 'transparent';
+      }
+      filterList();
+    });
+  });
+
+  // Set "All" pill default style
+  var allPill = document.querySelector('.li5-above-pills .li5-pill[data-principle="All"]');
+  if (allPill) { allPill.style.background = '#174DFF'; allPill.style.color = '#fff'; allPill.style.borderColor = 'transparent'; }
+
+  function filterList() {
+    var eps = list.querySelectorAll('.li5-ep');
+    var visible = 0;
+    eps.forEach(function(ep) {
+      var match = activePrinciple === 'All' || ep.dataset.principle === activePrinciple;
+      ep.classList.toggle('hidden', !match);
+      if (match) visible++;
+    });
+    var countEl = document.getElementById('li5-count');
+    if (countEl) countEl.textContent = visible + ' edition' + (visible !== 1 ? 's' : '') + (activePrinciple !== 'All' ? ' \u00b7 ' + activePrinciple : ' \u00b7 January \u2013 September 2026');
+  }
+
+  function loadEpisode(ep, el) {
+    list.querySelectorAll('.li5-ep').forEach(function(e) { e.classList.remove('active'); });
+    el.classList.add('active');
+    toolbar.style.display = 'flex';
+    document.getElementById('li5-toolbar-title').textContent = ep.date + ' \u2014 ' + ep.title;
+    var badge = document.getElementById('li5-toolbar-principle');
+    badge.textContent = ep.principle;
+    badge.style.background = ep.color;
+    placeholder.style.display = 'none';
+    frameWrap.style.display = 'block';
+    document.getElementById('li5-iframe').src = ep.file;
+  }
+}
 </script>
 </body>
 </html>

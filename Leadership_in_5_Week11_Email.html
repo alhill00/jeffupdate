@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadership in 5 — Week 11 — The 30-Second Check-In</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    background: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .infographic {
+    width: 680px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 6, 51, 0.14);
+  }
+
+  /* HEADER */
+  .header {
+    background: #000633;
+    padding: 34px 40px 30px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #174DFF, #C1DDFF, #174DFF);
+  }
+  .series-tag {
+    display: inline-block;
+    background: rgba(23, 77, 255, 0.25);
+    color: #C1DDFF;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .header h1 {
+    color: #FFFFFF;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+  .header h1 span { color: #C1DDFF; }
+  .header .subtitle {
+    color: rgba(193, 221, 255, 0.75);
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  /* PRINCIPLE BAR */
+  .principle-bar {
+    background: #174DFF;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 11px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+  }
+  .principle-bar span { opacity: 0.6; margin: 0 8px; }
+
+  /* INTRO */
+  .intro {
+    padding: 26px 40px 22px;
+    border-bottom: 1px solid #E8EDF2;
+  }
+  .intro p { color: #4A5568; font-size: 15px; line-height: 1.7; }
+  .intro strong { color: #000633; }
+  .intro em { color: #666; }
+
+  /* PHRASE SWAP */
+  .swap-section { padding: 26px 40px 10px; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #174DFF;
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    margin-bottom: 14px;
+  }
+  .phrase-swap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #F0F4FF;
+    border-radius: 12px;
+    padding: 20px 22px;
+    border: 1px solid #C1DDFF;
+  }
+  .phrase-box {
+    flex: 1;
+    text-align: center;
+    padding: 18px 14px;
+    border-radius: 10px;
+  }
+  .phrase-box.old {
+    background: #FFF5F8;
+    border: 1px solid #FFD4E0;
+  }
+  .phrase-box.new {
+    background: #000633;
+    border: 1px solid #174DFF;
+  }
+  .phrase-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .phrase-box.old .phrase-label { color: #FF527B; }
+  .phrase-box.new .phrase-label { color: #C1DDFF; }
+  .phrase-box.old .phrase-text { color: #777; font-size: 16px; font-weight: 700; text-decoration: line-through; text-decoration-color: #FF527B; line-height: 1.3; }
+  .phrase-box.new .phrase-text { color: #FFFFFF; font-size: 16px; font-weight: 700; line-height: 1.3; }
+  .swap-arrow { font-size: 26px; color: #174DFF; font-weight: 900; flex-shrink: 0; }
+
+  /* WHY IT WORKS */
+  .why-section { padding: 10px 40px 18px; }
+  .why-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 10px;
+    padding: 18px 20px;
+    border-radius: 10px;
+    border: 1px solid #E8EDF2;
+  }
+  .why-card:nth-child(2) { background: #F0F4FF; border-color: #C1DDFF; }
+  .why-card:nth-child(3) { background: #FFF5ED; border-color: #FFD4AA; }
+  .why-card:nth-child(4) { background: #F0F6FF; border-color: #BAD4FF; }
+  .why-num {
+    width: 36px; height: 36px;
+    background: #000633;
+    color: #C1DDFF;
+    font-size: 15px; font-weight: 800;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .why-content h3 { font-size: 15px; font-weight: 700; color: #000633; margin-bottom: 5px; }
+  .why-content p { font-size: 14px; color: #4A5568; line-height: 1.65; }
+
+  /* 30-SECOND STRUCTURE */
+  .structure-section { padding: 0 40px 18px; }
+  .structure-box {
+    background: #000633;
+    border-radius: 14px;
+    padding: 24px 28px;
+  }
+  .structure-box h3 {
+    color: #C1DDFF;
+    font-size: 12px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 1.8px;
+    margin-bottom: 18px;
+  }
+  .step-row {
+    display: flex; align-items: flex-start; gap: 16px;
+    margin-bottom: 14px;
+  }
+  .step-row:last-child { margin-bottom: 0; }
+  .step-time {
+    background: rgba(193, 221, 255, 0.12);
+    color: #C1DDFF;
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    padding: 4px 10px; border-radius: 6px;
+    white-space: nowrap; flex-shrink: 0; margin-top: 3px;
+  }
+  .step-row p { font-size: 14px; color: #FFFFFF; line-height: 1.6; }
+  .step-row p em { color: #C1DDFF; font-style: italic; }
+
+  /* CHALLENGE */
+  .challenge {
+    margin: 0 40px 18px;
+    padding: 24px 30px;
+    background: linear-gradient(135deg, #000633 0%, #0a1a4d 100%);
+    border-radius: 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .challenge::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #174DFF, #C1DDFF);
+  }
+  .challenge-label {
+    display: inline-block;
+    background: rgba(23, 77, 255, 0.3);
+    color: #C1DDFF;
+    font-size: 11px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 4px 14px; border-radius: 20px; margin-bottom: 12px;
+  }
+  .challenge p { color: #FFFFFF; font-size: 17px; font-weight: 600; line-height: 1.65; }
+  .challenge p span { color: #C1DDFF; font-weight: 800; }
+
+  /* REFLECTION */
+  .reflection {
+    margin: 0 40px 24px;
+    padding: 20px 24px;
+    background: #F0F4FF;
+    border-radius: 12px;
+    border-left: 4px solid #174DFF;
+  }
+  .reflection-label { font-size: 10px; font-weight: 700; color: #174DFF; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px; }
+  .reflection p { font-size: 14px; color: #1a2a4a; font-style: italic; line-height: 1.65; font-weight: 500; }
+
+  /* FOOTER */
+  .footer {
+    background: #000633;
+    padding: 16px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .footer .brand { color: #C1DDFF; font-size: 12px; font-weight: 600; letter-spacing: 0.4px; }
+  .footer .week { color: rgba(193, 221, 255, 0.5); font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="infographic">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="series-tag">Leadership in 5 &nbsp;·&nbsp; Week 11</div>
+    <h1>The 30-Second<br><span>Check-In</span></h1>
+    <div class="subtitle">One phrase that replaces "how are you" — and actually gets a real answer.</div>
+  </div>
+
+  <!-- PRINCIPLE BAR -->
+  <div class="principle-bar">
+    Communicate Openly <span>|</span> Communicating Powerfully
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <p>Most check-ins are a formality. <strong>"How are you?"</strong> gets <em>"Fine."</em> <strong>"How's the team?"</strong> gets <em>"Good."</em> You asked, they answered, nothing changed. This week, swap that one phrase for something that gets a real answer — in 30 seconds or less.</p>
+  </div>
+
+  <!-- PHRASE SWAP -->
+  <div class="swap-section">
+    <div class="section-label">The Swap</div>
+    <div class="phrase-swap">
+      <div class="phrase-box old">
+        <div class="phrase-label">Stop Saying</div>
+        <div class="phrase-text">"How are you?"</div>
+      </div>
+      <div class="swap-arrow">&#8594;</div>
+      <div class="phrase-box new">
+        <div class="phrase-label">Start Saying</div>
+        <div class="phrase-text">"What's one thing I can clear for you?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHY IT WORKS -->
+  <div class="why-section">
+    <div class="section-label">Why It Works</div>
+
+    <div class="why-card">
+      <div class="why-num">1</div>
+      <div class="why-content">
+        <h3>It's specific — "one thing"</h3>
+        <p>Asking for one thing removes the pressure of spilling everything. It gives permission to share one real issue, not a performance. You get a focused, honest answer instead of a shrug.</p>
+      </div>
+    </div>
+
+    <div class="why-card">
+      <div class="why-num">2</div>
+      <div class="why-content">
+        <h3>It's action-oriented — "I can clear"</h3>
+        <p>You're not asking how they feel. You're offering to remove an obstacle. That reframes you as a resource, not just a manager checking a box. It signals: <em>I'm here to help, not just to ask.</em></p>
+      </div>
+    </div>
+
+    <div class="why-card">
+      <div class="why-num">3</div>
+      <div class="why-content">
+        <h3>It surfaces real blockers</h3>
+        <p>The obstacles slowing your team down usually live in the gap between "I'm fine" and what they'd actually say if asked directly. This question opens that gap — comfortably.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 30-SECOND STRUCTURE -->
+  <div class="structure-section">
+    <div class="structure-box">
+      <h3>The 30-Second Structure</h3>
+      <div class="step-row">
+        <div class="step-time">0 – 10 sec</div>
+        <p><strong>Stop and face them.</strong> Put down whatever you're carrying. Eye contact. The pause itself signals: <em>you have my attention.</em></p>
+      </div>
+      <div class="step-row">
+        <div class="step-time">10 – 15 sec</div>
+        <p><strong>Ask the question.</strong> <em>"What's one thing I can clear for you right now?"</em> Say it like you mean it.</p>
+      </div>
+      <div class="step-row">
+        <div class="step-time">15 – 30 sec</div>
+        <p><strong>Actually listen — don't move yet.</strong> Resist filling the silence. The answer is coming. Let it arrive.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHALLENGE -->
+  <div class="challenge">
+    <div class="challenge-label">This Week's Challenge</div>
+    <p>Use <span>"What's one thing I can clear for you?"</span><br>
+    in at least <span>3 conversations</span> this week.<br>
+    Notice what you hear that you wouldn't have heard otherwise.</p>
+  </div>
+
+  <!-- REFLECTION -->
+  <div class="reflection">
+    <div class="reflection-label">Weekly Reflection</div>
+    <p>"Try replacing 'how are you' with 'what's one thing I can clear for you' this week. What did you hear?"</p>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="brand">BREEZE AVIATION GROUP — Leadership Development</div>
+    <div class="week">Week 11 &nbsp;·&nbsp; Jun 9, 2026</div>
+  </div>
+
+</div>
+
+</body>
+</html>

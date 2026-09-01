@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Leadership in 5 | Week 13 — Email Body Version</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      background-color: #f0f4f8;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #000633;
+    }
+
+    .note-banner {
+      max-width: 620px;
+      margin: 0 auto 16px;
+      background: #FFF5BD;
+      border-left: 4px solid #174DFF;
+      border-radius: 6px;
+      padding: 12px 18px;
+      font-size: 13px;
+      color: #000633;
+      line-height: 1.5;
+    }
+
+    .note-banner strong { display: block; margin-bottom: 4px; }
+
+    .email-wrapper {
+      max-width: 620px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+
+    /* HEADER */
+    .header {
+      background-color: #000633;
+      padding: 32px 40px;
+      text-align: center;
+    }
+
+    .header .label {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #C1DDFF;
+      margin-bottom: 8px;
+    }
+
+    .header h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 10px;
+      line-height: 1.4;
+    }
+
+    .header .meta {
+      font-size: 12px;
+      color: rgba(193,221,255,0.65);
+      letter-spacing: 1px;
+    }
+
+    .principle-bar {
+      background: #FF527B;
+      color: #ffffff;
+      text-align: center;
+      padding: 9px 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* BODY */
+    .body {
+      padding: 36px 40px 28px;
+    }
+
+    .body p {
+      font-size: 15px;
+      line-height: 1.75;
+      color: #333;
+      margin: 0 0 20px;
+    }
+
+    /* SCENARIO BOX */
+    .scenario-box {
+      background-color: #f4f6fb;
+      border-left: 4px solid #174DFF;
+      border-radius: 6px;
+      padding: 22px 26px;
+      margin-bottom: 24px;
+    }
+
+    .scenario-box p {
+      margin: 0 0 14px;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #000633;
+    }
+
+    .scenario-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    /* CHOICES */
+    .question {
+      font-size: 16px;
+      font-weight: 700;
+      color: #000633;
+      margin: 0 0 16px;
+    }
+
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .choice {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      border: 1.5px solid #C1DDFF;
+      border-radius: 8px;
+      padding: 15px 18px;
+      font-size: 15px;
+      line-height: 1.6;
+      color: #000633;
+    }
+
+    .choice .letter {
+      background-color: #174DFF;
+      color: #ffffff;
+      font-weight: 700;
+      font-size: 13px;
+      border-radius: 50%;
+      min-width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* DIVIDER */
+    .divider {
+      border: none;
+      border-top: 2px dashed #C1DDFF;
+      margin: 8px 0 28px;
+    }
+
+    .scroll-hint {
+      text-align: center;
+      font-size: 12px;
+      color: #aaa;
+      letter-spacing: 1px;
+      margin-bottom: 24px;
+    }
+
+    /* REVEAL */
+    .reveal-label {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #174DFF;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .reveal-headline {
+      font-size: 19px;
+      font-weight: 700;
+      color: #000633;
+      margin-bottom: 18px;
+      line-height: 1.35;
+    }
+
+    /* QUESTIONS BLOCK */
+    .questions-block {
+      background-color: #000633;
+      border-radius: 10px;
+      padding: 24px 28px;
+      margin: 24px 0;
+    }
+
+    .questions-block .qlabel {
+      font-size: 11px;
+      font-weight: 700;
+      color: #C1DDFF;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin: 0 0 14px;
+    }
+
+    .questions-block ol {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .questions-block li {
+      font-size: 15px;
+      color: #ffffff;
+      line-height: 1.7;
+      margin-bottom: 10px;
+    }
+
+    .questions-block li:last-child {
+      margin-bottom: 0;
+    }
+
+    /* CHALLENGE */
+    .challenge-box {
+      background-color: #FFF5BD;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 24px 0;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #000633;
+    }
+
+    .challenge-box .clabel {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #174DFF;
+      margin-bottom: 8px;
+    }
+
+    /* REFLECTION */
+    .reflection-box {
+      background-color: #C1DDFF;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin: 24px 0;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #000633;
+    }
+
+    .reflection-box .rlabel {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #000633;
+      margin-bottom: 8px;
+    }
+
+    .sign-off {
+      margin-top: 28px;
+      font-size: 15px;
+      color: #000633;
+    }
+
+    /* FOOTER */
+    .footer {
+      background-color: #000633;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer .brand {
+      font-size: 11px;
+      color: #C1DDFF;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .footer .week-tag {
+      background-color: #174DFF;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      border-radius: 20px;
+      padding: 4px 14px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="note-banner">
+    <strong>Note — Email Body Version (Week 13 · June 24, 2026)</strong>
+    This is the copy-paste version for use when GitHub is unavailable. Paste the text content directly into Outlook. The interactive HTML page (Leadership_in_5_Week13_PressureReveals.html) is still saved for future use.
+  </div>
+
+  <div class="email-wrapper">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="label">Leadership in 5 &nbsp;·&nbsp; Week 13</div>
+      <h1>What pressure reveals<br>about you as a leader</h1>
+      <div class="meta">Do What's Right &nbsp;·&nbsp; Character &nbsp;·&nbsp; June 24, 2026</div>
+    </div>
+
+    <div class="principle-bar">
+      Do What's Right &nbsp;|&nbsp; Character
+    </div>
+
+    <!-- BODY -->
+    <div class="body">
+
+      <!-- SCENARIO -->
+      <div class="scenario-box">
+        <p>It's Friday at 4:45 PM.</p>
+        <p>Your ops are behind, your team is exhausted, and someone just made a mistake that's about to ripple — into another department, a business partner, or your own team. Your manager is asking for an update in 10 minutes.</p>
+      </div>
+
+      <div class="question">What do you do first?</div>
+
+      <div class="choices">
+        <div class="choice">
+          <div class="letter">A</div>
+          <span>Get the facts and protect your team — figure out what happened before pointing fingers.</span>
+        </div>
+        <div class="choice">
+          <div class="letter">B</div>
+          <span>Escalate fast and make sure leadership knows it wasn't your call.</span>
+        </div>
+      </div>
+
+      <div class="scroll-hint">· · · · · · · · · · · · · · · · · ·</div>
+      <hr class="divider">
+
+      <!-- REVEAL -->
+      <div class="reveal-label">The Answer</div>
+      <div class="reveal-headline">If you said A — that's character under pressure.</div>
+
+      <p>Here's the truth: pressure doesn't create who you are as a leader. It reveals it.</p>
+
+      <p>The version of you that shows up at 4:45 on a bad Friday? That's the leader your team actually knows. Not the polished version from your best day.</p>
+
+      <!-- THREE QUESTIONS -->
+      <div class="questions-block">
+        <div class="qlabel">Three questions to sit with this week</div>
+        <ol>
+          <li>When things get hard, do you protect your team or protect yourself?</li>
+          <li>Do you slow down to get it right, or speed up to look right?</li>
+          <li>What would your team say you did — without you in the room?</li>
+        </ol>
+      </div>
+
+      <!-- CHALLENGE -->
+      <div class="challenge-box">
+        <span class="clabel">Your Challenge This Week</span>
+        The next time pressure spikes, pause for 10 seconds before responding. Notice what your instinct was. That's your data.
+      </div>
+
+      <!-- REFLECTION -->
+      <div class="reflection-box">
+        <span class="rlabel">Reflection Question</span>
+        Think of a high-pressure moment this week. What did it reveal about you as a leader?
+      </div>
+
+      <div class="sign-off">— Alex</div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="footer">
+      <div class="brand">BREEZE AIRWAYS &nbsp;·&nbsp; Leadership Development</div>
+      <div class="week-tag">Week 13 of 40</div>
+    </div>
+
+  </div>
+
+</body>
+</html>

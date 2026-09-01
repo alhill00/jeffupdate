@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Coaching Habit — Leadership in 5 Book Breakdown</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    background: #001633;
+    color: #FFFFFF;
+    overflow-x: hidden;
+  }
+
+  /* ── Progress bar ── */
+  .progress-bar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1F7ADF, #FFD4AA, #C1DDFF, #FF527B, #48C78E);
+    z-index: 1000;
+    width: 0%;
+    transition: width 0.1s linear;
+  }
+
+  /* ── Section base ── */
+  .section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    position: relative;
+    overflow: hidden;
+  }
+  .section-inner {
+    max-width: 680px;
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+
+  /* ── Fade-in animation ── */
+  .fade-in {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+  .fade-in.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .fade-in.delay-1 { transition-delay: 0.15s; }
+  .fade-in.delay-2 { transition-delay: 0.3s; }
+  .fade-in.delay-3 { transition-delay: 0.45s; }
+  .fade-in.delay-4 { transition-delay: 0.6s; }
+
+  /* ── Hero section ── */
+  .hero {
+    background: linear-gradient(135deg, #001633 0%, #0a2a5c 50%, #001633 100%);
+    text-align: center;
+    min-height: 100vh;
+  }
+  .hero-tag {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: #1F7ADF;
+    margin-bottom: 8px;
+  }
+  .hero-series {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: #FFD4AA;
+    margin-bottom: 40px;
+  }
+  .hero h1 {
+    font-size: 48px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 12px;
+  }
+  .hero h1 .accent { color: #1F7ADF; }
+  .hero .author {
+    font-size: 18px;
+    color: #C1DDFF;
+    font-weight: 400;
+    margin-bottom: 32px;
+  }
+  .hero .hook {
+    font-size: 17px;
+    color: #C1DDFF;
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0 auto 40px;
+  }
+  .hero .time-badge {
+    display: inline-block;
+    padding: 10px 24px;
+    border: 1px solid rgba(31,122,223,0.4);
+    border-radius: 30px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #C1DDFF;
+    letter-spacing: 1px;
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    animation: bounce 2s infinite;
+  }
+  .scroll-hint span {
+    font-size: 11px;
+    color: rgba(193,221,255,0.4);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .scroll-arrow {
+    display: block;
+    margin: 8px auto 0;
+    font-size: 20px;
+    color: rgba(31,122,223,0.5);
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(8px); }
+  }
+
+  /* ── Intro section ── */
+  .intro-section {
+    background: #001633;
+  }
+  .intro-section h2 {
+    font-size: 28px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 20px;
+  }
+  .intro-section p {
+    font-size: 16px;
+    color: #C1DDFF;
+    line-height: 1.8;
+    margin-bottom: 16px;
+  }
+  .intro-callout {
+    margin-top: 30px;
+    padding: 24px 28px;
+    background: rgba(31,122,223,0.1);
+    border-left: 4px solid #1F7ADF;
+    border-radius: 0 12px 12px 0;
+    font-size: 16px;
+    color: #FFFFFF;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+
+  /* ── Self-check section ── */
+  .self-check {
+    background: linear-gradient(180deg, #001633 0%, #0a1e3d 100%);
+  }
+  .self-check h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #FFD4AA;
+    margin-bottom: 12px;
+  }
+  .self-check .sub {
+    font-size: 15px;
+    color: #C1DDFF;
+    margin-bottom: 30px;
+    line-height: 1.6;
+  }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 20px;
+    padding: 16px 20px;
+    background: rgba(255,212,170,0.06);
+    border-radius: 10px;
+    border: 1px solid rgba(255,212,170,0.12);
+  }
+  .check-icon {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #FFD4AA;
+    border-radius: 4px;
+    margin-right: 16px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .check-text {
+    font-size: 15px;
+    color: #FFFFFF;
+    line-height: 1.5;
+  }
+  .check-result {
+    margin-top: 28px;
+    padding: 20px 24px;
+    background: rgba(255,212,170,0.08);
+    border-radius: 10px;
+    text-align: center;
+    font-size: 15px;
+    color: #FFD4AA;
+    font-weight: 600;
+    line-height: 1.6;
+  }
+
+  /* ── Principle sections ── */
+  .principle-section {
+    padding: 80px 20px;
+    min-height: 100vh;
+  }
+  .principle-number {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .principle-title {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 8px;
+  }
+  .principle-subtitle {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+  }
+
+  /* WHAT block */
+  .what-block {
+    margin-bottom: 28px;
+  }
+  .block-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .what-block p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #FFFFFF;
+  }
+
+  /* QUOTE block */
+  .quote-block {
+    margin: 28px 0;
+    padding: 28px 32px;
+    border-radius: 12px;
+    position: relative;
+  }
+  .quote-mark {
+    font-size: 60px;
+    font-weight: 800;
+    line-height: 1;
+    position: absolute;
+    top: 10px;
+    left: 16px;
+    opacity: 0.15;
+  }
+  .quote-text {
+    font-size: 18px;
+    font-weight: 600;
+    font-style: italic;
+    line-height: 1.6;
+    position: relative;
+    z-index: 1;
+    color: #FFFFFF;
+  }
+  .quote-source {
+    margin-top: 12px;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    color: rgba(255,255,255,0.5);
+  }
+
+  /* SO WHAT block */
+  .sowhat-block {
+    margin: 28px 0;
+  }
+  .sowhat-block p {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #C1DDFF;
+  }
+  .scenario-box {
+    margin-top: 16px;
+    padding: 20px 24px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+  }
+  .scenario-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .scenario-box p {
+    font-size: 14px;
+    color: #FFFFFF;
+    line-height: 1.7;
+  }
+
+  /* NOW WHAT block */
+  .nowwhat-block {
+    margin-top: 28px;
+    padding: 24px 28px;
+    border-radius: 12px;
+    border-width: 1px;
+    border-style: solid;
+  }
+  .nowwhat-block h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .nowwhat-block p {
+    font-size: 15px;
+    color: #FFFFFF;
+    line-height: 1.7;
+  }
+  .nowwhat-block .action-step {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 10px;
+  }
+  .nowwhat-block .action-bullet {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    margin-right: 12px;
+    margin-top: 8px;
+    flex-shrink: 0;
+  }
+
+  /* ── Principle color themes ── */
+  /* P1: Blue 500 */
+  .theme-blue .principle-number { color: #1F7ADF; }
+  .theme-blue .principle-title { color: #FFFFFF; }
+  .theme-blue .principle-subtitle { color: #1F7ADF; }
+  .theme-blue .block-label { color: #1F7ADF; }
+  .theme-blue .quote-block { background: rgba(31,122,223,0.12); }
+  .theme-blue .quote-mark { color: #1F7ADF; }
+  .theme-blue .scenario-label { color: #1F7ADF; }
+  .theme-blue .nowwhat-block { background: rgba(31,122,223,0.08); border-color: rgba(31,122,223,0.25); }
+  .theme-blue .nowwhat-block h4 { color: #1F7ADF; }
+  .theme-blue .action-bullet { background: #1F7ADF; }
+
+  /* P2: Tan 500 */
+  .theme-tan .principle-number { color: #FFD4AA; }
+  .theme-tan .principle-title { color: #FFFFFF; }
+  .theme-tan .principle-subtitle { color: #FFD4AA; }
+  .theme-tan .block-label { color: #FFD4AA; }
+  .theme-tan .quote-block { background: rgba(255,212,170,0.1); }
+  .theme-tan .quote-mark { color: #FFD4AA; }
+  .theme-tan .scenario-label { color: #FFD4AA; }
+  .theme-tan .nowwhat-block { background: rgba(255,212,170,0.06); border-color: rgba(255,212,170,0.2); }
+  .theme-tan .nowwhat-block h4 { color: #FFD4AA; }
+  .theme-tan .action-bullet { background: #FFD4AA; }
+
+  /* P3: Light Blue */
+  .theme-lightblue .principle-number { color: #C1DDFF; }
+  .theme-lightblue .principle-title { color: #FFFFFF; }
+  .theme-lightblue .principle-subtitle { color: #C1DDFF; }
+  .theme-lightblue .block-label { color: #C1DDFF; }
+  .theme-lightblue .quote-block { background: rgba(193,221,255,0.1); }
+  .theme-lightblue .quote-mark { color: #C1DDFF; }
+  .theme-lightblue .scenario-label { color: #C1DDFF; }
+  .theme-lightblue .nowwhat-block { background: rgba(193,221,255,0.06); border-color: rgba(193,221,255,0.2); }
+  .theme-lightblue .nowwhat-block h4 { color: #C1DDFF; }
+  .theme-lightblue .action-bullet { background: #C1DDFF; }
+
+  /* P4: Red 500 */
+  .theme-red .principle-number { color: #FF527B; }
+  .theme-red .principle-title { color: #FFFFFF; }
+  .theme-red .principle-subtitle { color: #FF527B; }
+  .theme-red .block-label { color: #FF527B; }
+  .theme-red .quote-block { background: rgba(255,82,123,0.1); }
+  .theme-red .quote-mark { color: #FF527B; }
+  .theme-red .scenario-label { color: #FF527B; }
+  .theme-red .nowwhat-block { background: rgba(255,82,123,0.06); border-color: rgba(255,82,123,0.2); }
+  .theme-red .nowwhat-block h4 { color: #FF527B; }
+  .theme-red .action-bullet { background: #FF527B; }
+
+  /* P5: Green */
+  .theme-green .principle-number { color: #48C78E; }
+  .theme-green .principle-title { color: #FFFFFF; }
+  .theme-green .principle-subtitle { color: #48C78E; }
+  .theme-green .block-label { color: #48C78E; }
+  .theme-green .quote-block { background: rgba(72,199,142,0.1); }
+  .theme-green .quote-mark { color: #48C78E; }
+  .theme-green .scenario-label { color: #48C78E; }
+  .theme-green .nowwhat-block { background: rgba(72,199,142,0.06); border-color: rgba(72,199,142,0.2); }
+  .theme-green .nowwhat-block h4 { color: #48C78E; }
+  .theme-green .action-bullet { background: #48C78E; }
+
+  /* ── Divider between principles ── */
+  .principle-divider {
+    text-align: center;
+    padding: 40px 20px;
+    background: #001633;
+  }
+  .divider-line {
+    width: 60px;
+    height: 3px;
+    margin: 0 auto;
+    border-radius: 2px;
+  }
+
+  /* ── Closing section ── */
+  .closing {
+    background: linear-gradient(135deg, #001633 0%, #0a2a5c 100%);
+    text-align: center;
+  }
+  .closing h2 {
+    font-size: 32px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 24px;
+    line-height: 1.3;
+  }
+  .closing p {
+    font-size: 16px;
+    color: #C1DDFF;
+    line-height: 1.7;
+    max-width: 500px;
+    margin: 0 auto 28px;
+  }
+  .five-questions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 420px;
+    margin: 0 auto 36px;
+    text-align: left;
+  }
+  .five-q {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #FFFFFF;
+  }
+  .five-q .q-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 14px;
+    font-size: 13px;
+    font-weight: 800;
+    flex-shrink: 0;
+    color: #FFFFFF;
+  }
+  .fq-1 { background: rgba(31,122,223,0.12); }
+  .fq-1 .q-num { background: #1F7ADF; }
+  .fq-2 { background: rgba(255,212,170,0.08); }
+  .fq-2 .q-num { background: #FFD4AA; color: #001633; }
+  .fq-3 { background: rgba(193,221,255,0.08); }
+  .fq-3 .q-num { background: #C1DDFF; color: #001633; }
+  .fq-4 { background: rgba(255,82,123,0.08); }
+  .fq-4 .q-num { background: #FF527B; }
+  .fq-5 { background: rgba(72,199,142,0.08); }
+  .fq-5 .q-num { background: #48C78E; color: #001633; }
+
+  .closing-challenge {
+    margin-top: 20px;
+    padding: 24px 28px;
+    background: rgba(255,212,170,0.08);
+    border: 1px solid rgba(255,212,170,0.2);
+    border-radius: 12px;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .closing-challenge h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #FFD4AA;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .closing-challenge p {
+    font-size: 15px;
+    color: #FFFFFF;
+    margin-bottom: 0;
+  }
+
+  .footer {
+    margin-top: 40px;
+    font-size: 11px;
+    color: rgba(193,221,255,0.3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* ── Self-check scenario sections ── */
+  .scenario-check {
+    background: linear-gradient(180deg, #071a33 0%, #0a1e3d 100%);
+  }
+  .sc-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .scenario-check .sc-tag { color: #FFD4AA; }
+  .scenario-check h2 {
+    font-size: 22px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 18px;
+    line-height: 1.3;
+  }
+  .sc-prompt {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 18px 22px;
+    font-size: 15px;
+    color: #FFFFFF;
+    line-height: 1.75;
+    margin-bottom: 18px;
+    font-style: italic;
+  }
+  .sc-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .sc-choice {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 13px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    width: 100%;
+    color: #FFFFFF;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .sc-choice:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.2);
+  }
+  .sc-letter {
+    width: 26px;
+    height: 26px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .sc-reveal-btn {
+    background: #1F7ADF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 26px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+  .sc-reveal-btn:hover { background: #1566c0; }
+  .sc-answer {
+    display: none;
+    margin-top: 16px;
+    padding: 20px 24px;
+    background: rgba(255,212,170,0.08);
+    border: 1px solid rgba(255,212,170,0.25);
+    border-radius: 12px;
+  }
+  .sc-answer .answer-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #FFD4AA;
+    margin-bottom: 10px;
+  }
+  .sc-answer h4 {
+    font-size: 17px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 10px;
+  }
+  .sc-answer p {
+    font-size: 15px;
+    color: #C1DDFF;
+    line-height: 1.7;
+  }
+
+  /* ── Survey section ── */
+  .survey-wrap {
+    background: linear-gradient(180deg, #001633 0%, #04112b 100%);
+    text-align: center;
+  }
+  .survey-wrap .sc-tag { color: #48C78E; }
+  .survey-wrap h2 {
+    font-size: 26px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 12px;
+    line-height: 1.3;
+  }
+  .survey-wrap p {
+    font-size: 15px;
+    color: #C1DDFF;
+    line-height: 1.7;
+    max-width: 440px;
+    margin: 0 auto 28px;
+  }
+  .survey-cta {
+    display: inline-block;
+    background: #FF527B;
+    color: white;
+    padding: 14px 36px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+  .survey-cta:hover { background: #e0415e; }
+  .survey-sub {
+    font-size: 12px;
+    color: rgba(193,221,255,0.4);
+    margin-top: 14px;
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- HERO -->
+<!-- ════════════════════════════════════════ -->
+<div class="section hero">
+  <div class="section-inner">
+    <div class="hero-tag fade-in">Leadership in 5</div>
+    <div class="hero-series fade-in delay-1">Monthly Book Breakdown</div>
+    <h1 class="fade-in delay-1">The <span class="accent">Coaching</span><br>Habit</h1>
+    <div class="author fade-in delay-2">by Michael Bungay Stanier</div>
+    <p class="hook fade-in delay-2">Say less, ask more, and change the way you lead forever. Here are the 5 questions that will transform how you develop your team.</p>
+    <div class="time-badge fade-in delay-3">5-Minute Read</div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll to begin</span>
+    <span class="scroll-arrow">&darr;</span>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- INTRO: THE PROBLEM -->
+<!-- ════════════════════════════════════════ -->
+<div class="section intro-section">
+  <div class="section-inner">
+    <h2 class="fade-in">You've Been Here Before</h2>
+    <p class="fade-in delay-1">A team member walks into your office with a problem. Your instinct kicks in — you listen for 30 seconds, and then you start solving. You give advice. You fix it. You move on.</p>
+    <p class="fade-in delay-2">It feels efficient. But here's the problem: you just taught them to come back to you every single time. You became the bottleneck, and they didn't grow.</p>
+    <div class="intro-callout fade-in delay-3">
+      The single biggest shift you can make as a leader: stop giving answers so quickly, and start asking better questions.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- SELF-CHECK -->
+<!-- ════════════════════════════════════════ -->
+<div class="section self-check">
+  <div class="section-inner">
+    <h2 class="fade-in">Quick Self-Check</h2>
+    <p class="sub fade-in delay-1">How many of these sound like you?</p>
+
+    <div class="check-item fade-in delay-1">
+      <div class="check-icon"></div>
+      <div class="check-text">I usually offer a solution before asking what they've already tried</div>
+    </div>
+    <div class="check-item fade-in delay-2">
+      <div class="check-icon"></div>
+      <div class="check-text">I feel responsible for having all the answers</div>
+    </div>
+    <div class="check-item fade-in delay-2">
+      <div class="check-icon"></div>
+      <div class="check-text">My team comes to me with the same types of problems repeatedly</div>
+    </div>
+    <div class="check-item fade-in delay-3">
+      <div class="check-icon"></div>
+      <div class="check-text">I sometimes solve the wrong problem because I jumped in too fast</div>
+    </div>
+
+    <div class="check-result fade-in delay-4">
+      If you checked even one, you're normal. And these 5 questions will help.
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- QUESTION 1: THE KICKSTART QUESTION -->
+<!-- ════════════════════════════════════════ -->
+<div class="section principle-section theme-blue" style="background: linear-gradient(180deg, #001633 0%, #071e3a 100%);">
+  <div class="section-inner">
+    <div class="principle-number fade-in">Question 1 of 5</div>
+    <h2 class="principle-title fade-in delay-1">"What's on your mind?"</h2>
+    <div class="principle-subtitle fade-in delay-1">The Kickstart Question</div>
+
+    <div class="what-block fade-in delay-2">
+      <div class="block-label">WHAT</div>
+      <p>This is how you open every coaching conversation. It's open enough to let them lead, but focused enough to get somewhere meaningful. It cuts through small talk and gets straight to what actually matters to them right now.</p>
+    </div>
+
+    <div class="quote-block fade-in delay-2">
+      <div class="quote-mark">"</div>
+      <div class="quote-text">An almost fail-safe way to start a chat that's quick and yet focused is to ask: What's on your mind?</div>
+      <div class="quote-source">— Michael Bungay Stanier, The Coaching Habit</div>
+    </div>
+
+    <div class="sowhat-block fade-in delay-3">
+      <div class="block-label">SO WHAT</div>
+      <p>Most leaders open conversations with "How's it going?" or "Any updates?" — which gives you surface-level answers. This question immediately signals: I'm here, I'm listening, and you're driving this conversation.</p>
+      <div class="scenario-box">
+        <div class="scenario-label">AT BREEZE</div>
+        <p>A new hire is struggling in training. Instead of jumping to "Here's what you need to do," open with "What's on your mind?" You might discover they're overwhelmed by the pace — not the content. That changes your entire approach.</p>
+      </div>
+    </div>
+
+    <div class="nowwhat-block fade-in delay-4">
+      <div class="block-label">NOW WHAT</div>
+      <h4>Try This Today</h4>
+      <div class="action-step">
+        <div class="action-bullet"></div>
+        <p>In your next 1:1 or check-in, replace your usual opener with "What's on your mind?" Then wait. Let the silence do the work.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- SELF-CHECK 1 -->
+<!-- ════════════════════════════════════════ -->
+<div class="section scenario-check">
+  <div class="section-inner">
+    <div class="sc-tag fade-in">✓ Self-Check</div>
+    <h2 class="fade-in delay-1">How would you handle this?</h2>
+    <div class="sc-prompt fade-in delay-2">
+      It's Monday morning. A team member walks into your office and says, "I need to talk to you about the new scheduling system — it's a complete mess." What do you do first?
+    </div>
+    <div class="sc-choices fade-in delay-2">
+      <button class="sc-choice"><span class="sc-letter">A</span><span>Ask them to walk you through exactly what's wrong with the system so you can help solve it</span></button>
+      <button class="sc-choice"><span class="sc-letter">B</span><span>Say "What's on your mind?" — and stay quiet</span></button>
+      <button class="sc-choice"><span class="sc-letter">C</span><span>Reassure them that you're already aware of the issues and things are being addressed</span></button>
+      <button class="sc-choice"><span class="sc-letter">D</span><span>Ask them to send you the specifics by email so you can review them when you have time</span></button>
+    </div>
+    <button class="sc-reveal-btn fade-in delay-3" onclick="revealAnswer('sc1')">See the Answer &darr;</button>
+    <div class="sc-answer" id="sc1">
+      <div class="answer-tag">The Answer</div>
+      <h4>B — "What's on your mind?"</h4>
+      <p>Option A sounds logical — gather information, then solve. But it assumes the scheduling system is the real issue. It might be. Or that complaint might be a proxy for frustration, feeling unheard, or a team dynamic that goes deeper than the system. "What's on your mind?" opens the door without assumptions. The complaint is the knock — this question is you saying: come in, I'm here, you lead.</p>
+    </div>
+  </div>
+</div>
+
+<div class="principle-divider"><div class="divider-line" style="background: #FFD4AA;"></div></div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- QUESTION 2: THE AWE QUESTION -->
+<!-- ════════════════════════════════════════ -->
+<div class="section principle-section theme-tan" style="background: linear-gradient(180deg, #001633 0%, #0f1e2e 100%);">
+  <div class="section-inner">
+    <div class="principle-number fade-in">Question 2 of 5</div>
+    <h2 class="principle-title fade-in delay-1">"And what else?"</h2>
+    <div class="principle-subtitle fade-in delay-1">The AWE Question</div>
+
+    <div class="what-block fade-in delay-2">
+      <div class="block-label">WHAT</div>
+      <p>The single most powerful coaching question in the world. Three words that keep you from jumping to solutions too early. The first answer someone gives you is rarely the most important one — there's almost always something deeper underneath.</p>
+    </div>
+
+    <div class="quote-block fade-in delay-2">
+      <div class="quote-mark">"</div>
+      <div class="quote-text">The first answer someone gives you is almost never the only answer, and it's rarely the best answer.</div>
+      <div class="quote-source">— Michael Bungay Stanier, The Coaching Habit</div>
+    </div>
+
+    <div class="sowhat-block fade-in delay-3">
+      <div class="block-label">SO WHAT</div>
+      <p>This question buys you time, keeps the other person thinking, and often reveals the real issue. Ask it at least three times in any conversation. It's your discipline against the "advice monster" — that urge to jump in and fix things.</p>
+      <div class="scenario-box">
+        <div class="scenario-label">AT BREEZE</div>
+        <p>A team member tells you they're frustrated with their schedule. You ask "And what else?" They mention they feel overlooked for a project. You ask again. Turns out — they're questioning whether they have a future here. That's the real conversation.</p>
+      </div>
+    </div>
+
+    <div class="nowwhat-block fade-in delay-4">
+      <div class="block-label">NOW WHAT</div>
+      <h4>Try This Today</h4>
+      <div class="action-step">
+        <div class="action-bullet"></div>
+        <p>The next time someone brings you a problem, ask "And what else?" at least twice before you offer any input. Count to yourself if you need to.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- SELF-CHECK 2 -->
+<!-- ════════════════════════════════════════ -->
+<div class="section scenario-check">
+  <div class="section-inner">
+    <div class="sc-tag fade-in">✓ Self-Check</div>
+    <h2 class="fade-in delay-1">How would you handle this?</h2>
+    <div class="sc-prompt fade-in delay-2">
+      You asked "What's on your mind?" and a team member shared a coworker conflict. You asked "And what else?" — they mentioned workload. You asked again — they brought up their career path. They pause: "I think that's it." What do you do next?
+    </div>
+    <div class="sc-choices fade-in delay-2">
+      <button class="sc-choice"><span class="sc-letter">A</span><span>Ask "And what else?" one more time — there might be something deeper</span></button>
+      <button class="sc-choice"><span class="sc-letter">B</span><span>Start addressing all three things they mentioned</span></button>
+      <button class="sc-choice"><span class="sc-letter">C</span><span>Ask "What's the real challenge here for you?" to bring focus</span></button>
+      <button class="sc-choice"><span class="sc-letter">D</span><span>Focus on the coworker conflict since it came up first</span></button>
+    </div>
+    <button class="sc-reveal-btn fade-in delay-3" onclick="revealAnswer('sc2')">See the Answer &darr;</button>
+    <div class="sc-answer" id="sc2">
+      <div class="answer-tag">The Answer</div>
+      <h4>C — "What's the real challenge here for you?"</h4>
+      <p>You've done the AWE Question exactly right — three rounds, real depth. Now you have three things on the table: conflict, workload, career. Option A overuses the question (they said they're done — trust that). Option B tries to solve everything at once and scatters the energy. Option C takes everything you've heard and asks them to find the thread that matters most to them right now. That's where coaching happens.</p>
+    </div>
+  </div>
+</div>
+
+<div class="principle-divider"><div class="divider-line" style="background: #C1DDFF;"></div></div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- QUESTION 3: THE FOCUS QUESTION -->
+<!-- ════════════════════════════════════════ -->
+<div class="section principle-section theme-lightblue" style="background: linear-gradient(180deg, #001633 0%, #091d35 100%);">
+  <div class="section-inner">
+    <div class="principle-number fade-in">Question 3 of 5</div>
+    <h2 class="principle-title fade-in delay-1">"What's the real challenge<br>here for you?"</h2>
+    <div class="principle-subtitle fade-in delay-1">The Focus Question</div>
+
+    <div class="what-block fade-in delay-2">
+      <div class="block-label">WHAT</div>
+      <p>This question does two critical things: it zeroes in on the actual problem (not the first problem they mentioned), and the words "for you" make it personal. You're not solving an abstract issue — you're coaching a person.</p>
+    </div>
+
+    <div class="quote-block fade-in delay-2">
+      <div class="quote-mark">"</div>
+      <div class="quote-text">We often solve the wrong problem by working on the first challenge presented rather than finding the real one.</div>
+      <div class="quote-source">— Michael Bungay Stanier, The Coaching Habit</div>
+    </div>
+
+    <div class="sowhat-block fade-in delay-3">
+      <div class="block-label">SO WHAT</div>
+      <p>Leaders waste enormous energy solving presenting problems instead of root causes. This question prevents you from building the perfect solution to the wrong challenge. The "for you" is the key — it turns the focus from the situation to the person.</p>
+      <div class="scenario-box">
+        <div class="scenario-label">AT BREEZE</div>
+        <p>Someone on your team isn't performing to expectations. Before you launch into a performance plan, ask: "What's the real challenge here for you?" Maybe the real issue isn't skill — it's that they don't understand what "good" looks like, or they're dealing with something outside of work that's pulling their focus.</p>
+      </div>
+    </div>
+
+    <div class="nowwhat-block fade-in delay-4">
+      <div class="block-label">NOW WHAT</div>
+      <h4>Try This Today</h4>
+      <div class="action-step">
+        <div class="action-bullet"></div>
+        <p>When someone describes a messy situation with multiple issues, resist solving any of them. Instead ask: "What's the real challenge here for you?" and let their answer guide where you focus.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- SELF-CHECK 3 -->
+<!-- ════════════════════════════════════════ -->
+<div class="section scenario-check">
+  <div class="section-inner">
+    <div class="sc-tag fade-in">✓ Self-Check</div>
+    <h2 class="fade-in delay-1">How would you handle this?</h2>
+    <div class="sc-prompt fade-in delay-2">
+      A manager tells you they're dealing with a performance issue, a new process rollout, AND a big schedule change coming up. You ask "What's the real challenge here for you?" — they pause and say: "Honestly... I don't think I have the confidence to handle all of it at once." What do you do next?
+    </div>
+    <div class="sc-choices fade-in delay-2">
+      <button class="sc-choice"><span class="sc-letter">A</span><span>Reassure them: "You've got this — I believe in you completely"</span></button>
+      <button class="sc-choice"><span class="sc-letter">B</span><span>Ask "How can I help?"</span></button>
+      <button class="sc-choice"><span class="sc-letter">C</span><span>Ask "And what else?" to keep exploring the confidence issue</span></button>
+      <button class="sc-choice"><span class="sc-letter">D</span><span>Pivot to coaching them on the performance issue since that's the most concrete of the three</span></button>
+    </div>
+    <button class="sc-reveal-btn fade-in delay-3" onclick="revealAnswer('sc3')">See the Answer &darr;</button>
+    <div class="sc-answer" id="sc3">
+      <div class="answer-tag">The Answer</div>
+      <h4>B — "How can I help?"</h4>
+      <p>They just gave you the real thing — not the tasks on their list, but the feeling underneath them. This is the breakthrough moment in the conversation. Now you need to find out what they actually need from you. Coaching? Resources? A pep talk? Just to be heard? "How can I help?" lets them tell you. Option A feels warm but shuts the moment down. Option C risks over-mining — they already opened up. Option D retreats to logistics when they just got personal.</p>
+    </div>
+  </div>
+</div>
+
+<div class="principle-divider"><div class="divider-line" style="background: #FF527B;"></div></div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- QUESTION 4: THE LAZY QUESTION -->
+<!-- ════════════════════════════════════════ -->
+<div class="section principle-section theme-red" style="background: linear-gradient(180deg, #001633 0%, #0d1a2e 100%);">
+  <div class="section-inner">
+    <div class="principle-number fade-in">Question 4 of 5</div>
+    <h2 class="principle-title fade-in delay-1">"How can I help?"</h2>
+    <div class="principle-subtitle fade-in delay-1">The Lazy Question</div>
+
+    <div class="what-block fade-in delay-2">
+      <div class="block-label">WHAT</div>
+      <p>It's called "lazy" because it forces the other person to make a direct request instead of you guessing what they need. It stops you from over-functioning and taking on work that isn't yours. It puts the ownership back where it belongs — with them.</p>
+    </div>
+
+    <div class="quote-block fade-in delay-2">
+      <div class="quote-mark">"</div>
+      <div class="quote-text">Stop offering help that isn't requested. Ask the other person to make a direct request of you, and then decide if you can fulfill it.</div>
+      <div class="quote-source">— Michael Bungay Stanier, The Coaching Habit</div>
+    </div>
+
+    <div class="sowhat-block fade-in delay-3">
+      <div class="block-label">SO WHAT</div>
+      <p>Most leaders assume they know what help looks like and jump in. But your idea of help and theirs are often completely different. This question prevents you from doing work they should own and makes sure the help you give is actually what they need.</p>
+      <div class="scenario-box">
+        <div class="scenario-label">AT BREEZE</div>
+        <p>A team member is not accepting feedback well and getting emotional. After you've listened, ask: "How can I help?" Maybe they need you to deliver feedback differently. Maybe they need a minute to process. Maybe they just need to know you're still in their corner. Let them tell you.</p>
+      </div>
+    </div>
+
+    <div class="nowwhat-block fade-in delay-4">
+      <div class="block-label">NOW WHAT</div>
+      <h4>Try This Today</h4>
+      <div class="action-step">
+        <div class="action-bullet"></div>
+        <p>The next time you catch yourself about to volunteer a solution, pause and ask "How can I help?" instead. You'll be surprised — what they need is often simpler than what you were about to offer.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="principle-divider"><div class="divider-line" style="background: #48C78E;"></div></div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- QUESTION 5: THE LEARNING QUESTION -->
+<!-- ════════════════════════════════════════ -->
+<div class="section principle-section theme-green" style="background: linear-gradient(180deg, #001633 0%, #081e30 100%);">
+  <div class="section-inner">
+    <div class="principle-number fade-in">Question 5 of 5</div>
+    <h2 class="principle-title fade-in delay-1">"What was most useful<br>for you?"</h2>
+    <div class="principle-subtitle fade-in delay-1">The Learning Question</div>
+
+    <div class="what-block fade-in delay-2">
+      <div class="block-label">WHAT</div>
+      <p>This is how you close every coaching conversation. It forces the other person to extract their own takeaway — which makes it stick. It also gives you real-time feedback on what's actually landing. Double loop learning in one sentence.</p>
+    </div>
+
+    <div class="quote-block fade-in delay-2">
+      <div class="quote-mark">"</div>
+      <div class="quote-text">People don't really learn when you tell them something. They learn when they have a chance to reflect on what happened.</div>
+      <div class="quote-source">— Michael Bungay Stanier, The Coaching Habit</div>
+    </div>
+
+    <div class="sowhat-block fade-in delay-3">
+      <div class="block-label">SO WHAT</div>
+      <p>Without reflection, a conversation is just noise. This question turns every interaction into a development moment. It creates a "learning loop" where the other person names what they're taking away — and that act of naming is what makes it stick in their brain long-term.</p>
+      <div class="scenario-box">
+        <div class="scenario-label">AT BREEZE</div>
+        <p>You just worked through a tough issue with a team member — performance, a conflict, a process breakdown. Before they walk away, ask: "What was most useful for you?" Their answer tells you what landed, what to repeat, and whether you actually helped or just talked.</p>
+      </div>
+    </div>
+
+    <div class="nowwhat-block fade-in delay-4">
+      <div class="block-label">NOW WHAT</div>
+      <h4>Try This Today</h4>
+      <div class="action-step">
+        <div class="action-bullet"></div>
+        <p>End your next meaningful conversation — a 1:1, a coaching moment, even a team meeting — by asking "What was most useful for you?" Make it your new closing ritual.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- SURVEY -->
+<!-- ════════════════════════════════════════ -->
+<div class="section survey-wrap">
+  <div class="section-inner">
+    <div class="sc-tag fade-in">1-Question Pulse Check</div>
+    <h2 class="fade-in delay-1">One question for you.</h2>
+    <p class="fade-in delay-2">It's just one question — takes 30 seconds. Your answer helps shape what's next.</p>
+    <div class="fade-in delay-3" style="max-width:500px; margin: 0 auto;">
+      <iframe data-tally-src="https://tally.so/embed/44PBrA?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="406" frameborder="0" marginheight="0" marginwidth="0" title="Leadership in 5 - Coaching Habit Pulse"></iframe>
+      <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+    </div>
+    <div class="survey-sub fade-in delay-4">Anonymous &middot; No sign-in required</div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════ -->
+<!-- CLOSING -->
+<!-- ════════════════════════════════════════ -->
+<div class="section closing">
+  <div class="section-inner">
+    <h2 class="fade-in">Your 5 Coaching Questions<br>All in One Place</h2>
+    <p class="fade-in delay-1">You don't need to memorize a coaching framework. You just need five questions.</p>
+
+    <div class="five-questions fade-in delay-2">
+      <div class="five-q fq-1">
+        <div class="q-num">1</div>
+        "What's on your mind?"
+      </div>
+      <div class="five-q fq-2">
+        <div class="q-num">2</div>
+        "And what else?"
+      </div>
+      <div class="five-q fq-3">
+        <div class="q-num">3</div>
+        "What's the real challenge here for you?"
+      </div>
+      <div class="five-q fq-4">
+        <div class="q-num">4</div>
+        "How can I help?"
+      </div>
+      <div class="five-q fq-5">
+        <div class="q-num">5</div>
+        "What was most useful for you?"
+      </div>
+    </div>
+
+    <div class="closing-challenge fade-in delay-3">
+      <h3>This Week's Challenge</h3>
+      <p>Pick just ONE of these five questions and commit to using it in every conversation this week. That's it. One question, one week. See what changes.</p>
+    </div>
+
+    <div class="footer fade-in delay-4">Leadership in 5 &middot; Breeze Aviation Group</div>
+  </div>
+</div>
+
+<script>
+  // ── Scroll progress ──
+  const progressBar = document.getElementById('progressBar');
+  window.addEventListener('scroll', () => {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = (scrollTop / docHeight) * 100;
+    progressBar.style.width = progress + '%';
+  });
+
+  // ── Fade-in on scroll ──
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // ── Self-check reveal ──
+  function revealAnswer(id) {
+    const el = document.getElementById(id);
+    el.style.display = 'block';
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+</script>
+
+</body>
+</html>

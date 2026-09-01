@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadership in 5 — What You Bring Into the Room</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    background: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .infographic {
+    width: 680px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 22, 51, 0.12);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #001633;
+    padding: 32px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1F7ADF, #FFD4AA, #1F7ADF);
+  }
+  .series-tag {
+    display: inline-block;
+    background: rgba(31, 122, 223, 0.25);
+    color: #C1DDFF;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .header h1 {
+    color: #FFFFFF;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .header h1 span { color: #FFD4AA; }
+  .header .subtitle {
+    color: #C1DDFF;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* ── PRINCIPLE BAR ── */
+  .principle-bar {
+    background: #1F7ADF;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .principle-bar span { opacity: 0.7; margin: 0 8px; }
+
+  /* ── INTRO ── */
+  .intro {
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid #E8EDF2;
+  }
+  .intro p {
+    color: #4A5568;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .intro strong { color: #001633; }
+
+  /* ── WSW SECTION ── */
+  .wsw-section {
+    padding: 28px 40px 8px;
+  }
+  .wsw-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1F7ADF;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 20px;
+  }
+  .wsw-block {
+    margin-bottom: 20px;
+    padding: 18px 22px;
+    border-radius: 12px;
+  }
+  .wsw-block.what {
+    background: #F0F4FF;
+    border-left: 4px solid #1F7ADF;
+  }
+  .wsw-block.sowhat {
+    background: #FFF5ED;
+    border-left: 4px solid #FFD4AA;
+  }
+  .wsw-block.nowwhat {
+    background: #001633;
+    border-left: 4px solid #48C78E;
+  }
+  .wsw-block-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+  .wsw-block.what .wsw-block-label { color: #1F7ADF; }
+  .wsw-block.sowhat .wsw-block-label { color: #C07000; }
+  .wsw-block.nowwhat .wsw-block-label { color: #48C78E; }
+  .wsw-block h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: #001633;
+  }
+  .wsw-block.nowwhat h3 { color: #FFFFFF; }
+  .wsw-block p {
+    font-size: 14px;
+    line-height: 1.65;
+    color: #4A5568;
+  }
+  .wsw-block.nowwhat p { color: #C1DDFF; }
+  .reset-steps {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .reset-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    color: #FFFFFF;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .reset-step-num {
+    width: 22px;
+    height: 22px;
+    background: #48C78E;
+    color: #001633;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 800;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* ── SELF-CHECK ── */
+  .self-check-section {
+    margin: 4px 40px 20px;
+    background: #0a1e3d;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .self-check-header {
+    background: rgba(255,212,170,0.15);
+    padding: 12px 22px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #FFD4AA;
+    border-bottom: 1px solid rgba(255,212,170,0.15);
+  }
+  .self-check-body {
+    padding: 20px 22px;
+  }
+  .self-check-body h4 {
+    color: #FFFFFF;
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+  .sc-scenario {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-style: italic;
+    color: #FFFFFF;
+    line-height: 1.7;
+    margin-bottom: 14px;
+  }
+  .sc-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .sc-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 11px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    width: 100%;
+    color: #FFFFFF;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .sc-option:hover {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.2);
+  }
+  .sc-opt-letter {
+    width: 22px;
+    height: 22px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .sc-reveal {
+    background: #1F7ADF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+  .sc-reveal:hover { background: #1566c0; }
+  .sc-answer-box {
+    display: none;
+    margin-top: 14px;
+    padding: 16px 20px;
+    background: rgba(255,212,170,0.08);
+    border: 1px solid rgba(255,212,170,0.25);
+    border-radius: 10px;
+  }
+  .sc-answer-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #FFD4AA;
+    margin-bottom: 8px;
+  }
+  .sc-answer-box h5 {
+    font-size: 15px;
+    font-weight: 800;
+    color: #FFFFFF;
+    margin-bottom: 8px;
+  }
+  .sc-answer-box p {
+    font-size: 13.5px;
+    color: #C1DDFF;
+    line-height: 1.65;
+  }
+
+  /* ── CHALLENGE ── */
+  .challenge {
+    margin: 4px 40px 24px;
+    padding: 22px 28px;
+    background: linear-gradient(135deg, #001633 0%, #0a2d5c 100%);
+    border-radius: 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .challenge::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #1F7ADF, #FFD4AA);
+  }
+  .challenge-label {
+    display: inline-block;
+    background: rgba(31, 122, 223, 0.3);
+    color: #C1DDFF;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .challenge p {
+    color: #FFFFFF;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .challenge p span { color: #FFD4AA; font-weight: 800; }
+
+  /* ── SURVEY ── */
+  .survey-section {
+    margin: 0 40px 24px;
+    padding: 18px 22px;
+    background: #F0F4FF;
+    border-radius: 12px;
+    border: 1px solid #C1DDFF;
+    text-align: center;
+  }
+  .survey-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #1F7ADF;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 8px;
+  }
+  .survey-section p {
+    font-size: 13px;
+    color: #4A5568;
+    margin-bottom: 14px;
+    line-height: 1.5;
+  }
+  .survey-link {
+    display: inline-block;
+    background: #FF527B;
+    color: white;
+    padding: 10px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 13px;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+  .survey-link:hover { background: #e0415e; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #001633;
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer .brand {
+    color: #C1DDFF;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .footer .week {
+    color: rgba(193, 221, 255, 0.5);
+    font-size: 11px;
+  }
+</style>
+</head>
+<body>
+
+<div class="infographic">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="series-tag">Leadership in 5</div>
+    <h1>What You Bring<br><span>Into the Room</span></h1>
+    <div class="subtitle">Executive presence starts before you say a word.</div>
+  </div>
+
+  <!-- PRINCIPLE -->
+  <div class="principle-bar">
+    Champion Others <span>|</span> Inspiring &amp; Motivating
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <p>You've had that experience — walking into a meeting and immediately sensing someone's energy. Before they spoke, you knew the tone. <strong>You do the same thing to your team, every single day.</strong> The question is whether you're choosing what you bring, or just carrying whatever happened last.</p>
+  </div>
+
+  <!-- WHAT / SO WHAT / NOW WHAT -->
+  <div class="wsw-section">
+    <div class="wsw-label">What · So What · Now What</div>
+
+    <div class="wsw-block what">
+      <div class="wsw-block-label">What</div>
+      <h3>Intentional Presence</h3>
+      <p>Executive presence isn't about how you look or how you speak — it's the intentional choice to bring a specific energy into each interaction. Leaders who practice this ask themselves one question before walking into any conversation: <em>"What do I want this person to feel when I leave?"</em></p>
+    </div>
+
+    <div class="wsw-block sowhat">
+      <div class="wsw-block-label">So What</div>
+      <h3>Your mood is contagious</h3>
+      <p>Research shows that a leader's emotional state spreads to the team within <strong>minutes</strong>. If you walk in distracted, rushed, or carrying residue from your last meeting — your team mirrors it. Your presence doesn't just set the tone for the conversation. It sets the ceiling for what's possible in it.</p>
+    </div>
+
+    <div class="wsw-block nowwhat">
+      <div class="wsw-block-label">Now What</div>
+      <h3 style="color:#FFFFFF;">The 60-Second Reset</h3>
+      <p>Before your next 3 important conversations:</p>
+      <div class="reset-steps">
+        <div class="reset-step">
+          <div class="reset-step-num">1</div>
+          <span>Pause for 60 seconds before walking in</span>
+        </div>
+        <div class="reset-step">
+          <div class="reset-step-num">2</div>
+          <span>Ask yourself: <em style="color:#FFD4AA;">"What do I want this person to feel when I leave?"</em></span>
+        </div>
+        <div class="reset-step">
+          <div class="reset-step-num">3</div>
+          <span>Walk in with that intention as your North Star</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SELF-CHECK -->
+  <div class="self-check-section">
+    <div class="self-check-header">✓ Self-Check — How Would You Handle This?</div>
+    <div class="self-check-body">
+      <h4>What's your move?</h4>
+      <div class="sc-scenario">
+        You just got off a stressful ops call with unexpected bad news. Your 1-on-1 with a high-potential team member starts in 4 minutes. What do you do?
+      </div>
+      <div class="sc-options">
+        <button class="sc-option"><span class="sc-opt-letter">A</span><span>Walk straight in — you're a professional, you can separate it</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">B</span><span>Reschedule — you're not in the right headspace and that's not fair to them</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">C</span><span>Take 3 minutes to reset: breathe, decide what you want them to feel, walk in with intention</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">D</span><span>Start the meeting by briefly venting — being real builds trust</span></button>
+      </div>
+      <button class="sc-reveal" onclick="revealAnswer()">See the Answer &darr;</button>
+      <div class="sc-answer-box" id="sc-answer">
+        <div class="sc-answer-label">The Answer</div>
+        <h5>C — The 60-Second Reset</h5>
+        <p>Option A is optimistic — emotional state bleeds through even when we believe it won't. Option B gives up too easily; most conversations recover with a quick reset, not a cancellation. Option D can occasionally work for authenticity, but making your team absorb your stress isn't presence — it's burden-shifting. Option C is the executive presence move: you're not suppressing your emotion, you're choosing what to do with it before it lands on someone else.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHALLENGE -->
+  <div class="challenge">
+    <div class="challenge-label">This Week's Challenge</div>
+    <p>Before your next <span>3 important conversations</span>, take 60 seconds.<br>Ask yourself: <span>"What do I want this person to feel when I leave?"</span><br>Let that be your North Star.</p>
+  </div>
+
+  <!-- SURVEY -->
+  <div class="survey-section">
+    <div class="survey-label">1-Question Pulse Check</div>
+    <p>It's just one question — takes 30 seconds. Your answer helps shape what's next.</p>
+    <a href="https://forms.cloud.microsoft/r/NZ5gWsyp6T" class="survey-link" target="_blank">Take the 1-Question Pulse Check →</a>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="brand">BREEZE AVIATION GROUP — Leadership Development</div>
+    <div class="week">Week 17 · April 28, 2026</div>
+  </div>
+
+</div>
+
+<script>
+  function revealAnswer() {
+    const el = document.getElementById('sc-answer');
+    el.style.display = 'block';
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+</script>
+
+</body>
+</html>

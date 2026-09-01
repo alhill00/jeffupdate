@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadership in 5 — The 2-Minute Connection</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    background: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .infographic {
+    width: 680px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 22, 51, 0.12);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #001633;
+    padding: 32px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #1F7ADF, #FFD4AA, #1F7ADF);
+  }
+  .series-tag {
+    display: inline-block;
+    background: rgba(31, 122, 223, 0.25);
+    color: #C1DDFF;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .header h1 {
+    color: #FFFFFF;
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .header h1 span {
+    color: #FFD4AA;
+  }
+  .header .subtitle {
+    color: #C1DDFF;
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* ── PRINCIPLE BAR ── */
+  .principle-bar {
+    background: #1F7ADF;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .principle-bar span {
+    opacity: 0.7;
+    margin: 0 8px;
+  }
+
+  /* ── INTRO ── */
+  .intro {
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid #E8EDF2;
+  }
+  .intro p {
+    color: #4A5568;
+    font-size: 15px;
+    line-height: 1.65;
+  }
+  .intro strong {
+    color: #001633;
+  }
+
+  /* ── STEPS ── */
+  .steps {
+    padding: 28px 40px 8px;
+  }
+  .steps-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #1F7ADF;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 20px;
+  }
+
+  .step {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 22px;
+    gap: 18px;
+  }
+  .step-number {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    background: #001633;
+    color: #FFD4AA;
+    font-size: 20px;
+    font-weight: 800;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .step-content h3 {
+    color: #001633;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 3px;
+  }
+  .step-content p {
+    color: #4A5568;
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .step-content .example {
+    display: inline-block;
+    background: #FFF5ED;
+    color: #001633;
+    font-size: 13px;
+    font-style: italic;
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-top: 4px;
+    border-left: 3px solid #FFD4AA;
+  }
+
+  /* ── WHAT NOT TO DO ── */
+  .donts {
+    margin: 4px 40px 0;
+    padding: 18px 24px;
+    background: #FFF5ED;
+    border-radius: 12px;
+    border-left: 4px solid #FF527B;
+  }
+  .donts h4 {
+    color: #FF527B;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+  .donts ul {
+    list-style: none;
+    padding: 0;
+  }
+  .donts li {
+    color: #4A5568;
+    font-size: 13.5px;
+    line-height: 1.5;
+    padding-left: 20px;
+    position: relative;
+    margin-bottom: 3px;
+  }
+  .donts li::before {
+    content: '✕';
+    position: absolute;
+    left: 0;
+    color: #FF527B;
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  /* ── CHALLENGE ── */
+  .challenge {
+    margin: 24px 40px;
+    padding: 22px 28px;
+    background: linear-gradient(135deg, #001633 0%, #0a2d5c 100%);
+    border-radius: 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .challenge::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #1F7ADF, #FFD4AA);
+  }
+  .challenge-label {
+    display: inline-block;
+    background: rgba(31, 122, 223, 0.3);
+    color: #C1DDFF;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .challenge p {
+    color: #FFFFFF;
+    font-size: 17px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .challenge p span {
+    color: #FFD4AA;
+    font-weight: 800;
+  }
+
+  /* ── SCIENCE ── */
+  .science {
+    padding: 0 40px 24px;
+  }
+  .science-box {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #C1DDFF22;
+    border: 1px solid #C1DDFF;
+    border-radius: 10px;
+    padding: 14px 18px;
+  }
+  .science-icon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    background: #1F7ADF;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 18px;
+  }
+  .science-box p {
+    color: #4A5568;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .science-box strong {
+    color: #001633;
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #001633;
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer .brand {
+    color: #C1DDFF;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .footer .week {
+    color: rgba(193, 221, 255, 0.5);
+    font-size: 11px;
+  }
+</style>
+</head>
+<body>
+
+<div class="infographic">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="series-tag">Leadership in 5</div>
+    <h1>The <span>2-Minute</span> Connection</h1>
+    <div class="subtitle">Make every brief interaction count — even when you're moving fast.</div>
+  </div>
+
+  <!-- PRINCIPLE -->
+  <div class="principle-bar">
+    Be Seriously Nice <span>|</span> Building Relationships
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro">
+    <p>You pass your team members in the hall. You have 2 minutes before your next meeting. Most leaders default to <strong>"Hey, how's it going?"</strong> and keep walking. That's a missed opportunity. Here's how to make those 2 minutes matter.</p>
+  </div>
+
+  <!-- STEPS -->
+  <div class="steps">
+    <div class="steps-title">The 4-Part Framework</div>
+
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h3>Use their name</h3>
+        <p>It's the most powerful word in any language. Don't skip it.</p>
+        <div class="example">"Hey Marcus — glad I caught you."</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h3>Reference something specific</h3>
+        <p>Show you're paying attention. Mention something real — a project, a win, a challenge they mentioned.</p>
+        <div class="example">"I saw how you handled that gate change yesterday."</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h3>Ask one real question</h3>
+        <p>Not "how are you?" — something that shows genuine curiosity about them.</p>
+        <div class="example">"What's one thing I can help clear off your plate this week?"</div>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h3>Listen to the answer</h3>
+        <p>Two minutes means you only ask <strong>one</strong> question. But you actually hear the response. Don't check your phone. Don't look past them.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHAT NOT TO DO -->
+  <div class="donts">
+    <h4>Skip these</h4>
+    <ul>
+      <li>"How's it going?" while walking past (you don't want the real answer)</li>
+      <li>Launching straight into a task or request (that's not connection — that's delegation)</li>
+      <li>The double-screen glance (phone in hand, eyes on them, brain somewhere else)</li>
+    </ul>
+  </div>
+
+  <!-- CHALLENGE -->
+  <div class="challenge">
+    <div class="challenge-label">This Week's Challenge</div>
+    <p>Have <span>3 two-minute connections</span> this week.<br>Name + something specific + one real question.<br>Notice what changes.</p>
+  </div>
+
+  <!-- SCIENCE NUGGET -->
+  <div class="science">
+    <div class="science-box">
+      <div class="science-icon">📊</div>
+      <div>
+        <p><strong>Why it works:</strong> Research shows that employees who feel "seen" by their leader are <strong>4.6x more likely</strong> to feel empowered to do their best work. Two minutes of real attention beats an hour of surface-level meetings.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="brand">BREEZE AVIATION GROUP — Leadership Development</div>
+    <div class="week">Week 13 · March 31, 2026</div>
+  </div>
+
+</div>
+
+</body>
+</html>

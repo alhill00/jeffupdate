@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leadership in 5 — The 30-Second Check-In</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    background: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  .infographic {
+    width: 680px;
+    background: #FFFFFF;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 6, 51, 0.12);
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: #000633;
+    padding: 32px 40px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #174DFF, #C1DDFF, #174DFF);
+  }
+  .series-tag {
+    display: inline-block;
+    background: rgba(23, 77, 255, 0.25);
+    color: #C1DDFF;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 5px 14px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .header h1 {
+    color: #FFFFFF;
+    font-size: 32px;
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 8px;
+  }
+  .header h1 span { color: #C1DDFF; }
+  .header .subtitle {
+    color: rgba(193,221,255,0.75);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  /* ── PRINCIPLE BAR ── */
+  .principle-bar {
+    background: #174DFF;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 10px 20px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  .principle-bar span { opacity: 0.65; margin: 0 8px; }
+
+  /* ── VIDEO SECTION ── */
+  .video-section {
+    margin: 28px 40px 0;
+  }
+  .video-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #174DFF;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+  }
+  .video-embed {
+    background: #000633;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 16/9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* Once you have the video URL, replace the placeholder below with:
+     <iframe src="YOUR_VIDEO_URL" ... allowfullscreen></iframe>
+     Common options: SharePoint embed, Vimeo, YouTube unlisted */
+  .video-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    color: #C1DDFF;
+    text-align: center;
+    padding: 32px;
+  }
+  .video-play-icon {
+    width: 64px;
+    height: 64px;
+    background: rgba(193,221,255,0.12);
+    border: 2px solid rgba(193,221,255,0.25);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+  }
+  .video-placeholder h3 {
+    font-size: 15px;
+    font-weight: 700;
+    color: #FFFFFF;
+  }
+  .video-placeholder p {
+    font-size: 13px;
+    color: rgba(193,221,255,0.65);
+    line-height: 1.5;
+  }
+  .video-duration {
+    display: inline-block;
+    background: rgba(23,77,255,0.4);
+    color: #C1DDFF;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-top: 4px;
+  }
+
+  /* ── INTRO ── */
+  .intro {
+    padding: 28px 40px 20px;
+    border-bottom: 1px solid #E8EDF2;
+  }
+  .intro p { color: #4A5568; font-size: 15px; line-height: 1.65; }
+  .intro strong { color: #000633; }
+
+  /* ── PHRASE SWAP SECTION ── */
+  .swap-section { padding: 28px 40px 8px; }
+  .section-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #174DFF;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-bottom: 16px;
+  }
+  .phrase-swap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+    background: #F0F4FF;
+    border-radius: 12px;
+    padding: 20px 24px;
+    border: 1px solid #C1DDFF;
+  }
+  .phrase-box {
+    flex: 1;
+    text-align: center;
+    padding: 16px 12px;
+    border-radius: 10px;
+  }
+  .phrase-box.old {
+    background: #FFF5F8;
+    border: 1px solid #FFD4E0;
+  }
+  .phrase-box.new {
+    background: #000633;
+    border: 1px solid #174DFF;
+  }
+  .phrase-box-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .phrase-box.old .phrase-box-label { color: #FF527B; }
+  .phrase-box.new .phrase-box-label { color: #C1DDFF; }
+  .phrase-box .phrase-text {
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+  .phrase-box.old .phrase-text { color: #4A5568; text-decoration: line-through; text-decoration-color: #FF527B; }
+  .phrase-box.new .phrase-text { color: #FFFFFF; }
+  .swap-arrow {
+    font-size: 24px;
+    color: #174DFF;
+    font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  /* ── WHY IT WORKS ── */
+  .why-section { padding: 8px 40px 20px; }
+  .why-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 12px;
+    padding: 18px 20px;
+    border-radius: 10px;
+    border: 1px solid #E8EDF2;
+  }
+  .why-card:nth-child(2) { background: #F0F4FF; border-color: #C1DDFF; }
+  .why-card:nth-child(3) { background: #FFF5ED; border-color: #FFD4AA; }
+  .why-card:nth-child(4) { background: #F0FFF4; border-color: #9AE6B4; }
+  .why-num {
+    width: 36px;
+    height: 36px;
+    background: #000633;
+    color: #C1DDFF;
+    font-size: 15px;
+    font-weight: 800;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .why-content h3 { font-size: 15px; font-weight: 700; color: #000633; margin-bottom: 4px; }
+  .why-content p { font-size: 13.5px; color: #4A5568; line-height: 1.6; }
+
+  /* ── STRUCTURE BOX ── */
+  .structure-section { padding: 0 40px 20px; }
+  .structure-box {
+    background: #000633;
+    border-radius: 14px;
+    padding: 24px 28px;
+  }
+  .structure-box h3 {
+    color: #C1DDFF;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 18px;
+  }
+  .step-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 14px;
+  }
+  .step-row:last-child { margin-bottom: 0; }
+  .step-time {
+    background: rgba(193,221,255,0.12);
+    color: #C1DDFF;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .step-row p { font-size: 14px; color: #FFFFFF; line-height: 1.55; }
+  .step-row p em { color: #C1DDFF; font-style: italic; }
+
+  /* ── SELF-CHECK ── */
+  .self-check-section {
+    margin: 0 40px 20px;
+    background: #0a1e3d;
+    border-radius: 14px;
+    overflow: hidden;
+  }
+  .self-check-header {
+    background: rgba(193,221,255,0.1);
+    padding: 12px 22px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #C1DDFF;
+    border-bottom: 1px solid rgba(193,221,255,0.12);
+  }
+  .self-check-body { padding: 20px 22px; }
+  .self-check-body h4 { color: #FFFFFF; font-size: 15px; font-weight: 700; margin-bottom: 14px; line-height: 1.4; }
+  .sc-scenario {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 14px;
+    font-style: italic;
+    color: #FFFFFF;
+    line-height: 1.7;
+    margin-bottom: 14px;
+  }
+  .sc-options { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  .sc-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    padding: 11px 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    width: 100%;
+    color: #FFFFFF;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+  .sc-option:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.2); }
+  .sc-opt-letter {
+    width: 22px;
+    height: 22px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .sc-reveal {
+    background: #174DFF;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 22px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: 'Inter', 'Calibri', Arial, sans-serif;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: background 0.2s;
+  }
+  .sc-reveal:hover { background: #0f3acc; }
+  .sc-answer-box {
+    display: none;
+    margin-top: 14px;
+    padding: 16px 20px;
+    background: rgba(193,221,255,0.08);
+    border: 1px solid rgba(193,221,255,0.2);
+    border-radius: 10px;
+  }
+  .sc-answer-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #C1DDFF; margin-bottom: 8px; }
+  .sc-answer-box h5 { font-size: 15px; font-weight: 800; color: #FFFFFF; margin-bottom: 8px; }
+  .sc-answer-box p { font-size: 13.5px; color: rgba(193,221,255,0.9); line-height: 1.65; }
+
+  /* ── CHALLENGE ── */
+  .challenge {
+    margin: 4px 40px 24px;
+    padding: 22px 28px;
+    background: linear-gradient(135deg, #000633 0%, #0a1a4d 100%);
+    border-radius: 14px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .challenge::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #174DFF, #C1DDFF);
+  }
+  .challenge-label {
+    display: inline-block;
+    background: rgba(23,77,255,0.3);
+    color: #C1DDFF;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+  .challenge p { color: #FFFFFF; font-size: 16px; font-weight: 600; line-height: 1.6; }
+  .challenge p span { color: #C1DDFF; font-weight: 800; }
+
+  /* ── SURVEY ── */
+  .survey-section {
+    margin: 0 40px 24px;
+    padding: 18px 22px;
+    background: #F0F4FF;
+    border-radius: 12px;
+    border: 1px solid #C1DDFF;
+    text-align: center;
+  }
+  .survey-label { font-size: 11px; font-weight: 700; color: #174DFF; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
+  .survey-section p { font-size: 13px; color: #4A5568; margin-bottom: 14px; line-height: 1.5; }
+
+  /* ── FOOTER ── */
+  .footer {
+    background: #000633;
+    padding: 16px 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer .brand { color: #C1DDFF; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; }
+  .footer .week { color: rgba(193, 221, 255, 0.5); font-size: 11px; }
+</style>
+</head>
+<body>
+
+<div class="infographic">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="series-tag">Leadership in 5</div>
+    <h1>The 30-Second<br><span>Check-In</span></h1>
+    <div class="subtitle">One phrase that replaces "how are you" — and actually gets a real answer.</div>
+  </div>
+
+  <!-- PRINCIPLE BAR -->
+  <div class="principle-bar">
+    Communicate Openly <span>|</span> Communicating Powerfully
+  </div>
+
+  <!-- VIDEO SECTION -->
+  <div class="video-section">
+    <div class="video-label">This Week from Alex</div>
+    <div class="video-embed">
+      <!-- REPLACE THIS PLACEHOLDER with your video embed once recorded.
+           Options: SharePoint embed code, Vimeo, or YouTube (unlisted).
+           Recommended embed format:
+           <iframe src="YOUR_URL" width="680" height="383"
+             frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+      -->
+      <div class="video-placeholder">
+        <div class="video-play-icon">&#9654;</div>
+        <h3>The 30-Second Check-In</h3>
+        <p>Alex walks you through the one question that changes<br>the check-in from a formality to an actual conversation.</p>
+        <div class="video-duration">~3 minutes</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="intro" style="margin-top: 28px;">
+    <p>Most check-ins are a formality. <strong>"How are you?"</strong> gets <em>"Fine."</em> <strong>"How's the team?"</strong> gets <em>"Good."</em> You asked. They answered. Nothing changed. This week, we're swapping that one phrase for something that gets a real answer — in 30 seconds or less.</p>
+  </div>
+
+  <!-- PHRASE SWAP -->
+  <div class="swap-section">
+    <div class="section-label">The Swap</div>
+    <div class="phrase-swap">
+      <div class="phrase-box old">
+        <div class="phrase-box-label">Stop Saying</div>
+        <div class="phrase-text">"How are you?"</div>
+      </div>
+      <div class="swap-arrow">&#8594;</div>
+      <div class="phrase-box new">
+        <div class="phrase-box-label">Start Saying</div>
+        <div class="phrase-text">"What's one thing I can clear for you?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- WHY IT WORKS -->
+  <div class="why-section">
+    <div class="section-label">Why It Works</div>
+
+    <div class="why-card">
+      <div class="why-num">1</div>
+      <div class="why-content">
+        <h3>It's specific — "one thing"</h3>
+        <p>Asking for one thing removes the pressure of spilling everything. It gives permission to share one real issue, not a performance. You get a focused, honest answer instead of a shrug.</p>
+      </div>
+    </div>
+
+    <div class="why-card">
+      <div class="why-num">2</div>
+      <div class="why-content">
+        <h3>It's action-oriented — "I can clear"</h3>
+        <p>You're not asking them how they feel. You're offering to remove an obstacle. That reframes you as a resource, not just a manager checking a box. It signals: I'm here to help, not just to ask.</p>
+      </div>
+    </div>
+
+    <div class="why-card">
+      <div class="why-num">3</div>
+      <div class="why-content">
+        <h3>It surfaces real blockers</h3>
+        <p>The obstacles slowing your team down usually live in the gap between "I'm fine" and what they'd actually say if asked directly. This question opens that gap — in a way that's comfortable to answer.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 30-SECOND STRUCTURE -->
+  <div class="structure-section">
+    <div class="structure-box">
+      <h3>The 30-Second Structure</h3>
+      <div class="step-row">
+        <div class="step-time">0–10 sec</div>
+        <p><strong>Stop and face them.</strong> Put down whatever you're carrying. Eye contact. The pause itself signals: <em>you have my attention.</em></p>
+      </div>
+      <div class="step-row">
+        <div class="step-time">10–15 sec</div>
+        <p><strong>Ask the question.</strong> <em>"What's one thing I can clear for you right now?"</em> Say it like you mean it.</p>
+      </div>
+      <div class="step-row">
+        <div class="step-time">15–30 sec</div>
+        <p><strong>Actually listen — don't move yet.</strong> Resist filling the silence. The answer is coming. Let it arrive.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SELF-CHECK -->
+  <div class="self-check-section">
+    <div class="self-check-header">&#10003; Self-Check — How Would You Handle This?</div>
+    <div class="self-check-body">
+      <h4>What's your move?</h4>
+      <div class="sc-scenario">
+        You're walking through the ops area and spot one of your team members moving fast, head down — clearly in the weeds. You have about 30 seconds before you need to be somewhere. What do you do?
+      </div>
+      <div class="sc-options">
+        <button class="sc-option"><span class="sc-opt-letter">A</span><span>Call out "Great work, keep it up!" as you walk by</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">B</span><span>Stop, make eye contact, and ask "What's one thing I can clear for you?"</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">C</span><span>Say "How are you doing?" without slowing down</span></button>
+        <button class="sc-option"><span class="sc-opt-letter">D</span><span>Wait until your next 1:1 to check in — you don't want to interrupt</span></button>
+      </div>
+      <button class="sc-reveal" onclick="revealAnswer()">See the Answer &#8595;</button>
+      <div class="sc-answer-box" id="sc-answer">
+        <div class="sc-answer-label">The Answer</div>
+        <h5>B — Stop, ask the question, and listen</h5>
+        <p>Option A is generic and keeps moving — it doesn't pause to actually connect. Option C is the phrase we're replacing: easy to answer without thinking, easy to brush off. Option D means the blocker sits for days and they feel invisible in the meantime. Option B takes 30 seconds and signals: I see you, I'm here to help, and I'm asking something specific. That's a leadership moment in the middle of a regular day.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHALLENGE -->
+  <div class="challenge">
+    <div class="challenge-label">This Week's Challenge</div>
+    <p>Use <span>"What's one thing I can clear for you?"</span><br>in at least <span>3 conversations</span> this week.<br>Notice what you hear that you wouldn't have heard otherwise.</p>
+  </div>
+
+  <!-- SURVEY -->
+  <div class="survey-section">
+    <div class="survey-label">1-Question Pulse Check</div>
+    <p>It's just one question — tap your answer below. No sign-in required.</p>
+    <!-- Replace the Tally embed ID below with the new Week 11 form ID from tally.so -->
+    <iframe data-tally-src="https://tally.so/embed/WEEK11FORMID?alignLeft=1&hideTitle=1&transparentBackground=1&dynamicHeight=1" loading="lazy" width="100%" height="200" frameborder="0" marginheight="0" marginwidth="0" title="Leadership in 5 - Week 11 Pulse"></iframe>
+    <script>var d=document,w="https://tally.so/widgets/embed.js",v=function(){"undefined"!=typeof Tally?Tally.loadEmbeds():d.querySelectorAll("iframe[data-tally-src]:not([src])").forEach((function(e){e.src=e.dataset.tallySrc}))};if("undefined"!=typeof Tally)v();else if(d.querySelector('script[src="'+w+'"]')==null){var s=d.createElement("script");s.src=w,s.onload=v,s.onerror=v,d.body.appendChild(s);}</script>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="brand">BREEZE AVIATION GROUP — Leadership Development</div>
+    <div class="week">Week 11 &nbsp;·&nbsp; Jun 9, 2026</div>
+  </div>
+
+</div>
+
+<script>
+  function revealAnswer() {
+    const el = document.getElementById('sc-answer');
+    el.style.display = 'block';
+    setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+  }
+</script>
+
+</body>
+</html>
