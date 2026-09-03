@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Seriously Nice Summer TM Award — Vote</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    .sr-only {
+      position: absolute; width: 1px; height: 1px;
+      padding: 0; margin: -1px; overflow: hidden;
+      clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f3fa;
+      color: #000633;
+      min-height: 100vh;
+      padding: 2rem 1rem 4rem;
+    }
+
+    .container { max-width: 780px; margin: 0 auto; }
+
+    .header {
+      background: #000633;
+      border-radius: 14px 14px 0 0;
+      padding: 1.5rem 2rem;
+      text-align: center;
+    }
+    .header h1 {
+      color: #fff;
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+    .header-sub {
+      background: #174DFF;
+      border-radius: 0 0 14px 14px;
+      padding: 0.65rem 2rem;
+      text-align: center;
+      color: #fff;
+      font-size: 0.9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .instructions {
+      background: #C1DDFF;
+      border-left: 4px solid #174DFF;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      margin-bottom: 1.75rem;
+      color: #000633;
+    }
+    .instructions strong { color: #174DFF; }
+
+    .nominations { display: flex; flex-direction: column; gap: 1rem; margin-bottom: 2rem; }
+
+    .card {
+      background: #fff;
+      border: 2px solid #C1DDFF;
+      border-radius: 10px;
+      padding: 1.25rem 1.4rem;
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+      cursor: pointer;
+      transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+    }
+    .card:hover { border-color: #174DFF; box-shadow: 0 3px 10px rgba(23,77,255,0.13); }
+    .card:focus-within { outline: 3px solid #174DFF; outline-offset: 2px; }
+    .card.selected {
+      border-color: #174DFF;
+      background: #eef2ff;
+      box-shadow: 0 3px 14px rgba(23,77,255,0.18);
+    }
+    .card.dimmed {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .card input[type="checkbox"] {
+      margin-top: 4px;
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      accent-color: #174DFF;
+      cursor: pointer;
+    }
+
+    .card-label { flex: 1; cursor: pointer; }
+
+    .nom-tag {
+      display: inline-block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #174DFF;
+      background: #eef2ff;
+      border-radius: 4px;
+      padding: 2px 8px;
+      margin-bottom: 0.6rem;
+    }
+    .card.selected .nom-tag { background: #174DFF; color: #fff; }
+
+    .nom-text {
+      font-size: 0.93rem;
+      line-height: 1.7;
+      color: #1a1a2e;
+    }
+
+    .counter {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #174DFF;
+      font-weight: 600;
+      margin-bottom: 1.25rem;
+      min-height: 1.4em;
+    }
+
+    .submit-section { text-align: center; }
+
+    .submit-btn {
+      background: #174DFF;
+      color: #fff;
+      border: none;
+      padding: 0.9rem 3.5rem;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.18s, transform 0.1s;
+      letter-spacing: 0.01em;
+    }
+    .submit-btn:hover:not(:disabled) { background: #000633; }
+    .submit-btn:focus { outline: 3px solid #174DFF; outline-offset: 3px; }
+    .submit-btn:active:not(:disabled) { transform: scale(0.98); }
+    .submit-btn:disabled { background: #9aaec8; cursor: not-allowed; }
+
+    .validation-msg {
+      color: #FF527B;
+      font-size: 0.88rem;
+      margin-top: 0.75rem;
+      min-height: 1.2em;
+    }
+
+    .already-voted {
+      background: #FFF5BD;
+      border: 2px solid #e0c040;
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      color: #000633;
+    }
+
+    .thank-you {
+      display: none;
+      text-align: center;
+      padding: 3.5rem 2rem;
+      background: #fff;
+      border-radius: 12px;
+      border: 2px solid #174DFF;
+      margin-top: 1rem;
+    }
+    .thank-you h2 { color: #174DFF; font-size: 1.6rem; margin-bottom: 0.75rem; }
+    .thank-you p { color: #000633; font-size: 1rem; line-height: 1.6; }
+    .check { font-size: 3rem; margin-bottom: 1rem; }
+
+    @media (max-width: 560px) {
+      .header h1 { font-size: 1.15rem; }
+      .card { padding: 1rem; }
+      .submit-btn { width: 100%; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .card, .submit-btn { transition: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <div class="header">
+    <h1>Seriously Nice Summer Team Member Award</h1>
+  </div>
+  <div class="header-sub">All nominations are anonymous — vote for the story, not the name</div>
+
+  <!-- Shown if already voted on this device -->
+  <div id="alreadyVoted" class="already-voted" role="alert" style="display:none;">
+    You've already submitted your vote. Thank you for participating!
+  </div>
+
+  <div id="voteArea">
+    <div class="instructions" role="note">
+      <strong>How to vote:</strong> Read each nomination and select <strong>up to 2</strong> that best represent what it means to be Seriously Nice at Breeze. When you're ready, click <strong>Submit My Vote</strong>.
+    </div>
+
+    <div class="counter" id="counter" aria-live="polite">Select up to 2 nominations</div>
+
+    <div class="nominations" role="group" aria-labelledby="counter">
+
+      <div class="card" id="card-nom1">
+        <input type="checkbox" id="nom1" value="Nomination 1" aria-describedby="nom1-text">
+        <label for="nom1" class="card-label">
+          <span class="nom-tag">Nomination 1</span>
+          <div class="nom-text" id="nom1-text">I may have only flown with this Team Member a handful of times, but I am especially grateful to have had them as our CA on a recent flight. We had a medical emergency onboard (which was my first). The PAX was stable and safe until landing, but not without the outstanding support and guidance from this Team Member and MedLink. This incident came on top of prior maintenance issues, weather delays, and service disruptions. Their ability to "charm to disarm" and navigate situations of high stress to ensure the comfortability of the crew and onboard guests is admirable, reassuring, and deserves recognition. Their passion towards their role and commitment to the crew is exactly what Breeze stands for, and what I look forward to whenever I fly. Thank you!</div>
+        </label>
+      </div>
+
+      <div class="card" id="card-nom2">
+        <input type="checkbox" id="nom2" value="Nomination 2" aria-describedby="nom2-text">
+        <label for="nom2" class="card-label">
+          <span class="nom-tag">Nomination 2</span>
+          <div class="nom-text" id="nom2-text">Today, this Team Member was given a large amount of work with our training class, beginning with around 2 hours of retests and assessments left from the previous day. They had to start our day late and did their best to get us further ahead for the instructors the next day. This Team Member had the added challenge of having to project their voice across a class that was two rooms combined! They were joined by a great team of other instructors who also did their best to keep us on task. They even squeezed in a demo of the Ejet door to ~70 trainees! Impressive work.</div>
+        </label>
+      </div>
+
+      <div class="card" id="card-nom3">
+        <input type="checkbox" id="nom3" value="Nomination 3" aria-describedby="nom3-text">
+        <label for="nom3" class="card-label">
+          <span class="nom-tag">Nomination 3</span>
+          <div class="nom-text" id="nom3-text">I have flown with many pilots during my time at Breeze, but every time I see this Team Member's name on my pairing, I know it's going to be a great trip. They consistently create an environment where safety comes first while fostering a warm, supportive, and lighthearted atmosphere for both me and the rest of the inflight crew. They are kind, approachable, communicative, and deeply passionate about their work, and those qualities shine through on every flight. This Team Member is a tremendous asset to Breeze and embodies the company's values in everything they do. It's always a pleasure to fly with them!</div>
+        </label>
+      </div>
+
+      <div class="card" id="card-nom4">
+        <input type="checkbox" id="nom4" value="Nomination 4" aria-describedby="nom4-text">
+        <label for="nom4" class="card-label">
+          <span class="nom-tag">Nomination 4</span>
+          <div class="nom-text" id="nom4-text">I wanted to recognize this Team Member for always being such a pleasure to work with. They have such a positive, light, and bubbly attitude, and they are always willing to help wherever needed. Their kindness, professionalism, and upbeat energy make every flight better, and I truly appreciate the positivity and support they bring to the team.</div>
+        </label>
+      </div>
+
+      <div class="card" id="card-nom5">
+        <input type="checkbox" id="nom5" value="Nomination 5" aria-describedby="nom5-text">
+        <label for="nom5" class="card-label">
+          <span class="nom-tag">Nomination 5</span>
+          <div class="nom-text" id="nom5-text">I wanted to take a moment to recognize how much of a help this Team Member was on our last flight. They were incredibly kind, professional, and supportive throughout the trip, and their help truly meant a lot to me. There was a difficult situation onboard, and they stepped in without hesitation. They handled it with professionalism, care, and a positive attitude, and I really appreciated having them there. Their friendliness and willingness to help made a big difference, and I am very grateful for their support and always friendly attitude.</div>
+        </label>
+      </div>
+
+      <div class="card" id="card-nom6">
+        <input type="checkbox" id="nom6" value="Nomination 6" aria-describedby="nom6-text">
+        <label for="nom6" class="card-label">
+          <span class="nom-tag">Nomination 6</span>
+          <div class="nom-text" id="nom6-text">This Team Member is the best! Had some travel hiccups on the planning/logistics side and they coordinated to have everything resolved so quickly. They communicated everything very efficiently and kindly. Having people that care like this on our team truly makes Breeze a special place. Thank you for being awesome at what you do!</div>
+        </label>
+      </div>
+
+    </div>
+
+    <div class="submit-section">
+      <button type="button" class="submit-btn" id="submitBtn">Submit My Vote</button>
+      <div class="validation-msg" id="validationMsg" role="alert" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <div class="thank-you" id="thankYou" role="alert" aria-live="polite">
+    <div class="check" aria-hidden="true">&#10003;</div>
+    <h2>Vote submitted!</h2>
+    <p>Thank you for participating in the Seriously Nice Summer TM Award.<br>Results will be announced soon.</p>
+  </div>
+
+</div>
+
+<script>
+  // ─── CONFIGURATION ──────────────────────────────────────────────────
+  // Paste your Google Apps Script web app URL here
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw5bX5hK6YsUVJwoQAbX2e0JgTszDc1HpIQGb1r3XUkMawrKVcrgUoInGF16MeOPzd_oQ/exec';
+  const VOTE_KEY = 'sn_summer_2026_voted';
+  const MAX = 2;
+  // ────────────────────────────────────────────────────────────────────
+
+  const checkboxes = Array.from(document.querySelectorAll('input[type="checkbox"]'));
+
+  // Block the page if already voted on this device
+  if (localStorage.getItem(VOTE_KEY)) {
+    document.getElementById('voteArea').style.display = 'none';
+    document.getElementById('alreadyVoted').style.display = 'block';
+  }
+
+  function getSelected() {
+    return checkboxes.filter(cb => cb.checked);
+  }
+
+  function updateUI() {
+    const selected = getSelected();
+    const count = selected.length;
+    const counter = document.getElementById('counter');
+
+    if (count === 0)      counter.textContent = 'Select up to 2 nominations';
+    else if (count === 1) counter.textContent = '1 of 2 selected — you can pick one more';
+    else                  counter.textContent = '2 of 2 selected';
+
+    checkboxes.forEach(cb => {
+      const card = cb.closest('.card');
+      if (cb.checked) {
+        card.classList.add('selected');
+        card.classList.remove('dimmed');
+      } else if (count >= MAX) {
+        card.classList.remove('selected');
+        card.classList.add('dimmed');
+      } else {
+        card.classList.remove('selected', 'dimmed');
+      }
+    });
+
+    document.getElementById('validationMsg').textContent = '';
+  }
+
+  // Wire up checkboxes and card clicks
+  checkboxes.forEach(cb => {
+    const card = cb.closest('.card');
+
+    cb.addEventListener('change', () => {
+      if (getSelected().length > MAX) cb.checked = false;
+      updateUI();
+    });
+
+    card.addEventListener('click', e => {
+      if (e.target === cb || e.target.closest('label')) return;
+      if (!cb.checked && getSelected().length >= MAX) return;
+      cb.checked = !cb.checked;
+      updateUI();
+    });
+
+    card.setAttribute('tabindex', '0');
+    card.addEventListener('keydown', e => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        if (!cb.checked && getSelected().length >= MAX) return;
+        cb.checked = !cb.checked;
+        updateUI();
+      }
+    });
+  });
+
+  // Submit
+  document.getElementById('submitBtn').addEventListener('click', async () => {
+    const selected = getSelected();
+    const validationMsg = document.getElementById('validationMsg');
+    const btn = document.getElementById('submitBtn');
+
+    if (selected.length === 0) {
+      validationMsg.textContent = 'Please select at least 1 nomination before submitting.';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Submitting…';
+
+    const payload = {
+      timestamp: new Date().toISOString(),
+      votes: selected.map(cb => cb.value).join(', '),
+      vote1: selected[0] ? selected[0].value : '',
+      vote2: selected[1] ? selected[1].value : ''
+    };
+
+    try {
+      // Google Apps Script requires no-cors mode — response will be opaque but the data goes through
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      localStorage.setItem(VOTE_KEY, '1');
+      document.getElementById('voteArea').style.display = 'none';
+      document.getElementById('thankYou').style.display = 'block';
+
+    } catch {
+      btn.disabled = false;
+      btn.textContent = 'Submit My Vote';
+      validationMsg.textContent = 'Something went wrong. Please try again.';
+    }
+  });
+</script>
+</body>
+</html>
