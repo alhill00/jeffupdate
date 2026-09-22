@@ -378,6 +378,28 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
   .tab-btn{font-size:12px;padding:13px 14px;}
 }
 
+/* ── WHAT'S NEW TAB ── */
+.wn-badge{display:inline-block;background:var(--nice);color:var(--white);font-size:9px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;padding:2px 7px;border-radius:100px;vertical-align:middle;margin-left:6px;line-height:1.6;}
+.wn-timeline{display:flex;flex-direction:column;gap:0;max-width:780px;}
+.wn-item{display:flex;gap:22px;align-items:flex-start;}
+.wn-left{display:flex;flex-direction:column;align-items:center;flex-shrink:0;width:44px;}
+.wn-dot{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;z-index:1;}
+.wn-line{width:2px;flex:1;min-height:24px;background:#e2e8f0;margin:4px 0;}
+.wn-right{flex:1;padding-bottom:32px;}
+.wn-date{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.wn-title{font-size:17px;font-weight:800;color:var(--dark);margin-bottom:6px;line-height:1.3;}
+.wn-desc{font-size:13px;color:var(--muted);line-height:1.7;margin-bottom:12px;}
+.wn-link{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:9px;font-size:13px;font-weight:700;text-decoration:none;border:2px solid transparent;transition:all .2s;font-family:inherit;cursor:pointer;}
+.wn-link-primary{background:var(--blue);color:var(--white);border-color:var(--blue);}
+.wn-link-primary:hover{background:#0f3cc7;border-color:#0f3cc7;}
+.wn-link-secondary{background:none;color:var(--blue);border-color:#d0e0ff;}
+.wn-link-secondary:hover{background:#f0f4ff;}
+.wn-link-row{display:flex;gap:10px;flex-wrap:wrap;}
+.wn-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;padding:2px 9px;border-radius:20px;margin-bottom:8px;}
+.wn-tag-new{background:#fff0f3;color:var(--nice);}
+.wn-tag-update{background:#eff6ff;color:var(--blue);}
+.wn-tag-tool{background:#f0fafa;color:var(--right);}
+
 /* ── LI5 TAB ── */
 .li5-layout{display:flex;gap:0;height:780px;border-radius:12px;overflow:hidden;box-shadow:0 2px 16px rgba(0,0,0,.08);}
 .li5-sidebar{width:260px;flex-shrink:0;background:#ffffff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;}
@@ -439,6 +461,7 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
     <button class="tab-btn" onclick="switchTab('onboard',this)">Onboard My Team</button>
     <button class="tab-btn" onclick="switchTab('resources',this)">Resources</button>
     <button class="tab-btn" onclick="switchTab('li5',this);if(!window.li5Ready){initLi5();window.li5Ready=true;}">Leadership in 5</button>
+    <button class="tab-btn" onclick="switchTab('whatsnew',this)">What&rsquo;s New <span class="wn-badge" aria-label="new content">New</span></button>
   </div>
   <div class="values-row">
     <div class="values-row-inner">
@@ -1281,6 +1304,87 @@ body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--
   </div>
 
   <p style="font-size:12px;color:#94a3b8;margin-top:14px;">32 editions &middot; January &ndash; September 2026 &middot; New topics added every Tuesday</p>
+
+</div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     TAB: WHAT'S NEW
+══════════════════════════════════════ -->
+<div class="tab-panel" id="tab-whatsnew">
+<div class="tab-inner">
+
+  <div class="sec-label">Breeze University &nbsp;&middot;&nbsp; Leader Guide</div>
+  <div class="sec-title">What&rsquo;s New</div>
+  <div class="sec-sub">Recent additions and updates to the Leader Guide. Bookmark this tab to stay current &mdash; new tools and resources are added here as they launch.</div>
+
+  <div class="wn-timeline" role="list">
+
+    <!-- Sep 22, 2026 -->
+    <div class="wn-item" role="listitem">
+      <div class="wn-left" aria-hidden="true">
+        <div class="wn-dot" style="background:rgba(23,77,255,.1);border:2px solid var(--blue);color:var(--blue);">&#128203;</div>
+        <div class="wn-line"></div>
+      </div>
+      <div class="wn-right">
+        <span class="wn-tag wn-tag-new">New</span>
+        <div class="wn-date">September 22, 2026</div>
+        <div class="wn-title">Unbreakable Breeze &mdash; Strategy at a Glance</div>
+        <div class="wn-desc">A strategy reference page built from the 2026 Leadership Summit guide. Covers the Breeze vision and Irrefutable Promise, the Four Forces (Right Plane, Places, Product, People), the growth Flywheel, all four strategic focus areas with leader connection callouts, ready-to-use team discussion prompts, and the AI at Breeze section with adoption stats and three leader actions (Ask, Identify, Disclose).</div>
+        <div class="wn-link-row">
+          <a href="unbreakable-breeze-strategy.html" target="_blank" rel="noopener" class="wn-link wn-link-primary">Open Strategy Page &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sep 2026 -->
+    <div class="wn-item" role="listitem">
+      <div class="wn-left" aria-hidden="true">
+        <div class="wn-dot" style="background:rgba(255,202,64,.1);border:2px solid var(--champ);color:#b38e00;">&#128239;</div>
+        <div class="wn-line"></div>
+      </div>
+      <div class="wn-right">
+        <span class="wn-tag wn-tag-new">New</span>
+        <div class="wn-date">September 2026</div>
+        <div class="wn-title">Leadership in 5 &mdash; Full Archive</div>
+        <div class="wn-desc">Every edition of the weekly Leadership in 5 email is now browsable inside the guide. Filter by principle &mdash; Be Seriously Nice, Do What&rsquo;s Right, Communicate Openly, Promote Ownership, Champion Others &mdash; and read any edition inline without leaving the page. 32 editions and counting, with new topics added every Tuesday.</div>
+        <div class="wn-link-row">
+          <button class="wn-link wn-link-primary" onclick="wnGoLi5()">Open Li5 Archive &rarr;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aug 2026 -->
+    <div class="wn-item" role="listitem">
+      <div class="wn-left" aria-hidden="true">
+        <div class="wn-dot" style="background:rgba(0,181,160,.1);border:2px solid var(--right);color:var(--right);">&#9992;&#65039;</div>
+        <div class="wn-line"></div>
+      </div>
+      <div class="wn-right">
+        <span class="wn-tag wn-tag-new">New</span>
+        <div class="wn-date">August 2026</div>
+        <div class="wn-title">Onboard My Team</div>
+        <div class="wn-desc">A complete 30-60-90 day onboarding toolkit for leaders bringing on new Team Members. Includes milestone conversations, key actions for each phase, a link to the full interactive onboarding app, and quick-reference guidance on what great onboarding looks like at every stage.</div>
+        <div class="wn-link-row">
+          <button class="wn-link wn-link-primary" onclick="wnGoTab('onboard')">Open Onboard My Team &rarr;</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Coming next placeholder -->
+    <div class="wn-item" role="listitem">
+      <div class="wn-left" aria-hidden="true">
+        <div class="wn-dot" style="background:#f1f5f9;border:2px dashed #e2e8f0;color:#cbd5e1;font-size:20px;font-weight:700;">+</div>
+      </div>
+      <div class="wn-right">
+        <div class="wn-date" style="color:#cbd5e1;">Coming Next</div>
+        <div class="wn-title" style="color:#94a3b8;font-size:15px;font-weight:600;">More tools launching soon</div>
+        <div class="wn-desc" style="color:#cbd5e1;">Leader Insights, Promotion Readiness, and additional resources will appear here as they launch. Reach out to Alex Hill on Teams to learn what&rsquo;s in the pipeline.</div>
+      </div>
+    </div>
+
+  </div>
 
 </div>
 </div>
@@ -5823,6 +5927,15 @@ function switchTab(id, btn) {
     });
   }
   window.scrollTo(0, 0);
+}
+
+/* ── WHAT'S NEW HELPERS ── */
+function wnGoTab(id) {
+  switchTab(id, null);
+}
+function wnGoLi5() {
+  switchTab('li5', null);
+  if (!window.li5Ready) { initLi5(); window.li5Ready = true; }
 }
 
 /* ── PHASE PANELS ── */
