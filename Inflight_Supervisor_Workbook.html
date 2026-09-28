@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leading at Altitude — My Workbook</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --dark:   #000633;
+  --blue:   #174DFF;
+  --lblue:  #C1DDFF;
+  --red:    #FF527B;
+  --orange: #FF9040;
+  --teal:   #00B5A0;
+  --purple: #8B6FD8;
+  --yellow: #FFCA40;
+  --white:  #FFFFFF;
+  --bg:     #f4f6fb;
+  --card:   #ffffff;
+  --text:   #0d1b3e;
+  --muted:  #5a6780;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── SAVE BANNER ── */
+.save-banner {
+  background: #fffbea;
+  border-bottom: 1px solid #f0e080;
+  padding: 10px 24px;
+  font-size: 13px;
+  color: #5a4a00;
+  text-align: center;
+  font-weight: 500;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--dark);
+  padding: 36px 40px 32px;
+}
+.header-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--lblue);
+  margin-bottom: 8px;
+}
+.header-title {
+  font-size: 28px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.header-sub {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(193,221,255,.65);
+  margin-bottom: 22px;
+}
+.name-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.name-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 180px;
+}
+.name-field label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(193,221,255,.5);
+}
+.name-field input {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  outline: none;
+  transition: border-color .2s;
+}
+.name-field input::placeholder { color: rgba(255,255,255,.3); }
+.name-field input:focus { border-color: var(--blue); }
+
+/* ── CONTENT ── */
+.content { max-width: 820px; margin: 0 auto; padding: 40px 24px 80px; }
+
+/* ── MODULE ── */
+.module {
+  background: var(--card);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0,6,51,.07);
+  margin-bottom: 32px;
+}
+
+.module-header {
+  padding: 24px 32px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  border-bottom: 1px solid #eef0f8;
+}
+.module-badge {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 900;
+  color: #fff;
+}
+.module-meta { flex: 1; }
+.module-num {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+.module-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.principle-tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: 100px;
+  color: #fff;
+}
+.principle-tag.yellow { color: #3a2800; }
+
+.module-body { padding: 28px 32px; }
+
+/* ── SECTIONS ── */
+.section { margin-bottom: 28px; }
+.section:last-child { margin-bottom: 0; }
+
+.section-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.section-prompt {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+.section-prompt em {
+  color: var(--text);
+  font-style: italic;
+  font-weight: 600;
+}
+
+textarea {
+  width: 100%;
+  background: #f8f9fc;
+  border: 1.5px solid #e4e8f2;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text);
+  resize: vertical;
+  outline: none;
+  transition: border-color .2s;
+  line-height: 1.6;
+}
+textarea:focus { border-color: var(--blue); background: #fff; }
+textarea::placeholder { color: #b0b8cc; }
+
+input[type="text"] {
+  width: 100%;
+  background: #f8f9fc;
+  border: 1.5px solid #e4e8f2;
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+  outline: none;
+  transition: border-color .2s;
+}
+input[type="text"]:focus { border-color: var(--blue); background: #fff; }
+input[type="text"]::placeholder { color: #b0b8cc; }
+
+/* ── FRAMEWORK BOXES ── */
+.fw-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.fw-box {
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+.fw-box .fw-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  opacity: .6;
+}
+.fw-box .fw-word {
+  font-size: 16px;
+  font-weight: 900;
+}
+
+/* ── TOOL CARDS ── */
+.tool-set { display: flex; flex-direction: column; gap: 12px; margin-bottom: 16px; }
+.tool-box {
+  background: #f8f9fc;
+  border-radius: 10px;
+  padding: 16px 18px;
+  border-left: 4px solid;
+}
+.tool-box .t-name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: 3px;
+}
+.tool-box .t-desc {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+/* ── SBI ── */
+.sbi-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.sbi-box {
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+}
+.sbi-letter { font-size: 32px; font-weight: 900; margin-bottom: 4px; }
+.sbi-word   { font-size: 11px; font-weight: 800; opacity: .6; margin-bottom: 10px; text-transform: uppercase; letter-spacing: .06em; }
+
+/* ── DEBRIEF ── */
+.debrief-set { display: flex; flex-direction: column; gap: 16px; }
+.debrief-box {
+  background: #f8f9fc;
+  border-radius: 10px;
+  padding: 18px 20px;
+  border-left: 4px solid var(--purple);
+}
+.debrief-q {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.debrief-q span {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--purple);
+  margin-bottom: 4px;
+}
+
+/* ── SCENARIO ── */
+.scenario-box {
+  background: #f0f4ff;
+  border: 1px solid #d0d9ff;
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+.scenario-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 8px;
+}
+.scenario-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.65;
+}
+
+/* ── COMMITMENT ── */
+.commit-box {
+  background: var(--dark);
+  border-radius: 14px;
+  padding: 28px 28px;
+  margin-bottom: 16px;
+}
+.commit-box .c-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--lblue);
+  margin-bottom: 8px;
+}
+.commit-box .c-prompt {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+.commit-box textarea {
+  background: rgba(255,255,255,.08);
+  border-color: rgba(255,255,255,.2);
+  color: #fff;
+}
+.commit-box textarea::placeholder { color: rgba(255,255,255,.3); }
+.commit-box textarea:focus { border-color: var(--blue); background: rgba(255,255,255,.12); }
+
+/* ── PARTNER BOX ── */
+.partner-box {
+  background: #f8f9fc;
+  border: 1.5px dashed #c8d0e8;
+  border-radius: 12px;
+  padding: 20px 22px;
+  margin-bottom: 16px;
+}
+.partner-box .p-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.partner-row { display: flex; gap: 12px; flex-wrap: wrap; }
+.partner-field { flex: 1; min-width: 160px; }
+.partner-field label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--muted);
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* ── DUTY NOTE ── */
+.duty-note {
+  background: #fff8f0;
+  border: 1px solid #ffe0b0;
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: #7a4020;
+  line-height: 1.6;
+  margin-bottom: 32px;
+}
+
+/* ── DIVIDER ── */
+.divider {
+  height: 1px;
+  background: #eef0f8;
+  margin: 24px 0;
+}
+
+/* ── CHECKLIST ── */
+.checklist { display: flex; flex-direction: column; gap: 10px; }
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f8f9fc;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+  line-height: 1.4;
+}
+.check-item input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  accent-color: var(--blue);
+  margin-top: 1px;
+  cursor: pointer;
+}
+
+/* PRINT */
+@media print {
+  .save-banner { display: none; }
+  .module { break-inside: avoid; }
+  body { background: #fff; }
+}
+</style>
+</head>
+<body>
+
+<div class="save-banner" id="save-banner">
+  Your responses are saving automatically as you type. Keep this tab open during the session. At the end — use <strong>Ctrl+P</strong> (or Cmd+P on Mac) to save as PDF and keep your work permanently.
+</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-label">Participant Workbook &mdash; Inflight Supervisor Development Day</div>
+  <div class="header-title">Leading at Altitude</div>
+  <div class="header-sub">This is your workbook for the session. Type directly into any field. Your responses stay here — they're yours.</div>
+  <div class="name-row">
+    <div class="name-field">
+      <label>Your Name</label>
+      <input type="text" placeholder="First Last">
+    </div>
+    <div class="name-field">
+      <label>Your Base</label>
+      <input type="text" placeholder="e.g. BNA, BOS, SLC...">
+    </div>
+    <div class="name-field">
+      <label>How long have you been a supervisor?</label>
+      <input type="text" placeholder="e.g. 2 years">
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- DUTY NOTE -->
+  <div class="duty-note">
+    <strong>If you're on duty today:</strong> We know things can come up. Each section of this workbook stands on its own — if you need to step away, you can jump back in at any point without losing the thread. Your spot will be here when you're back.
+  </div>
+
+  <!-- ══ MODULE 1 ══ -->
+  <div class="module">
+    <div class="module-header">
+      <div class="module-badge" style="background:#FF527B;">1</div>
+      <div class="module-meta">
+        <div class="module-num">Module 1 &nbsp;·&nbsp; 0:20 – 0:50</div>
+        <div class="module-title">Who We Are</div>
+        <span class="principle-tag" style="background:#FF527B;">Be Seriously Nice</span>
+      </div>
+    </div>
+    <div class="module-body">
+
+      <div class="section">
+        <div class="section-title">Cross-Base Breakout</div>
+        <div class="section-prompt">You'll be paired with a supervisor from a different base. Share two things: <em>What's unique about leading FAs at your base?</em> And: <em>What's a challenge you've never said out loud to someone from another base?</em></div>
+        <div style="margin-bottom:12px;">
+          <div class="section-prompt" style="margin-bottom:6px; font-size:13px;">My partner's name &amp; base:</div>
+          <input type="text" placeholder="Name / Base">
+        </div>
+        <textarea rows="3" placeholder="What's unique about leading FAs at your base?"></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">The Challenge I Don't Say Out Loud</div>
+        <div class="section-prompt">What did you share with your partner? What did <em>they</em> share that surprised you?</div>
+        <textarea rows="4" placeholder="Write it here — you don't have to share this with the group unless you want to."></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">Large Group Debrief — What Did You Find?</div>
+        <div class="section-prompt">What came up in the room that landed with you? What did you have in common across bases that surprised you?</div>
+        <textarea rows="3" placeholder="Notes from the group discussion..."></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ MODULE 2 ══ -->
+  <div class="module">
+    <div class="module-header">
+      <div class="module-badge" style="background:#FFCA40; color:#3a2800;">2</div>
+      <div class="module-meta">
+        <div class="module-num">Module 2 &nbsp;·&nbsp; 0:50 – 1:25</div>
+        <div class="module-title">Your Daily Toolkit</div>
+        <span class="principle-tag yellow" style="background:#FFCA40;">Champion Others</span>
+      </div>
+    </div>
+    <div class="module-body">
+
+      <div class="section">
+        <div class="section-title">The Three Tools</div>
+        <div class="tool-set">
+          <div class="tool-box" style="border-left-color:#FFCA40;">
+            <div class="t-name">Tool 1: The 30-Second Check-In</div>
+            <div class="t-desc">Before a shift. Before you hang up. Before you walk away. Genuine, specific, brief.</div>
+            <textarea rows="2" placeholder="How do you currently do this — or where does it fall through the cracks?"></textarea>
+          </div>
+          <div class="tool-box" style="border-left-color:#FFCA40;">
+            <div class="t-name">Tool 2: The Coaching Question</div>
+            <div class="t-desc">"What do you think?" — the question that builds ownership instead of dependency.</div>
+            <textarea rows="2" placeholder="When do you give answers when you could be asking this question instead?"></textarea>
+          </div>
+          <div class="tool-box" style="border-left-color:#FFCA40;">
+            <div class="t-name">Tool 3: The Recognition Hit</div>
+            <div class="t-desc">Specific, timely, genuine. Name the behavior. Say why it mattered.</div>
+            <textarea rows="2" placeholder="Who on your team is due for recognition right now — and what specifically would you say?"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">My Daily Rhythm with FAs</div>
+        <div class="section-prompt">Honestly — what does your current daily rhythm with your Flight Attendants look like? What's consistent? What's missing?</div>
+        <textarea rows="4" placeholder="Be honest. Nobody else reads this."></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">Practice Notes: The 30-Second Check-In</div>
+        <div class="section-prompt">After practicing with your partner: what felt natural? What felt awkward? What will you do differently the first time you try this for real?</div>
+        <textarea rows="3" placeholder="Practice debrief notes..."></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">Your Leader Guide</div>
+        <div class="section-prompt">The Leader Guide is where all of today's tools and frameworks live — organized by the same 5 Leadership Principles you're seeing here. Drop the link in your browser bookmarks so it's there when you need it.</div>
+        <div class="checklist">
+          <label class="check-item">
+            <input type="checkbox"> I opened the Leader Guide during the session.
+          </label>
+          <label class="check-item">
+            <input type="checkbox"> I bookmarked it or saved the link somewhere I'll actually find it.
+          </label>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ MODULE 3 ══ -->
+  <div class="module">
+    <div class="module-header">
+      <div class="module-badge" style="background:#00B5A0;">3</div>
+      <div class="module-meta">
+        <div class="module-num">Module 3 &nbsp;·&nbsp; 1:35 – 2:05</div>
+        <div class="module-title">When the Pressure's On</div>
+        <span class="principle-tag" style="background:#00B5A0;">Do What's Right</span>
+      </div>
+    </div>
+    <div class="module-body">
+
+      <div class="section">
+        <div class="section-title">The Framework: Assess → Choose → Communicate</div>
+        <div class="fw-grid">
+          <div class="fw-box" style="background:#e6f7f5; color:#00B5A0;">
+            <div class="fw-label">Step 1</div>
+            <div class="fw-word">Assess</div>
+          </div>
+          <div class="fw-box" style="background:#e6f7f5; color:#00B5A0;">
+            <div class="fw-label">Step 2</div>
+            <div class="fw-word">Choose</div>
+          </div>
+          <div class="fw-box" style="background:#e6f7f5; color:#00B5A0;">
+            <div class="fw-label">Step 3</div>
+            <div class="fw-word">Communicate</div>
+          </div>
+        </div>
+        <textarea rows="3" placeholder="In your own words — what does each step mean to you as an inflight supervisor?"></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">A Moment I Made a Call Under Pressure</div>
+        <div class="section-prompt"><em>Optional: this is what you shared (or would have shared) in Slido.</em> What happened? What did you decide? Looking back — what part of Assess → Choose → Communicate did you do well? What would you do differently?</div>
+        <textarea rows="5" placeholder="Describe the situation and what you decided..."></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">Scenario: Work It in Your Group</div>
+        <div class="scenario-box">
+          <div class="scenario-label">Scenario</div>
+          <div class="scenario-text">
+            It's 45 minutes before a full departure. One of your Flight Attendants calls you — she's in the gate area and just had a serious verbal altercation with a passenger who is now on the phone with the airline demanding she be removed from the flight. Your FA says the passenger was verbally abusive first, and two other FAs witnessed it. The gate agent is looking to you for direction. The captain is asking for an update. And the passenger is now approaching the podium again.
+            <br><br>
+            <strong>Walk through Assess → Choose → Communicate as a group. What do you do?</strong>
+          </div>
+        </div>
+        <textarea rows="5" placeholder="Your group's approach: What did you assess? What did you choose? How did you communicate it?"></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">Where Did Your Group Land?</div>
+        <div class="section-prompt">After the large group debrief — did other groups land differently? What's the insight from hearing multiple approaches to the same situation?</div>
+        <textarea rows="3" placeholder="What you heard from other groups..."></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ MODULE 4 ══ -->
+  <div class="module">
+    <div class="module-header">
+      <div class="module-badge" style="background:#FF9040;">4</div>
+      <div class="module-meta">
+        <div class="module-num">Module 4 &nbsp;·&nbsp; 2:05 – 2:45</div>
+        <div class="module-title">The Hard Conversations</div>
+        <span class="principle-tag" style="background:#FF9040;">Communicate Openly</span>
+      </div>
+    </div>
+    <div class="module-body">
+
+      <div class="section">
+        <div class="section-title">The Seriously Nice Paradox</div>
+        <div class="section-prompt">Avoiding a hard conversation isn't kindness — it's avoidance. <em>What's a conversation you've been telling yourself you're "not ready" for — when really, you've been protecting yourself, not them?</em></div>
+        <textarea rows="3" placeholder="Be honest with yourself here. Nobody reads this but you."></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">The SBI Framework</div>
+        <div class="sbi-grid">
+          <div class="sbi-box" style="background:#fff3ee; color:#FF9040;">
+            <div class="sbi-letter">S</div>
+            <div class="sbi-word">Situation</div>
+          </div>
+          <div class="sbi-box" style="background:#fff3ee; color:#FF9040;">
+            <div class="sbi-letter">B</div>
+            <div class="sbi-word">Behavior</div>
+          </div>
+          <div class="sbi-box" style="background:#fff3ee; color:#FF9040;">
+            <div class="sbi-letter">I</div>
+            <div class="sbi-word">Impact</div>
+          </div>
+        </div>
+        <div class="section-prompt" style="margin-bottom:10px; font-size:13px;">Key reminder: Behavior, not character. What they <em>did</em>, not who they <em>are</em>.</div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">The Conversation I've Been Putting Off</div>
+        <div class="section-prompt">Write it out using SBI. You're going to practice this in a few minutes — the clearer you are here, the better the practice.</div>
+        <textarea rows="2" placeholder="Situation: When / where did this happen?"></textarea>
+        <div style="margin-top:10px;"></div>
+        <textarea rows="2" placeholder="Behavior: What specifically did they do? (Stick to observable behavior — not attitude, not character)"></textarea>
+        <div style="margin-top:10px;"></div>
+        <textarea rows="2" placeholder="Impact: What was the effect on the team, the guest, the operation, or you?"></textarea>
+        <div style="margin-top:12px;"></div>
+        <div class="section-prompt" style="margin-bottom:6px; font-size:13px;">After SBI — your coaching question:</div>
+        <textarea rows="2" placeholder='"What do you think about what happened?" — write how you'd say this in your own words.'></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">Practice Debrief</div>
+        <div class="section-prompt">After practicing with your partner — what feedback did they give you? What landed well? What would you adjust?</div>
+        <textarea rows="4" placeholder="Partner feedback + my own reflection..."></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">Accountability vs. Empathy — Where Do You Land?</div>
+        <div class="section-prompt">After the Slido check and group discussion: what's your honest read on your own default? What does leading with both look like for you?</div>
+        <textarea rows="3" placeholder="My honest default is... and what I want to work on is..."></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ MODULE 5 ══ -->
+  <div class="module">
+    <div class="module-header">
+      <div class="module-badge" style="background:#8B6FD8;">5</div>
+      <div class="module-meta">
+        <div class="module-num">Module 5 &nbsp;·&nbsp; 2:55 – 3:25</div>
+        <div class="module-title">Learning from Turbulence</div>
+        <span class="principle-tag" style="background:#8B6FD8;">Promote Ownership</span>
+      </div>
+    </div>
+    <div class="module-body">
+
+      <div class="section">
+        <div class="section-title">Why My Current Debriefs Aren't Working</div>
+        <div class="section-prompt">Be honest. Do you debrief challenging situations with your FAs? If not — what gets in the way? If yes — what makes them fall flat?</div>
+        <textarea rows="3" placeholder="What my debrief habit looks like right now..."></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">The 4-Question Debrief — Live Practice</div>
+        <div class="section-prompt">We're going to debrief today's session using these 4 questions. Write your own answers first, then share in the group.</div>
+        <div class="debrief-set">
+          <div class="debrief-box">
+            <div class="debrief-q"><span>Question 1</span>What happened today?</div>
+            <textarea rows="2" placeholder="The facts — what did we do?"></textarea>
+          </div>
+          <div class="debrief-box">
+            <div class="debrief-q"><span>Question 2</span>What worked?</div>
+            <textarea rows="2" placeholder="What felt right? What produced energy?"></textarea>
+          </div>
+          <div class="debrief-box">
+            <div class="debrief-q"><span>Question 3</span>What would we do differently?</div>
+            <textarea rows="2" placeholder="No blame — just honest learning."></textarea>
+          </div>
+          <div class="debrief-box">
+            <div class="debrief-q"><span>Question 4</span>What do we take forward?</div>
+            <textarea rows="2" placeholder="The one thing that will actually change because of today."></textarea>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">My 5-Minute Debrief Template</div>
+        <div class="section-prompt">Use this with your FAs after any hard situation — a difficult flight, a conflict, a near-miss, a rough passenger interaction. It takes five minutes. It builds the habit of learning out loud.</div>
+        <div class="tool-box" style="border-left-color:#8B6FD8; margin-bottom:12px;">
+          <div class="t-name">How to Open It</div>
+          <div class="t-desc"><strong>Say this to start:</strong> "Before we move on, I want to spend about 5 minutes on what just happened. I'm going to ask you four questions — I just want honest answers. There's no blame here. This is about what we learn and take forward."<br><br>Then go quiet. Ask each question in order. Keep your reactions neutral — the goal is learning, not judgment. Close with one clear takeaway the whole group agrees on.</div>
+        </div>
+        <div class="section-prompt" style="font-size:13px; margin-bottom:8px;">The situation I will try this on first:</div>
+        <textarea rows="2" placeholder="A specific upcoming or recent situation where I'll run this debrief..."></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ MODULE 6 ══ -->
+  <div class="module">
+    <div class="module-header">
+      <div class="module-badge" style="background:linear-gradient(135deg, #174DFF, #8B6FD8);">6</div>
+      <div class="module-meta">
+        <div class="module-num">Module 6 &nbsp;·&nbsp; 3:25 – 3:50</div>
+        <div class="module-title">Flying Together</div>
+        <span class="principle-tag" style="background:#174DFF;">All 5 Principles</span>
+      </div>
+    </div>
+    <div class="module-body">
+
+      <div class="section">
+        <div class="section-title">My Cross-Base Accountability Partner</div>
+        <div class="section-prompt">You're being paired with someone from a different base. This isn't a work relationship — it's a leadership one. Reach out in the next 30 days. Ask how it's going. Share what you're working on.</div>
+        <div class="partner-box">
+          <div class="p-label">My Partner</div>
+          <div class="partner-row">
+            <div class="partner-field">
+              <label>Name</label>
+              <input type="text" placeholder="Partner name">
+            </div>
+            <div class="partner-field">
+              <label>Base</label>
+              <input type="text" placeholder="Their base">
+            </div>
+            <div class="partner-field">
+              <label>Best way to reach them</label>
+              <input type="text" placeholder="Teams / phone / email">
+            </div>
+          </div>
+        </div>
+        <textarea rows="2" placeholder="What will I ask them when I reach out? What do I want to talk about?"></textarea>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">What I'm Taking Away from Today</div>
+        <div class="section-prompt">Not the list of things you learned. The one thing — the thing that shifted something.</div>
+        <textarea rows="3" placeholder="The thing that actually landed..."></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ COMMITMENTS ══ -->
+  <div class="module">
+    <div class="module-header">
+      <div class="module-badge" style="background:var(--dark);">✓</div>
+      <div class="module-meta">
+        <div class="module-num">3:50 – 4:00</div>
+        <div class="module-title">My Commitments</div>
+        <span class="principle-tag" style="background:var(--blue);">Take-Home</span>
+      </div>
+    </div>
+    <div class="module-body">
+
+      <div class="commit-box">
+        <div class="c-label">Commitment 1</div>
+        <div class="c-prompt">One thing I will do differently in the next 7 days.</div>
+        <textarea rows="3" placeholder="Be specific. What will you do, when, and with whom?"></textarea>
+      </div>
+
+      <div class="commit-box" style="margin-top:14px;">
+        <div class="c-label">Commitment 2</div>
+        <div class="c-prompt">One person I will call or message this week.</div>
+        <textarea rows="2" placeholder="Name, and what you'll say or ask..."></textarea>
+      </div>
+
+      <div style="margin-top:20px;">
+        <div class="section-title" style="margin-bottom:10px;">Before You Close</div>
+        <div class="checklist">
+          <label class="check-item">
+            <input type="checkbox"> I dropped Commitment 1 in the Teams chat.
+          </label>
+          <label class="check-item">
+            <input type="checkbox"> I have my accountability partner's contact info.
+          </label>
+          <label class="check-item">
+            <input type="checkbox"> I bookmarked the Leader Guide.
+          </label>
+          <label class="check-item">
+            <input type="checkbox"> I printed or saved this workbook as a PDF (Ctrl+P / Cmd+P).
+          </label>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <div class="section">
+        <div class="section-title">30-Day Check-In</div>
+        <div class="section-prompt">Your facilitator will send you one question in 30 days. Just one — and they want a real answer. Use this space now to write down what you hope to be able to say when that message comes.</div>
+        <textarea rows="3" placeholder="In 30 days, I hope I can say that I..."></textarea>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- end content -->
+
+<script>
+(function() {
+  var STORAGE_KEY = 'lat_workbook_v1';
+
+  function getFields() {
+    return document.querySelectorAll('textarea, input[type="text"]');
+  }
+
+  function saveAll() {
+    var data = {};
+    getFields().forEach(function(el, i) {
+      data[i] = el.value;
+    });
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    } catch(e) {}
+  }
+
+  function loadAll() {
+    var raw;
+    try { raw = localStorage.getItem(STORAGE_KEY); } catch(e) {}
+    if (!raw) return;
+    var data;
+    try { data = JSON.parse(raw); } catch(e) { return; }
+    getFields().forEach(function(el, i) {
+      if (data[i] !== undefined && data[i] !== '') {
+        el.value = data[i];
+      }
+    });
+  }
+
+  function clearAll() {
+    if (confirm('Clear all your saved responses and start fresh?')) {
+      try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+      getFields().forEach(function(el) { el.value = ''; });
+    }
+  }
+
+  // Load saved data when page opens
+  window.addEventListener('DOMContentLoaded', function() {
+    loadAll();
+
+    // Add clear button to banner
+    var banner = document.getElementById('save-banner');
+    if (banner) {
+      var btn = document.createElement('button');
+      btn.textContent = 'Clear & start fresh';
+      btn.style.cssText = 'margin-left:16px;background:none;border:1px solid #c8a800;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:600;color:#5a4a00;cursor:pointer;';
+      btn.addEventListener('click', clearAll);
+      banner.appendChild(btn);
+    }
+  });
+
+  // Save on every keystroke with a short debounce
+  var saveTimer;
+  document.addEventListener('input', function() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveAll, 400);
+  });
+
+  // Also save on checkbox change
+  document.addEventListener('change', saveAll);
+
+  // Save before tab closes
+  window.addEventListener('beforeunload', saveAll);
+})();
+</script>
+</body>
+</html>
