@@ -422,6 +422,107 @@ input[type="text"]::placeholder { color: #b0b8cc; }
   cursor: pointer;
 }
 
+/* ── KEY CONCEPT BLOCKS ── */
+.key-concept {
+  border-left: 4px solid;
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 24px;
+}
+.kc-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.kc-body {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.7;
+}
+.kc-rows { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
+.kc-row {
+  font-size: 13px;
+  color: var(--text);
+  line-height: 1.6;
+  padding-left: 14px;
+  border-left: 2px solid rgba(0,0,0,.1);
+}
+
+/* ── FIELD GUIDE ── */
+.fg-header {
+  background: var(--dark);
+  border-radius: 16px 16px 0 0;
+  padding: 30px 32px 26px;
+}
+.fg-header-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--lblue);
+  margin-bottom: 6px;
+  opacity: .7;
+}
+.fg-header-title { font-size: 24px; font-weight: 900; color: #fff; margin-bottom: 6px; }
+.fg-header-sub { font-size: 13px; color: rgba(193,221,255,.6); line-height: 1.5; }
+.fg-body {
+  background: var(--card);
+  border-radius: 0 0 16px 16px;
+  padding: 36px 32px;
+  box-shadow: 0 2px 12px rgba(0,6,51,.07);
+}
+.fg-topic {
+  padding-bottom: 36px;
+  margin-bottom: 36px;
+  border-bottom: 1px solid #eef0f8;
+}
+.fg-topic:last-child { padding-bottom: 0; margin-bottom: 0; border-bottom: none; }
+.fg-topic-bar { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.fg-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+.fg-topic-title { font-size: 16px; font-weight: 800; color: var(--text); }
+.fg-topic-tag { font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+.fg-what { font-size: 14px; color: var(--text); line-height: 1.75; margin-bottom: 16px; }
+.fg-sub {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 16px;
+  margin-bottom: 8px;
+}
+.fg-list { display: flex; flex-direction: column; gap: 7px; margin-bottom: 4px; }
+.fg-item { font-size: 13px; color: var(--text); line-height: 1.65; padding-left: 18px; position: relative; }
+.fg-item::before { content: '→'; position: absolute; left: 0; color: var(--muted); font-size: 12px; top: 1px; }
+.fg-phrases { display: flex; flex-direction: column; gap: 7px; margin-bottom: 4px; }
+.fg-phrase {
+  background: #f4f6fb;
+  border-left: 3px solid;
+  border-radius: 0 8px 8px 0;
+  padding: 9px 14px;
+  font-size: 13px;
+  color: var(--text);
+  font-style: italic;
+  line-height: 1.5;
+}
+.fg-miss {
+  background: #fff5f5;
+  border: 1px solid #ffd5d5;
+  border-radius: 8px;
+  padding: 11px 15px;
+  font-size: 13px;
+  color: #922020;
+  line-height: 1.6;
+  margin-top: 14px;
+}
+.fg-principles-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 4px; }
+.fg-p-row { display: flex; gap: 12px; align-items: flex-start; background: #f8f9fc; border-radius: 10px; padding: 14px 16px; }
+.fg-p-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 4px; }
+.fg-p-name { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
+.fg-p-desc { font-size: 12px; color: var(--muted); line-height: 1.55; }
+
 /* PRINT */
 @media print {
   .save-banner { display: none; }
@@ -471,6 +572,12 @@ input[type="text"]::placeholder { color: #b0b8cc; }
     </div>
     <div class="module-body">
 
+      <div class="key-concept" style="border-left-color:#FF527B; background:#fff5f7;">
+        <div class="kc-label" style="color:#FF527B;">Be Seriously Nice</div>
+        <div class="kc-body">This principle doesn't mean keeping the peace — it means caring enough to stay in the uncomfortable conversation instead of taking the easy exit. For supervisors, that looks like: calling an FA after a rough flight just to ask how they're doing, addressing a pattern early because you care too much to let it grow, being honest even when silence would be easier.</div>
+        <div class="kc-body" style="margin-top:8px;">This module is about building the peer connection that makes all of that sustainable — because you can't consistently show up for your FAs when you're isolated from the only people who know exactly what that role feels like.</div>
+      </div>
+
       <div class="section">
         <div class="section-title">Cross-Base Breakout</div>
         <div class="section-prompt">You'll be paired with a supervisor from a different base. Share two things: <em>What's unique about leading FAs at your base?</em> And: <em>What keeps you up at night when you think about leading your base?</em></div>
@@ -511,6 +618,15 @@ input[type="text"]::placeholder { color: #b0b8cc; }
       </div>
     </div>
     <div class="module-body">
+
+      <div class="key-concept" style="border-left-color:#FFCA40; background:#fffdf0;">
+        <div class="kc-label" style="color:#a87c00;">Champion Others — The 3 Daily Tools</div>
+        <div class="kc-rows">
+          <div class="kc-row"><strong>The 30-Second Check-In:</strong> Open (genuine question, not operational) → Listen (wait for the answer — don't fill the silence) → Respond (acknowledge what you heard before you move on). Before a shift. Before you hang up. Every time.</div>
+          <div class="kc-row"><strong>The Coaching Question:</strong> "What do you think?" — ask before you answer. Every time you solve a problem for your FA, you take a learning opportunity away from them. Ask first. Give the answer only if they truly can't get there.</div>
+          <div class="kc-row"><strong>The Recognition Hit:</strong> Name the specific behavior + say why it mattered to the team, the guest, or the operation. Not a trophy — a moment. Do it close to when it happened. Generic recognition fades. Specific recognition sticks.</div>
+        </div>
+      </div>
 
       <div class="section">
         <div class="section-title">The Three Tools</div>
@@ -585,6 +701,16 @@ input[type="text"]::placeholder { color: #b0b8cc; }
     </div>
     <div class="module-body">
 
+      <div class="key-concept" style="border-left-color:#00B5A0; background:#f0fbfa;">
+        <div class="kc-label" style="color:#00796b;">Do What's Right — Assess → Choose → Communicate</div>
+        <div class="kc-body">When pressure hits, most supervisors skip straight to Choose. This framework slows you down just enough to make the right call — and gets everyone who needs to know, knowing.</div>
+        <div class="kc-rows">
+          <div class="kc-row"><strong>Assess:</strong> What's actually happening? What's at stake — for the operation, the team, the guest, and you?</div>
+          <div class="kc-row"><strong>Choose:</strong> Best call with what you know right now. A clear decision you own beats a hesitant one that confuses everyone.</div>
+          <div class="kc-row"><strong>Communicate:</strong> Who needs to know, and what do they need — information, a decision, or just reassurance? This is the step most supervisors underinvest in. The call was right. People just didn't know what was happening.</div>
+        </div>
+      </div>
+
       <div class="section">
         <div class="section-title">The Framework: Assess → Choose → Communicate</div>
         <div class="fw-grid">
@@ -649,6 +775,13 @@ input[type="text"]::placeholder { color: #b0b8cc; }
       </div>
     </div>
     <div class="module-body">
+
+      <div class="key-concept" style="border-left-color:#FF9040; background:#fff8f2;">
+        <div class="kc-label" style="color:#c85a00;">Communicate Openly — SBI + The Coaching Question</div>
+        <div class="kc-body"><strong>The key rule: behavior, not character.</strong> "You were rude" starts a debate about who someone is. "You walked past her without acknowledging her" opens a conversation about what happened. Stay on the observable action — not the interpretation.</div>
+        <div class="kc-body" style="margin-top:8px;"><strong>After you deliver the Impact:</strong> pause. Ask — "What do you think about what happened?" Then stop. The silence is uncomfortable. Let them fill it. What they say next is almost always what the conversation needed to be about all along.</div>
+        <div class="kc-body" style="margin-top:8px;"><strong>Remember:</strong> Avoiding a hard conversation isn't kindness. It lets the problem grow — and quietly tells your FA you don't believe they can handle the truth. The most caring thing you can do is be honest, specific, and early.</div>
+      </div>
 
       <div class="section">
         <div class="section-title">The Seriously Nice Paradox</div>
@@ -726,6 +859,17 @@ input[type="text"]::placeholder { color: #b0b8cc; }
     </div>
     <div class="module-body">
 
+      <div class="key-concept" style="border-left-color:#8B6FD8; background:#f7f4ff;">
+        <div class="kc-label" style="color:#6b4fc8;">Promote Ownership — The 4-Question Debrief</div>
+        <div class="kc-body">The debrief is the leadership development. Every hard situation with your team is a curriculum — if you create the space to learn from it. Five minutes. Four questions. In order. The order matters: don't jump to Q3 before you've done Q2 or it becomes a blame session.</div>
+        <div class="kc-rows">
+          <div class="kc-row"><strong>Q1 — What happened?</strong> Facts only first. Get everyone on the same page before drawing conclusions.</div>
+          <div class="kc-row"><strong>Q2 — What worked?</strong> Find this before you go to what didn't. Even in the worst situations, something worked. This is what makes people safe enough to be honest in Q3.</div>
+          <div class="kc-row"><strong>Q3 — What would we do differently?</strong> Forward-looking — not blame. What changes next time?</div>
+          <div class="kc-row"><strong>Q4 — What do we take forward?</strong> One agreed-on takeaway. This is what makes it a debrief instead of just venting.</div>
+        </div>
+      </div>
+
       <div class="section">
         <div class="section-title">Why My Current Debriefs Aren't Working</div>
         <div class="section-prompt">Be honest. Do you debrief challenging situations with your FAs? If not — what gets in the way? If yes — what makes them fall flat?</div>
@@ -784,6 +928,12 @@ input[type="text"]::placeholder { color: #b0b8cc; }
       </div>
     </div>
     <div class="module-body">
+
+      <div class="key-concept" style="border-left-color:#174DFF; background:#f0f4ff;">
+        <div class="kc-label" style="color:#174DFF;">Flying Together — All 5 Principles</div>
+        <div class="kc-body">Your accountability partner isn't a work relationship — it's a leadership one. Reach out in the next 30 days. Not for a problem, not for an issue. Just to ask: how's it going? What are you working on? What do you need? Peer connection for supervisors at remote bases doesn't happen by accident. You have to make it intentional.</div>
+        <div class="kc-body" style="margin-top:8px;">Everything in today's training connects back to the same five principles — Be Seriously Nice, Champion Others, Do What's Right, Communicate Openly, Promote Ownership. They're not about who you are on a good day. They're about who you choose to be when it's hard, when it would be easier to take a shortcut, when no one would notice if you didn't show up fully. Your FAs will notice.</div>
+      </div>
 
       <div class="section">
         <div class="section-title">My Cross-Base Accountability Partner</div>
@@ -867,6 +1017,235 @@ input[type="text"]::placeholder { color: #b0b8cc; }
         <div class="section-title">30-Day Check-In</div>
         <div class="section-prompt">Your facilitator will send you one question in 30 days. Just one — and they want a real answer. Use this space now to write down what you hope to be able to say when that message comes.</div>
         <textarea rows="3" placeholder="In 30 days, I hope I can say that I..."></textarea>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══ FIELD GUIDE ══ -->
+  <div class="module" style="margin-top:32px;">
+    <div class="fg-header">
+      <div class="fg-header-label">Take-Home Reference</div>
+      <div class="fg-header-title">Field Guide</div>
+      <div class="fg-header-sub">Everything from today — frameworks, phrases, and practical suggestions for using these tools with your FAs. Come back to this on a Tuesday morning when you need a quick reminder of how something works.</div>
+    </div>
+    <div class="fg-body">
+
+      <!-- PRINCIPLES AT A GLANCE -->
+      <div class="fg-topic">
+        <div class="fg-topic-bar">
+          <div class="fg-dot" style="background:var(--blue);"></div>
+          <div>
+            <div class="fg-topic-title">The 5 Leadership Principles</div>
+            <div class="fg-topic-tag">Your foundation</div>
+          </div>
+        </div>
+        <div class="fg-what">These aren't aspirational values — they're the standard. Every framework in this guide connects back to one of these five. When you're not sure what to do in a moment, come back to which principle applies and let it orient you.</div>
+        <div class="fg-principles-grid">
+          <div class="fg-p-row">
+            <div class="fg-p-dot" style="background:#FF527B;"></div>
+            <div><div class="fg-p-name">Be Seriously Nice</div><div class="fg-p-desc">Genuine care over comfortable silence. You're the one who stays in the hard conversation because you care too much to walk away. The "seriously" is what separates it from just being pleasant.</div></div>
+          </div>
+          <div class="fg-p-row">
+            <div class="fg-p-dot" style="background:#FFCA40;"></div>
+            <div><div class="fg-p-name">Champion Others</div><div class="fg-p-desc">Invest in your FAs as people, not just performers. Check in genuinely, ask before you answer, recognize specifically. Do this consistently and your team will run through walls for you.</div></div>
+          </div>
+          <div class="fg-p-row">
+            <div class="fg-p-dot" style="background:#00B5A0;"></div>
+            <div><div class="fg-p-name">Do What's Right</div><div class="fg-p-desc">Make the call, own it, communicate it. Even with incomplete information, a clear decision you stand behind is better than paralysis or politics. Then tell people what you did and why.</div></div>
+          </div>
+          <div class="fg-p-row">
+            <div class="fg-p-dot" style="background:#FF9040;"></div>
+            <div><div class="fg-p-name">Communicate Openly</div><div class="fg-p-desc">Say the thing. Specific, honest, early. Hard truths delivered with care are the most respectful thing you can offer someone — far more respectful than protecting them from a conversation they deserve to have.</div></div>
+          </div>
+          <div class="fg-p-row">
+            <div class="fg-p-dot" style="background:#8B6FD8;"></div>
+            <div><div class="fg-p-name">Promote Ownership</div><div class="fg-p-desc">Create the conditions for your FAs to own their work. Ask instead of tell. Debrief instead of move on. People grow when they build the answer themselves — not when someone hands it to them.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BE SERIOUSLY NICE -->
+      <div class="fg-topic">
+        <div class="fg-topic-bar">
+          <div class="fg-dot" style="background:#FF527B;"></div>
+          <div>
+            <div class="fg-topic-title">Be Seriously Nice</div>
+            <div class="fg-topic-tag">Module 1 Principle</div>
+          </div>
+        </div>
+        <div class="fg-what">Be Seriously Nice is the most misunderstood of the five principles. It doesn't mean being gentle or avoiding conflict. It means you genuinely care — and that care is what makes you willing to stay in hard conversations instead of taking the easy exit. The "serious" part is doing it even when it's uncomfortable. The "nice" part is doing it in a way that keeps the person whole.</div>
+        <div class="fg-sub">What it looks like for inflight supervisors</div>
+        <div class="fg-list">
+          <div class="fg-item">Calling an FA after a rough flight — not to debrief the operation, but to ask how <em>they're</em> doing.</div>
+          <div class="fg-item">Addressing a pattern early, before it becomes a formal issue, because you care too much to let it grow unchecked.</div>
+          <div class="fg-item">Being the one person who tells them the truth — not the one who softens every message until it means nothing.</div>
+          <div class="fg-item">Staying fully present in a hard conversation instead of looking for the exit ramp. Being there completely, even when it's uncomfortable.</div>
+        </div>
+        <div class="fg-sub">When you feel yourself wanting to avoid</div>
+        <div class="fg-list">
+          <div class="fg-item">Ask yourself: am I protecting them — or protecting myself? Usually it's the latter. The message you're softening is the message they need to hear.</div>
+          <div class="fg-item">When you've waited too long: start with this — <em>"I should have said this sooner. I want to say it now because I respect you."</em> Then go.</div>
+          <div class="fg-item">When the relationship feels fragile: the conversations you avoid are the ones that slowly erode trust. The ones you have — carefully and honestly — are the ones that build it.</div>
+        </div>
+        <div class="fg-miss"><strong>Common mistake:</strong> Confusing niceness with avoidance. Keeping the peace to protect yourself from an uncomfortable moment isn't being seriously nice — it's protecting yourself while your FA misses the chance to grow.</div>
+      </div>
+
+      <!-- 3 DAILY TOOLS -->
+      <div class="fg-topic">
+        <div class="fg-topic-bar">
+          <div class="fg-dot" style="background:#FFCA40;"></div>
+          <div>
+            <div class="fg-topic-title">The 3 Daily Tools</div>
+            <div class="fg-topic-tag">Module 2 · Champion Others</div>
+          </div>
+        </div>
+        <div class="fg-what">Three things you can do with your FAs every day — not in a formal conversation, not in a big meeting, but in the small moments that are actually where leadership happens. None of them require more than a few minutes. All of them compound over time.</div>
+
+        <div class="fg-sub">Tool 1 — The 30-Second Check-In</div>
+        <div class="fg-list">
+          <div class="fg-item"><strong>What it is:</strong> A brief, genuine human connection — not a status update. Three steps: <em>Open</em> (real question, not operational), <em>Listen</em> (actually wait for the answer, don't fill the silence), <em>Respond</em> (acknowledge what you heard before you move on).</div>
+          <div class="fg-item"><strong>When to use it:</strong> Before a shift starts. Before you end a call. After a hard flight. After anything difficult. It takes 30 seconds and it signals: you're seen, not just managed.</div>
+          <div class="fg-item"><strong>The "actually" matters:</strong> "How are you actually doing?" signals you want a real answer, not a reflexive "fine." Try it once. Notice the difference in what you hear back.</div>
+        </div>
+        <div class="fg-sub">Try this</div>
+        <div class="fg-phrases">
+          <div class="fg-phrase" style="border-color:#FFCA40;">"Before we get into the brief — how are you actually doing?"</div>
+          <div class="fg-phrase" style="border-color:#FFCA40;">"That was a hard shift. I just want to check in before we move on to the next thing."</div>
+          <div class="fg-phrase" style="border-color:#FFCA40;">"I saw what happened on that flight. Before we talk about next steps — how are you?"</div>
+        </div>
+        <div class="fg-miss"><strong>Common mistake:</strong> Asking "how are you?" while already thinking about the next thing. Your FA can feel that. Make it real or don't do it — a performative check-in is worse than none at all.</div>
+
+        <div class="fg-sub" style="margin-top:20px;">Tool 2 — The Coaching Question</div>
+        <div class="fg-list">
+          <div class="fg-item"><strong>What it is:</strong> "What do you think?" — the question that builds ownership instead of dependency. When you give answers, your FAs follow your lead. When you ask what they think, they own the answer — and the next one.</div>
+          <div class="fg-item"><strong>When to use it:</strong> When a FA brings you a problem you could solve in 10 seconds. Pause. Ask first. You'll be surprised how often they already know. Your job is to help them trust that they know.</div>
+          <div class="fg-item"><strong>When they say "I don't know":</strong> Don't give the answer. Try "What's your best guess?" or "If you had to make a call right now, what would it be?" Most "I don't know" responses are about risk aversion, not lack of knowledge.</div>
+        </div>
+        <div class="fg-sub">Try this</div>
+        <div class="fg-phrases">
+          <div class="fg-phrase" style="border-color:#FFCA40;">"What do you think?"</div>
+          <div class="fg-phrase" style="border-color:#FFCA40;">"What would you do if I wasn't available?"</div>
+          <div class="fg-phrase" style="border-color:#FFCA40;">"What options do you see right now?"</div>
+          <div class="fg-phrase" style="border-color:#FFCA40;">"What's your gut telling you?"</div>
+          <div class="fg-phrase" style="border-color:#FFCA40;">"What have you already tried?"</div>
+        </div>
+        <div class="fg-miss"><strong>Common mistake:</strong> Asking the question and then immediately filling the silence with your own answer. The pause is the point. The discomfort of waiting is exactly where the learning happens — for them and for you.</div>
+
+        <div class="fg-sub" style="margin-top:20px;">Tool 3 — The Recognition Hit</div>
+        <div class="fg-list">
+          <div class="fg-item"><strong>What it is:</strong> Specific, timely, genuine. Name the exact behavior. Say why it mattered to the team, the guest, or the operation. Do it close to when it happened. Not a trophy — a moment they'll actually remember.</div>
+          <div class="fg-item"><strong>The formula:</strong> [Name] + [what they did, specifically] + [why it mattered]. Three parts. Done in under 30 seconds. That's the whole thing.</div>
+          <div class="fg-item"><strong>Don't wait for a big moment:</strong> Notice the small things — the FA who de-escalated quietly, the one who checked on a nervous flyer without being asked, the one who stayed to help when they didn't have to. Those moments deserve to be named.</div>
+        </div>
+        <div class="fg-sub">Try this</div>
+        <div class="fg-phrases">
+          <div class="fg-phrase" style="border-color:#FFCA40;">"The way you handled that passenger in row 12 — staying calm, getting ahead of it — that kept the whole cabin steady. That was exactly right."</div>
+          <div class="fg-phrase" style="border-color:#FFCA40;">"I noticed you checked on the nervous flyer in 4A before anyone asked. That's the kind of thing that makes a difference to that person's whole experience."</div>
+          <div class="fg-phrase" style="border-color:#FFCA40;">"You didn't have to stay and help with that turnaround. You did. The team noticed, and I noticed."</div>
+        </div>
+        <div class="fg-miss"><strong>Common mistake:</strong> Generic recognition. "You did a great job today" means nothing. "You handled the delay communication before guests had a reason to be frustrated — that's exactly the standard" means everything. Specificity is what makes it stick.</div>
+      </div>
+
+      <!-- ASSESS CHOOSE COMMUNICATE -->
+      <div class="fg-topic">
+        <div class="fg-topic-bar">
+          <div class="fg-dot" style="background:#00B5A0;"></div>
+          <div>
+            <div class="fg-topic-title">Assess → Choose → Communicate</div>
+            <div class="fg-topic-tag">Module 3 · Do What's Right</div>
+          </div>
+        </div>
+        <div class="fg-what">A three-step decision framework for moments when you have limited time, limited information, and everyone is watching you to know how to feel. It doesn't slow you down — it makes sure you're doing all three steps instead of just the one you're most comfortable with. Most supervisors are decent at Assess and Choose. Nearly everyone underinvests in Communicate — and that's usually where things fall apart.</div>
+        <div class="fg-sub">The three steps — and why each one matters</div>
+        <div class="fg-list">
+          <div class="fg-item"><strong>Assess:</strong> What's actually happening right now? What's at stake — for the operation, the team, the guest, and you? Don't skip this to look decisive. Even 10 seconds of clear-headed assessment changes the quality of everything that comes next.</div>
+          <div class="fg-item"><strong>Choose:</strong> What's the best call I can make with what I know right now? It won't be perfect — that's okay. A clear decision you own beats a hesitant one that leaves everyone waiting for someone to step up. Make the call. Stand behind it.</div>
+          <div class="fg-item"><strong>Communicate:</strong> Who needs to know, and what do they need from me — information, a decision, or just reassurance that someone is in control? This is the most underused step. The call was right. People just didn't know what was happening or why.</div>
+        </div>
+        <div class="fg-sub">Phrases for communicating under pressure</div>
+        <div class="fg-phrases">
+          <div class="fg-phrase" style="border-color:#00B5A0;">"Here's what I'm seeing, here's what I decided, and here's why."</div>
+          <div class="fg-phrase" style="border-color:#00B5A0;">"I may not have all the information yet, but here's my call right now — and I'm open to adjusting as we learn more."</div>
+          <div class="fg-phrase" style="border-color:#00B5A0;">"I want you to hear this from me directly before it comes from anywhere else."</div>
+          <div class="fg-phrase" style="border-color:#00B5A0;">"We're still assessing. I'll have a clear update for you in [X] minutes — sit tight."</div>
+        </div>
+        <div class="fg-sub">When assess goes wrong</div>
+        <div class="fg-list">
+          <div class="fg-item">You jumped to a decision because hesitation felt like weakness. Most of the time, the mess that follows wasn't because the call was wrong — it was because you didn't know what you were actually responding to.</div>
+          <div class="fg-item">You conflated what's convenient with what's right. Those are different things. "Do What's Right" means sometimes the right call is the harder one. The fact that it's hard is often a sign you're on the right track.</div>
+          <div class="fg-item">You made the call but didn't close the Communicate loop. If key people found out through someone else — that's a Communicate failure, not an Assess or Choose failure. Fix that loop next time.</div>
+        </div>
+        <div class="fg-miss"><strong>Common mistake:</strong> Skipping Assess because hesitation feels like weakness. The 10 seconds you spend on Assess often saves you 10 minutes of cleanup after a poor call. Fast and right beats fast and wrong every time.</div>
+      </div>
+
+      <!-- SBI MODEL -->
+      <div class="fg-topic">
+        <div class="fg-topic-bar">
+          <div class="fg-dot" style="background:#FF9040;"></div>
+          <div>
+            <div class="fg-topic-title">The SBI Model</div>
+            <div class="fg-topic-tag">Module 4 · Communicate Openly</div>
+          </div>
+        </div>
+        <div class="fg-what">SBI is a framework for giving feedback that's specific, fair, and actionable — without turning into a character attack. Situation anchors the conversation in fact. Behavior names what happened without editorializing. Impact makes the conversation real and gives the other person a reason to care. Together, they create a feedback moment that's hard to argue with because it stays on what happened — not who someone is.</div>
+        <div class="fg-sub">The three parts — and why each one matters</div>
+        <div class="fg-list">
+          <div class="fg-item"><strong>Situation:</strong> Set the specific time and place. "On Tuesday's flight to BNA" is a Situation. "You always do this" is not. Anchoring in a specific moment removes the "but that's not who I am" defense before it starts — because you're not talking about who they are, you're talking about what happened at a specific moment.</div>
+          <div class="fg-item"><strong>Behavior:</strong> Name what they did — observable action only. "You walked past the passenger in 14C without acknowledging her" is a Behavior. "You were rude" is a character statement. One opens a conversation. One starts a fight. If you can't describe it as something a camera would have captured — you're not at the Behavior level yet.</div>
+          <div class="fg-item"><strong>Impact:</strong> Say what it cost — the team, the guest, the operation, or you. Don't soften this. "It kind of affected morale a little" is not an Impact. "Three FAs came to me after that shift and said they didn't feel supported" is an Impact. Your FA can't change what they don't fully understand. Say it plainly.</div>
+        </div>
+        <div class="fg-sub">How to open the conversation</div>
+        <div class="fg-phrases">
+          <div class="fg-phrase" style="border-color:#FF9040;">"I want to talk to you about something I observed — and I want to hear your side too."</div>
+          <div class="fg-phrase" style="border-color:#FF9040;">"This isn't about questioning who you are. I want to address a specific moment."</div>
+          <div class="fg-phrase" style="border-color:#FF9040;">"I'm coming to you directly because I think you can handle this, and because I respect you."</div>
+        </div>
+        <div class="fg-sub">After SBI — the coaching question</div>
+        <div class="fg-list">
+          <div class="fg-item">After you deliver the Impact — pause. Ask: <em>"What do you think about what happened?"</em> Then stop talking. The silence will feel uncomfortable. That's okay. Let them fill it.</div>
+          <div class="fg-item">What they say next is almost always exactly what the conversation needed to be about all along. When you ask instead of lecture after SBI, it becomes coaching — not correction.</div>
+          <div class="fg-item"><strong>When they get defensive:</strong> Don't retreat and don't escalate. "I hear you, and I'm not here to attack you. I'm here because [behavior] happened and we need to talk about it." Return to the behavior. Stay there. The conversation becomes coaching the moment they feel safe enough to be honest.</div>
+        </div>
+        <div class="fg-miss"><strong>Common mistake:</strong> Softening the Impact until it has no meaning. If you end with "and I just want us to be a good team," you've lost the whole point of the conversation. Land the Impact clearly — then ask the coaching question. The combination is what makes the conversation stick.</div>
+      </div>
+
+      <!-- 4-QUESTION DEBRIEF -->
+      <div class="fg-topic">
+        <div class="fg-topic-bar">
+          <div class="fg-dot" style="background:#8B6FD8;"></div>
+          <div>
+            <div class="fg-topic-title">The 4-Question Debrief</div>
+            <div class="fg-topic-tag">Module 5 · Promote Ownership</div>
+          </div>
+        </div>
+        <div class="fg-what">The debrief is where ownership is built. When you create space to learn from hard situations — instead of just moving on to the next thing — you turn experience into growth. This framework takes five minutes, can be run anywhere, and works after any significant situation: a conflict, a difficult guest, a crew moment that didn't go as planned, or even a great shift where you want to understand what went right.</div>
+        <div class="fg-sub">The four questions — in order (the order matters)</div>
+        <div class="fg-list">
+          <div class="fg-item"><strong>Q1 — What happened?</strong> Facts only first. No interpretation yet. Get everyone on the same page about what actually occurred before anyone starts drawing conclusions. This alone often surfaces things people saw differently.</div>
+          <div class="fg-item"><strong>Q2 — What worked?</strong> Find this before you move to what didn't. Even in the worst situations, something worked. Starting here creates safety — people are more honest about Q3 when they know Q2 wasn't skipped. Skip Q2 and the debrief becomes a blame session, even when you don't mean it to.</div>
+          <div class="fg-item"><strong>Q3 — What would we do differently?</strong> Not "what went wrong" — what would we change next time? Keep it forward-looking. The past is information; the future is the point. Great debrief answers to Q3 are specific enough to act on: not "communicate better," but "tell the gate agent first before telling the captain."</div>
+          <div class="fg-item"><strong>Q4 — What do we take forward?</strong> One clear, agreed-on takeaway that leaves the room with everyone. This is what makes it a debrief instead of just a venting session. If you can't name a Q4 everyone agrees on — the debrief isn't finished.</div>
+        </div>
+        <div class="fg-sub">How to open it</div>
+        <div class="fg-phrases">
+          <div class="fg-phrase" style="border-color:#8B6FD8;">"Before we move on, I want to spend five minutes on what just happened. Four questions — honest answers. No blame. What did we learn?"</div>
+          <div class="fg-phrase" style="border-color:#8B6FD8;">"That was a hard one. I want to debrief it right now while it's fresh. Five minutes."</div>
+          <div class="fg-phrase" style="border-color:#8B6FD8;">"I want to run our 4-question debrief. Q1: What happened? Walk me through it."</div>
+        </div>
+        <div class="fg-sub">When to use it</div>
+        <div class="fg-list">
+          <div class="fg-item">After a conflict, difficult guest interaction, or crew situation that didn't go as planned — especially if emotions ran high.</div>
+          <div class="fg-item">After a near-miss — a situation that could have gone worse and almost did. These are the most valuable learning moments and the ones most often skipped.</div>
+          <div class="fg-item">After a great shift — debriefing what went well is just as valuable as debriefing what didn't. "What worked and why?" is a question worth running regularly.</div>
+          <div class="fg-item">Any time you sense your FA walked away from something without fully processing it. The debrief creates the space they didn't give themselves.</div>
+        </div>
+        <div class="fg-sub">When people won't engage</div>
+        <div class="fg-list">
+          <div class="fg-item">They've probably been "debriefed" in a way that felt like a post-mortem. Name the safety: "This isn't about finding fault — it's about what we take forward." Then model it by naming something that worked yourself first.</div>
+          <div class="fg-item">If someone says "we already talked about it" — that's usually conflict management, not a debrief. Those are different. A real debrief asks: what did we learn, and how do we use it? That conversation is still worth having.</div>
+        </div>
+        <div class="fg-miss"><strong>Common mistake:</strong> Starting with Q3 (what went wrong) without doing Q2 first. The moment you skip "what worked," the whole exercise becomes a blame session — even when you don't mean it to be. Q2 is not optional. It's what makes everything else possible.</div>
       </div>
 
     </div>
