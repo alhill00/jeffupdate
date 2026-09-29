@@ -523,6 +523,208 @@ input[type="text"]::placeholder { color: #b0b8cc; }
 .fg-p-name { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 3px; }
 .fg-p-desc { font-size: 12px; color: var(--muted); line-height: 1.55; }
 
+/* ── POST-TRAINING SURVEY ── */
+.survey-wrap {
+  background: #fff;
+  border-radius: 16px;
+  border: 2px solid #e0e8ff;
+  overflow: hidden;
+  margin-top: 48px;
+}
+.survey-header {
+  background: var(--dark);
+  padding: 28px 32px 24px;
+}
+.survey-header-label {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(193,221,255,.7);
+  margin-bottom: 6px;
+}
+.survey-header-title {
+  font-size: 24px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.survey-header-sub {
+  font-size: 13px;
+  color: rgba(193,221,255,.6);
+  line-height: 1.5;
+}
+.survey-body { padding: 28px 32px 36px; }
+.survey-q {
+  margin-bottom: 28px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid #f0f2f8;
+}
+.survey-q:last-of-type { border-bottom: none; margin-bottom: 0; }
+.survey-q-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.survey-q-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.survey-q-sub {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 14px;
+  margin-left: 18px;
+}
+.likert-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+  margin-left: 18px;
+}
+.likert-option { flex: 1; }
+.likert-option input[type="radio"] { display: none; }
+.likert-option label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 4px;
+  border: 2px solid #e0e4f0;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color .15s, background .15s;
+  min-height: 60px;
+}
+.likert-option label:hover { border-color: #b0b8d8; background: #f8f9ff; }
+.likert-option input:checked + label {
+  border-color: var(--lk-color, var(--blue));
+  background: var(--lk-bg, #f0f4ff);
+}
+.likert-num {
+  font-size: 18px;
+  font-weight: 800;
+  color: #999;
+  line-height: 1;
+  transition: color .15s;
+}
+.likert-option input:checked + label .likert-num {
+  color: var(--lk-color, var(--blue));
+}
+.likert-desc {
+  font-size: 10px;
+  font-weight: 600;
+  color: #aaa;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+}
+.likert-option input:checked + label .likert-desc {
+  color: var(--lk-color, var(--blue));
+}
+.survey-open-q { margin-bottom: 28px; }
+.survey-open-q:last-of-type { margin-bottom: 0; }
+.survey-open-label {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+.survey-open-label span {
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  margin-left: 6px;
+}
+.survey-textarea {
+  width: 100%;
+  min-height: 80px;
+  border: 2px solid #e0e4f0;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--dark);
+  resize: vertical;
+  box-sizing: border-box;
+  transition: border-color .15s;
+}
+.survey-textarea:focus {
+  outline: none;
+  border-color: var(--blue);
+}
+.survey-name-row {
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid #f0f2f8;
+}
+.survey-name-field { flex: 1; }
+.survey-name-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 6px;
+}
+.survey-name-input {
+  width: 100%;
+  border: 2px solid #e0e4f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--dark);
+  box-sizing: border-box;
+  transition: border-color .15s;
+}
+.survey-name-input:focus { outline: none; border-color: var(--blue); }
+.survey-submit {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s, transform .1s;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.survey-submit:hover { background: #0033cc; }
+.survey-submit:active { transform: scale(.97); }
+.survey-success {
+  display: none;
+  text-align: center;
+  padding: 48px 32px;
+}
+.survey-success-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  line-height: 1;
+}
+.survey-success-title {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+.survey-success-sub {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.6;
+}
+
 /* PRINT */
 @media print {
   .save-banner { display: none; }
@@ -1278,6 +1480,168 @@ input[type="text"]::placeholder { color: #b0b8cc; }
     </div>
   </div>
 
+  <!-- ══ POST-TRAINING SURVEY ══ -->
+  <div class="survey-wrap" id="lat-survey-section">
+    <div class="survey-header">
+      <div class="survey-header-label">End of Session</div>
+      <div class="survey-header-title">Session Feedback</div>
+      <div class="survey-header-sub">Takes about 3 minutes. Your responses go directly to the L&amp;D team and help shape how this training evolves. No response is shared with your manager.</div>
+    </div>
+
+    <form class="survey-body" id="lat-feedback-form"
+          action="https://formspree.io/f/xzezojgn"
+          method="POST">
+
+      <!-- Hidden fields for Formspree -->
+      <input type="hidden" name="_subject" value="Leading at Altitude — Post-Training Feedback">
+
+      <!-- ── MODULE RATINGS ── -->
+      <p style="font-size:13px; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:1.5px; margin:0 0 20px;">Module Ratings &nbsp;·&nbsp; 1 = Not helpful &nbsp;·&nbsp; 5 = Extremely helpful</p>
+
+      <!-- Module 1 -->
+      <div class="survey-q">
+        <div class="survey-q-label">
+          <span class="survey-q-dot" style="background:#FF527B;"></span>
+          Module 1 — The Leadership Identity Shift
+        </div>
+        <div class="survey-q-sub">How satisfied were you with this module?</div>
+        <div class="likert-row" style="--lk-color:#FF527B; --lk-bg:#fff5f7;">
+          <div class="likert-option"><input type="radio" name="module_1_rating" id="m1r1" value="1"><label for="m1r1"><span class="likert-num">1</span><span class="likert-desc">Not<br>helpful</span></label></div>
+          <div class="likert-option"><input type="radio" name="module_1_rating" id="m1r2" value="2"><label for="m1r2"><span class="likert-num">2</span><span class="likert-desc"></span></label></div>
+          <div class="likert-option"><input type="radio" name="module_1_rating" id="m1r3" value="3"><label for="m1r3"><span class="likert-num">3</span><span class="likert-desc">Somewhat<br>helpful</span></label></div>
+          <div class="likert-option"><input type="radio" name="module_1_rating" id="m1r4" value="4"><label for="m1r4"><span class="likert-num">4</span><span class="likert-desc"></span></label></div>
+          <div class="likert-option"><input type="radio" name="module_1_rating" id="m1r5" value="5"><label for="m1r5"><span class="likert-num">5</span><span class="likert-desc">Extremely<br>helpful</span></label></div>
+        </div>
+      </div>
+
+      <!-- Module 2 -->
+      <div class="survey-q">
+        <div class="survey-q-label">
+          <span class="survey-q-dot" style="background:#FFCA40;"></span>
+          Module 2 — The 3 Daily Tools
+        </div>
+        <div class="survey-q-sub">How satisfied were you with this module?</div>
+        <div class="likert-row" style="--lk-color:#c49500; --lk-bg:#fffdf0;">
+          <div class="likert-option"><input type="radio" name="module_2_rating" id="m2r1" value="1"><label for="m2r1"><span class="likert-num">1</span><span class="likert-desc">Not<br>helpful</span></label></div>
+          <div class="likert-option"><input type="radio" name="module_2_rating" id="m2r2" value="2"><label for="m2r2"><span class="likert-num">2</span><span class="likert-desc"></span></label></div>
+          <div class="likert-option"><input type="radio" name="module_2_rating" id="m2r3" value="3"><label for="m2r3"><span class="likert-num">3</span><span class="likert-desc">Somewhat<br>helpful</span></label></div>
+          <div class="likert-option"><input type="radio" name="module_2_rating" id="m2r4" value="4"><label for="m2r4"><span class="likert-num">4</span><span class="likert-desc"></span></label></div>
+          <div class="likert-option"><input type="radio" name="module_2_rating" id="m2r5" value="5"><label for="m2r5"><span class="likert-num">5</span><span class="likert-desc">Extremely<br>helpful</span></label></div>
+        </div>
+      </div>
+
+      <!-- Module 3 -->
+      <div class="survey-q">
+        <div class="survey-q-label">
+          <span class="survey-q-dot" style="background:#00B5A0;"></span>
+          Module 3 — Assess, Choose, Communicate
+        </div>
+        <div class="survey-q-sub">How satisfied were you with this module?</div>
+        <div class="likert-row" style="--lk-color:#00796b; --lk-bg:#f0fbfa;">
+          <div class="likert-option"><input type="radio" name="module_3_rating" id="m3r1" value="1"><label for="m3r1"><span class="likert-num">1</span><span class="likert-desc">Not<br>helpful</span></label></div>
+          <div class="likert-option"><input type="radio" name="module_3_rating" id="m3r2" value="2"><label for="m3r2"><span class="likert-num">2</span><span class="likert-desc"></span></label></div>
+          <div class="likert-option"><input type="radio" name="module_3_rating" id="m3r3" value="3"><label for="m3r3"><span class="likert-num">3</span><span class="likert-desc">Somewhat<br>helpful</span></label></div>
+          <div class="likert-option"><input type="radio" name="module_3_rating" id="m3r4" value="4"><label for="m3r4"><span class="likert-num">4</span><span class="likert-desc"></span></label></div>
+          <div class="likert-option"><input type="radio" name="module_3_rating" id="m3r5" value="5"><label for="m3r5"><span class="likert-num">5</span><span class="likert-desc">Extremely<br>helpful</span></label></div>
+        </div>
+      </div>
+
+      <!-- Module 4 -->
+      <div class="survey-q">
+        <div class="survey-q-label">
+          <span class="survey-q-dot" style="background:#FF9040;"></span>
+          Module 4 — The Hard Conversation
+        </div>
+        <div class="survey-q-sub">How satisfied were you with this module?</div>
+        <div class="likert-row" style="--lk-color:#c25500; --lk-bg:#fff8f2;">
+          <div class="likert-option"><input type="radio" name="module_4_rating" id="m4r1" value="1"><label for="m4r1"><span class="likert-num">1</span><span class="likert-desc">Not<br>helpful</span></label></div>
+          <div class="likert-option"><input type="radio" name="module_4_rating" id="m4r2" value="2"><label for="m4r2"><span class="likert-num">2</span><span class="likert-desc"></span></label></div>
+          <div class="likert-option"><input type="radio" name="module_4_rating" id="m4r3" value="3"><label for="m4r3"><span class="likert-num">3</span><span class="likert-desc">Somewhat<br>helpful</span></label></div>
+          <div class="likert-option"><input type="radio" name="module_4_rating" id="m4r4" value="4"><label for="m4r4"><span class="likert-num">4</span><span class="likert-desc"></span></label></div>
+          <div class="likert-option"><input type="radio" name="module_4_rating" id="m4r5" value="5"><label for="m4r5"><span class="likert-num">5</span><span class="likert-desc">Extremely<br>helpful</span></label></div>
+        </div>
+      </div>
+
+      <!-- Module 5 -->
+      <div class="survey-q">
+        <div class="survey-q-label">
+          <span class="survey-q-dot" style="background:#8B6FD8;"></span>
+          Module 5 — The Debrief Habit
+        </div>
+        <div class="survey-q-sub">How satisfied were you with this module?</div>
+        <div class="likert-row" style="--lk-color:#6040b8; --lk-bg:#f7f4ff;">
+          <div class="likert-option"><input type="radio" name="module_5_rating" id="m5r1" value="1"><label for="m5r1"><span class="likert-num">1</span><span class="likert-desc">Not<br>helpful</span></label></div>
+          <div class="likert-option"><input type="radio" name="module_5_rating" id="m5r2" value="2"><label for="m5r2"><span class="likert-num">2</span><span class="likert-desc"></span></label></div>
+          <div class="likert-option"><input type="radio" name="module_5_rating" id="m5r3" value="3"><label for="m5r3"><span class="likert-num">3</span><span class="likert-desc">Somewhat<br>helpful</span></label></div>
+          <div class="likert-option"><input type="radio" name="module_5_rating" id="m5r4" value="4"><label for="m5r4"><span class="likert-num">4</span><span class="likert-desc"></span></label></div>
+          <div class="likert-option"><input type="radio" name="module_5_rating" id="m5r5" value="5"><label for="m5r5"><span class="likert-num">5</span><span class="likert-desc">Extremely<br>helpful</span></label></div>
+        </div>
+      </div>
+
+      <!-- Module 6 -->
+      <div class="survey-q">
+        <div class="survey-q-label">
+          <span class="survey-q-dot" style="background:#174DFF;"></span>
+          Module 6 — Your Leadership from Here
+        </div>
+        <div class="survey-q-sub">How satisfied were you with this module?</div>
+        <div class="likert-row" style="--lk-color:#174DFF; --lk-bg:#f0f4ff;">
+          <div class="likert-option"><input type="radio" name="module_6_rating" id="m6r1" value="1"><label for="m6r1"><span class="likert-num">1</span><span class="likert-desc">Not<br>helpful</span></label></div>
+          <div class="likert-option"><input type="radio" name="module_6_rating" id="m6r2" value="2"><label for="m6r2"><span class="likert-num">2</span><span class="likert-desc"></span></label></div>
+          <div class="likert-option"><input type="radio" name="module_6_rating" id="m6r3" value="3"><label for="m6r3"><span class="likert-num">3</span><span class="likert-desc">Somewhat<br>helpful</span></label></div>
+          <div class="likert-option"><input type="radio" name="module_6_rating" id="m6r4" value="4"><label for="m6r4"><span class="likert-num">4</span><span class="likert-desc"></span></label></div>
+          <div class="likert-option"><input type="radio" name="module_6_rating" id="m6r5" value="5"><label for="m6r5"><span class="likert-num">5</span><span class="likert-desc">Extremely<br>helpful</span></label></div>
+        </div>
+      </div>
+
+      <!-- ── CONFIDENCE QUESTION ── -->
+      <div class="survey-q" style="border-top: 2px solid #f0f2f8; padding-top:28px;">
+        <div class="survey-q-label">
+          <span class="survey-q-dot" style="background:var(--dark);"></span>
+          Overall Confidence
+        </div>
+        <div class="survey-q-sub">After today's session, how confident do you feel in your ability to lead your team at the base level?</div>
+        <div class="likert-row" style="--lk-color:#000633; --lk-bg:#f0f2f8;">
+          <div class="likert-option"><input type="radio" name="confidence" id="confr1" value="1"><label for="confr1"><span class="likert-num">1</span><span class="likert-desc">Not at all<br>confident</span></label></div>
+          <div class="likert-option"><input type="radio" name="confidence" id="confr2" value="2"><label for="confr2"><span class="likert-num">2</span><span class="likert-desc"></span></label></div>
+          <div class="likert-option"><input type="radio" name="confidence" id="confr3" value="3"><label for="confr3"><span class="likert-num">3</span><span class="likert-desc">Somewhat<br>confident</span></label></div>
+          <div class="likert-option"><input type="radio" name="confidence" id="confr4" value="4"><label for="confr4"><span class="likert-num">4</span><span class="likert-desc"></span></label></div>
+          <div class="likert-option"><input type="radio" name="confidence" id="confr5" value="5"><label for="confr5"><span class="likert-num">5</span><span class="likert-desc">Very<br>confident</span></label></div>
+        </div>
+      </div>
+
+      <!-- ── OPEN TEXT ── -->
+      <div style="margin-top:28px; padding-top:28px; border-top:2px solid #f0f2f8;">
+        <div class="survey-open-q">
+          <div class="survey-open-label">What went well? <span>What was most valuable or memorable?</span></div>
+          <textarea class="survey-textarea" name="what_went_well" placeholder="Share what resonated…" rows="3"></textarea>
+        </div>
+        <div class="survey-open-q">
+          <div class="survey-open-label">What would you improve for next time? <span>Be specific — your feedback shapes the next session.</span></div>
+          <textarea class="survey-textarea" name="what_to_improve" placeholder="Share any suggestions…" rows="3"></textarea>
+        </div>
+      </div>
+
+      <!-- ── NAME + SUBMIT ── -->
+      <div class="survey-name-row">
+        <div class="survey-name-field">
+          <div class="survey-name-label">Your name <em style="font-weight:400;">(optional — responses are private to the L&amp;D team)</em></div>
+          <input class="survey-name-input" type="text" name="name" placeholder="First name or initials">
+        </div>
+        <button type="submit" class="survey-submit">Submit Feedback</button>
+      </div>
+
+    </form>
+
+    <!-- Success state shown after submit -->
+    <div class="survey-success" id="lat-survey-success">
+      <div class="survey-success-icon">&#10003;</div>
+      <div class="survey-success-title">Thank you!</div>
+      <div class="survey-success-sub">Your feedback has been submitted and goes directly to the L&amp;D team.<br>We'll use it to make the next session even better.</div>
+    </div>
+
+  </div><!-- end survey -->
+
 </div><!-- end content -->
 
 <script>
@@ -1345,6 +1709,36 @@ input[type="text"]::placeholder { color: #b0b8cc; }
 
   // Save before tab closes
   window.addEventListener('beforeunload', saveAll);
+
+  // ── Survey AJAX submit (Formspree) ──
+  var surveyForm = document.getElementById('lat-feedback-form');
+  if (surveyForm) {
+    surveyForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var btn = surveyForm.querySelector('.survey-submit');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+      fetch(surveyForm.action, {
+        method: 'POST',
+        body: new FormData(surveyForm),
+        headers: { 'Accept': 'application/json' }
+      }).then(function(res) {
+        if (res.ok) {
+          surveyForm.style.display = 'none';
+          document.getElementById('lat-survey-success').style.display = 'block';
+        } else {
+          btn.disabled = false;
+          btn.textContent = 'Submit Feedback';
+          alert('Something went wrong — please try again or contact Alex Hill directly.');
+        }
+      }).catch(function() {
+        btn.disabled = false;
+        btn.textContent = 'Submit Feedback';
+        alert('Something went wrong — please try again or contact Alex Hill directly.');
+      });
+    });
+  }
+
 })();
 </script>
 </body>
