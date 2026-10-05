@@ -736,7 +736,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
 <body>
 
 <div class="save-banner" id="save-banner">
-  Your responses are saving automatically as you type. Keep this tab open during the session. At the end — use <strong>Ctrl+P</strong> (or Cmd+P on Mac) to save as PDF and keep your work permanently.
+  Your responses are saving automatically to this browser only — nothing leaves your device. Keep this tab open during the session. At the end — use <strong>Ctrl+P</strong> (or Cmd+P on Mac) to save as PDF and keep your work permanently.
 </div>
 
 <!-- HEADER -->
@@ -1673,15 +1673,22 @@ input[type="text"]::placeholder { color: #b0b8cc; }
   } catch(e) {}
 
   function getFields() {
-    // Include checkboxes alongside text fields so all responses are persisted
-    return document.querySelectorAll('textarea, input[type="text"], input[type="checkbox"]');
+    // Include checkboxes and radio buttons so all responses are persisted locally
+    return document.querySelectorAll('textarea, input[type="text"], input[type="checkbox"], input[type="radio"]');
   }
 
   function saveAll() {
     if (!storageAvailable) return;
     var data = {};
     getFields().forEach(function(el, i) {
-      data[i] = el.type === 'checkbox' ? el.checked : el.value;
+      if (el.type === 'checkbox') {
+        data[i] = el.checked;
+      } else if (el.type === 'radio') {
+        // Only save selected radio buttons; skip unselected so load is unambiguous
+        if (el.checked) data[i] = el.value;
+      } else {
+        data[i] = el.value;
+      }
     });
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -1699,6 +1706,8 @@ input[type="text"]::placeholder { color: #b0b8cc; }
       if (data[i] !== undefined) {
         if (el.type === 'checkbox') {
           el.checked = !!data[i];
+        } else if (el.type === 'radio') {
+          if (data[i] === el.value) el.checked = true;
         } else if (data[i] !== '') {
           el.value = data[i];
         }
@@ -1710,7 +1719,8 @@ input[type="text"]::placeholder { color: #b0b8cc; }
     if (confirm('Clear all your saved responses and start fresh?')) {
       try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
       getFields().forEach(function(el) {
-        if (el.type === 'checkbox') { el.checked = false; } else { el.value = ''; }
+        if (el.type === 'checkbox' || el.type === 'radio') { el.checked = false; }
+        else { el.value = ''; }
       });
     }
   }
