@@ -1485,7 +1485,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
     <div class="survey-header">
       <div class="survey-header-label">End of Session</div>
       <div class="survey-header-title">Session Feedback</div>
-      <div class="survey-header-sub">Takes about 3 minutes. Your responses go directly to the L&amp;D team and help shape how this training evolves. No response is shared with your manager.</div>
+      <div class="survey-header-sub">Takes about 3 minutes. Responses are collected via Formspree and go directly to the L&amp;D team — they are not shared with your manager or anyone in your reporting chain.</div>
     </div>
 
     <form class="survey-body" id="lat-feedback-form"
@@ -1653,7 +1653,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
     <div class="survey-success" id="lat-survey-success">
       <div class="survey-success-icon">&#10003;</div>
       <div class="survey-success-title">Thank you!</div>
-      <div class="survey-success-sub">Your feedback has been submitted and goes directly to the L&amp;D team.<br>We'll use it to make the next session even better.</div>
+      <div class="survey-success-sub">Your feedback has been received by the L&amp;D team via Formspree.<br>We'll use it to make the next session even better.</div>
     </div>
 
   </div><!-- end survey -->
@@ -1664,14 +1664,24 @@ input[type="text"]::placeholder { color: #b0b8cc; }
 (function() {
   var STORAGE_KEY = 'lat_workbook_v1';
 
+  // Detect localStorage availability (fails in private browsing / restricted environments)
+  var storageAvailable = false;
+  try {
+    localStorage.setItem('__lat_test__', '1');
+    localStorage.removeItem('__lat_test__');
+    storageAvailable = true;
+  } catch(e) {}
+
   function getFields() {
-    return document.querySelectorAll('textarea, input[type="text"]');
+    // Include checkboxes alongside text fields so all responses are persisted
+    return document.querySelectorAll('textarea, input[type="text"], input[type="checkbox"]');
   }
 
   function saveAll() {
+    if (!storageAvailable) return;
     var data = {};
     getFields().forEach(function(el, i) {
-      data[i] = el.value;
+      data[i] = el.type === 'checkbox' ? el.checked : el.value;
     });
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -1679,14 +1689,19 @@ input[type="text"]::placeholder { color: #b0b8cc; }
   }
 
   function loadAll() {
+    if (!storageAvailable) return;
     var raw;
     try { raw = localStorage.getItem(STORAGE_KEY); } catch(e) {}
     if (!raw) return;
     var data;
     try { data = JSON.parse(raw); } catch(e) { return; }
     getFields().forEach(function(el, i) {
-      if (data[i] !== undefined && data[i] !== '') {
-        el.value = data[i];
+      if (data[i] !== undefined) {
+        if (el.type === 'checkbox') {
+          el.checked = !!data[i];
+        } else if (data[i] !== '') {
+          el.value = data[i];
+        }
       }
     });
   }
@@ -1694,7 +1709,9 @@ input[type="text"]::placeholder { color: #b0b8cc; }
   function clearAll() {
     if (confirm('Clear all your saved responses and start fresh?')) {
       try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
-      getFields().forEach(function(el) { el.value = ''; });
+      getFields().forEach(function(el) {
+        if (el.type === 'checkbox') { el.checked = false; } else { el.value = ''; }
+      });
     }
   }
 
@@ -1705,11 +1722,18 @@ input[type="text"]::placeholder { color: #b0b8cc; }
     // Add clear button to banner
     var banner = document.getElementById('save-banner');
     if (banner) {
-      var btn = document.createElement('button');
-      btn.textContent = 'Clear & start fresh';
-      btn.style.cssText = 'margin-left:16px;background:none;border:1px solid #c8a800;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:600;color:#5a4a00;cursor:pointer;';
-      btn.addEventListener('click', clearAll);
-      banner.appendChild(btn);
+      if (!storageAvailable) {
+        // Warn the user that saving is unavailable in this browser mode
+        banner.style.background = '#fff3cd';
+        banner.style.color = '#856404';
+        banner.childNodes[0].textContent = '⚠ Auto-save is not available in private browsing mode. Your responses will not be saved if you close this tab.';
+      } else {
+        var btn = document.createElement('button');
+        btn.textContent = 'Clear & start fresh';
+        btn.style.cssText = 'margin-left:16px;background:none;border:1px solid #c8a800;border-radius:6px;padding:3px 10px;font-size:12px;font-weight:600;color:#5a4a00;cursor:pointer;';
+        btn.addEventListener('click', clearAll);
+        banner.appendChild(btn);
+      }
     }
   });
 
@@ -1720,7 +1744,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
     saveTimer = setTimeout(saveAll, 400);
   });
 
-  // Also save on checkbox change
+  // Save on checkbox and radio change
   document.addEventListener('change', saveAll);
 
   // Save before tab closes
