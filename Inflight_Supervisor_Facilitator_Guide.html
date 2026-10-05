@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leading at Altitude — Facilitator Guide</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --dark:   #000633;
+  --blue:   #174DFF;
+  --lblue:  #C1DDFF;
+  --red:    #FF527B;
+  --orange: #FF9040;
+  --teal:   #00B5A0;
+  --purple: #8B6FD8;
+  --yellow: #FFCA40;
+  --bg:     #f0f2f8;
+  --card:   #ffffff;
+  --text:   #0d1b3e;
+  --muted:  #5a6780;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* PRIVATE BANNER */
+.private-banner {
+  background: #1a0030;
+  padding: 10px 24px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #d0b0ff;
+  letter-spacing: .05em;
+}
+
+/* HEADER */
+.header {
+  background: var(--dark);
+  padding: 36px 40px 32px;
+}
+.header-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--lblue);
+  margin-bottom: 8px;
+}
+.header-title { font-size: 26px; font-weight: 900; color: #fff; margin-bottom: 4px; }
+.header-sub   { font-size: 14px; font-weight: 500; color: rgba(193,221,255,.6); margin-bottom: 20px; }
+
+.at-a-glance {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.glance-chip {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+}
+.glance-chip span { color: var(--lblue); font-weight: 500; display: block; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 2px; }
+
+/* CONTENT */
+.content { max-width: 900px; margin: 0 auto; padding: 36px 24px 80px; }
+
+/* SECTION HEADER */
+.sec-head {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 14px;
+  margin-top: 40px;
+}
+.sec-head:first-child { margin-top: 0; }
+
+/* CARDS */
+.card {
+  background: var(--card);
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,6,51,.07);
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+/* MODULE CARD */
+.mod-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 24px;
+  border-bottom: 1px solid #eef0f8;
+}
+.mod-badge {
+  width: 42px; height: 42px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; font-weight: 900; color: #fff; flex-shrink: 0;
+}
+.mod-badge.yellow { color: #3a2800; }
+.mod-info { flex: 1; }
+.mod-num  { font-size: 10px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: 2px; }
+.mod-title { font-size: 17px; font-weight: 800; color: var(--text); }
+.mod-principle {
+  font-size: 10px; font-weight: 800; padding: 3px 10px;
+  border-radius: 100px; color: #fff;
+}
+.mod-principle.yellow { color: #3a2800; }
+.mod-time {
+  font-size: 13px; font-weight: 700; color: var(--muted);
+  background: #f0f2f8; border-radius: 8px; padding: 6px 14px;
+  flex-shrink: 0;
+}
+
+.mod-body { padding: 0; }
+
+/* ROWS */
+.row {
+  padding: 18px 24px;
+  border-bottom: 1px solid #f0f2f8;
+}
+.row:last-child { border-bottom: none; }
+.row-label {
+  font-size: 10px; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+}
+
+/* TALKING POINTS */
+.tp-list { display: flex; flex-direction: column; gap: 8px; }
+.tp {
+  display: flex; gap: 10px; align-items: flex-start;
+  font-size: 14px; color: var(--text); line-height: 1.55;
+}
+.tp::before {
+  content: '▸';
+  color: var(--blue);
+  flex-shrink: 0;
+  margin-top: 1px;
+  font-size: 12px;
+}
+.tp em { font-style: italic; color: var(--muted); font-size: 13px; }
+.tp strong { color: var(--text); }
+
+/* SCRIPT */
+.script {
+  background: #f8f9fc;
+  border-left: 4px solid var(--blue);
+  border-radius: 0 10px 10px 0;
+  padding: 14px 18px;
+  font-size: 14px;
+  color: #1a2340;
+  line-height: 1.65;
+  font-style: italic;
+}
+.script-label {
+  font-size: 10px; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--blue);
+  margin-bottom: 6px; font-style: normal;
+}
+
+/* SLIDO ROW */
+.slido-row {
+  background: #fff8f0;
+  border: 1px solid #ffe0b0;
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+.slido-row .sl-label {
+  font-size: 10px; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; color: #a05000; margin-bottom: 6px;
+}
+.slido-row .sl-prompt {
+  font-size: 14px; font-weight: 700; color: #3a1800;
+  margin-bottom: 6px; font-style: italic;
+}
+.slido-row .sl-type {
+  font-size: 12px; color: #7a4020; margin-bottom: 6px;
+}
+.slido-row .sl-note {
+  font-size: 12px; color: #9a5020; font-style: italic;
+}
+
+/* ACTIVITY BOX */
+.activity {
+  background: #f0f4ff;
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+.activity .a-label {
+  font-size: 10px; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--blue); margin-bottom: 6px;
+}
+.activity .a-text { font-size: 13px; color: #1a2340; line-height: 1.6; }
+.activity .a-text strong { color: var(--dark); }
+
+/* WATCH FOR */
+.watch {
+  background: #fff5f8;
+  border: 1px solid #ffd0dc;
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+.watch .w-label {
+  font-size: 10px; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; color: #c0002a; margin-bottom: 8px;
+}
+.watch .w-list { display: flex; flex-direction: column; gap: 6px; }
+.watch .w-item {
+  font-size: 13px; color: #5a0015; line-height: 1.5;
+  padding-left: 16px; position: relative;
+}
+.watch .w-item::before { content: '!'; position: absolute; left: 0; color: var(--red); font-weight: 800; font-size: 11px; }
+
+/* TIMING TABLE */
+.timing-table { width: 100%; border-collapse: collapse; }
+.timing-table th {
+  background: #f0f2f8; font-size: 11px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: .08em; color: var(--muted);
+  padding: 10px 16px; text-align: left; border-bottom: 2px solid #e4e8f2;
+}
+.timing-table td {
+  padding: 11px 16px; font-size: 13px; border-bottom: 1px solid #f0f2f8;
+  vertical-align: top; line-height: 1.5;
+}
+.timing-table tr:last-child td { border-bottom: none; }
+.timing-table .t-time { font-weight: 700; color: var(--blue); white-space: nowrap; }
+.timing-table .t-mod  { font-weight: 700; color: var(--text); }
+.timing-table .t-note { color: var(--muted); font-size: 12px; }
+.timing-table .t-break td { background: #f8f9fc; color: var(--muted); font-weight: 600; }
+
+/* SLIDO SETUP */
+.setup-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.setup-card {
+  background: #f8f9fc;
+  border-radius: 10px;
+  padding: 16px;
+  border-top: 3px solid;
+}
+.setup-card .s-num { font-size: 11px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.setup-card .s-prompt { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 4px; font-style: italic; }
+.setup-card .s-type  { font-size: 11px; color: var(--muted); }
+
+/* BREAKOUT GUIDE */
+.breakout-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.breakout-card {
+  flex: 1; min-width: 220px;
+  background: #f8f9fc; border-radius: 10px; padding: 16px;
+  border-left: 4px solid var(--blue);
+}
+.breakout-card .b-title { font-size: 13px; font-weight: 800; color: var(--text); margin-bottom: 6px; }
+.breakout-card .b-text  { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+/* ON-DUTY NOTE */
+.duty-note {
+  background: #fffbea;
+  border: 1px solid #f0e080;
+  border-radius: 10px;
+  padding: 16px 20px;
+  font-size: 13px;
+  color: #5a4a00;
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.duty-note strong { color: #3a2a00; }
+
+/* LEADER GUIDE SCRIPT */
+.lg-script {
+  background: var(--dark);
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin-top: 8px;
+}
+.lg-script .lgs-label {
+  font-size: 10px; font-weight: 800; letter-spacing: .1em;
+  text-transform: uppercase; color: var(--lblue); margin-bottom: 10px;
+}
+.lg-script .lgs-text {
+  font-size: 14px; color: rgba(255,255,255,.85);
+  line-height: 1.7; font-style: italic;
+}
+.lg-script .lgs-note {
+  font-size: 12px; color: rgba(255,255,255,.4);
+  margin-top: 10px; font-style: normal;
+}
+</style>
+</head>
+<body>
+
+<div class="private-banner">FACILITATOR GUIDE — PRIVATE — DO NOT SHARE YOUR SCREEN ON THIS FILE</div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-label">Facilitator Guide &mdash; Inflight Supervisor Development Day</div>
+  <div class="header-title">Leading at Altitude</div>
+  <div class="header-sub">Everything you need to run the session. Talking points, scripts, timing cues, Slido setup, and what to watch for in each module.</div>
+  <div class="at-a-glance">
+    <div class="glance-chip"><span>Participants</span>14 total</div>
+    <div class="glance-chip"><span>Breakdown</span>9 base supervisors, 5 inflight supervisors</div>
+    <div class="glance-chip"><span>Format</span>Virtual &mdash; Microsoft Teams</div>
+    <div class="glance-chip"><span>Duration</span>4 hours</div>
+    <div class="glance-chip"><span>Slides</span>Presentation View (separate file)</div>
+    <div class="glance-chip"><span>Interaction</span>Slido (5 moments) + breakouts</div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- ══ PRE-SESSION CHECKLIST ══ -->
+  <div class="sec-head">Before the Session — Setup Checklist</div>
+  <div class="card">
+    <div class="row">
+      <div class="row-label">Technical Setup</div>
+      <div class="tp-list">
+        <div class="tp">Open three windows on your computer: <strong>Teams (to host)</strong>, <strong>Presentation View HTML</strong> (to share screen on), and <strong>Slido</strong> (for results). Keep the Facilitator Guide in a separate window — never share it.</div>
+        <div class="tp">Test your screen share before participants join. Share the Presentation View window specifically, not your entire desktop — this prevents accidentally showing Slido results or this guide.</div>
+        <div class="tp">Have the Workbook link ready to drop in Teams chat the moment the session starts. Paste it in the chat before you open the meeting so it's ready to go.</div>
+        <div class="tp">Set up all 5 Slido activities in advance — see the Slido Setup section below. Have the event code ready to paste in chat.</div>
+        <div class="tp">Pre-plan your breakout groups. With 14 people: you'll need 7 cross-base pairs for Module 1, 7 pairs for Module 2 and 4, and groups of 3–4 for Module 3. Write the pairings down now.</div>
+        <div class="tp">Pre-plan cross-base accountability partners for Module 6 — pair people who haven't spoken today. Write these now too.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ TIMING OVERVIEW ══ -->
+  <div class="sec-head">Full Timing Overview</div>
+  <div class="card">
+    <div style="padding:8px 0;">
+      <table class="timing-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Module</th>
+            <th>Duration</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="t-time">0:00</td>
+            <td class="t-mod">Welcome &amp; Slido Opener</td>
+            <td>20 min</td>
+            <td class="t-note">Set the tone. Slido word cloud. Intro to the 5 Principles.</td>
+          </tr>
+          <tr>
+            <td class="t-time">0:20</td>
+            <td class="t-mod">Module 1 — Who We Are</td>
+            <td>30 min</td>
+            <td class="t-note">Cross-base pairs (8 min breakout), large group debrief.</td>
+          </tr>
+          <tr>
+            <td class="t-time">0:50</td>
+            <td class="t-mod">Module 2 — Daily Toolkit</td>
+            <td>35 min</td>
+            <td class="t-note">3 tools, workbook reflection, Slido poll, practice pairs.</td>
+          </tr>
+          <tr class="t-break">
+            <td class="t-time">1:25</td>
+            <td colspan="2">Break — 10 minutes</td>
+            <td class="t-note">Give a hard return time. Announce Module 3 topic.</td>
+          </tr>
+          <tr>
+            <td class="t-time">1:35</td>
+            <td class="t-mod">Module 3 — When the Pressure's On</td>
+            <td>30 min</td>
+            <td class="t-note">Framework, Slido open-text, scenario groups of 3–4.</td>
+          </tr>
+          <tr>
+            <td class="t-time">2:05</td>
+            <td class="t-mod">Module 4 — The Hard Conversations</td>
+            <td>40 min</td>
+            <td class="t-note">Longest module. SBI, written reflection, practice pairs, Slido rating.</td>
+          </tr>
+          <tr class="t-break">
+            <td class="t-time">2:45</td>
+            <td colspan="2">Break — 10 minutes</td>
+            <td class="t-note">Last break. Let them know two modules left and a strong close.</td>
+          </tr>
+          <tr>
+            <td class="t-time">2:55</td>
+            <td class="t-mod">Module 5 — Learning from Turbulence</td>
+            <td>25 min</td>
+            <td class="t-note">Debrief framework, live debrief of today's session, template.</td>
+          </tr>
+          <tr>
+            <td class="t-time">3:20</td>
+            <td class="t-mod">Module 6 — Flying Together</td>
+            <td>30 min</td>
+            <td class="t-note">Accountability partners, Leader Guide intro, Slido close, commitments.</td>
+          </tr>
+          <tr>
+            <td class="t-time">3:50</td>
+            <td class="t-mod">Commitments &amp; Close</td>
+            <td>10 min</td>
+            <td class="t-note">Workbook final page, Teams chat drop, your closing words.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══ SLIDO SETUP ══ -->
+  <div class="sec-head">Slido — 5 Activities to Set Up in Advance</div>
+  <div class="card">
+    <div class="row">
+      <div class="setup-grid">
+        <div class="setup-card" style="border-top-color:#FF527B;">
+          <div class="s-num">Activity 1 &nbsp;·&nbsp; Welcome</div>
+          <div class="s-prompt">"In one word — what do your Flight Attendants need most from you right now?"</div>
+          <div class="s-type">Type: Word Cloud</div>
+        </div>
+        <div class="setup-card" style="border-top-color:#FFCA40;">
+          <div class="s-num">Activity 2 &nbsp;·&nbsp; Module 2</div>
+          <div class="s-prompt">"Which of the 3 tools do you use the least?"</div>
+          <div class="s-type">Type: Multiple Choice &nbsp;·&nbsp; Options: 30-Second Check-In / Coaching Question / Recognition Hit</div>
+        </div>
+        <div class="setup-card" style="border-top-color:#00B5A0;">
+          <div class="s-num">Activity 3 &nbsp;·&nbsp; Module 3</div>
+          <div class="s-prompt">"Describe a recent moment you had to make a call under pressure."</div>
+          <div class="s-type">Type: Open Text &nbsp;·&nbsp; You pick 2–3 responses to discuss live</div>
+        </div>
+        <div class="setup-card" style="border-top-color:#FF9040;">
+          <div class="s-num">Activity 4 &nbsp;·&nbsp; Module 4</div>
+          <div class="s-prompt">"When things get hard, do you lean toward accountability or empathy?"</div>
+          <div class="s-type">Type: Rating (1–5) &nbsp;·&nbsp; 1 = Almost always empathy / 5 = Almost always accountability</div>
+        </div>
+        <div class="setup-card" style="border-top-color:#174DFF; grid-column: span 2;">
+          <div class="s-num">Activity 5 &nbsp;·&nbsp; Closing</div>
+          <div class="s-prompt">"In one word — what are you taking away from today?"</div>
+          <div class="s-type">Type: Word Cloud &nbsp;·&nbsp; This is your close — leave it on screen while you give your closing remarks</div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="row-label">Slido Tips</div>
+      <div class="tp-list">
+        <div class="tp">Activate each activity just before you need it — not all at once. Participants will only see the one that's live.</div>
+        <div class="tp">Drop the event code in Teams chat every time you open a Slido activity. Say it out loud too: <em>"Event code is [CODE] — also in the chat."</em></div>
+        <div class="tp">For the Module 3 open-text: read responses privately before sharing. Pick ones that are specific and safe to discuss — not the ones that might make someone identifiable or uncomfortable.</div>
+        <div class="tp">For the Module 4 rating: don't linger on the number too long. The point is to normalize the tension, not judge anyone's score. <em>"Most of us lean one way naturally — what matters is knowing your default."</em></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BREAKOUT PLAN ══ -->
+  <div class="sec-head">Breakout Group Planning</div>
+  <div class="card">
+    <div class="row">
+      <div class="row-label">Principles</div>
+      <div class="breakout-row">
+        <div class="breakout-card">
+          <div class="b-title">Always cross-base in pairs</div>
+          <div class="b-text">For Modules 1, 2, and 4 — never pair someone with their own base supervisor. The whole point is building new connections.</div>
+        </div>
+        <div class="breakout-card">
+          <div class="b-title">Module 3 — groups of 3–4</div>
+          <div class="b-text">Larger groups create more debate on the scenario, which is the point. Mix bases.</div>
+        </div>
+        <div class="breakout-card">
+          <div class="b-title">Same partner for Modules 1, 2, and 4</div>
+          <div class="b-text">Reusing the same cross-base pair builds comfort. By Module 4 (hard conversations practice), they'll be willing to go deeper because they already have rapport.</div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="row-label">How to Assign in Teams</div>
+      <div class="tp-list">
+        <div class="tp">Use Teams breakout rooms. Create 7 rooms before the session (labeled Room 1–7). Assign pairs in advance in your notes, then move people into rooms manually when it's time.</div>
+        <div class="tp">Give a clear time check when you open rooms: <em>"You have 8 minutes — I'll call you back at [TIME]."</em> Set a Teams timer if you use one.</div>
+        <div class="tp">For Module 3 groups: collapse 7 pairs into 3–4 rooms (2–3 pairs per room = groups of 4–6). Give them 10 minutes on the scenario.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MODULE GUIDES ══ -->
+  <div class="sec-head">Module-by-Module Facilitator Notes</div>
+
+  <!-- WELCOME -->
+  <div class="card">
+    <div class="mod-header">
+      <div class="mod-badge" style="background:var(--dark);">★</div>
+      <div class="mod-info">
+        <div class="mod-num">0:00 – 0:20 &nbsp;·&nbsp; 20 Minutes</div>
+        <div class="mod-title">Welcome &amp; Setting the Tone</div>
+      </div>
+      <div class="mod-time">Slide 1–4</div>
+    </div>
+    <div class="mod-body">
+      <div class="row">
+        <div class="row-label">Opening Script</div>
+        <div class="script">
+          <div class="script-label">Say This (Slide 2)</div>
+          "Good morning, everyone. I want to start by saying something directly: this is not a Teams meeting. I know we're on Teams, but that's just the tool. What this is — is four hours I've been thinking about for a long time, built specifically for you. Not for the operation. Not for compliance. For you as leaders. So cameras on, workbooks open, and let's actually be here."
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Slido — Activity 1</div>
+        <div class="slido-row">
+          <div class="sl-label">Word Cloud</div>
+          <div class="sl-prompt">"In one word — what do your Flight Attendants need most from you right now?"</div>
+          <div class="sl-type">Switch to Slido screen. Drop the event code in chat. Give 60 seconds.</div>
+          <div class="sl-note">When results come in: read 3–4 words out loud. Pick one that surprises you and ask: "Who chose this? Tell me what's behind it." Get 1–2 people talking before you move on. Don't rush this — the energy here sets the whole session.</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">The 5 Principles Intro (Slide 4)</div>
+        <div class="script">
+          "Everything we do today connects back to these five principles. You've seen them before — you live them every day. What I want you to notice today is which one shows up in each module. By the end of four hours, you'll have touched all five. They're not just a banner on a wall. They're the through-line of how we lead."
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Watch For</div>
+        <div class="watch">
+          <div class="w-label">Watch For</div>
+          <div class="w-list">
+            <div class="w-item">Low energy at the start — this is normal for a 4-hour Teams session. The Slido word cloud and the "this is not a Teams meeting" framing are designed to break it. Don't rush past them.</div>
+            <div class="w-item">Cameras off — gently ask for cameras on at the start. You can name it directly: "I know we all have Teams fatigue. Cameras on helps us see each other — it makes a real difference in these conversations."</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 1 -->
+  <div class="card">
+    <div class="mod-header">
+      <div class="mod-badge" style="background:#FF527B;">1</div>
+      <div class="mod-info">
+        <div class="mod-num">0:20 – 0:50 &nbsp;·&nbsp; 30 Minutes</div>
+        <div class="mod-title">Who We Are</div>
+      </div>
+      <div class="mod-time">Slide 5–7 &nbsp;·&nbsp; <span class="mod-principle" style="background:#FF527B;">Be Seriously Nice</span></div>
+    </div>
+    <div class="mod-body">
+      <div class="row">
+        <div class="row-label">Purpose</div>
+        <div class="tp-list">
+          <div class="tp">This module exists for one reason: to make the room feel safe. If people don't feel connected to each other, nothing in Modules 3 and 4 will work. Don't shortchange this.</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Talking Points</div>
+        <div class="tp-list">
+          <div class="tp">Frame the cross-base breakout: <em>"We rarely get all of us in the same room. Your counterpart in BOS is dealing with something you've already solved in BNA — and vice versa. That's about to change."</em></div>
+          <div class="tp">Set the breakout tone: <em>"This is a safe space. What you share stays in this room — or in that breakout room, specifically. Be honest. Be curious. Ask follow-up questions."</em></div>
+          <div class="tp">For large group debrief: ask 2–3 people to share what surprised them. Look for the themes: usually it's some version of "we're all dealing with the same thing and didn't know it."</div>
+          <div class="tp">Close the module with: <em>"The supervisor across the country from you isn't your competition. They're your most underused resource. We're going to do something about that today."</em></div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Watch For</div>
+        <div class="watch">
+          <div class="w-label">Watch For</div>
+          <div class="w-list">
+            <div class="w-item">People keeping it surface-level in the breakout (talking about weather, delays, easy stuff). That's okay for the first 2 minutes. The second question — <em>what keeps you up at night when you think about leading your base</em> — is the one that matters. Give them the full 8 minutes.</div>
+            <div class="w-item">Anyone who seems reluctant to share in large group debrief. Don't put people on the spot — invite, don't require. "Anyone from a pair where something landed — feel free to share."</div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Deeper Knowledge — Be Seriously Nice</div>
+        <div class="tp-list">
+          <div class="tp"><strong>What the principle actually means for hard moments:</strong> "Be Seriously Nice" is not the soft principle. It's the hardest one. Being seriously nice means you care enough to stay in an uncomfortable conversation rather than exit. It means you tell the truth with warmth, not avoidance with politeness. Every module today connects back to it.</div>
+          <div class="tp"><strong>When someone pushes back on "niceness" as weakness:</strong> Name it directly — "This isn't about being a pushover. Seriously Nice means you never sacrifice honesty for comfort. The 'serious' part is doing it even when it's hard. The 'nice' part is doing it in a way that keeps the person whole." These aren't opposites.</div>
+          <div class="tp"><strong>What this looks like on a hard shift:</strong> A seriously nice supervisor is the one who calls the FA after a bad flight — not to debrief the operation, but to ask how they're doing. That's it. That one call does more for retention and loyalty than any recognition program.</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Module 1 Close — Tie Back to Principle</div>
+        <div class="script">
+          Before you move to Module 2, land the principle. Don't rush past it: <strong>"Everything you just did — asking honest questions, actually listening, sharing something you don't usually say out loud — that's what Be Seriously Nice looks like in practice. It's not about being pleasant. It's about genuinely caring about the person across from you. And you just practiced it."</strong><br><br>
+          Then move. Don't add more. That landing is enough.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 2 -->
+  <div class="card">
+    <div class="mod-header">
+      <div class="mod-badge mod-badge yellow" style="background:#FFCA40;">2</div>
+      <div class="mod-info">
+        <div class="mod-num">0:50 – 1:25 &nbsp;·&nbsp; 35 Minutes</div>
+        <div class="mod-title">Your Daily Toolkit</div>
+      </div>
+      <div class="mod-time">Slide 8–14 &nbsp;·&nbsp; <span class="mod-principle yellow" style="background:#FFCA40;">Champion Others</span></div>
+    </div>
+    <div class="mod-body">
+      <div class="row">
+        <div class="row-label">Opening Question First (Slide 9 — New)</div>
+        <div class="activity">
+          <div class="a-label">Before You Explain Anything — Ask First</div>
+          <div class="a-text">
+            Slide 9 asks participants which of the 3 tools they already do consistently — A, B, or C — in the Teams chat. <strong>Read what comes in before moving to the tools slide.</strong><br><br>
+            This changes the dynamic completely: you're no longer delivering information, you're responding to what they just told you about themselves. Use their answers to frame the tool explanations — <em>"Several of you said C — recognition. So let's start with why that one is actually the hardest to do consistently..."</em>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Talking Points — The Three Tools</div>
+        <div class="tp-list">
+          <div class="tp"><strong>30-Second Check-In:</strong> "This is not a status update. It's not 'did you get the memo.' It's: how are you? And then actually listening to the answer. Thirty seconds. Before a shift. Before you hang up. It costs you nothing and it changes everything for your FA."</div>
+          <div class="tp"><strong>The Coaching Question:</strong> "When a FA comes to you with a problem, your instinct is to solve it. That's what got you promoted. But every time you solve it for them, you take an opportunity away from them. Try this: before you give the answer, ask — 'What do you think?' You'll be surprised how often they know."</div>
+          <div class="tp"><strong>More coaching question examples you can use or share:</strong> "What would you do if I wasn't here?" / "What's your gut telling you?" / "What options do you see?" / "What have you already tried?" / "What would you tell a colleague in this same situation?" — These all do the same thing: they return ownership to the FA instead of reinforcing dependency on you.</div>
+          <div class="tp"><strong>The Recognition Hit:</strong> "Not a trophy. Not a monthly email. A specific moment where you name the exact thing they did and say why it mattered. 'Hey, the way you handled that passenger in row 12 yesterday — that was textbook. I want you to know I saw it.' That's it. That's the whole thing."</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Teams Chat Discussion — After Tools Overview</div>
+        <div class="activity">
+          <div class="a-label">2 Minutes — Teams Chat (Slide 11)</div>
+          <div class="a-text">
+            Ask everyone to drop A, B, or C in the Teams chat: which of the 3 tools do they use the <em>least</em> consistently? A = 30-Second Check-In, B = Coaching Question, C = Recognition Hit.<br><br>
+            <strong>After responses come in:</strong> Call out what you see. "Looks like [A/B/C] is the most common — let's talk about why that one is the hardest." Don't move on without naming the pattern. This makes the tools feel personal, not generic. Keep it to 2 minutes — you're about to practice one of them.
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Practice: 30-Second Check-In</div>
+        <div class="activity">
+          <div class="a-label">Breakout Pairs — 5 Minutes</div>
+          <div class="a-text">
+            <strong>Instructions to give before breakouts:</strong> "Same pair as Module 1. I want you to use the 3-step structure from your workbook: Open with a genuine question — not operational, not 'did you get the brief.' Listen — actually wait for the answer, don't fill the pause. And respond — acknowledge what you heard before you move on. One person is the supervisor, one is the FA. Then switch. When you come back, I want to know: what felt natural, and what felt awkward?"<br><br>
+            <strong>After breakouts:</strong> Ask 2–3 pairs to share. Common answers: Step 2 (the listening/silence) is what people find hardest. Name it: "Most of us are already thinking about what to say next. That's the habit we're breaking." Normalize the awkward: "It's supposed to feel a little different. That's how you know it's working."
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Deeper Knowledge — Champion Others</div>
+        <div class="tp-list">
+          <div class="tp"><strong>What champions actually do differently:</strong> They have a habit of noticing — specifically what someone did, why it was good, and when to say it. Most supervisors wait for a big moment to recognize. Champions do it constantly for small moments. A specific, timely "I saw that" is worth more than a quarterly recognition email.</div>
+          <div class="tp"><strong>When a FA seems resistant to check-ins:</strong> Some FAs will deflect ("I'm fine, don't worry about me"). Don't interpret that as "they don't need it." It usually means they're not used to it. Stay consistent. After 3–4 genuine check-ins, most FAs start opening up. The habit is on you, not on them.</div>
+          <div class="tp"><strong>The coaching question with a FA who always says "I don't know":</strong> Don't give the answer. Try: "What's your best guess?" or "If you had to make a call right now, what would it be?" Those reframes bypass the reflex. Most "I don't know" responses are about risk-aversion, not actual lack of knowledge.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 3 -->
+  <div class="card">
+    <div class="mod-header">
+      <div class="mod-badge" style="background:#00B5A0;">3</div>
+      <div class="mod-info">
+        <div class="mod-num">1:35 – 2:05 &nbsp;·&nbsp; 30 Minutes</div>
+        <div class="mod-title">When the Pressure's On</div>
+      </div>
+      <div class="mod-time">Slide 15–18 &nbsp;·&nbsp; <span class="mod-principle" style="background:#00B5A0;">Do What's Right</span></div>
+    </div>
+    <div class="mod-body">
+      <div class="row">
+        <div class="row-label">Introducing the Framework</div>
+        <div class="script">
+          "You make decisions under pressure every day. Gate conflicts, crew disputes, last-minute changes. You rarely have full information, you have seconds — and people are watching you to know how to feel. This framework isn't about slowing you down. It's about making sure you're doing all three steps, not just the one you're comfortable with. A lot of us are good at Assess. We're decent at Choose. We underinvest in Communicate — and that's usually where things fall apart."
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Slido — Activity 3</div>
+        <div class="slido-row">
+          <div class="sl-label">Open Text Responses</div>
+          <div class="sl-prompt">"Describe a recent moment you had to make a call under pressure."</div>
+          <div class="sl-note">Read responses privately as they come in. Select 2–3 to discuss live — look for ones that are specific, relatable, and safe to share. Don't pick anything that could embarrass or identify someone. You can paraphrase: "Someone shared something like this..." before reading it.</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Scenario Groups (Slide 18)</div>
+        <div class="activity">
+          <div class="a-label">Groups of 3–4 — 10 Minutes</div>
+          <div class="a-text">
+            The scenario is in the participant workbook (Section 3). It involves an FA-passenger altercation 45 minutes before departure with multiple stakeholders watching.<br><br>
+            <strong>What to listen for in debrief:</strong> Did groups skip Assess and jump straight to Choose? Did they think about who to Communicate with, or just what to do? Surface these differences — they're the learning.
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Watch For</div>
+        <div class="watch">
+          <div class="w-label">Watch For</div>
+          <div class="w-list">
+            <div class="w-item">Groups landing in very different places on the scenario — that's good. If everyone agrees, push back: "What if the captain was pushing you to just get rid of the FA? Does your answer change?"</div>
+            <div class="w-item">Supervisors who focus only on procedure (SOP, chain of command) without thinking about the human element. Gently redirect: "What does your FA need from you in that moment, not just the operation?"</div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Deeper Knowledge — Do What's Right</div>
+        <div class="tp-list">
+          <div class="tp"><strong>Assess — when it goes wrong:</strong> The most common failure here is skipping it entirely. Supervisors jump to a decision because hesitation feels like weakness. Name it: "The fastest decision is not always the right one. Assess doesn't mean pause — it means making sure you know what you're actually responding to before you respond."</div>
+          <div class="tp"><strong>Phrases for tough calls in the Communicate step:</strong> "Here's what I'm seeing, here's what I decided, and here's why." / "I may not have all the information, but here's my call right now — and I'm open to adjusting." / "I want you to hear this from me directly before it comes from anyone else." These phrases do three things: they establish authority, signal transparency, and invite dialogue without surrendering the call.</div>
+          <div class="tp"><strong>When Assess, Choose, and Communicate feel like too many steps under pressure:</strong> It is. Under real pressure, most of the framework is unconscious. What you're building today is the muscle that becomes instinct. The goal is not to run through 3 steps consciously in a crisis — it's to realize afterward that you skipped step 3 and commit to closing that loop.</div>
+          <div class="tp"><strong>When "Do What's Right" conflicts with what's operationally easy:</strong> That tension is real. Sometimes the right call is the harder one. Help supervisors name the difference between what's convenient, what's comfortable, and what's actually right. "The fact that it's hard is often a sign you're on the right track."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 4 -->
+  <div class="card">
+    <div class="mod-header">
+      <div class="mod-badge" style="background:#FF9040;">4</div>
+      <div class="mod-info">
+        <div class="mod-num">2:05 – 2:45 &nbsp;·&nbsp; 40 Minutes</div>
+        <div class="mod-title">The Hard Conversations</div>
+      </div>
+      <div class="mod-time">Slide 19–25 &nbsp;·&nbsp; <span class="mod-principle" style="background:#FF9040;">Communicate Openly</span></div>
+    </div>
+    <div class="mod-body">
+      <div class="row">
+        <div class="row-label">The Seriously Nice Paradox (Slide 20)</div>
+        <div class="script">
+          "Seriously Nice is one of our leadership principles, and I think it's the one we most often misapply. We think being seriously nice means being gentle, keeping the peace, not rocking the boat. But think about the most caring leader you ever had. Did they avoid hard conversations with you? Or did they care enough to tell you the truth — in a way that felt like it came from someone who was in your corner? That's what Seriously Nice actually means. Avoiding a hard conversation isn't kindness. It's avoidance. And your FAs can feel the difference."
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">SBI Framework Notes</div>
+        <div class="tp-list">
+          <div class="tp">Walk through SBI slowly. Give an example of each part: <em>"On Tuesday's flight to BNA [Situation]... I noticed you walked past the passenger in 14C three times without acknowledging them [Behavior]... The impact was that she filed a complaint and said she felt invisible [Impact]."</em></div>
+          <div class="tp">Emphasize: <strong>Behavior, not character.</strong> "You were rude" is a character statement. "You walked past her without acknowledging her" is a behavior statement. One starts a fight. One opens a conversation.</div>
+          <div class="tp">The coaching question: after SBI, pause. "What do you think?" Then stop talking. The silence is uncomfortable. Let them fill it. What they say next is almost always exactly what you needed to hear.</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Private Workbook Reflection (Slide 23)</div>
+        <div class="activity">
+          <div class="a-label">4 Minutes — Individual, Private</div>
+          <div class="a-text">
+            Give a full 4 minutes of quiet here. This is the most important thing you'll ask them to do all day. Say: <strong>"I want you to write out a real conversation you've been putting off. You won't have to share what you wrote. But you will practice it in a few minutes. The more specific you are right now, the better the practice will be."</strong><br><br>
+            Go quiet. Let them write. Don't fill the silence.
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Practice: The Hard Conversation (Slide 24)</div>
+        <div class="activity">
+          <div class="a-label">Breakout Pairs — 8 Minutes</div>
+          <div class="a-text">
+            <strong>Before you send them to breakouts:</strong> "You're going to use what you just wrote — the real conversation you've been putting off. One person plays supervisor, one plays FA. Supervisor: deliver your SBI. Use the actual words you wrote. Your partner's job is to give you one piece of feedback: Was it specific? Was it about behavior or character? Did you stay in it, or did you soften the impact? Then switch."<br><br>
+            <strong>While they're in breakouts:</strong> You can drop into a room briefly to listen — don't intervene unless someone is clearly stuck or distressed. Let the practice unfold.<br><br>
+            <strong>Large group debrief after:</strong> Ask 2 questions: "What was hard to say out loud?" and "What did it feel like to hear it as the FA?" Surface this: most people say the impact piece is the hardest to deliver without softening it. That's the muscle you're building.<br><br>
+            <strong>Common facilitation moments:</strong><br>
+            — If someone says "I don't have a real situation to use": push gently. "Think of the last time you had a conversation you wished you'd handled differently. Use that." Almost everyone has one.<br>
+            — If the practice stays polite and surface-level: normalize going deeper. "Try it again — this time actually say the impact out loud. Don't soften it. Your partner can handle it."<br>
+            — If someone gets emotional in the reflection: let it land. You don't need to fix it. "That reaction tells you this conversation matters. That's exactly why we're practicing it here."
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Slido — Activity 4</div>
+        <div class="slido-row">
+          <div class="sl-label">Rating Scale (1–5)</div>
+          <div class="sl-prompt">"When things get hard, do you lean toward accountability or empathy?"</div>
+          <div class="sl-note">After results: "This is not a test. There's no right answer. But notice — most of us lean one way. The goal isn't to be in the middle. The goal is to know your default so you can flex when the situation needs something different. If you lean empathy — practice naming impact. If you lean accountability — practice asking 'what do you think?' more."</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Watch For</div>
+        <div class="watch">
+          <div class="w-label">Watch For</div>
+          <div class="w-list">
+            <div class="w-item">Supervisors who write a vague conversation ("I need to talk to someone about their attitude"). Coach them: "Can you be more specific? What did they do? When? What was the effect?" The more specific the SBI, the better the practice.</div>
+            <div class="w-item">Practice that stays polite and surface-level. Push pairs gently: "That was good. Now try it again — but this time really say the impact. Don't soften it." Softening the impact is the most common habit to break.</div>
+            <div class="w-item">Anyone who seems emotionally activated by the reflection. This is real for some people. If someone needs a moment, let them. Don't rush Module 4.</div>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Deeper Knowledge — Communicate Openly</div>
+        <div class="tp-list">
+          <div class="tp"><strong>When supervisors can't name the behavior (stuck in character language):</strong> This is the most common SBI failure. "She has a bad attitude" is not a behavior — it's an interpretation. Help them get specific: "What did she do? What did you see or hear? If a camera was there, what would it show?" Observable behavior is the only thing you can address in a conversation without it becoming a debate about character.</div>
+          <div class="tp"><strong>Phrases for opening a hard conversation without it feeling like an ambush:</strong> "I want to talk to you about something I saw — and I want to hear your side too." / "This isn't about questioning who you are. I want to address a specific moment." / "I'm coming to you directly because I think you can handle this — and because I respect you." The opener sets the tone. A well-delivered opener often determines whether the conversation is heard or defended against.</div>
+          <div class="tp"><strong>When a FA gets defensive in a real conversation:</strong> Don't retreat and don't escalate. Acknowledge the emotion, then return to the behavior: "I hear you, and I'm not here to attack you. I'm here because [behavior] happened and we need to talk about it." Stay on the behavior. If they won't de-escalate, name what you're observing: "I can see you're frustrated right now. I want to finish this conversation when you're ready — but we will finish it."</div>
+          <div class="tp"><strong>"Communicate Openly" and the coaching question working together:</strong> SBI delivers the feedback. The coaching question opens the learning. Together they create a conversation, not a verdict. After you land the I in SBI — pause. Ask: "What do you think about what happened?" Then listen. What they say next is almost always what the conversation needed to be about all along.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 5 -->
+  <div class="card">
+    <div class="mod-header">
+      <div class="mod-badge" style="background:#8B6FD8;">5</div>
+      <div class="mod-info">
+        <div class="mod-num">2:55 – 3:20 &nbsp;·&nbsp; 25 Minutes</div>
+        <div class="mod-title">Learning from Turbulence</div>
+      </div>
+      <div class="mod-time">Slide 28–33 &nbsp;·&nbsp; <span class="mod-principle" style="background:#8B6FD8;">Promote Ownership</span></div>
+    </div>
+    <div class="mod-body">
+      <div class="row">
+        <div class="row-label">Re-Engagement First (Slide 27 — New)</div>
+        <div class="activity">
+          <div class="a-label">2 Minutes to Get the Room Back After Break</div>
+          <div class="a-text">
+            Don't open Module 5 cold. Slide 27 asks: <em>"Think of the best leader you ever had. Did they avoid hard conversations with you?"</em><br><br>
+            Let 2–3 people respond before you move on. This gets energy back in the room and does the setup work for Module 5 for you — they'll name what made honest feedback feel different, and you can reflect it back: <strong>"That's exactly what this module is about."</strong> Then move to the opening frame.
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Opening Frame (Slide 28)</div>
+        <div class="script">
+          "The debrief is the leadership development. Every hard day, every difficult situation, every near-miss with your team — that's a curriculum. If you create the space to learn from it. Most of us don't. Not because we don't care. Because we're already on to the next thing. This module is about building one habit that turns experience into growth — and it takes five minutes."
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">The Live Debrief (Slide 30)</div>
+        <div class="activity">
+          <div class="a-label">Large Group — 10 Minutes</div>
+          <div class="a-text">
+            Give them 3 minutes to write their answers to all 4 questions in Section 5 of the workbook — they're not writing for you, they're writing for themselves. Then open the verbal group debrief. Ask who wants to share. Don't read out loud from the slide — you know the 4 questions; run it like a real debrief.<br><br>
+            <strong>Watch the tone you set:</strong> Genuine curiosity. No defensiveness about the session. If something didn't work, name it yourself first. "Question 3 — what would we do differently? I'm going to start: I would've given you a little more time in the Module 3 scenario..."
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Deeper Knowledge — Promote Ownership</div>
+        <div class="tp-list">
+          <div class="tp"><strong>Why most debriefs fail — and what to say when they do:</strong> When a debrief produces nothing useful, it's usually one of three things: (1) It happened too late — the moment has lost its charge. (2) It was too vague — "let's do better" isn't actionable. (3) People aren't safe — if they're afraid of being blamed, they won't be honest. Name whichever of these applies and adjust. "We're going to do a quick one right now while it's fresh. 5 minutes. No blame — just: what happened, what worked, what do we take forward."</div>
+          <div class="tp"><strong>When a FA resists the debrief ("We already talked about it"):</strong> "Talked about it" is not the same as debriefed. Usually "we talked about it" means someone vented, someone apologized, and everyone moved on. That's not a debrief — that's conflict management. The debrief is what comes after: what did we learn, and how do we use it? They're different conversations.</div>
+          <div class="tp"><strong>"Promote Ownership" and the debrief:</strong> The debrief is where ownership is built. When you ask "what would we do differently?" instead of "what did you do wrong?" you transfer ownership of the learning from the supervisor to the team. That's the whole principle. People own what they helped create — including insights about their own behavior.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODULE 6 -->
+  <div class="card">
+    <div class="mod-header">
+      <div class="mod-badge" style="background:linear-gradient(135deg, #174DFF, #8B6FD8);">6</div>
+      <div class="mod-info">
+        <div class="mod-num">3:20 – 3:50 &nbsp;·&nbsp; 30 Minutes</div>
+        <div class="mod-title">Flying Together</div>
+      </div>
+      <div class="mod-time">Slide 32–35</div>
+    </div>
+    <div class="mod-body">
+      <div class="row">
+        <div class="row-label">Leader Guide Introduction</div>
+        <div class="lg-script">
+          <div class="lgs-label">Say This — Then Share Your Screen on the Leader Guide for 60 Seconds</div>
+          <div class="lgs-text">"Before we close out — I want to show you one more thing. Everything we covered today lives in one place. It's called the Leader Guide and it's yours. It's not a training you have to take again. It's organized by the same five principles you've been seeing all morning, and it lives in your browser — open it any time you need to reference a tool, revisit a framework, or find a phrase when you're about to have a hard conversation. I'm dropping the link in Teams chat right now. This is your resource from here."</div>
+          <div class="lgs-note">→ Share screen on Leader Guide. Point to the principle tabs and show one example (the 30-Second Check-In or SBI card). Keep it to 60–90 seconds — they've had a full session, don't add new content. Then switch back to the presentation.</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Talking Points</div>
+        <div class="tp-list">
+          <div class="tp">"You are not alone in this. But that's easy to say and hard to feel — especially when you're at your base, dealing with a situation at 6am, and the nearest peer is 2,000 miles away. That's what accountability partners are for. This isn't a mentoring relationship. It's just: someone who gets it. Someone you can call."</div>
+          <div class="tp">Announce the pairs you've pre-planned. Give people 2 minutes to connect with their partner in the Teams chat before you close out. Seed the first message: "Start by just saying hi and dropping one thing you're taking away from today."</div>
+          <div class="tp">Float the idea of a monthly supervisor touchpoint — not operational, just theirs. Plant the seed: "I'm thinking about setting up a standing 30-minute call — just the 14 of you. No agenda from me. What would you use it for?"</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Slido — Activity 5 (Closing Word Cloud)</div>
+        <div class="slido-row">
+          <div class="sl-label">Word Cloud — Leave it Live Through Your Close</div>
+          <div class="sl-prompt">"In one word — what are you taking away from today?"</div>
+          <div class="sl-note">Share the word cloud on screen. Read a few words out loud. Let the visual be the backdrop for your closing remarks. Don't rush off it — let it sit.</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Deeper Knowledge — Flying Together</div>
+        <div class="tp-list">
+          <div class="tp"><strong>Why isolation is the real leadership risk for supervisors at remote bases:</strong> These supervisors don't have hallway conversations. They don't overhear how a peer handled a situation. They don't get informal modeling. That isolation means they're building leadership instincts in a vacuum — and usually defaulting to how they themselves were managed. The accountability partner structure breaks that loop.</div>
+          <div class="tp"><strong>If supervisors are skeptical about the accountability partner idea:</strong> Don't oversell it. "I'm not asking you to become best friends. I'm asking you to send one message in 30 days. That's it. If it's useful, you'll know. If it isn't — you're no worse off." Low commitment, low risk. High upside if it sticks.</div>
+          <div class="tp"><strong>"Flying Together" and all 5 principles:</strong> Module 6 is where all five principles converge. Being seriously nice is choosing to invest in a peer relationship. Championing others means not just supporting your FAs but supporting the supervisors around you. Doing what's right means showing up for the group even when it's easier to go it alone. Communicating openly means being real with your accountability partner when things are hard. Promoting ownership means taking responsibility for the health of this network — not waiting for someone to build it for you.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSING -->
+  <div class="card">
+    <div class="mod-header">
+      <div class="mod-badge" style="background:var(--dark);">✓</div>
+      <div class="mod-info">
+        <div class="mod-num">3:50 – 4:00 &nbsp;·&nbsp; 10 Minutes</div>
+        <div class="mod-title">Commitments &amp; Close</div>
+      </div>
+      <div class="mod-time">Slide 38–39</div>
+    </div>
+    <div class="mod-body">
+      <div class="row">
+        <div class="row-label">Post-Training Survey</div>
+        <div class="activity">
+          <div class="a-label">Direct Them to the Survey — Before the Lightning Round</div>
+          <div class="a-text">
+            Say: <strong>"Before we do our final close — scroll to the very bottom of your workbook. You'll see a Session Feedback section. It takes about 3 minutes. Your responses go directly to me and help shape the next session. No one sees your answers except the L&amp;D team. Go ahead and fill it out now while the session is still fresh — I'll give you 3 minutes."</strong><br><br>
+            Go quiet. Let them complete it. When time is up, say: <strong>"Hit submit whenever you're ready — then come back up to the chat."</strong> Then move into the lightning round.
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Lightning Round (Slide 34 — New)</div>
+        <div class="activity">
+          <div class="a-label">Before the Closing Word Cloud</div>
+          <div class="a-text">
+            Ask everyone to drop one thing in the Teams chat — 10 words or less — something specific they're doing differently for their FAs next week. Give them 60–90 seconds. Read a few out loud before you open Slido. <strong>This is the energy you want going into your close — their voices, not yours.</strong>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">Closing Script</div>
+        <div class="script">
+          <div class="script-label">Your Closing (After Word Cloud)</div>
+          "Before we go — I want you to look at that word cloud for a second. That's you. That's 14 people who came from different bases, spent four hours doing real work, had honest conversations, and are leaving with something. That's not nothing. That's actually pretty rare. The commitments you wrote in your workbook — those are yours. Nobody's grading you on them. But your FAs will feel whether you made them. And I will be back in 30 days with one question. Just one. And I want a real answer. Go lead. You know how."
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">The 30-Day Follow-Up</div>
+        <div class="slido-row" style="background:#f0f8f0; border-color:#b0e0b0;">
+          <div class="sl-label" style="color:#206020;">Commit to This in the Room — Then Do It</div>
+          <div class="sl-prompt" style="color:#0a3010;">Send this Teams message at exactly 30 days:</div>
+          <div class="sl-type" style="color:#206020; font-style:italic; margin-top:8px;">"30 days ago you made a commitment. Here's my question: did you make the call to your accountability partner? And what's one thing that's different about how you're leading your FAs because of our time together? I want a real answer — even if the real answer is 'I got busy and I didn't.' That's data too."</div>
+          <div class="sl-note" style="color:#206020;">Set a calendar reminder today before you close out. This follow-up is what separates a training from a habit.</div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-label">After You Close</div>
+        <div class="tp-list">
+          <div class="tp">Stay on for 5–10 minutes after the formal close. Let people linger. This is often where the most honest conversations happen.</div>
+          <div class="tp">Send a follow-up Teams message within 24 hours: thank them, drop the Leader Guide link again, remind them of their accountability partner's name and base.</div>
+          <div class="tp">At 30 days — send the follow-up message above. Don't skip this. The commitment page in the workbook primes them to expect it — and your FAs will feel whether they followed through.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end content -->
+</body>
+</html>
