@@ -589,7 +589,13 @@ input[type="text"]::placeholder { color: #b0b8cc; }
   margin-left: 18px;
 }
 .likert-option { flex: 1; }
-.likert-option input[type="radio"] { display: none; }
+.likert-option input[type="radio"] {
+  opacity: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
 .likert-option label {
   display: flex;
   flex-direction: column;
@@ -605,6 +611,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
   min-height: 60px;
 }
 .likert-option label:hover { border-color: #b0b8d8; background: #f8f9ff; }
+.likert-option input:focus-visible + label { outline: 3px solid var(--blue); outline-offset: 2px; }
 .likert-option input:checked + label {
   border-color: var(--lk-color, var(--blue));
   background: var(--lk-bg, #f0f4ff);
@@ -1502,7 +1509,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
       <div class="survey-q">
         <div class="survey-q-label">
           <span class="survey-q-dot" style="background:#FF527B;"></span>
-          Module 1 — The Leadership Identity Shift
+          Module 1 — Who We Are
         </div>
         <div class="survey-q-sub">How satisfied were you with this module?</div>
         <div class="likert-row" style="--lk-color:#FF527B; --lk-bg:#fff5f7;">
@@ -1518,7 +1525,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
       <div class="survey-q">
         <div class="survey-q-label">
           <span class="survey-q-dot" style="background:#FFCA40;"></span>
-          Module 2 — The 3 Daily Tools
+          Module 2 — Your Daily Toolkit
         </div>
         <div class="survey-q-sub">How satisfied were you with this module?</div>
         <div class="likert-row" style="--lk-color:#c49500; --lk-bg:#fffdf0;">
@@ -1534,7 +1541,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
       <div class="survey-q">
         <div class="survey-q-label">
           <span class="survey-q-dot" style="background:#00B5A0;"></span>
-          Module 3 — Assess, Choose, Communicate
+          Module 3 — When the Pressure's On
         </div>
         <div class="survey-q-sub">How satisfied were you with this module?</div>
         <div class="likert-row" style="--lk-color:#00796b; --lk-bg:#f0fbfa;">
@@ -1550,7 +1557,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
       <div class="survey-q">
         <div class="survey-q-label">
           <span class="survey-q-dot" style="background:#FF9040;"></span>
-          Module 4 — The Hard Conversation
+          Module 4 — The Hard Conversations
         </div>
         <div class="survey-q-sub">How satisfied were you with this module?</div>
         <div class="likert-row" style="--lk-color:#c25500; --lk-bg:#fff8f2;">
@@ -1566,7 +1573,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
       <div class="survey-q">
         <div class="survey-q-label">
           <span class="survey-q-dot" style="background:#8B6FD8;"></span>
-          Module 5 — The Debrief Habit
+          Module 5 — Learning from Turbulence
         </div>
         <div class="survey-q-sub">How satisfied were you with this module?</div>
         <div class="likert-row" style="--lk-color:#6040b8; --lk-bg:#f7f4ff;">
@@ -1582,7 +1589,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
       <div class="survey-q">
         <div class="survey-q-label">
           <span class="survey-q-dot" style="background:#174DFF;"></span>
-          Module 6 — Your Leadership from Here
+          Module 6 — Flying Together
         </div>
         <div class="survey-q-sub">How satisfied were you with this module?</div>
         <div class="likert-row" style="--lk-color:#174DFF; --lk-bg:#f0f4ff;">
