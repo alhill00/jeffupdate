@@ -884,10 +884,10 @@ input[type="text"]::placeholder { color: #b0b8cc; }
 
       <div class="section">
         <div class="section-title">Your Leader Guide</div>
-        <div class="section-prompt">The Leader Guide is where all of today's tools and frameworks live — organized by the same 5 Leadership Principles you're seeing here. Drop the link in your browser bookmarks so it's there when you need it.</div>
+        <div class="section-prompt">The Leader Guide is where all of today's tools and frameworks live — organized by the same 5 Leadership Principles. Your facilitator will share the link in the Teams chat during Module 6. When they do, drop it in your bookmarks so it's there when you need it.</div>
         <div class="checklist">
           <label class="check-item">
-            <input type="checkbox"> I opened the Leader Guide during the session.
+            <input type="checkbox"> I received the Leader Guide link from the facilitator (Module 6).
           </label>
           <label class="check-item">
             <input type="checkbox"> I bookmarked it or saved the link somewhere I'll actually find it.
@@ -1503,7 +1503,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
       <input type="hidden" name="_subject" value="Leading at Altitude — Post-Training Feedback">
 
       <!-- ── MODULE RATINGS ── -->
-      <p style="font-size:13px; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:1.5px; margin:0 0 20px;">Module Ratings &nbsp;·&nbsp; 1 = Not helpful &nbsp;·&nbsp; 5 = Extremely helpful</p>
+      <p style="font-size:13px; font-weight:700; color:#888; text-transform:uppercase; letter-spacing:1.5px; margin:0 0 20px;">Module Ratings &nbsp;·&nbsp; 1 = Not satisfied &nbsp;·&nbsp; 5 = Very satisfied</p>
 
       <!-- Module 1 -->
       <div class="survey-q">
@@ -1743,7 +1743,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
         // Warn the user that saving is unavailable in this browser mode
         banner.style.background = '#fff3cd';
         banner.style.color = '#856404';
-        banner.childNodes[0].textContent = '⚠ Auto-save is not available in private browsing mode. Your responses will not be saved if you close this tab.';
+        banner.innerHTML = '⚠ Auto-save is not available in private browsing mode. Your responses will not be saved if you close this tab. Use <strong>Ctrl+P</strong> (or Cmd+P on Mac) to save as PDF at any point.';
       } else {
         var btn = document.createElement('button');
         btn.textContent = 'Clear & start fresh';
