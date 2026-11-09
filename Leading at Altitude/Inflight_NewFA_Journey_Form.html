@@ -296,6 +296,8 @@ textarea::placeholder, input::placeholder { color: #b0b8cc; }
 document.getElementById('journey-form').addEventListener('submit', function(e) {
   e.preventDefault();
   var form = this;
+  var submitBtn = form.querySelector('button[type="submit"]');
+  if (submitBtn) submitBtn.disabled = true;
   fetch(form.action, {
     method: 'POST',
     body: new FormData(form),
@@ -307,9 +309,11 @@ document.getElementById('journey-form').addEventListener('submit', function(e) {
       success.style.display = 'block';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
+      if (submitBtn) submitBtn.disabled = false;
       alert('Something went wrong. Please try again or contact the L\u0026D team directly.');
     }
   }).catch(function() {
+    if (submitBtn) submitBtn.disabled = false;
     alert('Connection error. Please check your internet and try again.');
   });
 });
