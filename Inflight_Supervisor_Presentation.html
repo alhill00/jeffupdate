@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leading at Altitude — Presentation View</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --dark:   #000633;
+  --blue:   #174DFF;
+  --lblue:  #C1DDFF;
+  --red:    #FF527B;
+  --orange: #FF9040;
+  --teal:   #00B5A0;
+  --purple: #8B6FD8;
+  --yellow: #FFCA40;
+  --white:  #FFFFFF;
+}
+
+html, body {
+  width: 100%; height: 100%;
+  font-family: 'Inter', sans-serif;
+  background: var(--dark);
+  overflow: hidden;
+}
+
+/* ── DECK ── */
+.deck { width: 100%; height: 100%; position: relative; }
+
+.slide {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px;
+  text-align: center;
+}
+.slide.active { display: flex; }
+
+/* ── NAV ── */
+.nav {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 100;
+  background: rgba(0,0,0,.35);
+  backdrop-filter: blur(8px);
+  border-radius: 100px;
+  padding: 8px 20px;
+}
+.nav-btn {
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.2);
+  color: #fff;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 20px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background .2s;
+}
+.nav-btn:hover { background: rgba(255,255,255,.28); }
+.nav-btn:disabled { opacity: .3; cursor: not-allowed; }
+.nav-counter {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,.5);
+  min-width: 60px;
+  text-align: center;
+}
+
+/* ── PRINCIPLE BADGE ── */
+.principle {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 5px 16px;
+  border-radius: 100px;
+  color: #fff;
+  margin-bottom: 20px;
+}
+.principle.yellow { color: #3a2800; }
+
+.module-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+  margin-bottom: 14px;
+}
+
+.slide-title {
+  font-size: 52px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  max-width: 800px;
+}
+.slide-title.med { font-size: 42px; }
+.slide-title.sm  { font-size: 32px; }
+
+.slide-sub {
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--lblue);
+  max-width: 680px;
+  line-height: 1.5;
+  margin-bottom: 30px;
+}
+.slide-sub.sm { font-size: 16px; }
+
+/* ── ACTIVITY BOX ── */
+.activity-box {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 16px;
+  padding: 32px 40px;
+  max-width: 720px;
+  width: 100%;
+  margin-top: 10px;
+  text-align: left;
+}
+.activity-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  margin-bottom: 12px;
+}
+.activity-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.5;
+}
+.activity-text em {
+  color: var(--lblue);
+  font-style: normal;
+}
+
+/* ── FRAMEWORK ── */
+.fw-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+.fw-step {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 14px;
+  padding: 24px 32px;
+  min-width: 160px;
+  text-align: center;
+}
+.fw-step .num {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  color: rgba(255,255,255,.35);
+  margin-bottom: 8px;
+}
+.fw-step .word {
+  font-size: 22px;
+  font-weight: 900;
+  color: #fff;
+}
+.fw-arrow {
+  font-size: 28px;
+  color: rgba(255,255,255,.25);
+  font-weight: 300;
+}
+
+/* ── TOOL CARDS ── */
+.tool-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.tool-card {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 14px;
+  padding: 24px 28px;
+  min-width: 200px;
+  text-align: center;
+  flex: 1;
+  max-width: 220px;
+}
+.tool-card .t-num {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+  margin-bottom: 10px;
+}
+.tool-card .t-name {
+  font-size: 16px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 6px;
+}
+.tool-card .t-desc {
+  font-size: 12px;
+  font-weight: 500;
+  color: rgba(255,255,255,.5);
+  line-height: 1.5;
+}
+
+/* ── SLIDO SLIDE ── */
+.slido-big {
+  font-size: 28px;
+  font-weight: 900;
+  color: #fff;
+  margin-bottom: 10px;
+}
+.slido-prompt {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--lblue);
+  font-style: italic;
+  max-width: 700px;
+  line-height: 1.45;
+  margin-bottom: 24px;
+}
+.slido-code {
+  display: inline-block;
+  background: rgba(255,255,255,.1);
+  border: 2px solid rgba(255,255,255,.2);
+  border-radius: 12px;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: .05em;
+}
+.slido-note-sm {
+  font-size: 13px;
+  color: rgba(255,255,255,.35);
+  margin-top: 10px;
+}
+
+/* ── PRINCIPLES ROW ── */
+.p-row {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 30px;
+}
+.p-pill {
+  font-size: 14px;
+  font-weight: 800;
+  padding: 10px 22px;
+  border-radius: 100px;
+  color: #fff;
+}
+.p-pill.yellow { color: #3a2800; }
+
+/* ── BREAK SLIDE ── */
+.break-circle {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.07);
+  border: 3px solid rgba(255,255,255,.15);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+.break-circle .mins { font-size: 52px; font-weight: 900; color: #fff; line-height: 1; }
+.break-circle .min-label { font-size: 14px; font-weight: 600; color: rgba(255,255,255,.4); }
+
+/* ── COMMITMENT BOX ── */
+.commit-row {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.commit-card {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 14px;
+  padding: 28px 32px;
+  max-width: 300px;
+  text-align: left;
+}
+.commit-num {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+  margin-bottom: 8px;
+}
+.commit-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.4;
+}
+
+/* BG VARIANTS */
+.bg-dark  { background: var(--dark); }
+.bg-red   { background: linear-gradient(135deg, #5c0020 0%, #1a000a 100%); }
+.bg-teal  { background: linear-gradient(135deg, #003d38 0%, #001a17 100%); }
+.bg-orange{ background: linear-gradient(135deg, #4a2000 0%, #1a0a00 100%); }
+.bg-purple{ background: linear-gradient(135deg, #2a1a5a 0%, #0d0020 100%); }
+.bg-yellow{ background: linear-gradient(135deg, #3a2800 0%, #150f00 100%); }
+.bg-break { background: linear-gradient(135deg, #0a0d1f 0%, #000633 100%); }
+.bg-green { background: linear-gradient(135deg, #003d22 0%, #001508 100%); }
+
+/* DEBRIEF LIST */
+.debrief-list {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 660px;
+  width: 100%;
+  text-align: left;
+}
+.debrief-q {
+  background: rgba(255,255,255,.08);
+  border-left: 4px solid rgba(255,255,255,.2);
+  border-radius: 0 10px 10px 0;
+  padding: 16px 20px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.4;
+}
+.debrief-q span {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+  margin-bottom: 4px;
+}
+
+/* TITLE SLIDE accent */
+.title-accent {
+  width: 60px;
+  height: 4px;
+  background: var(--blue);
+  border-radius: 2px;
+  margin: 0 auto 28px;
+}
+.title-meta {
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(255,255,255,.35);
+  margin-top: 28px;
+  letter-spacing: .05em;
+}
+
+/* SBI */
+.sbi-row {
+  display: flex;
+  gap: 16px;
+  margin-top: 30px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.sbi-card {
+  border-radius: 14px;
+  padding: 26px 28px;
+  min-width: 180px;
+  max-width: 200px;
+  text-align: center;
+  flex: 1;
+}
+.sbi-letter { font-size: 48px; font-weight: 900; color: #fff; line-height: 1; margin-bottom: 6px; }
+.sbi-word   { font-size: 14px; font-weight: 800; color: rgba(255,255,255,.6); margin-bottom: 8px; }
+.sbi-example{ font-size: 12px; font-weight: 500; color: rgba(255,255,255,.4); line-height: 1.5; font-style: italic; }
+
+/* CLOSING */
+.closing-big {
+  font-size: 64px;
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.05;
+  margin-bottom: 16px;
+}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- SLIDE 1: TITLE -->
+  <div class="slide bg-dark active" id="s1">
+    <div class="title-accent"></div>
+    <div class="module-label">Inflight Supervisor Development Day</div>
+    <div class="slide-title">Leading at Altitude</div>
+    <div class="slide-sub">A development experience built around the real moments you face every day — and the supervisors who face them with you.</div>
+    <div class="title-meta">Breeze University &nbsp;·&nbsp; Inflight Supervisor Development Day</div>
+  </div>
+
+
+  <!-- SLIDE 2: TODAY'S PROMISE -->
+  <div class="slide bg-dark" id="s2">
+    <div class="module-label">Before We Start</div>
+    <div class="slide-title med">This is not a Teams meeting.</div>
+    <div class="slide-sub">This is four hours built for you — to connect, to practice, to leave with something you can actually use tomorrow. No slides to sit through. No lectures to endure. Just real work, with people who get it.</div>
+    <div class="activity-box">
+      <div class="activity-label">Your Two Jobs Today</div>
+      <div class="activity-text">
+        1. Show up fully — camera on, workbook open, ready to talk.<br><br>
+        2. Take one thing home that changes how you lead next week.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: SLIDO OPENER -->
+  <div class="slide bg-dark" id="s3">
+    <div class="module-label">Let's Start with You</div>
+    <div class="slido-big">Open Slido</div>
+    <div class="slido-prompt">"In one word — what do your Flight Attendants need most from you right now?"</div>
+    <div class="slido-code">slido.com &nbsp;·&nbsp; Event code: <strong>[Event 1 Code]</strong></div>
+    <div class="slido-note-sm">Drop the code in the Teams chat too — participants can use their phone or browser</div>
+  </div>
+
+  <!-- SLIDE 4: THE 5 PRINCIPLES -->
+  <div class="slide bg-dark" id="s4">
+    <div class="module-label">Our Foundation</div>
+    <div class="slide-title med">The 5 Leadership Principles</div>
+    <div class="slide-sub sm">Everything we do today connects back to these. They're not aspirational — they're the standard.</div>
+    <div class="p-row">
+      <div class="p-pill" style="background:#FF527B;">Be Seriously Nice</div>
+      <div class="p-pill" style="background:#00B5A0;">Do What's Right</div>
+      <div class="p-pill" style="background:#FF9040;">Communicate Openly</div>
+      <div class="p-pill" style="background:#8B6FD8;">Promote Ownership</div>
+      <div class="p-pill yellow" style="background:#FFCA40;">Champion Others</div>
+    </div>
+    <div class="activity-box" style="margin-top:28px;">
+      <div class="activity-label">How We'll Use Them</div>
+      <div class="activity-text" style="font-size:15px;">Each module today is anchored to one principle. You'll see which one at the top of every section in your workbook. By the end of the day, you'll have touched all five.</div>
+    </div>
+  </div>
+
+  <!-- ══ MODULE 1: WHO WE ARE ══ -->
+
+  <!-- SLIDE 5: MODULE 1 INTRO -->
+  <div class="slide bg-red" id="s5">
+    <div class="principle" style="background:#FF527B;">Be Seriously Nice</div>
+    <div class="module-label">Module 1</div>
+    <div class="slide-title">Who We Are</div>
+    <div class="slide-sub">Team building and cross-base connection — because the supervisor across the country is your most underused resource.</div>
+  </div>
+
+  <!-- SLIDE 6: MOD 1 ACTIVITY -->
+  <div class="slide bg-red" id="s6">
+    <div class="principle" style="background:#FF527B;">Be Seriously Nice</div>
+    <div class="module-label">Module 1 — Activity</div>
+    <div class="slide-title sm">Cross-Base Pairs</div>
+    <div class="activity-box">
+      <div class="activity-label">Your Instructions (8 minutes)</div>
+      <div class="activity-text">
+        You'll be paired with someone from a different base.<br><br>
+        <em>1. What's one thing that's unique about leading FAs at your base?</em><br><br>
+        <em>2. What keeps you up at night when you think about leading your base?</em><br><br>
+        <em>3. Tell your partner about a new FA at your base right now — someone in their first year. How are they doing? Do you actually know?</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 7: MOD 1 DEBRIEF -->
+  <div class="slide bg-red" id="s7">
+    <div class="principle" style="background:#FF527B;">Be Seriously Nice</div>
+    <div class="module-label">Module 1 — Large Group</div>
+    <div class="slide-title sm">What did you find in common?</div>
+    <div class="activity-box">
+      <div class="activity-label">Discussion</div>
+      <div class="activity-text">
+        <em>What surprised you about your partner's base?</em><br><br>
+        <em>Where did you see yourselves in each other?</em><br><br>
+        Drop one word in the Teams chat that describes what you felt in that conversation.
+      </div>
+    </div>
+    <div style="margin-top:28px; padding:16px 28px; background:rgba(255,82,123,.2); border:1px solid rgba(255,82,123,.4); border-radius:12px; max-width:640px; font-size:14px; color:rgba(255,255,255,.9); font-style:italic; line-height:1.6;">
+      <strong style="font-style:normal; color:#fff;">Be Seriously Nice</strong> isn't about keeping the peace — it's about genuinely caring about the person across from you. You just practiced it.
+    </div>
+  </div>
+
+  <!-- ══ MODULE 2: YOUR DAILY TOOLKIT ══ -->
+
+  <!-- SLIDE 8: MODULE 2 INTRO -->
+  <div class="slide bg-yellow" id="s8">
+    <div class="principle yellow" style="background:#FFCA40;">Champion Others</div>
+    <div class="module-label">Module 2</div>
+    <div class="slide-title">Your Daily Toolkit</div>
+    <div class="slide-sub" style="color:rgba(255,255,255,.7);">Four tools you can use with your FAs starting tomorrow.</div>
+  </div>
+
+  <!-- SLIDE 9: MOD 2 OPENING QUESTION -->
+  <div class="slide bg-yellow" id="s9">
+    <div class="principle yellow" style="background:#FFCA40;">Champion Others</div>
+    <div class="module-label">Module 2 — Before We Start</div>
+    <div class="slide-title sm">Be honest with yourself first.</div>
+    <div class="activity-box">
+      <div class="activity-label">Drop Your Answer in the Teams Chat</div>
+      <div class="activity-text">
+        We're about to talk about four tools you can use with your FAs every day.<br><br>
+        Before we get into them — <em>which of these do you already do consistently right now?</em><br><br>
+        A: The intentional check-in &nbsp;·&nbsp; B: Asking instead of telling &nbsp;·&nbsp; C: Specific recognition<br><br>
+        Drop A, B, C — or "none yet, honestly" — in the chat.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: THE 4 TOOLS -->
+  <div class="slide bg-yellow" id="s10">
+    <div class="principle yellow" style="background:#FFCA40;">Champion Others</div>
+    <div class="module-label">Module 2 — The Tools</div>
+    <div class="slide-title sm" style="margin-bottom:0;">Four Tools. Every Day.</div>
+    <div class="tool-row">
+      <div class="tool-card">
+        <div class="t-num">Tool 1</div>
+        <div class="t-name">The 30-Second Check-In</div>
+        <div class="t-desc">Before a shift. Before you hang up. Before you walk away.</div>
+      </div>
+      <div class="tool-card">
+        <div class="t-num">Tool 2</div>
+        <div class="t-name">The Coaching Question</div>
+        <div class="t-desc">"What do you think?" — the question that builds ownership instead of dependency.</div>
+      </div>
+      <div class="tool-card">
+        <div class="t-num">Tool 3</div>
+        <div class="t-name">The Recognition Hit</div>
+        <div class="t-desc">Specific, timely, genuine. Not a trophy — a moment they'll remember.</div>
+      </div>
+      <div class="tool-card">
+        <div class="t-num">Tool 4</div>
+        <div class="t-name">The Base Pulse</div>
+        <div class="t-desc">3 weekly questions to stay informed — not just on the loudest voices.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10a: MOD 2 WORKBOOK -->
+  <div class="slide bg-yellow" id="s10a">
+    <div class="principle yellow" style="background:#FFCA40;">Champion Others</div>
+    <div class="module-label">Module 2 — Workbook</div>
+    <div class="slide-title sm">Go to Section 2 in Your Workbook</div>
+    <div class="activity-box">
+      <div class="activity-label">Reflection (3 minutes, on your own)</div>
+      <div class="activity-text">
+        <em>What does your current daily rhythm with FAs actually look like?</em><br><br>
+        <em>Which of these four tools do you use the least — and why?</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: TEAMS CHAT DISCUSSION -->
+  <div class="slide bg-yellow" id="s11">
+    <div class="principle yellow" style="background:#FFCA40;">Champion Others</div>
+    <div class="module-label">Module 2 — Group Discussion</div>
+    <div class="slide-title sm">Drop it in the Teams chat.</div>
+    <div class="activity-box">
+      <div class="activity-label">Quick Honest Check</div>
+      <div class="activity-text">
+        Of the three daily tools — which one do you use the <em>least</em> consistently right now?<br><br>
+        <strong>A:</strong> The 30-Second Check-In &nbsp;·&nbsp; <strong>B:</strong> The Coaching Question &nbsp;·&nbsp; <strong>C:</strong> The Recognition Hit<br><br>
+        Drop A, B, or C in the Teams chat — then we'll talk about what makes that one the hardest to do.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 12: LEADER GUIDE TEASER -->
+  <div class="slide bg-yellow" id="s12">
+    <div class="principle yellow" style="background:#FFCA40;">Champion Others</div>
+    <div class="module-label">Module 2 — Coming Today</div>
+    <div class="slide-title sm">Your Leader Guide</div>
+    <div class="slide-sub" style="color:rgba(255,255,255,.7);">Everything from today lives in one reference — yours to keep.</div>
+    <div class="activity-box">
+      <div class="activity-label">We'll Tour It Together in Module 6</div>
+      <div class="activity-text" style="font-size:15px;">
+        Every framework, tool, and phrase from today — organized by the same 5 Leadership Principles you're seeing right now.<br><br>
+        <em>Your facilitator will share the link and walk you through it at the end of the session. Bookmark it when they do.</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13: MOD 2 PRACTICE -->
+  <div class="slide bg-yellow" id="s13">
+    <div class="principle yellow" style="background:#FFCA40;">Champion Others</div>
+    <div class="module-label">Module 2 — Practice</div>
+    <div class="slide-title sm">Practice: The 30-Second Check-In</div>
+    <div class="activity-box">
+      <div class="activity-label">With Your Partner (5 minutes)</div>
+      <div class="activity-text">
+        One person plays the supervisor. One plays the FA. Use the 3 steps:<br><br>
+        <strong>1. Open</strong> — Ask a genuine question. Not operational. Not "did you get the brief?"<br>
+        <strong>2. Listen</strong> — Actually wait for the answer. Don't fill the pause.<br>
+        <strong>3. Respond</strong> — Acknowledge what you heard before you move on.<br><br>
+        Then switch. After both rounds: what felt natural? What felt awkward?
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 13a: BASE PULSE — TOOL 4 -->
+  <div class="slide bg-yellow" id="s13a">
+    <div class="principle yellow" style="background:#FFCA40;">Champion Others</div>
+    <div class="module-label">Module 2 — Tool 4</div>
+    <div class="slide-title sm">The Base Pulse</div>
+    <div class="activity-box">
+      <div class="activity-label">Run the Scan Right Now — 3 Minutes, Individual</div>
+      <div class="activity-text">
+        Three questions. Your whole base. Right now.<br><br>
+        <em>1. Who haven't I heard from in the last 10 days?</em><br>
+        <em>2. Who's been giving me short answers lately?</em><br>
+        <em>3. Who's been calling out more than their normal pattern?</em><br><br>
+        Go to Tool 4 in your workbook. Write a name in each row — or write "clear." Give yourself 3 minutes of quiet.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MODULE 3: THE NEW FA EXPERIENCE ══ -->
+
+  <!-- SLIDE 14a: MODULE 3 INTRO -->
+  <div class="slide bg-green" id="s14a">
+    <div class="principle" style="background:#2DB87A;">Champion Others</div>
+    <div class="module-label">Module 3</div>
+    <div class="slide-title">The New FA Experience</div>
+    <div class="slide-sub">The gap no one's been filling — and the window you can't afford to miss.</div>
+  </div>
+
+  <!-- SLIDE 14b: WHO IS YOUR NEWEST FA -->
+  <div class="slide bg-green" id="s14b">
+    <div class="principle" style="background:#2DB87A;">Champion Others</div>
+    <div class="module-label">Module 3 — Before We Start</div>
+    <div class="slide-title sm">Who is your newest FA?</div>
+    <div class="activity-box">
+      <div class="activity-label">Give This 15 Seconds of Real Silence</div>
+      <div class="activity-text">
+        Not the newest one you've worked with.<br>
+        The newest one at your base, period.<br><br>
+        <em>Do you know their name?</em><br>
+        <em>Do you know how they're adjusting?</em><br>
+        <em>Have you reached out — not for work, just to check in?</em><br><br>
+        If you couldn't answer that — this is the most important module of the day.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14c: BUILD THE JOURNEY -->
+  <div class="slide bg-green" id="s14c">
+    <div class="principle" style="background:#2DB87A;">Champion Others</div>
+    <div class="module-label">Module 3 — Breakout Activity</div>
+    <div class="slide-title sm">Build the Journey</div>
+    <div class="activity-box">
+      <div class="activity-label">With Your Partner (8 minutes)</div>
+      <div class="activity-text">
+        Map what a new FA goes through — from day one of training to 90 days at base.<br><br>
+        Two columns per stage:<br>
+        <em>What is the FA experiencing or feeling?</em><br>
+        <em>When does their supervisor show up?</em><br><br>
+        Start with Weeks 1–3. That FA is not at base yet. What's in that supervisor column?
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14d: FOUR TOUCHPOINTS FRAMEWORK -->
+  <div class="slide bg-green" id="s14d">
+    <div class="principle" style="background:#2DB87A;">Champion Others</div>
+    <div class="module-label">Module 3 — The Framework</div>
+    <div class="slide-title sm">Four Touchpoints. One Habit.</div>
+    <div class="activity-box">
+      <div class="activity-label">The Framework — Starting Before They Arrive</div>
+      <div class="activity-text" style="font-size:15px;">
+        <em>Day 0 — Pre-Arrival Welcome:</em> "Hey — I'm [name], your base supervisor. I'm looking forward to having you on the team."<br><br>
+        <em>After first solo flights:</em> "What surprised you? What are you proud of?"<br><br>
+        <em>Day 45–60:</em> "What's been the toughest part so far?"<br><br>
+        <em>Day 75–90:</em> "Do you feel like part of the team yet? Not the job — the team."
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 14e: MODULE 3 COMMITMENT -->
+  <div class="slide bg-green" id="s14e">
+    <div class="principle" style="background:#2DB87A;">Champion Others</div>
+    <div class="module-label">Module 3 — Commitment</div>
+    <div class="slide-title sm">Drop it in the Teams chat.</div>
+    <div class="activity-box">
+      <div class="activity-label">Before the Break — 10 Words or Less</div>
+      <div class="activity-text">
+        The name of your newest FA and what touchpoint you're doing this week.<br><br>
+        <em>If they're still in training: "My newest FA is in training. I'm sending them a message today."</em><br><br>
+        These are now public commitments. That matters.
+      </div>
+    </div>
+  </div>
+
+  <!-- BREAK 1 — after Module 3 -->
+  <div class="slide bg-break" id="s14f">
+    <div class="break-circle">
+      <div class="min-label" style="font-size:18px; letter-spacing:.1em;">BREAK</div>
+    </div>
+    <div class="slide-title med">Take a real break.</div>
+    <div class="slide-sub">We'll pick back up with Module 4 in a few minutes. Workbook will be here when you get back.</div>
+  </div>
+
+  <!-- ══ MODULE 4: WHEN THE PRESSURE'S ON ══ -->
+
+  <!-- SLIDE 15: MODULE 4 INTRO -->
+  <div class="slide bg-teal" id="s15">
+    <div class="principle" style="background:#00B5A0;">Do What's Right</div>
+    <div class="module-label">Module 4</div>
+    <div class="slide-title">When the Pressure's On</div>
+    <div class="slide-sub">Decision-making under pressure — a simple framework you can run in 60 seconds when everything's moving fast.</div>
+  </div>
+
+  <!-- SLIDE 16: FRAMEWORK -->
+  <div class="slide bg-teal" id="s16">
+    <div class="principle" style="background:#00B5A0;">Do What's Right</div>
+    <div class="module-label">Module 4 — Framework</div>
+    <div class="slide-title sm">Assess → Choose → Communicate</div>
+    <div class="fw-row">
+      <div class="fw-step">
+        <div class="num">Step 1</div>
+        <div class="word">Assess</div>
+      </div>
+      <div class="fw-arrow">→</div>
+      <div class="fw-step">
+        <div class="num">Step 2</div>
+        <div class="word">Choose</div>
+      </div>
+      <div class="fw-arrow">→</div>
+      <div class="fw-step">
+        <div class="num">Step 3</div>
+        <div class="word">Communicate</div>
+      </div>
+    </div>
+    <div class="activity-box" style="margin-top:24px; text-align:left;">
+      <div class="activity-label">What Each Step Means</div>
+      <div class="activity-text" style="font-size:15px;">
+        <em>Assess:</em> What's actually happening right now? What's at stake?<br>
+        <em>Choose:</em> What's the best call I can make with what I know right now?<br>
+        <em>Communicate:</em> Who needs to know, and what do they need from me?
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 17: SLIDO PRESSURE MOMENT -->
+  <div class="slide bg-teal" id="s17">
+    <div class="principle" style="background:#00B5A0;">Do What's Right</div>
+    <div class="module-label">Module 4 — Slido</div>
+    <div class="slido-big">Open Slido</div>
+    <div class="slido-prompt">"Describe a recent moment you had to make a call under pressure. One or two sentences."</div>
+    <div class="slido-code">slido.com &nbsp;·&nbsp; Event code: <strong>[Event 1 Code]</strong></div>
+    <div class="slido-note-sm">The facilitator will select 2–3 to discuss live with the group</div>
+  </div>
+
+  <!-- SLIDE 18: MOD 4 SCENARIO -->
+  <div class="slide bg-teal" id="s18">
+    <div class="principle" style="background:#00B5A0;">Do What's Right</div>
+    <div class="module-label">Module 4 — Small Groups</div>
+    <div class="slide-title sm">Work the Scenario</div>
+    <div class="activity-box">
+      <div class="activity-label">Groups of 4–5 (10 minutes)</div>
+      <div class="activity-text">
+        Use the scenario in Section 4 of your workbook.<br><br>
+        Walk through <em>Assess → Choose → Communicate</em> as a group.<br><br>
+        You don't all have to land in the same place — that's the point. Be ready to share where you landed and why.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 18a: STAYING IN THE GAME -->
+  <div class="slide bg-teal" id="s18a">
+    <div class="principle" style="background:#00B5A0;">Do What's Right</div>
+    <div class="module-label">Module 4 — Staying in the Game</div>
+    <div class="slide-title sm">What's your running-on-empty signal?</div>
+    <div class="activity-box">
+      <div class="activity-label">Private Workbook Reflection (3 minutes)</div>
+      <div class="activity-text">
+        When you're depleted, the check-ins get shorter. The recognition disappears. The FA who's quietly struggling doesn't hear from you — and they feel it.<br><br>
+        <em>What's the first thing that changes about how you show up when you've hit your wall?</em><br><br>
+        <em>What one thing will you protect during the holiday stretch?</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ MODULE 5: THE HARD CONVERSATIONS ══ -->
+
+  <!-- SLIDE 19: MODULE 5 INTRO -->
+  <div class="slide bg-orange" id="s19">
+    <div class="principle" style="background:#FF9040;">Communicate Openly</div>
+    <div class="module-label">Module 5</div>
+    <div class="slide-title">The Hard Conversations</div>
+    <div class="slide-sub">Accountability, empathy, coaching, and communication — all in the same moment.</div>
+  </div>
+
+  <!-- SLIDE 20: SERIOUSLY NICE PARADOX -->
+  <div class="slide bg-orange" id="s20">
+    <div class="principle" style="background:#FF9040;">Communicate Openly</div>
+    <div class="module-label">Module 5 — The Paradox</div>
+    <div class="slide-title sm">Being kind doesn't mean avoiding hard truths.</div>
+    <div class="slide-sub">It means delivering them with care.</div>
+    <div class="activity-box">
+      <div class="activity-label">The Seriously Nice Paradox</div>
+      <div class="activity-text" style="font-size:15px;">
+        Avoiding a hard conversation isn't kindness — it's avoidance. It lets the problem grow, and it quietly tells your FA that you don't believe they can handle the truth.<br><br>
+        The most caring thing you can do is be honest, specific, and early.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 21: SBI FRAMEWORK -->
+  <div class="slide bg-orange" id="s21">
+    <div class="principle" style="background:#FF9040;">Communicate Openly</div>
+    <div class="module-label">Module 5 — Framework</div>
+    <div class="slide-title sm">The SBI Model</div>
+    <div class="sbi-row">
+      <div class="sbi-card" style="background:rgba(255,144,64,.15); border:1px solid rgba(255,144,64,.3);">
+        <div class="sbi-letter">S</div>
+        <div class="sbi-word">Situation</div>
+        <div style="font-size:12px; color:rgba(255,255,255,.65); margin-bottom:8px; font-style:italic;">Set the specific time and place — anchor the conversation in fact.</div>
+        <div class="sbi-example">"On Tuesday's flight to BNA..."</div>
+      </div>
+      <div class="sbi-card" style="background:rgba(255,144,64,.15); border:1px solid rgba(255,144,64,.3);">
+        <div class="sbi-letter">B</div>
+        <div class="sbi-word">Behavior</div>
+        <div style="font-size:12px; color:rgba(255,255,255,.65); margin-bottom:8px; font-style:italic;">Name what they did — not who they are. Observable action only.</div>
+        <div class="sbi-example">"I noticed you didn't acknowledge the passenger in 14C..."</div>
+      </div>
+      <div class="sbi-card" style="background:rgba(255,144,64,.15); border:1px solid rgba(255,144,64,.3);">
+        <div class="sbi-letter">I</div>
+        <div class="sbi-word">Impact</div>
+        <div style="font-size:12px; color:rgba(255,255,255,.65); margin-bottom:8px; font-style:italic;">Say what it cost — the team, the guest, the operation, or you.</div>
+        <div class="sbi-example">"The impact was that she filed a complaint and felt ignored..."</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 22: COACHING Q -->
+  <div class="slide bg-orange" id="s22">
+    <div class="principle" style="background:#FF9040;">Communicate Openly</div>
+    <div class="module-label">Module 5 — The Coaching Question</div>
+    <div class="slide-title">"What do you think?"</div>
+    <div class="activity-box">
+      <div class="activity-label">Why This Question Changes Everything</div>
+      <div class="activity-text" style="font-size:15px;">
+        When you tell someone what to do, they follow your lead.<br>
+        When you ask what they think, they own the answer.<br><br>
+        After SBI, pause. Ask: <em>"What do you think about what happened?"</em><br><br>
+        Then listen. The conversation becomes coaching, not correction.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 23: MOD 5 WORKBOOK -->
+  <div class="slide bg-orange" id="s23">
+    <div class="principle" style="background:#FF9040;">Communicate Openly</div>
+    <div class="module-label">Module 5 — Workbook</div>
+    <div class="slide-title sm">Go to Section 5 in Your Workbook</div>
+    <div class="activity-box">
+      <div class="activity-label">Private Reflection (4 minutes)</div>
+      <div class="activity-text">
+        Write out a real conversation you've been putting off.<br><br>
+        <em>Who is it with? What's the situation? What's the behavior? What's the impact?</em><br><br>
+        You won't have to share this. But you will practice it.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 24: MOD 5 PRACTICE -->
+  <div class="slide bg-orange" id="s24">
+    <div class="principle" style="background:#FF9040;">Communicate Openly</div>
+    <div class="module-label">Module 5 — Practice</div>
+    <div class="slide-title sm">Practice the Conversation</div>
+    <div class="activity-box">
+      <div class="activity-label">Breakout Pairs (8 minutes)</div>
+      <div class="activity-text">
+        Use what you wrote. Role-play the conversation using SBI.<br><br>
+        Partner gives feedback: <em>Was it specific? Was it caring? Did you stay on behavior — not character?</em><br><br>
+        Then switch.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 25: SLIDO RATING -->
+  <div class="slide bg-orange" id="s25">
+    <div class="principle" style="background:#FF9040;">Communicate Openly</div>
+    <div class="module-label">Module 5 — Slido</div>
+    <div class="slido-big" style="color:#fff;">Quick Honest Check</div>
+    <div class="slido-prompt" style="color:rgba(255,255,255,.7);">"When things get hard, do you lean toward accountability or empathy?"</div>
+    <div class="slido-code">slido.com &nbsp;·&nbsp; Event code: <strong>[Event 2 Code]</strong></div>
+    <div class="slido-note-sm">Scale: 1 = Almost always empathy &nbsp;·&nbsp; 5 = Almost always accountability</div>
+  </div>
+
+  <!-- SLIDE 25a: THE OTHER HARD CONVERSATION -->
+  <div class="slide bg-orange" id="s25a">
+    <div class="principle" style="background:#FF9040;">Communicate Openly</div>
+    <div class="module-label">Module 5 — The Other Hard Conversation</div>
+    <div class="slide-title sm">Not a performance issue. A retention one.</div>
+    <div class="activity-box">
+      <div class="activity-label">The Three-Part Conversation — Private Workbook Reflection</div>
+      <div class="activity-text" style="font-size:15px;">
+        For the FA who's quietly pulling back — before they've said a word about leaving.<br><br>
+        <em>1. Name what you noticed:</em> "I've noticed you seem a little different lately — just wanted to check in."<br><br>
+        <em>2. Ask the real question:</em> "Are you doing okay? Are you good in this role?"<br><br>
+        <em>3. Stop talking. Wait for the actual answer.</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- BREAK 2 -->
+  <div class="slide bg-break" id="s26">
+    <div class="break-circle">
+      <div class="min-label" style="font-size:18px; letter-spacing:.1em;">BREAK</div>
+    </div>
+    <div class="slide-title med">Last break.</div>
+    <div class="slide-sub">Two modules left. We'll wrap with something you can use the moment you hang up.</div>
+  </div>
+
+  <!-- ══ MODULE 6: FLYING TOGETHER ══ -->
+
+  <!-- SLIDE 32: MODULE 6 INTRO -->
+  <div class="slide bg-dark" id="s32">
+    <div class="p-row" style="margin-bottom:20px; margin-top:0;">
+      <div class="p-pill" style="background:#FF527B; font-size:11px; padding:6px 14px;">Be Seriously Nice</div>
+      <div class="p-pill" style="background:#00B5A0; font-size:11px; padding:6px 14px;">Do What's Right</div>
+      <div class="p-pill" style="background:#FF9040; font-size:11px; padding:6px 14px;">Communicate Openly</div>
+      <div class="p-pill" style="background:#8B6FD8; font-size:11px; padding:6px 14px;">Promote Ownership</div>
+      <div class="p-pill yellow" style="background:#FFCA40; font-size:11px; padding:6px 14px;">Champion Others</div>
+    </div>
+    <div class="module-label">Module 6</div>
+    <div class="slide-title">Flying Together</div>
+    <div class="slide-sub">You are not alone. But the network has to be intentional.</div>
+  </div>
+
+  <!-- SLIDE 33: ACCOUNTABILITY PARTNERS -->
+  <div class="slide bg-dark" id="s33">
+    <div class="module-label">Module 6 — The Network</div>
+    <div class="slide-title sm">Cross-Base Accountability Partners</div>
+    <div class="activity-box">
+      <div class="activity-label">Before We Close Today</div>
+      <div class="activity-text">
+        You're going to leave today with one person — from a different base — who you will reach out to in the next 30 days.<br><br>
+        Not for work. Not for an issue. Just to ask: <em>"How's it going? What are you working on? What do you need?"</em><br><br>
+        The facilitator will pair you up now. Write their name and base in Section 6 of your workbook.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 34: LIGHTNING ROUND -->
+  <div class="slide bg-dark" id="s34">
+    <div class="module-label">Module 6 — Before We Close</div>
+    <div class="slide-title sm">Drop it in the chat.</div>
+    <div class="activity-box">
+      <div class="activity-label">Lightning Round — 10 Words or Less</div>
+      <div class="activity-text">
+        One specific thing you're doing for a new FA or an FA who's been quiet.<br><br>
+        <em>With a name if you can. Something your FA will actually feel.</em><br><br>
+        10 words or less. Teams chat. Right now.
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 35: SLIDO CLOSE -->
+  <div class="slide bg-dark" id="s35">
+    <div class="module-label">Closing Moment</div>
+    <div class="slido-big">One Last Word</div>
+    <div class="slido-prompt">"In one word — what are you taking away from today?"</div>
+    <div class="slido-code">slido.com &nbsp;·&nbsp; Event code: <strong>[Event 2 Code]</strong></div>
+  </div>
+
+  <!-- SLIDE 35b: COMMITMENTS -->
+  <div class="slide bg-dark" id="s35b">
+    <div class="module-label">Commitments &amp; Close</div>
+    <div class="slide-title sm">Go to the last page of your workbook.</div>
+    <div class="commit-row">
+      <div class="commit-card">
+        <div class="commit-num">Commitment 1</div>
+        <div class="commit-text">A new FA — and which touchpoint I owe them.</div>
+      </div>
+      <div class="commit-card">
+        <div class="commit-num">Commitment 2</div>
+        <div class="commit-text">An FA who's been pulling back — and when I'm having the conversation.</div>
+      </div>
+      <div class="commit-card">
+        <div class="commit-num">Commitment 3</div>
+        <div class="commit-text">One thing I'm protecting for myself during the holiday stretch.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 36: CLOSE -->
+  <div class="slide bg-dark" id="s36">
+    <div class="title-accent"></div>
+    <div class="closing-big">You are Breeze<br>at 35,000 feet.</div>
+    <div class="slide-sub">Thank you for showing up today. Not just for yourselves — but for the 14 of you in this room and the hundreds of Flight Attendants counting on you. Go lead.</div>
+    <div class="title-meta">Breeze University &nbsp;·&nbsp; Leading at Altitude</div>
+  </div>
+
+</div><!-- end deck -->
+
+<!-- NAV -->
+<div class="nav">
+  <button class="nav-btn" id="prevBtn" onclick="changeSlide(-1)" disabled>← Back</button>
+  <div class="nav-counter" id="counter">1 / 39</div>
+  <button class="nav-btn" id="nextBtn" onclick="changeSlide(1)">Next →</button>
+</div>
+
+<script>
+  var current = 0;
+  var slides = document.querySelectorAll('.slide');
+  var total = slides.length;
+
+  function changeSlide(dir) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(total - 1, current + dir));
+    slides[current].classList.add('active');
+    document.getElementById('counter').textContent = (current + 1) + ' / ' + total;
+    document.getElementById('prevBtn').disabled = current === 0;
+    document.getElementById('nextBtn').disabled = current === total - 1;
+  }
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); changeSlide(1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                     { e.preventDefault(); changeSlide(-1); }
+  });
+</script>
+
+</body>
+</html>
