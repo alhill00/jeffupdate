@@ -1814,8 +1814,27 @@ input[type="text"]::placeholder { color: #b0b8cc; }
     storageAvailable = true;
   } catch(e) {}
 
-  // Migrate v1→v3 only when v2 is also absent. If v2 exists, v1 is older and
-  // migrating it would silently roll the workbook back to a previous state.
+  // v2→v3: 13 textareas (the journey table) were removed at field index 23.
+  // Remap surviving v2 indices to account for the removed block.
+  if (storageAvailable && !localStorage.getItem(STORAGE_KEY)) {
+    var v2raw;
+    try { v2raw = localStorage.getItem('lat_workbook_v2'); } catch(e) {}
+    if (v2raw) {
+      try {
+        var v2 = JSON.parse(v2raw);
+        var migrated = {};
+        var REMOVED_AT = 23, REMOVED_N = 13;
+        Object.keys(v2).forEach(function(k) {
+          var i = parseInt(k, 10);
+          if (isNaN(i)) return;
+          if (i < REMOVED_AT) { migrated[i] = v2[k]; }
+          else if (i >= REMOVED_AT + REMOVED_N) { migrated[i - REMOVED_N] = v2[k]; }
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+      } catch(e) {}
+    }
+  }
+  // v1→v3: only when v2 is also absent (v2 is always newer than v1)
   if (storageAvailable && !localStorage.getItem(STORAGE_KEY)
       && !localStorage.getItem('lat_workbook_v2')
       && localStorage.getItem('lat_workbook_v1')) {
