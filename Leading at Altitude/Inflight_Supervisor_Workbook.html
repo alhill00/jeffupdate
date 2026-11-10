@@ -1804,7 +1804,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
 
 <script>
 (function() {
-  var STORAGE_KEY = 'lat_workbook_v2';
+  var STORAGE_KEY = 'lat_workbook_v3';
 
   // Detect localStorage availability (fails in private browsing / restricted environments)
   var storageAvailable = false;
@@ -1814,8 +1814,10 @@ input[type="text"]::placeholder { color: #b0b8cc; }
     storageAvailable = true;
   } catch(e) {}
 
-  // Migrate v1 data to v2 so existing responses are not lost after the key bump
+  // Migrate v1 data to v3 — v1 field layout is compatible (no journey table was present)
   if (storageAvailable && !localStorage.getItem(STORAGE_KEY) && localStorage.getItem('lat_workbook_v1')) {
+    // v2 data intentionally not migrated: removing the journey table shifted all
+    // subsequent field indices, so restoring v2 data would corrupt other sections.
     try {
       localStorage.setItem(STORAGE_KEY, localStorage.getItem('lat_workbook_v1'));
     } catch(e) {}
@@ -1867,6 +1869,7 @@ input[type="text"]::placeholder { color: #b0b8cc; }
   function clearAll() {
     if (confirm('Clear all your saved responses and start fresh?')) {
       try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
+      try { localStorage.removeItem('lat_workbook_v2'); } catch(e) {}
       try { localStorage.removeItem('lat_workbook_v1'); } catch(e) {}
       getFields().forEach(function(el) {
         if (el.type === 'checkbox' || el.type === 'radio') { el.checked = false; }
